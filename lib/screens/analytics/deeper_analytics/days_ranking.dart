@@ -13,8 +13,7 @@ import 'package:stylestore/utilities/constants/color_constants.dart';
 
 
 import '../../../Utilities/constants/font_constants.dart';
-import '../../../model/best_customer.dart';
-import '../../../model/product_items_model.dart';
+
 
 class BestDaysPage extends StatelessWidget {
   final List<String> bestDays;
