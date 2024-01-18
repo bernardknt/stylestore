@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>406674063138-1odplqqjlgqva07mkl0mt6826firfdav.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.406674063138-1odplqqjlgqva07mkl0mt6826firfdav</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD7-wotntmgpEeUoGOJ8i2kVfYyolwpkqg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>406674063138</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.kingdomfinanciers.stylestore.stylestore</string>
+	<key>PROJECT_ID</key>
+	<string>doctor-booking-aa868</string>
+	<key>STORAGE_BUCKET</key>
+	<string>doctor-booking-aa868.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:406674063138:ios:d4d3e9f1ddc63864f1af7b</string>
+</dict>
+</plist>

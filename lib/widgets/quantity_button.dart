@@ -1,0 +1,28 @@
+
+import 'package:flutter/material.dart';
+import 'package:stylestore/utilities/constants/color_constants.dart';
+
+class QuantityBtn extends StatelessWidget {
+  QuantityBtn({required this.onTapFunction, required this.text, required this.size, this.color = kGreyLightThemeColor});
+  final VoidCallback onTapFunction;
+  final String text;
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTapFunction,
+      child: Container(
+        width: size,
+        height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: color
+        ),
+        child: Text(text, style: TextStyle(fontSize: 25, fontWeight: FontWeight.w400 ),),
+      ),
+    );
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "406674063138",
+    "project_id": "doctor-booking-aa868",
+    "storage_bucket": "doctor-booking-aa868.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406674063138:android:0b252e4acf9b2109f1af7b",
+        "android_client_info": {
+          "package_name": "com.kingdomfinancier.styleapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU303i20j9Qm9RDYzXaIAKlW0SdkuieGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "406674063138-612s560e05a4u2nlpj56j1icp5013256.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kingdomfinancier.styleapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406674063138:android:b83f3540d6d17b74f1af7b",
+        "android_client_info": {
+          "package_name": "com.kingdomfinanciers.stylestore.stylestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU303i20j9Qm9RDYzXaIAKlW0SdkuieGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "406674063138-612s560e05a4u2nlpj56j1icp5013256.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kingdomfinancier.styleapp"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:406674063138:android:2c2dbec0300cce86f1af7b",
+        "android_client_info": {
+          "package_name": "com.uganda.doctor_booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU303i20j9Qm9RDYzXaIAKlW0SdkuieGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "406674063138-1q4h75n38b486hqij4hhsu2trv77j8tu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "406674063138-612s560e05a4u2nlpj56j1icp5013256.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kingdomfinancier.styleapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
