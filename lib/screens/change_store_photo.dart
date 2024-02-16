@@ -16,7 +16,8 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 
@@ -80,7 +81,7 @@ class _ChangeStorePhotoState extends State<ChangeStorePhoto> {
 
     })
         .then((value) {
-      Navigator.pushNamed(context, ControlPage.id);
+      Navigator.pushNamed(context, SuperResponsiveLayout.id);
     })
         .catchError((error) => print("Failed to add Item: $error"));
   }

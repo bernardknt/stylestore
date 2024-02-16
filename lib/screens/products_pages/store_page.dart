@@ -24,6 +24,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
+import 'package:flutter/src/painting/box_border.dart' as boxBorder;
 
 import '../../controllers/adding_controller.dart';
 import '../../model/beautician_data.dart';
@@ -415,7 +416,7 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                               // border: OutlineInputBorder(
                               //   borderRadius: BorderRadius.all(Radius.circular(15)),
                               // ),
-                              border: Border.all(width: 1, color: kFontGreyColor),
+                              border: boxBorder.Border.all(width: 1, color: kFontGreyColor),
                               borderRadius: const BorderRadius.all(
                                 Radius.circular(20),
                               ),
@@ -523,7 +524,7 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                           //           child: Lottie.asset("images/confused.json")),
                           //       Text("No Items Here. Click here to see how to add Items", style: kNormalTextStyle.copyWith(color: Colors.blue),) ]),
                           // )
-                          CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Items', subTitle: 'One item at a time', image: 'store.jpg', title: 'Setup a World Class Store', function:
+                          CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Items', subTitle: 'One item at a time', image: 'new_logo.jpg', title: 'Setup a World Class Store', function:
                               () {
                             //   showModalBottomSheet(isScrollControlled: true, context: context, builder: (context) {
                             //   return Scaffold(

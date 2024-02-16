@@ -12,7 +12,7 @@ import 'package:stylestore/screens/analytics/analysis_page.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../utilities/constants/user_constants.dart';
-import '../home_page.dart';
+import '../home_pages/home_page.dart';
 
 
 class LoadingAnalysisPage extends StatefulWidget {

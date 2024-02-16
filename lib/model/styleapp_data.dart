@@ -30,6 +30,7 @@ class StyleProvider extends ChangeNotifier{
   String customerNumber  = '';
   String customerLocation  = '';
   bool isStoreEmpty = false;
+  bool kdsMode = false;
 
 
   String speciality = '';
@@ -80,6 +81,7 @@ class StyleProvider extends ChangeNotifier{
   double bookingPercentage = 0.15;
   bool showLocationInstructions = false;
   String instructionsInfo = '';
+  String transactionNote = '';
 
   Color bookButtonColor = kFontGreyColor;
   int openingTime = 8;
@@ -93,8 +95,9 @@ class StyleProvider extends ChangeNotifier{
   String invoicedCustomer = "";
   String invoiceTransactionId= "";
   String invoiceSms= "";
-  String invoicedCustomerNumber = "";
+  String invoicedCustomerNumber = "700123456";
   DateTime invoicedDate = DateTime.now();
+  List<DateTime> selectedTaskDates = [];
 
 
 
@@ -147,8 +150,18 @@ class StyleProvider extends ChangeNotifier{
 
   String expense = "";
 
+  void enterKDSmode (value){
+    kdsMode = value;
+    notifyListeners();
+  }
+
   void setIsStoreEmpty (bool value){
     isStoreEmpty = value;
+    notifyListeners();
+  }
+
+  void setSelectedTaskDates (List<DateTime> dates){
+    selectedTaskDates = dates;
     notifyListeners();
   }
 
@@ -160,6 +173,12 @@ class StyleProvider extends ChangeNotifier{
   void setExpense (newExpense){
     expense = newExpense;
     notifyListeners();
+  }
+  // create a function for the transaction Note
+  void setTransactionNote (note){
+    transactionNote = note;
+    notifyListeners();
+    print(transactionNote);
   }
 
   void addInvoicedItems (InvoiceItem item){
@@ -268,8 +287,10 @@ class StyleProvider extends ChangeNotifier{
     invoicedDate = date;
     invoicedBalance = paymentDifference;
     customerId = invoicedCustomerId;
-
-
+    notifyListeners();
+  }
+  void setSms (sms){
+    invoiceSms = sms;
     notifyListeners();
   }
 
@@ -397,7 +418,7 @@ class StyleProvider extends ChangeNotifier{
 
 
   setBookingPrice(double amount){
-    bookingPrice = amount * bookingPercentage;
+    bookingPrice = amount;
 
     notifyListeners();
   }
@@ -405,10 +426,7 @@ class StyleProvider extends ChangeNotifier{
   void setServicesOptionsCheckbox (boxIndex, value, index, BasketItem item){
 
     var checkboxChecker  = servicesOptionsCheckboxBase[boxIndex][index]; // This checks the value of the default array of box values!
-    // Below is an instance of this unedited array to compare with down the road
     var instanceOfCheckboxBase = [[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false,false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false],[false, false, false, false, false, false, false, false, false, false]];
-    // If the value of the item selected in the box selected is equal to the value of the checkbox that has just changed(on first run
-    // value is = true. This line runs true when the checkbox is changing from ticked to unticked to run the else
     stateOfBoxBefore = servicesOptionsCheckbox[boxIndex];
 
     print(stateOfBoxBefore);
@@ -483,26 +501,26 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setSelectedBeauticianInfo(location, modesOfOperation, name, imageUrl, rating, id, clients, services, reviewNumber, calendar){
-    beauticianLocation = location;
-    beauticianOperationModes = modesOfOperation;
-    beauticianName = name;
-    beauticianImageUrl = imageUrl;
-    beauticianRating = rating;
-    beauticianId = id;
-    beauticianClients = clients;
-    beauticianServices = services;
-    beauticianReviewNumber = reviewNumber;
-    calendarBlackouts = calendar;
-    convertCalendarValues(calendarBlackouts);
-
-    notifyListeners();
-  }
-  void setBeauticianInfo(name, id){
-    beauticianName = name;
-    beauticianId = id;
-    notifyListeners();
-  }
+  // void setSelectedBeauticianInfo(location, modesOfOperation, name, imageUrl, rating, id, clients, services, reviewNumber, calendar){
+  //   beauticianLocation = location;
+  //   beauticianOperationModes = modesOfOperation;
+  //   beauticianName = name;
+  //   beauticianImageUrl = imageUrl;
+  //   beauticianRating = rating;
+  //   beauticianId = id;
+  //   beauticianClients = clients;
+  //   beauticianServices = services;
+  //   beauticianReviewNumber = reviewNumber;
+  //   calendarBlackouts = calendar;
+  //   convertCalendarValues(calendarBlackouts);
+  //
+  //   notifyListeners();
+  // }
+  // void setBeauticianInfo(name, id){
+  //   beauticianName = name;
+  //   beauticianId = id;
+  //   notifyListeners();
+  // }
   void setRatingsNumber (newRatingNumber){
     reviewsNumber = newRatingNumber;
     notifyListeners();

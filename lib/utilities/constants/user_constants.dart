@@ -37,7 +37,5 @@ String kLiveString = 'liveString';
 String kSignInId = 'kSignInId';
 String kCountryCode = 'kCountryCode';
 String kCurrencyCode = 'kCountryCurrencyCode';
-
-
 String kGoogleMapsApiKey = 'AIzaSyAZO90xPWwT1bqCt9mTwWYh_Q7m7NngJoc';
 

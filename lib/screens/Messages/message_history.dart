@@ -1,6 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lottie/lottie.dart';
@@ -8,8 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/screens/Messages/message.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/locked_widget.dart';
 
 import '../../Utilities/constants/color_constants.dart';
@@ -36,7 +40,9 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   var formatter = NumberFormat('#,###,000');
 
   defaultInitialization()async{
+    final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
+    business = prefs.getString(kBusinessNameConstant)??"";
     setState(() {
 
     });
@@ -65,23 +71,52 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   var paidStatusListColor = [];
   List<double> opacityList = [];
   Map<String, dynamic> permissionsMap = {};
+  String business = '';
 
   double textSize = 12.0;
   String fontFamilyMont = 'Montserrat-Medium';
 
 
   @override
-  Widget build(BuildContext context) {double width = MediaQuery.of(context).size.width * 0.6;
-  // var blendedData = Provider.of<BlenditData>(context);
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width * 0.6;
+
 
   return Scaffold(
     backgroundColor: kBlack,
       appBar: AppBar(
-        title: Text("SMS History", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+        actions: [
+          Tooltip(
+            message: "${cSmsAccountBalance.tr} 20,000 Ugx",
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Icon(Icons.wallet),
+                  kMediumWidthSpacing,
+                  Text('20,000 Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                ],
+              ),
+            ),
+          )
+        ],
+        title: Text(cSmsAppBar.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
         backgroundColor: kAppPinkColor,
         foregroundColor: kPureWhiteColor,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: MediaQuery.of(context).size.width< 600 ?false:true,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to the MessagesPage
+          var sms = '{"thankyou": "Dear Customer! We appreciate your business. For any assistance, please call $business.","reminder": "Dear Customer, kindly make payment for your outstanding purchase with $business. For any assistance.","options": ["We value your business! Thank you for choosing $business. For any assistance, please call.","Thank you for your support! $business is here to serve you. For any assistance, please call.","Your order is on its way! Thank you for choosing $business. For any assistance, please call.","We appreciate your trust in $business! For any assistance, please call."]}';
+          Provider.of<StyleProvider>(context, listen: false).setSms(sms);
+          Navigator.pushNamed(context, MessagesPage.id);
+
+        },
+        child: const Icon(Icons.sms_outlined, color: kPureWhiteColor,),
+        backgroundColor: kAppPinkColor,
       ),
 
       body:
@@ -143,7 +178,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Lottie.asset("images/mailtime.json",height: 100), Text("No Messages sent yet!", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),) ]),
+                      children: [Lottie.asset("images/mailtime.json",height: 100), Text(cNoMessages.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),) ]),
                 ):ListView.builder(
                   shrinkWrap: true,
                   itemCount: descList.length,
@@ -152,9 +187,9 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                     var transactionDate = DateTime(dateList[index].year, dateList[index].month, dateList[index].day);
                     var showDateSeparator = false;
                     if (transactionDate.difference(DateTime.now()).inDays == 0) {
-                      dateSeparator = 'Today';
+                      dateSeparator = cToday.tr;
                     } else if (transactionDate.difference(DateTime.now()).inDays == -1) {
-                      dateSeparator = 'Yesterday';
+                      dateSeparator = cYesterday.tr;
                     } else {
                       dateSeparator = '${transactionDate.day}/${transactionDate.month}/${transactionDate.year}';
                     }
@@ -166,12 +201,12 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
 
                       children: [
                         if (showDateSeparator) ...[
-                          SizedBox(height: 10),
+                          kLargeHeightSpacing,
                           Text(
                             _getDateSeparator(transactionDate),
                             style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),
                           ),
-                          SizedBox(height: 10),
+                          kLargeHeightSpacing,
                         ],
                         Card(
 
@@ -222,9 +257,9 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   }
   String _getDateSeparator(DateTime date) {
     if (date.difference(DateTime.now()).inDays == 0) {
-      return 'Today';
+      return cToday.tr;
     } else if (date.difference(DateTime.now()).inDays == -1) {
-      return 'Yesterday';
+      return cYesterday.tr;
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }

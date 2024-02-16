@@ -8,13 +8,16 @@ import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/screens/sign_in_options/sign_in_page.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 
-import '../../controllers/home_controller.dart';
+import '../../controllers/home_page_controllers/home_controller_mobile.dart';
+import '../../controllers/responsive/responsive_page.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/user_constants.dart';
+import '../home_pages/home_page.dart';
 
 
 
@@ -31,7 +34,7 @@ class EmployeeSignIn extends StatefulWidget {
 class _EmployeeSignInState extends State<EmployeeSignIn> {
   TextEditingController countryController = TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  String token = "";
+  String token = "this_is_a_web_token";
   Map<String, dynamic> permissionsMap = {};
 
 
@@ -53,6 +56,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
     _firebaseMessaging.getToken().then((value) async{
       final prefs = await SharedPreferences.getInstance();
       token = value!;
+      print(value);
       prefs.setString(kToken, token);
     } );
   }
@@ -84,7 +88,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
         DocumentSnapshot store = await firestore.collection('medics').doc(storeId).get();
 
         if (store.exists) {
-          print("THIS RUN");
+
 
 
           prefs.setString(kBusinessNameConstant, store['name']);
@@ -105,7 +109,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
 
           deliveryStream();
           updateNotificationsIfAdmin(storeId);
-          Navigator.pushNamed(context, ControlPage.id);
+          Navigator.pushNamed(context, SignInUserPage.id);
 
         } else {
 
@@ -117,7 +121,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
 
       }
     } catch (error) {
-      _showCupertinoDialog(context, "Negative, Captain. The PIN doesn't match our coordinates. Please re-enter your access code to stay on course.");
+      _showCupertinoDialog(context, "Negative, Captain. The PIN doesn't match our coordinates. Please re-enter your access code to stay on course.$error");
     }
   }
 
@@ -146,7 +150,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
 
     var prefs = await SharedPreferences.getInstance();
     var id = prefs.getString(kStoreIdConstant)!;
-    // Provider.of<StyleProvider>(context, listen: false).clearSpecialityList();
+
     var start = FirebaseFirestore.instance.collection('medics').where(
         'id', isEqualTo: id).
     snapshots().listen((QuerySnapshot querySnapshot) {
@@ -185,143 +189,144 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
         centerTitle: true,
         title: Text("Employee Sign In",style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
       ),
-      body: Form(
-        key: formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Container(
-          margin: EdgeInsets.only(left: 25, right: 25),
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+      body: Center(
+        child: Form(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
+            margin: EdgeInsets.only(left: 25, right: 25),
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
 
-                Text(
-                  "Enter Your Phone Number and\nEmployee Pin",textAlign: TextAlign.center,
-                  style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 18),
-                ),
-
-                kLargeHeightSpacing,
-
-                Container(
-                  height: 53,
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      CountryCodePicker(
-                        onInit: (value){
-                          countryCode = value!.dialCode!;
-                          countryName = value!.name!;
-                          countryFlag = value!.flagUri!;
-
-                        },
-                        onChanged: (value){
-                          countryCode = value.dialCode!;
-                          countryName = value.name!;
-                          countryFlag = value.flagUri!;
-
-                        },
-                        // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                        initialSelection: 'UG',
-                        favorite: const ['+254','+255',"US"],
-                        // optional. Shows only country name and flag
-                        showCountryOnly: false,
-                        // optional. Shows only country name and flag when popup is closed.
-                        showOnlyCountryWhenClosed: false,
-                        // optional. aligns the flag and the Text left
-                        alignLeft: false,
-                      ),
-                      Text(
-                        "|",
-                        style: TextStyle(fontSize: 25, color: Colors.grey),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                          child:
-
-                          TextFormField(
-                            validator: (value){
-                              List letters = List<String>.generate(
-                                  value!.length,
-                                      (index) => value[index]);
-                              print(letters);
-
-
-                              if (value!=null && value.length > 10){
-                                return 'Number is too long';
-                              }else if (value == "") {
-                                return 'Enter phone number';
-                              } else if (letters[0] == '0'){
-                                return 'Number cannot start with a 0';
-                              } else if (value!= null && value.length < 9){
-                                return 'Number short';
-
-                              }
-                              else {
-                                return null;
-                              }
-                            },
-
-                            onChanged: (value){
-                              phoneNumber = countryCode + value;
-                            },
-                            keyboardType: TextInputType.phone,
-                            decoration: InputDecoration(
-
-                                border: InputBorder.none,
-                                hintText: "771234567",
-                                hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
-
-                            ),
-                          ))
-                    ],
+                  Text(
+                    "Enter Your Phone Number and\nEmployee Pin",textAlign: TextAlign.center,
+                    style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 18),
                   ),
-                ),
-                kLargeHeightSpacing,
-                Pinput(
-                  length: 4,
-                  // defaultPinTheme: defaultPinTheme,
-                  // focusedPinTheme: focusedPinTheme,
-                  // submittedPinTheme: submittedPinTheme,
-                  onChanged: (value){
-                    code = value;
-                    print(value);
 
-                  },
+                  kLargeHeightSpacing,
 
-                  showCursor: true,
-                  onCompleted: (pin) => print(pin),
-                ),
-                kLargeHeightSpacing,
+                  Container(
+                    height: 53,
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.grey),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        CountryCodePicker(
+                          onInit: (value){
+                            countryCode = value!.dialCode!;
+                            countryName = value!.name!;
+                            countryFlag = value!.flagUri!;
 
-                kLargeHeightSpacing,
-                RoundedLoadingButton(
-                  color: kAppPinkColor,
-                  child: Text('Login', style: TextStyle(color: Colors.white)),
-                  controller: _btnController,
-                  onPressed: () async {
-                    print("$phoneNumber : $code");
-                    if (phoneNumber == ""||code ==""){
-                      _btnController.error();
-                    } else {
-                      checkPhoneNumberAndCode(phoneNumber, code);
-                    }
+                          },
+                          onChanged: (value){
+                            countryCode = value.dialCode!;
+                            countryName = value.name!;
+                            countryFlag = value.flagUri!;
+
+                          },
+                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                          initialSelection: 'UG',
+                          favorite: const ['+254','+255',"US"],
+                          // optional. Shows only country name and flag
+                          showCountryOnly: false,
+                          // optional. Shows only country name and flag when popup is closed.
+                          showOnlyCountryWhenClosed: false,
+                          // optional. aligns the flag and the Text left
+                          alignLeft: false,
+                        ),
+                        Text(
+                          "|",
+                          style: TextStyle(fontSize: 25, color: Colors.grey),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                            child:
+
+                            TextFormField(
+                              validator: (value){
+                                List letters = List<String>.generate(
+                                    value!.length,
+                                        (index) => value[index]);
+                                print(letters);
+
+
+                                if (value!=null && value.length > 10){
+                                  return 'Number is too long';
+                                }else if (value == "") {
+                                  return 'Enter phone number';
+                                } else if (letters[0] == '0'){
+                                  return 'Number cannot start with a 0';
+                                } else if (value!= null && value.length < 9){
+                                  return 'Number short';
+
+                                }
+                                else {
+                                  return null;
+                                }
+                              },
+
+                              onChanged: (value){
+                                phoneNumber = countryCode + value;
+                              },
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+
+                                  border: InputBorder.none,
+                                  hintText: "771234567",
+                                  hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
+
+                              ),
+                            ))
+                      ],
+                    ),
+                  ),
+                  kLargeHeightSpacing,
+                  Pinput(
+                    length: 4,
+
+                    onChanged: (value){
+                      code = value;
+                      print(value);
+
+                    },
+
+                    showCursor: true,
+                    onCompleted: (pin) => print(pin),
+                  ),
+                  kLargeHeightSpacing,
+
+                  kLargeHeightSpacing,
+                  RoundedLoadingButton(
+                    color: kAppPinkColor,
+                    child: Text('Login', style: TextStyle(color: Colors.white)),
+                    controller: _btnController,
+                    onPressed: () async {
+                      print("$phoneNumber : $code");
+                      if (phoneNumber == ""||code ==""){
+                        _btnController.error();
+                      } else {
+                        checkPhoneNumberAndCode(phoneNumber, code);
+                      }
 
 
 
 
-                  },
-                ),
+                    },
+                  ),
 
-              ],
+                ],
+              ),
             ),
           ),
         ),

@@ -40,7 +40,7 @@ class RoundedButtons extends StatelessWidget {
         margin: EdgeInsets.all(2),
         decoration: BoxDecoration(
           color: buttonColor,
-          borderRadius: BorderRadius.circular(13),
+          borderRadius: BorderRadius.circular(8),
         )
     );
   }

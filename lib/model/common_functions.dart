@@ -38,6 +38,7 @@ import '../screens/customer_pages/sync_customer.dart';
 import '../screens/payment_pages/pos_summary.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/sign_in_options/sign_in_page.dart';
 import '../utilities/constants/user_constants.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
@@ -73,6 +74,61 @@ class CommonFunctions {
       number = number.substring(countryCode.length);
     }
     return number;
+  }
+
+  showSuccessNotification (message, context){
+    // snackbar to show success message at the top of the screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: kGreenThemeColor,
+        content: Text(message, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+
+  // Sign out of work
+  Future<void> signOutUser (context)async {
+    final prefs = await SharedPreferences.getInstance();
+    final dateNow = new DateTime.now();
+    showDialog(context: context, builder: ( context) {
+      return Center(
+          child:
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: kAppPinkColor,),
+              kSmallHeightSpacing,
+              DefaultTextStyle(
+                style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                child: Text("Signing out of Work"),
+              ),
+            ],
+          ));
+    }
+    );
+
+
+
+    CollectionReference userOrder = FirebaseFirestore.instance.collection('attendance');
+
+    String? orderId = prefs.getString(kAttendanceCode);
+    return userOrder.doc(orderId)
+        .update({
+      'signOut':dateNow
+    })
+        .then((value) {
+      Navigator.pop(context);
+      Navigator.pushNamed(context, SignInUserPage.id);
+      CommonFunctions().updateEmployeeSignInAndOutDoc(false);
+      prefs.setBool(kIsCheckedIn, false);
+    } )
+        .catchError((error) {
+          print("THE ERRROORRR goes like this:**** $error *****");
+    }
+
+    );
   }
 
   Future<void> decreaseBillAmount(String uid,double amountValue, context) async {
@@ -151,11 +207,7 @@ class CommonFunctions {
             ],
           ));});
 
-    // Because syncing contacts is heavy on the main thread we need to do it in the background in a sepatate thread or isolate
-    // The Fondation package and in particular the compute function helps us do this
-    // compute(_fetchContacts, null).then((contacts) {
-      // It takes in the function _fetchContacts as the first parameter, and executes it and returns the contacts. ITs these contacts we use to execute the rest of our code
-    var contacts = await Future<Iterable<Contact>>(_fetchContacts);
+      var contacts = await Future<Iterable<Contact>>(_fetchContacts);
     Provider.of<StyleProvider>(context, listen: false).setSyncedCustomers(contacts);
       if(iterations < 1){
         // Navigator.pop(context);
@@ -172,10 +224,6 @@ class CommonFunctions {
             return SyncCustomersPage();
 
           });
-    // });
-    // This is what syncs the contacts
-   // Iterable<Contact> contacts = await ContactsService.getContacts();
-   // Provider.of<StyleProvider>(context, listen: false).setSyncedCustomers(contacts);
   }
 
   // The function to fetch contacts
@@ -183,12 +231,29 @@ class CommonFunctions {
     Iterable<Contact> contacts = await ContactsService.getContacts();
     return contacts;
   }
-  // static Future<Iterable<Contact>> _fetchContacts(dynamic _) async{
-  //
-  //   Iterable<Contact> contacts = await ContactsService.getContacts();
-  //   //contacts = await ContactsService.getContacts();
-  //   return contacts;
-  // }
+
+  Future<dynamic> alertDialogueError(context) {
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error, color: kAppPinkColor,),
+              kMediumWidthSpacing,
+              Text('Enter all Details', style: kHeading2TextStyle.copyWith(fontWeight: FontWeight.bold),),
+            ],
+          ),
+          content: Text('Ooops looks like something is missing'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Dismisses the dialog
+              child: Text('Cancel'),
+            ),
+          ],
+        ));
+  }
 
 
   Future<void> _configureLocalTimeZone() async {
@@ -357,20 +422,6 @@ class CommonFunctions {
     return sms;
   }
 
-  // void callableAiSms(id, clientName, amount, business, currency, businessNumber) async {
-  //   dynamic serverCallableVariable = await callableSmsTransaction.call(<String, dynamic>{
-  //     "userId" : id,
-  //     "client" : clientName,
-  //     "amount" : amount,
-  //     "currency" : currency,
-  //     "business" : business,
-  //     "phone" : businessNumber
-  //   }).catchError((error){
-  //     // print('Request failed with status code ${error}');
-  //     // print('Response body: ${error}');
-  //   });
-  // }
-
   void sendCustomerSms(message, number, context) async {
     dynamic serverCallableVariable = await callableSmsCustomer.call(<String, dynamic>{
       "message" : message,
@@ -384,6 +435,41 @@ class CommonFunctions {
       Navigator.pushNamed(context, SuccessPageHiFive.id);
     });
   }
+
+  void sendBulkSms() async {
+    try {
+      // Dummy Message Data - Adjust for your actual use case
+      final messageData = [
+        { 'number': '256705894258',
+          'message': 'Jesus you are faithful',
+          'senderid': 'Frutsexpress',
+          'priority': '0'
+        },
+        { 'number': '256782081219',
+          'message': 'It is my time to thrive',
+          'senderid': 'Kangaves',
+          'priority': '0'
+
+        },
+      ];
+      final HttpsCallable bulkSmsCallable = FirebaseFunctions.instance.httpsCallable(
+        'sendBulkSmsToCustomer',
+      );
+
+      final results = await bulkSmsCallable.call(<String, dynamic>{
+        'messageData': messageData,
+      });
+      print(messageData);
+
+      print('SMS Response: $results'); // Log the API response
+
+    } on FirebaseFunctionsException catch (e) {
+      print('Caught FirebaseFunctionsException: $e');
+    } catch (e) {
+      print('Other Error occurred: $e');
+    }
+  }
+
   double getHighestValue(List array) {
     if (array.isEmpty) {
       throw Exception("The array is empty.");
@@ -448,6 +534,7 @@ class CommonFunctions {
 
       }) {
     return CoolAlert.show(
+        width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
         lottieAsset: imagePath,
         context: context,
         type: CoolAlertType.success,
@@ -473,6 +560,7 @@ class CommonFunctions {
 
       }) {
     return CoolAlert.show(
+        width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
         lottieAsset: imagePath,
         context: context,
         type: CoolAlertType.success,
@@ -886,6 +974,23 @@ class CommonFunctions {
 
     })
         .then((value) => Navigator.pop(context));
+  }
+
+  double calculateFontSize(BuildContext context) {
+    // Calculate font size based on screen width
+    double baseFontSize = 16.0;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double fontSize = baseFontSize;
+
+    if (screenWidth <= 320) {
+      fontSize = baseFontSize - 2.0;
+    } else if (screenWidth <= 360) {
+      fontSize = baseFontSize - 1.0;
+    } else if (screenWidth >= 414) {
+      fontSize = baseFontSize + 2.0;
+    }
+
+    return fontSize;
   }
 
   // Removing Appointment from the server

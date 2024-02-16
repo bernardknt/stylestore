@@ -55,7 +55,6 @@ class _MessagesPageState extends State<MessagesPage> {
 
   late TextEditingController phoneNumberController;
 
-
   void defaultInitialization() async {
     var prov = Provider.of<StyleProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
@@ -66,7 +65,6 @@ class _MessagesPageState extends State<MessagesPage> {
     } else {
       jsonMessage = jsonMap['thankyou'];
     }
-
     options = jsonMap['options'];
     print(options);
 
@@ -76,9 +74,7 @@ class _MessagesPageState extends State<MessagesPage> {
     controller = TextEditingController()..text = jsonMessage;
     Provider.of<BeauticianData>(context, listen: false).setTextMessage(jsonMessage);
     message = jsonMessage;
-    // controller = TextEditingController()..text = Provider.of<BeauticianData>(context, listen: false).textMessage;
     phoneNumberController = TextEditingController()..text = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedCustomerNumber, countryCode);
-    // phoneNumberController = TextEditingController()..text = reformatPhoneNumber("0705894258");
     setState(() {
 
     });
@@ -265,7 +261,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
 
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kCustomColor,
         onPressed: () {
           showDialog(context: context, builder: (BuildContext context){
@@ -278,6 +274,8 @@ class _MessagesPageState extends State<MessagesPage> {
                   CupertinoDialogAction(isDestructiveAction: true,
                     onPressed: (){
                       // _btnController.reset();
+                      // Navigator.pop(context);
+                      CommonFunctions().sendBulkSms();
                       Navigator.pop(context);
                     },
                     child: const Text('Cancel')),
@@ -293,233 +291,239 @@ class _MessagesPageState extends State<MessagesPage> {
           });
 
         },
-        child: Text("5"),
+        label: Text("Send Bulk Message"),
+
 
       ),
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Container(
+          child: Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
 
-            padding: EdgeInsets.all(20),
-            child: Column(
+              padding: EdgeInsets.all(20),
+              child: Column(
 
-              mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
 
-              children: [
 
-                Row(
-                  children: [
-                    Lottie.asset('images/talk.json', height: 150, width: 150, fit: BoxFit.contain ),
-                    Expanded(
-                      child: Card(
+                children: [
 
-                        color: kCustomColor,
-                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(20))),
-                        // shadowColor: kGreenThemeColor,
-                        // color: kBeigeColor,
-                        elevation: 1.0,
-
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(child:
-                          Text(beauticianDataListen.textMessage, style: TextStyle(fontWeight: FontWeight.w400),)
-                            // GlidingText(
-                            //   text: inspiration,
-                            //   delay: const Duration(seconds: 1),
-                            // ),
-
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                kSmallHeightSpacing,
-
-                Column(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children :
-                    [
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Lottie.asset('images/talk.json', height: 150, width: 150, fit: BoxFit.contain ),
+                      Expanded(
+                        child: Card(
 
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:
+                          color: kCustomColor,
+                          shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(20))),
+                          // shadowColor: kGreenThemeColor,
+                          // color: kBeigeColor,
+                          elevation: 1.0,
 
-                        TextField(
-                          controller:controller,
-                          maxLength: 160,
-                          onChanged: (enteredQuestion){
-                            print(enteredQuestion);
-                            message = enteredQuestion;
-                            beauticianDataListen.setTextMessage(enteredQuestion);
-                          },
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border:
-                            //InputBorder.none,
-                            OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.green, width: 2),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(child:
+                            Text(beauticianDataListen.textMessage, style: TextStyle(fontWeight: FontWeight.w400),)
+                              // GlidingText(
+                              //   text: inspiration,
+                              //   delay: const Duration(seconds: 1),
+                              // ),
+
                             ),
-                            labelText: 'Message',
-                            labelStyle: kNormalTextStyleExtraSmall,
-                            hintText: '',
-                            hintStyle: kNormalTextStyle,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  kSmallHeightSpacing,
+
+                  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children :
+                      [
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:
+
+                          TextField(
+                            controller:controller,
+                            maxLength: 160,
+                            onChanged: (enteredQuestion){
+                              print(enteredQuestion);
+                              message = enteredQuestion;
+                              beauticianDataListen.setTextMessage(enteredQuestion);
+                            },
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              border:
+                              //InputBorder.none,
+                              OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(color: Colors.green, width: 2),
+                              ),
+                              labelText: 'Message',
+                              labelStyle: kNormalTextStyleExtraSmall,
+                              hintText: '',
+                              hintStyle: kNormalTextStyle,
+
+                            ),
 
                           ),
 
                         ),
+                        ElevatedButton(
+                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
+                            onPressed: () async{
+                              phoneNumber = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedCustomerNumber, countryCode);
 
-                      ),
-                      ElevatedButton(
-                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
-                          onPressed: () async{
-                            phoneNumber = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedCustomerNumber, countryCode);
+                              if (message == ''|| phoneNumber.length != 9){
+                                showDialog(context: context, builder: (BuildContext context){
+                                  return CupertinoAlertDialog(
+                                    title: const Text('Something is wrong'),
+                                    content: Text('Ensure a message has been typed and the phone number is correct', style: kNormalTextStyle.copyWith(color: kBlack),),
+                                    actions: [CupertinoDialogAction(isDestructiveAction: true,
+                                        onPressed: (){
+                                          // _btnController.reset();
+                                          Navigator.pop(context);
 
+                                          // Navigator.pushNamed(context, SuccessPageHiFive.id);
+                                        },
+                                        child: const Text('Cancel'))],
+                                  );
+                                });
 
+                              } else {
+                                showDialog(context: context, builder: (BuildContext context){
+                                  return
+                                    Material(
+                                      color: Colors.transparent,
 
-                            if (message == ''|| phoneNumber.length != 9){
-                              showDialog(context: context, builder: (BuildContext context){
-                                return CupertinoAlertDialog(
-                                  title: const Text('Something is wrong'),
-                                  content: Text('Ensure a message has been typed and the phone number is correct', style: kNormalTextStyle.copyWith(color: kBlack),),
-                                  actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                      onPressed: (){
-                                        // _btnController.reset();
-                                        Navigator.pop(context);
+                                      child: Stack(
+                                        children: [
 
-                                        // Navigator.pushNamed(context, SuccessPageHiFive.id);
-                                      },
-                                      child: const Text('Cancel'))],
-                                );
-                              });
-
-                            } else {
-                              showDialog(context: context, builder: (BuildContext context){
-                                return
-                                  Material(
-                                    color: Colors.transparent,
-
-                                    child: Stack(
-                                      children: [
-
-                                        CupertinoAlertDialog(
-                                          title: const Text('SENDING MESSAGE'),
-                                          content: Column(
-                                            children: [
-                                              Text(beauticianDataListen.textMessage, style: kNormalTextStyle.copyWith(color: kBlack),),
+                                          CupertinoAlertDialog(
+                                            title: const Text('SENDING MESSAGE'),
+                                            content: Column(
+                                              children: [
+                                                Text("${beauticianDataListen.textMessage}\n_________________________\nTo: $countryCode$phoneNumber\n_________________________\n@ 40 Ugx", style: kNormalTextStyle.copyWith(color: kBlack),),
 
 
+
+                                              ],
+                                            ),
+                                            actions: [
+
+                                              CupertinoDialogAction(isDestructiveAction: true,
+                                                  onPressed: (){
+                                                    // _btnController.reset();
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text('Cancel')),
+                                              CupertinoDialogAction(isDefaultAction: true,
+                                                  onPressed: (){
+                                                    // _btnController.reset();
+                                                    Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
+                                                    CommonFunctions().sendCustomerSms(beauticianDataListen.textMessage, phoneNumber, context);
+                                                    upLoadOrder();
+                                                    print(phoneNumber);
+
+
+
+                                                  },
+                                                  child: const Text('Send')),
 
                                             ],
                                           ),
-                                          actions: [
-
-                                            CupertinoDialogAction(isDestructiveAction: true,
-                                                onPressed: (){
-                                                  // _btnController.reset();
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Cancel')),
-                                            CupertinoDialogAction(isDefaultAction: true,
-                                                onPressed: (){
-                                                  // _btnController.reset();
-                                                  Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
-                                                  CommonFunctions().sendCustomerSms(beauticianDataListen.textMessage, phoneNumber, context);
-                                                  upLoadOrder();
-                                                  print(phoneNumber);
 
 
-
-                                                },
-                                                child: const Text('Send')),
-
-                                          ],
-                                        ),
-
-
-                                      ],
-                                    ),
-                                  );
-                              });
-                              // Navigator.pop(context);
-                              // Navigator.pushNamed(context, SuccessPageHiFive.id);
-                            }
+                                        ],
+                                      ),
+                                    );
+                                });
+                              }
 
 
 
 
-                          }, child: Container(
-                        width: 140,
-                            child: Row(
-                              children: [
-                                Text("Send Message", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                               kSmallWidthSpacing,
-                                Icon(Iconsax.sms, color: kPureWhiteColor,)
-                              ],
-                            ),
-                          )
-                      ),
-                      TextButton(onPressed: (){
-                        showDialog(context: context, builder: (BuildContext context){
-                          return
-                          GestureDetector(
-                            onTap: (){
-                              Navigator.pop(context);
-                            },
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView.builder(
-                                  itemCount: options.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return GestureDetector(
-                                      onTap: (){
-                                        Navigator.pop(context);
-                                      },
-                                      child: Container(
-                                        // height: 250,
-                                        margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
-                                        decoration: BoxDecoration(
-                                          color: kAppPinkColor.withOpacity(0.8),
-                                          borderRadius: BorderRadius.circular(20.0),
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: (){
-                                            controller = TextEditingController()..text = options[index];
-                                            beauticianDataListen.setTextMessage(options[index]);
-                                            Navigator.pop(context);
-                                            setState(() {
+                            }, child: Container(
+                          width: 140,
+                              child: Row(
+                                children: [
+                                  Text("Send Message", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+                                 kSmallWidthSpacing,
+                                  Icon(Icons.sms, color: kPureWhiteColor,)
+                                ],
+                              ),
+                            )
+                        ),
+                        TextButton(onPressed: (){
+                          showDialog(context: context, builder: (BuildContext context){
+                            return
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ListView.builder(
+                                    itemCount: options.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return GestureDetector(
+                                        onTap: (){
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
 
-                                            });
-                                            // Provider.of<StyleProvider>(context, listen: false).set
-                                          },
-                                          child: ListTile(
-                                            title: Text(
-                                              options[index],
-                                              style: TextStyle(color: Colors.white, fontSize: 14),
+                                          // height: 250,
+                                          margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
+                                          decoration: BoxDecoration(
+                                            color: kAppPinkColor.withOpacity(0.8),
+                                            borderRadius: BorderRadius.circular(20.0),
+                                          ),
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              controller = TextEditingController()..text = options[index];
+                                              beauticianDataListen.setTextMessage(options[index]);
+                                              Navigator.pop(context);
+                                              setState(() {
+
+                                              });
+                                              // Provider.of<StyleProvider>(context, listen: false).set
+                                            },
+                                            child: ListTile(
+                                              title: Text(
+                                                options[index],
+                                                style: TextStyle(color: Colors.white, fontSize: 14),
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
+                            );
 
-                        });
-
-
-                      }, child: Text("Message Variations", style: kNormalTextStyle.copyWith(color: Colors.blue),))
-                    ]
-                ),
-                kSmallHeightSpacing,
+                          });
 
 
-              ],
+                        }, child: Text("Message Variations", style: kNormalTextStyle.copyWith(color: Colors.blue),))
+                      ]
+                  ),
+                  kSmallHeightSpacing,
+
+
+                ],
+              ),
             ),
           ),
         ),

@@ -34,7 +34,7 @@ class RoundImageRing extends StatelessWidget {
               gradient:  LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [kAirPink, kYellowThemeColor] ),
+                  colors: [kPlainBackground, kPlainBackground] ),
               border: Border.all(
                   color: outsideRingColor,
                   width: 2

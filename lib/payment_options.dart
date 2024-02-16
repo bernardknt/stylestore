@@ -36,9 +36,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
             var data =  Provider.of<StyleProvider>(context, listen: false);
             data.setPaymentMethod(selectedSaleableValue);
             if (Provider.of<StyleProvider>(context, listen: false).paidPrice >=  Provider.of<StyleProvider>(context, listen:false).totalPrice){
-           //  if (Provider.of<StyleProvider>(context, listen: false).paidPrice >  0){
-              // CommonFunctions().callableSms(prefs.getString(kOrderId), data.customerName, 20000, prefs.getString(kBusinessNameConstant), "Ugx", prefs.getString(kPhoneNumberConstant));
-
               Navigator.pushNamed(context, SuccessPage.id);
 
 
@@ -63,9 +60,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
-
             children: [
 
               Text('Enter Payment Method',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 20, color: kBlack),),

@@ -7,11 +7,12 @@ import 'package:lottie/lottie.dart';
 // import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
 import 'package:stylestore/screens/analytics/loading_analysis_page.dart';
 
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
+import '../../controllers/responsive/responsive_page.dart';
 
 
 
@@ -63,7 +64,7 @@ class _AnalysisIntroPageState extends State<AnalysisIntroPage> {
          onTap: (){
            Navigator.pop(context);
            Navigator.pop(context);
-           Navigator.pushNamed(context, ControlPage.id);
+           Navigator.pushNamed(context, SuperResponsiveLayout.id);
          },
          child: Icon(Icons.cancel),
        ),

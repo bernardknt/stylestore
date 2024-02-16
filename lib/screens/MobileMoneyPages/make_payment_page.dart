@@ -8,7 +8,8 @@ import 'package:provider/provider.dart';
 
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
-import '../../controllers/home_controller.dart';
+import '../../controllers/home_page_controllers/home_controller_mobile.dart';
+import '../../controllers/responsive/responsive_page.dart';
 import '../../model/styleapp_data.dart';
 import 'mm_payment_button_widget.dart';
 
@@ -47,7 +48,7 @@ class _MakePaymentPageState extends State<MakePaymentPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Lottie.asset('images/payment.json', height: 150, width: 150, fit: BoxFit.cover ),
+              Lottie.asset('images/mailtime.json', height: 150, width: 150, fit: BoxFit.cover ),
               kSmallHeightSpacing,
               Center(child: Text(Provider.of<StyleProvider>(context).pendingPaymentStatement,textAlign: TextAlign.center, style: kNormalTextStyle)),
               kSmallHeightSpacing,
@@ -55,7 +56,7 @@ class _MakePaymentPageState extends State<MakePaymentPage> {
               kLargeHeightSpacing,
               kLargeHeightSpacing,
               kLargeHeightSpacing,
-              MobileMoneyPaymentButton(firstButtonFunction: (){Navigator.pushNamed(context, ControlPage.id); }, firstButtonText: 'Go Home',buttonTextColor: kPureWhiteColor, lineIconFirstButton: Icons.check_circle_outline,)
+              MobileMoneyPaymentButton(firstButtonFunction: (){Navigator.pushNamed(context, SuperResponsiveLayout.id); }, firstButtonText: 'Go Home',buttonTextColor: kPureWhiteColor, lineIconFirstButton: Icons.check_circle_outline,)
 
               // SizedBox(height: 10,),
               // Center(child: Text('You have Earned',textAlign: TextAlign.center, style: GoogleFonts.lato( fontSize: 30),)),

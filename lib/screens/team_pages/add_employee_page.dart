@@ -40,7 +40,7 @@ class AddEmployeePage extends StatefulWidget {
 }
 
 class _AddEmployeePageState extends State<AddEmployeePage> {
-  final _auth = FirebaseAuth.instance;
+
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   File? image;
   var imageUploaded = false;
@@ -60,113 +60,107 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         .join('');
     customerId = 'employee${initials}${uuid.v1().split("-")[0]}';
     containerToShow =
-        Container(
-      height: 180,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Opacity(
-              opacity: changeInvalidMessageOpacity,
-              child: Text(invalidMessageDisplay, style: const TextStyle(color:Colors.red , fontSize: 12),)),
-          InputFieldWidget(labelText:' Employee Full Name' ,hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-            customerName = value;
+        Container(height: 180, child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Opacity(
+                opacity: changeInvalidMessageOpacity,
+                child: Text(invalidMessageDisplay, style: const TextStyle(color:Colors.red , fontSize: 12),)),
+            InputFieldWidget(labelText:' Employee Full Name' ,hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+              customerName = value;
 
-          },),
-          Padding(
-            padding: const EdgeInsets.only(left:20.0, right: 20, top: 10, bottom: 8),
-            child: Container(
-              height: 53,
-              decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: kAppPinkColor),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  CountryCodePicker(
-                    textStyle: kNormalTextStyle,
+            },),
+            Padding(
+              padding: const EdgeInsets.only(left:20.0, right: 20, top: 10, bottom: 8),
+              child: Container(
+                height: 53,
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: kAppPinkColor),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    CountryCodePicker(
+                      textStyle: kNormalTextStyle,
 
-                    onInit: (value){
-                      countryCode = value!.dialCode!;
-                    },
-                    onChanged: (value){
-                      countryCode = value.dialCode!;
+                      onInit: (value){
+                        countryCode = value!.dialCode!;
+                      },
+                      onChanged: (value){
+                        countryCode = value.dialCode!;
 
-                    },
-                    // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                    initialSelection: 'UG',
-                    favorite: const ['+254','+255',"US"],
-                    // optional. Shows only country name and flag
-                    showCountryOnly: false,
-                    // optional. Shows only country name and flag when popup is closed.
-                    showOnlyCountryWhenClosed: false,
-                    // optional. aligns the flag and the Text left
-                    alignLeft: false,
-                  ),
-                  Text(
-                    "|",
-                    style: TextStyle(fontSize: 25, color: kAppPinkColor),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                      child:
+                      },
+                      // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                      initialSelection: 'UG',
+                      favorite: const ['+254','+255',"US"],
+                      // optional. Shows only country name and flag
+                      showCountryOnly: false,
+                      // optional. Shows only country name and flag when popup is closed.
+                      showOnlyCountryWhenClosed: false,
+                      // optional. aligns the flag and the Text left
+                      alignLeft: false,
+                    ),
+                    Text(
+                      "|",
+                      style: TextStyle(fontSize: 25, color: kAppPinkColor),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                        child:
 
-                      TextFormField(
-                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-                        validator: (value){
-                          List letters = List<String>.generate(
-                              value!.length,
-                                  (index) => value[index]);
-                          print(letters);
+                        TextFormField(
+                          style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                          validator: (value){
+                            List letters = List<String>.generate(
+                                value!.length,
+                                    (index) => value[index]);
+                            print(letters);
 
 
-                          if (value!=null && value.length > 10){
-                            return 'Number is too long';
-                          }else if (value == "") {
-                            return 'Enter phone number';
-                          } else if (letters[0] == '0'){
-                            return 'Number cannot start with a 0';
-                          } else if (value!= null && value.length < 9){
-                            return 'Number short';
+                            if (value!=null && value.length > 10){
+                              return 'Number is too long';
+                            }else if (value == "") {
+                              return 'Enter phone number';
+                            } else if (letters[0] == '0'){
+                              return 'Number cannot start with a 0';
+                            } else if (value!= null && value.length < 9){
+                              return 'Number short';
 
-                          }
-                          else {
-                            return null;
-                          }
-                        },
+                            }
+                            else {
+                              return null;
+                            }
+                          },
 
-                        onChanged: (value){
-                          phoneNumber = countryCode + value;
-                        },
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
+                          onChanged: (value){
+                            phoneNumber = countryCode + value;
+                          },
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
 
-                            border: InputBorder.none,
-                            hintText: "77000000",
-                            hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
+                              border: InputBorder.none,
+                              hintText: "77000000",
+                              hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
 
-                        ),
-                      ))
-                ],
+                          ),
+                        ))
+                  ],
+                ),
               ),
             ),
-          ),
 
-          InputFieldWidget(fontColor: kPureWhiteColor, labelText: ' Position', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-            role = value;
-          }),
-
-
-          // SizedBox(height: 8.0,),
-
-        ],
-      ),
-    );
+            InputFieldWidget(fontColor: kPureWhiteColor, labelText: ' Position', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+              role = value;
+            }),
+          ],
+        ),
+        );
 
     setState(() {
 
@@ -216,21 +210,7 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
         .then((value) => print("Service Added"))
         .catchError((error) => print("Failed to add service: $error"));
   }
-  Future<void> uploadPhoto(String filePath, String fileName)async {
-    File file = File(filePath);
-    try {
-      uploadTask  = storage.ref('customer/$fileName').putFile(file);
-      final snapshot = await uploadTask!.whenComplete((){
 
-      });
-      final urlDownload = await snapshot.ref.getDownloadURL();
-      print("KIWEEEEEEDDDEEEEEEEEEEEEEE: $urlDownload");
-      addCustomer(urlDownload);
-      // Navigator.pushNamed(context, ControlPage.id);
-    }  catch(e){
-      print(e);
-    }
-  }
 
 
   String customerId = "";
@@ -292,14 +272,9 @@ class _AddEmployeePageState extends State<AddEmployeePage> {
             kLargeHeightSpacing,
             Pinput(
               length: 4,
-
-              // focusedPinTheme: focusedPinTheme,
-              // submittedPinTheme: submittedPinTheme,
               onChanged: (value){
                 code = value;
-
               },
-
               showCursor: true,
               onCompleted: (pin) => print(pin),
             ),

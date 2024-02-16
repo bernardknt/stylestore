@@ -54,7 +54,7 @@ showDialogFunc(context, orderStatus, location, clientName, orderNumber, orderSel
             child:
             SliderButton(
 
-              action: () {
+              action: () async{
                 changeOrderStatus();
                 Navigator.pop(context);
                 print(time);

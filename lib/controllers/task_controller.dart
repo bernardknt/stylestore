@@ -37,11 +37,11 @@ class _TasksControllerState extends State<TasksController> {
             automaticallyImplyLeading: false,
             toolbarHeight: 5,
             backgroundColor: kCustomColorPurple.withOpacity(1),
-            // shape: ShapeBorder.lerp(, b, t),
             elevation: 0,
             //title: Center(child: Text("Stock Page", style: TextStyle(color: kBiegeThemeColor, fontSize: 13, fontWeight: FontWeight.bold),),),
             bottom: TabBar(
               indicatorPadding: EdgeInsets.all(7),
+              indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                   gradient: const LinearGradient(
                       colors: [kPureWhiteColor, kPureWhiteColor]),
@@ -71,19 +71,7 @@ class _TasksControllerState extends State<TasksController> {
           ),
           body: TabBarView(
             children: [
-              // TransactionsOnlinePage(),
-              // SummaryWidget(),
               SummaryPage(),
-             // Container(
-             //   child: Center(child: Column(
-             //     mainAxisAlignment: MainAxisAlignment.center,
-             //     children: [
-             //       Icon(Iconsax.designtools5, color: kAppPinkColor,),
-             //       Text("Different Tasks will appear here", style: kNormalTextStyle,),
-             //     ],
-             //   )),
-             // )
-             //  StockSummaryPage(),
               TasksWidget(),
 
 

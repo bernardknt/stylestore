@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/tasks_pages/add_tasks.dart';
@@ -112,6 +113,7 @@ class _SuccessPageState extends State<SuccessPage> {
       'phoneNumber': providerData.customerNumber,
       'items':basketToPost,
       'currency': "Ugx",
+      'notes': providerData.transactionNote,
       'sms':CommonFunctions().smsValue(providerData.beauticianName, CommonFunctions().formatPhoneNumber(prefs.getString(kPhoneNumberConstant)!, prefs.getString(kCountryCode)?? "+256"), providerData.customerName,  prefs.getString(kCountryCode)?? "+256"),
 
     }).then((value) {
@@ -179,7 +181,7 @@ class _SuccessPageState extends State<SuccessPage> {
 
               children: [
                 TextButton(onPressed: (){
-                  Navigator.pushNamed(context, ControlPage.id);
+                  // Navigator.pushNamed(context, ControlPageMobile.id);
                   }, child: Text("Go Back", style: kNormalTextStyle.copyWith(color: kAppPinkColor),)),
                 kLargeHeightSpacing,
                 kLargeHeightSpacing,
@@ -196,8 +198,9 @@ class _SuccessPageState extends State<SuccessPage> {
                   style:ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
 
                     onPressed:(){
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, ControlPage.id);
+                    // Navigator.pop(context);
+                    // Navigator.pushNamed(context, ControlPageMobile.id);
+                      Navigator.pushNamed(context, SuperResponsiveLayout.id);
 
                 }, child: Text('Go Home',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
                 kSmallWidthSpacing,
@@ -213,15 +216,15 @@ class _SuccessPageState extends State<SuccessPage> {
 
                       Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
 
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, ControlPage.id);
+                      // Navigator.pop(context);
+                      Navigator.pushNamed(context, SuperResponsiveLayout.id);
                       final orderText = StringBuffer();
                       basketToPost.length == 1 ? orderText.writeln('Order has ${basketToPost.length} item'):orderText.writeln('Order has ${basketToPost.length} items');
                       for (var i = 0; i < basketToPost.length; i++) {
                         final item = basketToPost[i];
                         orderText.writeln('${i + 1}. ${item['product']} (${item['description']}) x ${item['quantity'].toInt()}');
                       }
-                      Provider.of<StyleProvider>(context, listen: false).setTaskToDo("No. $orderId\nOrder For ${providerData.customerName}: ${providerData.customerNumber} \n_____________________\n${orderText.toString()}\n_____________________");
+                      Provider.of<StyleProvider>(context, listen: false).setTaskToDo("No. $orderId\nOrder For ${providerData.customerName}: ${providerData.customerNumber} \n_____________________\n${orderText.toString()}\n_____________________\nNote: ${providerData.transactionNote}");
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -234,8 +237,6 @@ class _SuccessPageState extends State<SuccessPage> {
                                 ),
                                 body: AddTasksWidget());
                           });
-
-
                 }, child: Text('Create Task from Order', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
               ],
 

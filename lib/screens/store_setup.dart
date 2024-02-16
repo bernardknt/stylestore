@@ -11,12 +11,13 @@ import 'package:lottie/lottie.dart';
 
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
+import '../controllers/responsive/responsive_page.dart';
 import '../model/common_functions.dart';
 import '../utilities/InputFieldWidget.dart';
 import '../utilities/paymentButtons.dart';
@@ -98,7 +99,7 @@ class _StoreSetupState extends State<StoreSetup> {
 
     })
         .then((value) {
-          Navigator.pushNamed(context, ControlPage.id);
+          Navigator.pushNamed(context,SuperResponsiveLayout.id);
 
 
 

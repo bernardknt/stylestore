@@ -337,7 +337,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                               GestureDetector(
                                 onTap: (){
                                   Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(priceOfProducts[index][index].toDouble(), priceOfProducts[index][index].toDouble(),createdByList[index], transIdList[index], [], "", dateList[index],  priceOfProducts[index].toDouble() - priceOfProducts[index].toDouble(), transIdList[index]);
-                                  //Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(priceOfProducts[index][index].toDouble(), priceOfProducts[index][index].toDouble(),createdByList[index], transIdList[index], [], "", dateList[index],  priceOfProducts[index].toDouble() - priceOfProducts[index].toDouble(), transIdList[index]);
+
 
                                   showModalBottomSheet(
                                       context: context,

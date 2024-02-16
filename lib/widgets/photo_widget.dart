@@ -37,24 +37,31 @@ class PhotoWidget extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: widgetColor,
+              color: kPureWhiteColor,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: iconColor,
-                width: 1,
-              ),
+
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-               height<=80? Container(): Icon(
-                  iconToUse,
-                  size: 38,
-                  color: iconColor,
-                ),
-                kSmallHeightSpacing,
-                Text(footer, style: kNormalTextStyle.copyWith(color: iconColor, fontWeight: FontWeight.bold, fontSize: fontSize),)
-              ],
+
+            child: Container(
+              width: width,
+              height: height,
+              decoration: BoxDecoration(
+                color: widgetColor,
+                borderRadius: BorderRadius.circular(10),
+
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                 height<=80? Container(): Icon(
+                    iconToUse,
+                    size: 24,
+                    color: iconColor,
+                  ),
+                  kSmallHeightSpacing,
+                  Text(footer, style: kNormalTextStyle.copyWith(color: iconColor, fontWeight: FontWeight.bold, fontSize: fontSize),)
+                ],
+              ),
             ),
           ),
           // kSmallHeightSpacing,

@@ -13,16 +13,20 @@ import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/calendar_pages/calendar_page.dart';
 import 'package:stylestore/screens/customer_care_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
+import 'package:stylestore/screens/employee_pages/employees_page.dart';
 import 'package:stylestore/screens/reviews_page.dart';
 import 'package:stylestore/screens/services_page.dart';
+import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
 import 'package:stylestore/screens/team_pages/team_page.dart';
 import 'package:stylestore/screens/tutorials_page.dart';
+import 'package:stylestore/screens/wallets_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';
 import 'package:stylestore/screens/videos/tutorials_page_new.dart';
 
 import '../Utilities/constants/user_constants.dart';
+import '../controllers/responsive/responsive_page.dart';
 import '../model/common_functions.dart';
 import '../model/menu_items.dart';
 import '../widgets/rounded_icon_widget.dart';
@@ -39,22 +43,21 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   //MenuItem('Payment', Icons.payment);
   List <SideMenuItem> all = [
-    SideMenuItem(title: 'Edit Store', icon: Iconsax.building),
-    SideMenuItem(title: 'Transactions', icon: Iconsax.money_recive),
-    SideMenuItem(title: 'Messages', icon: Iconsax.message),
-    SideMenuItem(title: 'Team', icon: Iconsax.people),
-    SideMenuItem(title: 'Tutorials', icon: LineIcons.youtube),
-    // SideMenuItem(title: 'Reviews', icon: LineIcons.star),
-    // SideMenuItem(title: 'Tutorials', icon: LineIcons.youtube),
-    // SideMenuItem(title: 'Customer Support', icon: Icons.support_agent)
+    SideMenuItem(title: 'Edit Store', icon: Icons.business_outlined),
+    SideMenuItem(title: 'Transactions', icon: Icons.money),
+    SideMenuItem(title: 'Marketing', icon: Icons.chat_outlined),
+    SideMenuItem(title: 'Team', icon: Icons.people_alt_outlined),
+    SideMenuItem(title: 'Business Wallet', icon: Icons.monetization_on_outlined),
+
   ];
 
   List pages = [
     EditShopPage.id,
     TransactionsController.id,
     MessageHistoryPage.id,
-    TeamPage.id,
-    NewTutorialPage.id,
+    EmployeesPage.id,
+    WalletsPage.id
+    // NewTutorialPage.id,
 
   ];
   var liveStatus = '';
@@ -101,31 +104,7 @@ class _MenuPageState extends State<MenuPage> {
                 children: [
                   RoundImageRing(radius: 80, outsideRingColor: kPureWhiteColor, networkImageToUse: Provider.of<StyleProvider>(context).beauticianImageUrl,),
                   Spacer(),
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(10),
-                  //     color: kBlueDarkColorOld,
-                  //   ),
-                  //   child:
-                  //   Row(
-                  //     children: [
-                  //       Padding(
-                  //         padding: const EdgeInsets.all(2.0),
-                  //         child: Container(
-                  //           decoration: BoxDecoration(
-                  //             shape: BoxShape.circle,
-                  //             // borderRadius: BorderRadius.circular(10),
-                  //             color: kBackgroundGreyColor,
-                  //           ),
-                  //           child: Icon(Icons.circle, color: Provider.of<StyleProvider>(context).liveIndicatorColor,size: 15,),
-                  //         ),
-                  //       ),
-                  //       kSmallWidthSpacing,
-                  //       Text(Provider.of<StyleProvider>(context).liveIndicatorString, style: kNormalTextStyleWhiteLabel.copyWith( fontSize: 15, color: kPureWhiteColor),),
-                  //       // kSmallWidthSpacing
-                  //     ],
-                  //   ),
-                  // ),
+
                 ],
               ),
               kLargeHeightSpacing,
@@ -184,7 +163,15 @@ class _MenuPageState extends State<MenuPage> {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.setBool(kIsLoggedInConstant, false);
                           prefs.setBool(kIsFirstTimeUser, true);
-                          await auth.signOut().then((value) => Navigator.pushNamed(context, LoginPage.id));
+                          await auth.signOut().then((value) => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SuperResponsiveLayout(
+                                mobileBody: LoginPage(),
+                                desktopBody: LoginPageNewWeb(),
+                              ),
+                            ),
+                          ));
 
 
 
@@ -215,13 +202,7 @@ class _MenuPageState extends State<MenuPage> {
 
 
                     onConfirmBtnTap: () async{
-                      // FirebaseUser user = await FirebaseAuth.instance.currentUser!();
-                      // user.delete();
-                      // CommonFunctions().signOut();
-                      // // Navigator.pop(context);
-                      // // Navigator.pop(context);
-                      // // Navigator.pop(context);
-                      // Navigator.pushNamed(context, WelcomePage.id)
+
 
 
                       final prefs = await SharedPreferences.getInstance();

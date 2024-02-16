@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 
@@ -107,7 +107,7 @@ class _SuccessPageProductsState extends State<SuccessPageProducts> {
       'items':basketToPost
     }).then((value) {
       Navigator.pop(context);
-      Navigator.pushNamed(context, ControlPage.id);
+      // Navigator.pushNamed(context, ControlPageMobile.id);
 
     } ).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Check your Internet Connection')));

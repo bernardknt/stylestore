@@ -13,7 +13,8 @@ import 'package:stylestore/utilities/constants/font_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../controllers/home_controller.dart';
+import '../controllers/home_page_controllers/home_controller_mobile.dart';
+import '../controllers/responsive/responsive_page.dart';
 import '../utilities/paymentButtons.dart';
 import '../widgets/orderedContentsWidget.dart';
 import 'new_printer.dart';
@@ -211,7 +212,7 @@ class _AppointmentSummaryState extends State<AppointmentSummary> {
                       checkOutText: 'Edit Order',
                       buyFunction: () {
                         changeOrderStatus();
-                        Navigator.pushNamed(context, ControlPage.id);
+                        Navigator.pushNamed(context, SuperResponsiveLayout.id);
                       },
                     )
                   ],

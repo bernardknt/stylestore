@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stylestore/model/products.dart';
 
+import '../screens/employee_pages/employee_details.dart';
 
-class BeauticianData extends ChangeNotifier{
+class BeauticianData extends ChangeNotifier {
   List selectedOrder = [];
   String clientName = '';
   String clientId = '';
@@ -14,7 +16,7 @@ class BeauticianData extends ChangeNotifier{
   DateTime appointmentDate = DateTime.now();
   DateTime appointmentTime = DateTime.now();
   String phoneNumber = ' ';
-  double bill= 0;
+  double bill = 0;
   double bookingFee = 0;
   String note = ' ';
   List itemDetails = [];
@@ -28,15 +30,114 @@ class BeauticianData extends ChangeNotifier{
   String itemImage = ' ';
   bool itemSaleable = false;
   bool itemTracking = false;
+  List<Product> productItems = [];
+  AllEmployeeData? employeeInformation;
 
   String itemUnit = ' ';
-  double price = 0 ;
-  int appointmentsToday = 0 ;
+  double price = 0;
+  int appointmentsToday = 0;
 
   // NEW PROVIDER DETAILS CREATED
   String imagePath = '';
   String imageName = '';
-  List<bool>visible = [false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,false, false, false, false,];
+  List<bool> visible = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
 
   // Customer information
   String customerName = "";
@@ -61,6 +162,11 @@ class BeauticianData extends ChangeNotifier{
   String lottieImage = 'images/Hi5.json';
   String bannerMessage = 'Transaction Updated';
 
+  void setProductItems(List<Product> items) {
+    productItems = items;
+    notifyListeners();
+  }
+
   void setEmployeePermission(String permissionKey, bool newValue) {
     if (employeePermissions.containsKey(permissionKey)) {
       employeePermissions[permissionKey] = newValue;
@@ -78,20 +184,18 @@ class BeauticianData extends ChangeNotifier{
     notifyListeners(); // Notify listeners of the change
   }
 
-
-void setLottieImage(image, message){
+  void setLottieImage(image, message) {
     lottieImage = image;
     bannerMessage = message;
     notifyListeners();
   }
 
-  void setTextMessage (String message) {
+  void setTextMessage(String message) {
     textMessage = message;
     notifyListeners();
   }
 
-
-  void setEmployeeDetails (name, phoneNumber, role, permissions, pin, id){
+  void setEmployeeDetails(name, phoneNumber, role, permissions, pin, id) {
     employeeName = name;
     employeePermissions = permissions;
     employeePhoneNumber = phoneNumber;
@@ -102,8 +206,8 @@ void setLottieImage(image, message){
     notifyListeners();
   }
 
-
-  void setCustomerDetails (name, phoneNumber, note, preferences, image, location, id){
+  void setCustomerDetails(
+      name, phoneNumber, note, preferences, image, location, id) {
     customerName = name;
     customerNote = note;
     customerPhoneNumber = phoneNumber;
@@ -114,44 +218,63 @@ void setLottieImage(image, message){
     notifyListeners();
   }
 
+  void setClientName(name, id) {
+    clientName = name;
+    clientId = id;
+    notifyListeners();
+  }
 
- void setClientName(name, id){
-   clientName = name;
-   clientId = id;
-   notifyListeners();
- }
-  void changeCustomerDetailsVisibility(index){
-    visible[index] =! visible[index];
+  void changeCustomerDetailsVisibility(index) {
+    visible[index] = !visible[index];
     notifyListeners();
     print(visible);
-
   }
-  void setStoreId (values){
+
+  void setStoreId(values) {
     storeId = values;
     notifyListeners();
   }
 
-  void setImageUploadData(String filePath, String fileName){
+  void setImageUploadData(String filePath, String fileName) {
     imagePath = filePath;
     imageName = fileName;
     notifyListeners();
   }
-  void clearAppointments(){
+
+  void clearAppointments() {
     // appointmentsToday.clear();
     notifyListeners();
   }
-  void setAppointmentToday(info){
+
+  void setAppointmentToday(info) {
     appointmentsToday = info;
     notifyListeners();
   }
 
-
-
-  void setSelectedOrder(listOfOrders){
+  void setSelectedOrder(listOfOrders) {
     selectedOrder = listOfOrders;
     notifyListeners();
   }
-  void changeOrderDetails (newClientName, newLocation, newOrderNumber, newAppointmentDate, newNote, newItemsDetails, newStatus, newPhoneNumber, newBill, newBooking, newAppointmentTime){
+
+  void setEmployeeProfile(AllEmployeeData employeeData) {
+    employeeInformation = employeeData;
+    notifyListeners();
+  }
+
+
+
+void changeOrderDetails(
+      newClientName,
+      newLocation,
+      newOrderNumber,
+      newAppointmentDate,
+      newNote,
+      newItemsDetails,
+      newStatus,
+      newPhoneNumber,
+      newBill,
+      newBooking,
+      newAppointmentTime) {
     clientName = newClientName;
     location = newLocation;
     orderNumber = newOrderNumber;
@@ -166,7 +289,11 @@ void setLottieImage(image, message){
     bookingFee = newBooking;
     notifyListeners();
   }
-  void changeItemDetails (newItemName, newQuantity, newDescription, newMinimumQuantity, newItemId,  newPrice, newImage, tracking, saleable){
+
+
+
+  void changeItemDetails(newItemName, newQuantity, newDescription,
+      newMinimumQuantity, newItemId, newPrice, newImage, tracking, saleable) {
     item = newItemName;
     quantity = newQuantity;
     itemDescription = newDescription;
@@ -180,6 +307,4 @@ void setLottieImage(image, message){
     price = newPrice;
     notifyListeners();
   }
-
 }
-

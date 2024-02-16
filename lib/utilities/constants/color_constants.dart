@@ -20,14 +20,11 @@ const kCustomColor = Color(0xff64f8f6);
 const kGoldColor = Color(0xffFFD700);
 const kCustomColorPurple = Color(0xfff2e5f6);
 const kCustomColorPink = Color(0xff8d0f5a);
-
+const kPlainBackground = Color(0xffe2e5e9);
+const kPlainBackground2 = Color(0xfff4f8fa);
 const kBeigeThemeColor = Color(0xFFF2efe4);
-
 const kBabyPinkThemeColor = Color(0xFFFFF0F0);
-
 const kAirPink = Color(0xFFda0041);
-
-
 const kBlueDarkColorOld = Color(0xFF17183c);
 const kBrownDarkColor = Color(0xFFae3137);
 const kBackgroundGreyColor = Color(0xFFF4F4F4);
@@ -42,6 +39,11 @@ const kBlack = Color(0xFF0A0909);
 const kRedColor = Color(0xFFFF0000);
 const kBeigeColor = Color(0xFFfce7af);
 const kContainerGrey = Color(0xFF5d5d5d);
+
+// Button Colours
+// Sales button colour
+var kSalesButtonColor = kCustomColorPink.withOpacity(0.3);
+var kCustomersButtonColor = kCustomColor.withOpacity(0.3);
 
 const kBoxShadowGrey = BoxShadow(color: kFaintGrey,spreadRadius: 0, blurRadius: 0.5, offset: Offset.zero );
 const kBoxShadowPink = BoxShadow(color: kAppPinkColor,spreadRadius: 0, blurRadius: 1, offset: Offset.zero );

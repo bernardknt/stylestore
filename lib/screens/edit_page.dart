@@ -125,7 +125,8 @@ class _EditShopPageState extends State<EditShopPage> {
               children: [
 
                 // CarouselWidget(urlImages: urlImages),
-                Stack(children: [
+                Stack(
+                    children: [
                   //BannerPictureRoundedEdges(image: styleData.beauticianImageUrl),
                   // CarouselPhotosWidget(urlImages: styleData.beauticianClients),
                   Center(

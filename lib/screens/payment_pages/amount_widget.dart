@@ -38,9 +38,7 @@ class AmountToPayWidget extends StatelessWidget {
 
           //if (Provider.of<StyleProvider>(context, listen: false).paidPrice >=  Provider.of<StyleProvider>(context, listen:false).totalPrice){
           if (Provider.of<StyleProvider>(context, listen: false).paidPrice >  0){
-            // CommonFunctions().callableSms(prefs.getString(kOrderId), data.customerName, 20000, prefs.getString(kBusinessNameConstant), "Ugx", prefs.getString(kPhoneNumberConstant));
 
-            // Navigator.pushNamed(context, SuccessPage.id);
             showModalBottomSheet(
                 context: context,
                 builder: (context) {
@@ -70,7 +68,7 @@ class AmountToPayWidget extends StatelessWidget {
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text('Enter amount received for this transaction',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 25, color: kBlack),),
+            Text('Enter amount received for this transaction',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 20, color: kBlack),),
             Text('(Billed Ugx ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen:false).totalPrice)} to ${Provider.of<StyleProvider>(context, listen: false).customerName})',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 14, color: kGreenThemeColor),),
             kLargeHeightSpacing,
             kLargeHeightSpacing,
@@ -117,7 +115,30 @@ class AmountToPayWidget extends StatelessWidget {
               );
 
             }, child:
-            Text('Invoice Date:   ${DateFormat('dd MMMM yyy k:mm').format(Provider.of<StyleProvider>(context, listen: false).invoicedDate)}', style: kNormalTextStyle.copyWith(color: Colors.blueAccent),))
+            Text('Invoice Date:   ${DateFormat('dd MMMM yyy k:mm').format(Provider.of<StyleProvider>(context, listen: false).invoicedDate)}', style: kNormalTextStyle.copyWith(color: Colors.blueAccent),)),
+            kLargeHeightSpacing,
+
+// Add a text box to enter a note about the transaction
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: kBackgroundGreyColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: TextField(
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: 'Add a note for this transaction (optional)',
+                  hintStyle: kNormalTextStyle.copyWith(color: kFontGreyColor),
+                  border: InputBorder.none,
+                ),
+                style: kNormalTextStyle.copyWith(color: kBlack),
+                onChanged: (value){
+                  Provider.of<StyleProvider>(context, listen: false).setTransactionNote(value);
+                },
+              ),
+            ),
+
 
           ],
         ),

@@ -23,7 +23,7 @@ import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
 import '../customer_pages/add_customers_page.dart';
-import '../expenses_pages/employee_permissions_page.dart';
+import 'employee_permissions_page.dart';
 import '../payment_pages/record_payment_widget.dart';
 import '../products_pages/restock_page.dart';
 
@@ -111,16 +111,11 @@ class _TeamPageState extends State<TeamPage> {
       ),
 
 
-      body:
-      permissionsMap['employees'] == false ? LockedWidget(page: "Team",): StreamBuilder<QuerySnapshot> (
+      body: permissionsMap['employees'] == false ? LockedWidget(page: "Team",): StreamBuilder<QuerySnapshot> (
           stream: FirebaseFirestore.instance
               .collection('employees').where('storeId', isEqualTo:
-          Provider.of<StyleProvider>(context, listen: false).beauticianId
-
-          )
-              .snapshots(),
-          builder: (context, snapshot)
-          {
+          Provider.of<StyleProvider>(context, listen: false).beauticianId)
+              .snapshots(), builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
                 child: Text('Error: ${snapshot.error}'),
@@ -141,14 +136,8 @@ class _TeamPageState extends State<TeamPage> {
               statusList = [];
               permissionsList = [];
               signedInList = [];
-
-
-
-              var dateSeparator = '';
               var orders = snapshot.data?.docs;
               for( var doc in orders!){
-
-
                 nameList.add(doc['name']);
                 employeeIdList.add(doc['id']);
                 roleList.add(doc['role']);
@@ -157,7 +146,6 @@ class _TeamPageState extends State<TeamPage> {
                 codeList.add(doc['code']);
                 phoneNumberList.add(doc['phoneNumber']);
                 signedInList.add(doc['signedIn']);
-
                 print(signedInList[0].values.join(""));
               }
 

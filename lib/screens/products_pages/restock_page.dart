@@ -706,29 +706,30 @@ class _ReStockPageState extends State<ReStockPage> {
                               children: [
                                 // Text('${CommonFunctions().formatter.format(amount)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
                                 Checkbox(
-                                  fillColor: CommonFunctions().convertToMaterialStateProperty(kAppPinkColor),
+                                  activeColor: kBlack,
+                                  fillColor: CommonFunctions().convertToMaterialStateProperty(
+                                    checkboxStates[index] ?? false  ? kAppPinkColor: kPlainBackground, // Dynamic color change
+                                  ),
                                   checkColor: kPureWhiteColor,
-                                  value: checkboxStates[index], // Add your own logic here to set the value of the checkbox.
+
+                                  value: checkboxStates[index],
                                   onChanged: (value) {
 
                                     setState(() {
                                       bool newValue = value ?? false;
                                       checkboxStates[index] = newValue;
-                                      // Set the default value of the TextField to 0 when the checkbox is checked.
+
                                       if (newValue) {
                                         _showPriceAndQuantityDialog(index, name, item.id, description );
                                         quantityControllers[index]?.text = '0';
-                                        // Add the selected stock to the list.
                                         selectedStocks.add(Stock(name: name, id: item.id, restock: 0, description: description));
                                         print(selectedStocks);
                                       } else {
-                                        // Remove the selected stock from the list.
                                         quantityControllers[index]?.text = '';
                                         selectedStocks.removeWhere((stock) => stock.id == item.id);
                                         print(selectedStocks);
                                       }
                                     });
-                                    // Add your logic to handle checkbox value change.
                                   },
                                 ),
                                 Column(

@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slider_button/slider_button.dart';
-import 'package:stylestore/controllers/home_controller.dart';
+import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/sign_in_options/login_page.dart';
@@ -288,7 +289,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
                   children: [
 
                     Icon(Icons.copyright, color: kPureWhiteColor,size: 14,),
-                    Text('BusinessPilot 2023',style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
+                    Text('BusinessPilot 2024',style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
                   ],
                 ))
         ]
@@ -367,11 +368,9 @@ class _SignInUserPageState extends State<SignInUserPage> {
         prefs.setString(kSignInId, orderId);
         prefs.setString(kAttendanceCode, orderId);
         Navigator.pop(context);
-
-        // Navigator.pushNamed(context, ControlPage.id);
+        Navigator.pushNamed(context, SuperResponsiveLayout.id);
         CommonFunctions().updateEmployeeSignInAndOutDoc(true);
 
-        // updateNotifyArray(token);
 
       } )
           .catchError((error) => print("Failed to add user: $error"));

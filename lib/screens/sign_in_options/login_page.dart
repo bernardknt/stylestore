@@ -13,7 +13,8 @@ import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
 import 'package:stylestore/screens/tasks_pages/tasks_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../controllers/home_controller.dart';
+import '../../controllers/home_page_controllers/home_controller_mobile.dart';
+import '../../controllers/responsive/responsive_page.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/color_constants.dart';
 import '../../utilities/constants/icon_constants.dart';
@@ -40,11 +41,6 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-  // void subscribeToTopic()async{
-  //   await FirebaseMessaging.instance.subscribeToTopic('beauticians').then((value) =>
-  //   print('Succefully Subscribed')
-  //   );
-  // }
   Future deliveryStream() async {
     var prefs = await SharedPreferences.getInstance();
     var id = prefs.getString(kStoreIdConstant)!;
@@ -68,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       userLoggedIn = isLoggedIn ;
       if(userLoggedIn == true){
-        Navigator.pushNamed(context, ControlPage.id);
+        Navigator.pushNamed(context, SuperResponsiveLayout.id);
       }else{
         print('NOT LOGGED IN');
       }
@@ -96,77 +92,35 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Stack(
                 children: [
-                  Lottie.asset("images/flying.json", fit: BoxFit.fitWidth),
+                  Image.asset("images/welcome_banner.jpg", fit: BoxFit.fitWidth),
                   Positioned(
                       bottom: 10,
                       top: 10,
                       right: 10,
                       child:
-                      Container(
+                      SizedBox(
                           height: 50,
                           width: 50,
                           child: Image.asset("images/new_logo.png",))
                   ),
+                  // Positioned(
+                  //     bottom: 10,
+                  //     left: 10,
+                  //     right: 10,
+                  //     child: CircleAvatar(
+                  //       backgroundColor: kAppPinkColor,
+                  //         radius: 40,
+                  //
+                  //         child: Icon(Iconsax.shop, size: 40,))),
                   Positioned(
                       bottom: 10,
                       left: 10,
                       right: 10,
-                      child: CircleAvatar(
-                        backgroundColor: kAppPinkColor,
-                          radius: 40,
-
-                          child: Icon(Iconsax.shop, size: 40,))),
-                  Positioned(
-                      top: 10,
-                      left: 10,
-                      right: 10,
-                      child: Text("YOUR BUSINESS ON AUTO PILOT",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlueDarkColor) ),
-
+                      child: Text("Do Business Like \nA Pro",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kPureWhiteColor, fontSize: 20) ),
                   )
                 ],
               ),
-            //   SizedBox(
-            //   height: 180,
-            //   width: double.infinity,
-            //
-            //   //color: Colors.red,
-            //   child: Stack(
-            //     children: [
-            //
-            //       // Positioned(child: Container(
-            //       //   decoration: const BoxDecoration(
-            //       //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(90), bottomRight: Radius.circular(90)),
-            //       //     image: DecorationImage
-            //       //       (
-            //       //         image:
-            //       //         //Lottie.asset(name),
-            //       //          AssetImage('images/welcome.jpg'),
-            //       //         fit: BoxFit.fitWidth),
-            //       //   ),
-            //       // ))
-            //     ],
-            //   ),
-            // ),
-              //åSizedBox(height: 10,),
-              //kLargeHeightSpacing,
 
-              // kSmallHeightSpacing,
-              // TextButton.icon(
-              //     onPressed: (){
-              //       // launchUrl(Uri.parse('https://skmjitdmvzo.typeform.com/to/WmADCAZW'));
-              //       Navigator.pushNamed(context, RegisterPageDuplicate.id);
-              //
-              //     },
-              //     label:Text("Create Business Account", style: kNormalTextStyle.copyWith(color: Colors.blueAccent),
-              //     ), icon: kIconScissorWhite
-              // ),
-              // kLargeHeightSpacing,
-              // kLargeHeightSpacing,
-              // Container(
-              //     height: 50,
-              //     width: 50,
-              //     child: Image.asset("images/new_logo.png",)),
-              // kLargeHeightSpacing,
               Padding(padding: EdgeInsets.only(left: 50, right: 50,),
                   child:
                   Container(
@@ -175,8 +129,6 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Text("YOUR BUSINESS ON AUTO PILOT",textAlign: TextAlign.center,style: TextStyle(fontSize: 12, color: kBlack, fontFamily: "Helvitica", fontWeight: FontWeight.bold, ) ),
-                        // kLargeHeightSpacing,
 
                         GestureDetector(
                           onTap: (){
@@ -340,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                                     // subscribeToTopic();
                                     deliveryStream();
 
-                                    Navigator.pushNamed(context, ControlPage.id);
+                                    Navigator.pushNamed(context, SuperResponsiveLayout.id);
                                   } else {
                                     showDialog(context: context, builder: (BuildContext context){
                                       return CupertinoAlertDialog(
