@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
-import 'package:stylestore/screens/home_pages/home_page.dart';
+import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
 import '../../screens/products_pages/store_page.dart';

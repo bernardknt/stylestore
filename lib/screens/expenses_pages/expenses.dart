@@ -266,7 +266,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
 
                     // print("${dynamicList[i]['product']}");
                     array.add(dynamicList[i]['product']) ;
-                    prices.add(dynamicList[i]['totalPrice']) ;
+                    prices.add(dynamicList[i]['totalPrice']/1.0) ;
                     listOfPriceOfProducts.add(dynamicList[i]['totalPrice']) ;
 
 

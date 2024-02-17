@@ -9,16 +9,18 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
-import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
+import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
+import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/locked_widget.dart';
 
 import '../../Utilities/constants/color_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../widgets/customer_content.dart';
+import '../MobileMoneyPages/make_custom_mobile_money_payment.dart';
 
 
 
@@ -37,11 +39,13 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   late int price = 0;
   late int quantity = 1;
   DateTime? _previousDate;
+  double smsAmount = 0.0;
   var formatter = NumberFormat('#,###,000');
 
   defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
+    smsAmount = prefs.getDouble(kSmsAmount)??0.0;
     business = prefs.getString(kBusinessNameConstant)??"";
     setState(() {
 
@@ -86,17 +90,33 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
     backgroundColor: kBlack,
       appBar: AppBar(
         actions: [
-          Tooltip(
-            message: "${cSmsAccountBalance.tr} 20,000 Ugx",
-            child: Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Icon(Icons.wallet),
-                  kMediumWidthSpacing,
-                  Text('20,000 Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
-                ],
+          GestureDetector(
+            onTap: (){
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return Scaffold(
+                        appBar: AppBar(
+                          elevation: 0,
+                          backgroundColor: kPureWhiteColor,
+                          automaticallyImplyLeading: false,
+                        ),
+                        body: CustomMobileMoneyPage());
+                  });
+            },
+            child: Tooltip(
+              message: "${cSmsAccountBalance.tr} ${CommonFunctions().formatter.format(smsAmount)} Ugx",
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(Icons.wallet),
+                    kMediumWidthSpacing,
+                    Text('${CommonFunctions().formatter.format(smsAmount)} Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                  ],
+                ),
               ),
             ),
           )

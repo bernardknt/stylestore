@@ -108,27 +108,29 @@ class CommonFunctions {
           ));
     }
     );
-
-
-
-    CollectionReference userOrder = FirebaseFirestore.instance.collection('attendance');
-
     String? orderId = prefs.getString(kAttendanceCode);
-    return userOrder.doc(orderId)
-        .update({
-      'signOut':dateNow
-    })
-        .then((value) {
+    try {
+      await FirebaseFirestore.instance
+          .collection('attendance')
+          .doc(orderId)
+          .update({'signOut': dateNow}); // Await this update
+
+      // Success - now safe to modify the UI
       Navigator.pop(context);
       Navigator.pushNamed(context, SignInUserPage.id);
       CommonFunctions().updateEmployeeSignInAndOutDoc(false);
       prefs.setBool(kIsCheckedIn, false);
-    } )
-        .catchError((error) {
-          print("THE ERRROORRR goes like this:**** $error *****");
-    }
 
-    );
+    } catch (error) {
+      print("THE ERRROORRR goes like this:**** $error *****");
+      Navigator.pop(context); // Close the loading dialog
+
+      // Display error using ScaffoldMessenger
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('An error occurred during sign out. Please try again.'),
+        backgroundColor: Colors.red, // Adjust as needed
+      ));
+    }
   }
 
   Future<void> decreaseBillAmount(String uid,double amountValue, context) async {

@@ -34,12 +34,7 @@ class _TasksWidgetState extends State<TasksWidget> {
   var fromList = [];
   var formatter = NumberFormat('#,###,000');
 
-  var pages = [
-    'New Orders: 0}',
-    'DetoxPlansPage.id',
-    'SaladsPage.id',
-    'TropicalPage.id '
-  ];
+
   // var orderContents = [];
   var instructions = [];
   var createdDate = [];

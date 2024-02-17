@@ -1,5 +1,6 @@
 
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -50,7 +51,7 @@ import 'package:stylestore/screens/store_setup.dart';
 import 'package:stylestore/screens/team_pages/team_page.dart';
 import 'package:stylestore/screens/transactions_online_page.dart';
 import 'package:stylestore/screens/calendar_pages/calendar_page.dart';
-import 'package:stylestore/screens/home_pages/home_page.dart';
+import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/screens/service_edit_page.dart';
 import 'package:stylestore/screens/sign_in_options/login_page.dart';
 import 'package:stylestore/screens/order_details_page.dart';
@@ -85,15 +86,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyDLJj_nZyjAzBdWB5kW91opVds5Ao80XWc",
-      appId: "1:406674063138:web:bcbba63e6a56ceedf1af7b",
-      messagingSenderId: "406674063138",
-      projectId: "doctor-booking-aa868",
-      storageBucket: "doctor-booking-aa868.appspot.com",
-    ),
-  );
+  if(kIsWeb){
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "AIzaSyDLJj_nZyjAzBdWB5kW91opVds5Ao80XWc",
+        appId: "1:406674063138:web:bcbba63e6a56ceedf1af7b",
+        messagingSenderId: "406674063138",
+        projectId: "doctor-booking-aa868",
+        storageBucket: "doctor-booking-aa868.appspot.com",
+      ),
+    );
+  }else {
+    await Firebase.initializeApp();
+  }
+
   runApp(MyApp());
   RemoteMessage? initialMessage =
       await FirebaseMessaging.instance.getInitialMessage();

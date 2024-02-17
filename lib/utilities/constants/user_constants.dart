@@ -13,6 +13,7 @@ String kBillValue = 'billable';
 String kBeyonicServerName = 'beyonicPayment';
 
 String kImageConstant = 'image';
+String kSmsAmount = 'smsAmount';
 String kOrderId = 'orderId';
 String kToken = 'token';
 String kIsOwner = 'owner';

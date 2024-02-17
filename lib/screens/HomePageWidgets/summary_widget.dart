@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
@@ -15,7 +16,6 @@ import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
 import 'package:stylestore/screens/payment_pages/record_payment_widget.dart';
 import '../../Utilities/constants/color_constants.dart';
-import '../../model/beautician_data.dart';
 import '../../model/pdf_files/invoice.dart';
 import '../../model/pdf_files/invoice_customer.dart';
 import '../../model/pdf_files/invoice_supplier.dart';
@@ -187,319 +187,78 @@ class _SummaryPageState extends State<SummaryPage> {
                               itemCount: productList.length,
                               shrinkWrap: true,
                               primary: false,
-                              // physics: NeverScrollableScrollPhysics(),
+                              physics: !kIsWeb?NeverScrollableScrollPhysics():ScrollPhysics(),
 
                               itemBuilder: (context, index) {
-                                var transactionDate = DateTime(
-                                    dateList[index].year,
-                                    dateList[index].month,
-                                    dateList[index].day);
-                                var showDateSeparator = false;
-                                if (transactionDate
-                                        .difference(DateTime.now())
-                                        .inDays ==
-                                    0) {
-                                  dateSeparator = 'Today';
-                                } else if (transactionDate
-                                        .difference(DateTime.now())
-                                        .inDays ==
-                                    -1) {
-                                  dateSeparator = 'Yesterday';
-                                } else {
-                                  dateSeparator =
-                                      '${transactionDate.day}/${transactionDate.month}/${transactionDate.year}';
-                                }
-                                if (_previousDate == null ||
-                                    transactionDate != _previousDate) {
-                                  showDateSeparator = true;
-                                  _previousDate = transactionDate;
-                                }
-                                return Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Provider.of<StyleProvider>(context,
-                                                listen: false)
-                                            .clearInvoiceItems();
-                                        for (int i = 0;
-                                            i < productList[index].length;
-                                            i++) {
-                                          Provider.of<StyleProvider>(context,
-                                                  listen: false)
-                                              .setInvoiceItems(InvoiceItem(
-                                                  name: productList[index][i]
-                                                      ['product'],
-                                                  quantity: productList[index]
-                                                          [i]['quantity']
-                                                      .toDouble(),
-                                                  unitPrice: productList[index]
-                                                          [i]['totalPrice'] /
-                                                      1.0,
-                                                  description:
-                                                      productList[index][i]
-                                                          ['description']));
-                                        }
-                                        print(Provider.of<StyleProvider>(
-                                                context,
-                                                listen: false)
-                                            .invoiceItems);
 
-                                        showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Material(
-                                                  color: Colors.transparent,
-                                                  child: Column(
+                                return GestureDetector(
+                                  onTap: () {
+                                    Provider.of<StyleProvider>(context,
+                                            listen: false)
+                                        .clearInvoiceItems();
+                                    for (int i = 0;
+                                        i < productList[index].length;
+                                        i++) {
+                                      Provider.of<StyleProvider>(context,
+                                              listen: false)
+                                          .setInvoiceItems(InvoiceItem(
+                                              name: productList[index][i]
+                                                  ['product'],
+                                              quantity: productList[index]
+                                                      [i]['quantity']
+                                                  .toDouble(),
+                                              unitPrice: productList[index]
+                                                      [i]['totalPrice'] /
+                                                  1.0,
+                                              description:
+                                                  productList[index][i]
+                                                      ['description']));
+                                    }
+                                    print(Provider.of<StyleProvider>(
+                                            context,
+                                            listen: false)
+                                        .invoiceItems);
+
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                children: [
+                                                  Card(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .all(8.0),
+                                                      child: Text(
+                                                        "${clientList[index]}\n${clientPhoneList[index]}",
+                                                        textAlign: TextAlign
+                                                            .center,
+                                                        style: kNormalTextStyle
+                                                            .copyWith(
+                                                                color:
+                                                                    kBlack),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  Center(
+                                                      child: Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      Card(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Text(
-                                                            "${clientList[index]}\n${clientPhoneList[index]}",
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: kNormalTextStyle
-                                                                .copyWith(
-                                                                    color:
-                                                                        kBlack),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      Center(
-                                                          child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Column(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  Provider.of<StyleProvider>(
-                                                                          context,
-                                                                          listen:
-                                                                              false)
-                                                                      .setInvoicedPriceToPay(priceList[index]
-                                                                              .toDouble() -
-                                                                          paidAmountList[index]
-                                                                              .toDouble());
-                                                                  Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
-                                                                      priceList[
-                                                                              index]
-                                                                          .toDouble(),
-                                                                      paidAmountList[
-                                                                              index]
-                                                                          .toDouble(),
-                                                                      clientList[
-                                                                          index],
-                                                                      transIdList[
-                                                                          index],
-                                                                      smsList[
-                                                                          index],
-                                                                      clientPhoneList[
-                                                                          index],
-                                                                      dateList[
-                                                                          index],
-                                                                      priceList[index]
-                                                                              .toDouble() -
-                                                                          paidAmountList[index]
-                                                                              .toDouble(),
-                                                                      customerIdList[
-                                                                          index]);
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  showModalBottomSheet(
-                                                                      context:
-                                                                          context,
-                                                                      isScrollControlled:
-                                                                          true,
-                                                                      builder:
-                                                                          (context) {
-                                                                        return Scaffold(
-                                                                            appBar:
-                                                                                AppBar(
-                                                                              automaticallyImplyLeading: false,
-                                                                              backgroundColor: kPureWhiteColor,
-                                                                              elevation: 0,
-                                                                            ),
-                                                                            body:
-                                                                                RecordPaymentWidget());
-                                                                      });
-                                                                },
-                                                                child:
-                                                                    CircleAvatar(
-                                                                        backgroundColor:
-                                                                            kCustomColorPink.withOpacity(
-                                                                                1),
-                                                                        radius:
-                                                                            30,
-                                                                        child:
-                                                                            const Icon(
-                                                                          Iconsax
-                                                                              .chart,
-                                                                          color:
-                                                                              kPureWhiteColor,
-                                                                          size:
-                                                                              20,
-                                                                        )),
-                                                              ),
-                                                              Text(
-                                                                "Record Payment",
-                                                                style: kNormalTextStyle
-                                                                    .copyWith(
-                                                                        color:
-                                                                            kPureWhiteColor,
-                                                                        fontSize:
-                                                                            12),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          kMediumWidthSpacing,
-                                                          kMediumWidthSpacing,
-                                                          kMediumWidthSpacing,
-                                                          Column(
-                                                            children: [
-                                                              GestureDetector(
-                                                                onTap:
-                                                                    () async {
-                                                                  final date =
-                                                                      dateList[
-                                                                          index];
-                                                                  final dueDate =
-                                                                      paymentDueDateList[
-                                                                          index];
-
-                                                                  showModalBottomSheet(
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return Container(
-                                                                          color:
-                                                                              Color(0xFF292929).withOpacity(0.9),
-                                                                          child:
-                                                                              Container(
-                                                                            decoration:
-                                                                                BoxDecoration(color: kPureWhiteColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                                                                              child: Column(
-                                                                                mainAxisSize: MainAxisSize.min,
-                                                                                children: [
-                                                                                  buildButton(context, 'Invoice', Iconsax.printer, () async {
-                                                                                    Navigator.pop(context);
-                                                                                    Navigator.pop(context);
-
-                                                                                    final invoice = Invoice(
-                                                                                        supplier: Supplier(
-                                                                                          name: storeName,
-                                                                                          address: location,
-                                                                                          phoneNumber: phoneNumber,
-                                                                                          paymentInfo: phoneNumber,
-                                                                                        ),
-                                                                                        customer: Customer(
-                                                                                          name: clientList[index],
-                                                                                          address: clientLocationList[index],
-                                                                                          phone: clientPhoneList[index],
-                                                                                        ),
-                                                                                        info: InvoiceInfo(
-                                                                                          date: date,
-                                                                                          dueDate: dueDate,
-                                                                                          description: '',
-                                                                                          number: '${transIdList[index]}',
-                                                                                        ),
-                                                                                        items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                                                                        template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
-                                                                                        paid: Receipt(amount: paidAmountList[index] / 1.0));
-                                                                                    final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
-                                                                                    PdfHelper.openFile(pdfFile);
-                                                                                  }),
-                                                                                  const SizedBox(height: 16.0),
-                                                                                  paidAmountList[index] >= priceList[index]
-                                                                                      ? buildButton(context, 'Receipt', Iconsax.receipt, () async {
-                                                                                          Navigator.pop(context);
-                                                                                          Navigator.pop(context);
-                                                                                          final invoice = Invoice(
-                                                                                              supplier: Supplier(
-                                                                                                name: storeName,
-                                                                                                address: location,
-                                                                                                phoneNumber: phoneNumber,
-                                                                                                paymentInfo: phoneNumber,
-                                                                                              ),
-                                                                                              customer: Customer(
-                                                                                                name: clientList[index],
-                                                                                                address: clientLocationList[index],
-                                                                                                phone: clientPhoneList[index],
-                                                                                              ),
-                                                                                              info: InvoiceInfo(
-                                                                                                date: date,
-                                                                                                dueDate: dueDate,
-                                                                                                description: '',
-                                                                                                number: '${transIdList[index]}',
-                                                                                              ),
-                                                                                              items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                                                                              template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due"),
-                                                                                              paid: Receipt(amount: paidAmountList[index] / 1.0));
-                                                                                          final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
-                                                                                          PdfHelper.openFile(pdfFile);
-                                                                                        })
-                                                                                      : Container(),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        );
-                                                                      });
-                                                                },
-                                                                child:
-                                                                    CircleAvatar(
-                                                                        radius:
-                                                                            30,
-                                                                        backgroundColor:
-                                                                            kCustomColor.withOpacity(
-                                                                                1),
-                                                                        child:
-                                                                            const Icon(
-                                                                          Iconsax
-                                                                              .printer,
-                                                                          color:
-                                                                              kBlack,
-                                                                          size:
-                                                                              20,
-                                                                        )),
-                                                              ),
-                                                              Text(
-                                                                "Invoice/ Receipt",
-                                                                style: kNormalTextStyle
-                                                                    .copyWith(
-                                                                        color:
-                                                                            kPureWhiteColor,
-                                                                        fontSize:
-                                                                            12),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      )),
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      Center(
-                                                          child: Column(
+                                                      Column(
                                                         children: [
                                                           GestureDetector(
                                                             onTap: () {
@@ -507,14 +266,13 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                       context,
                                                                       listen:
                                                                           false)
-                                                                  .setInvoicedPriceToPay(priceList[
-                                                                              index]
+                                                                  .setInvoicedPriceToPay(priceList[index]
                                                                           .toDouble() -
-                                                                      paidAmountList[
-                                                                              index]
+                                                                      paidAmountList[index]
                                                                           .toDouble());
                                                               Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
-                                                                  priceList[index]
+                                                                  priceList[
+                                                                          index]
                                                                       .toDouble(),
                                                                   paidAmountList[
                                                                           index]
@@ -531,14 +289,12 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                       index],
                                                                   priceList[index]
                                                                           .toDouble() -
-                                                                      paidAmountList[
-                                                                              index]
+                                                                      paidAmountList[index]
                                                                           .toDouble(),
                                                                   customerIdList[
                                                                       index]);
                                                               Navigator.pop(
                                                                   context);
-
                                                               showModalBottomSheet(
                                                                   context:
                                                                       context,
@@ -549,243 +305,460 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                     return Scaffold(
                                                                         appBar:
                                                                             AppBar(
-                                                                          automaticallyImplyLeading:
-                                                                              false,
-                                                                          elevation:
-                                                                              0,
-                                                                          backgroundColor:
-                                                                              kPureWhiteColor,
+                                                                          automaticallyImplyLeading: false,
+                                                                          backgroundColor: kPureWhiteColor,
+                                                                          elevation: 0,
                                                                         ),
                                                                         body:
-                                                                            MessagesPage());
+                                                                            RecordPaymentWidget());
                                                                   });
                                                             },
-                                                            child: CircleAvatar(
-                                                                backgroundColor:
-                                                                    kBiegeThemeColor
-                                                                        .withOpacity(
+                                                            child:
+                                                                CircleAvatar(
+                                                                    backgroundColor:
+                                                                        kCustomColorPink.withOpacity(
                                                                             1),
-                                                                radius: 30,
-                                                                child:
-                                                                    const Icon(
-                                                                  Iconsax
-                                                                      .message,
-                                                                  color: kBlack,
-                                                                  size: 20,
-                                                                )),
+                                                                    radius:
+                                                                        30,
+                                                                    child:
+                                                                        const Icon(
+                                                                      Iconsax
+                                                                          .chart,
+                                                                      color:
+                                                                          kPureWhiteColor,
+                                                                      size:
+                                                                          20,
+                                                                    )),
                                                           ),
-                                                          paidAmountList[
-                                                                      index] >=
-                                                                  priceList[
-                                                                      index]
-                                                              ? Text(
-                                                                  "Send Thank You",
-                                                                  style: kNormalTextStyle
-                                                                      .copyWith(
-                                                                          color:
-                                                                              kPureWhiteColor,
-                                                                          fontSize:
-                                                                              12),
-                                                                )
-                                                              : Text(
-                                                                  "Send Reminder",
-                                                                  style: kNormalTextStyle
-                                                                      .copyWith(
-                                                                          color:
-                                                                              kPureWhiteColor,
-                                                                          fontSize:
-                                                                              12),
-                                                                )
+                                                          Text(
+                                                            "Record Payment",
+                                                            style: kNormalTextStyle
+                                                                .copyWith(
+                                                                    color:
+                                                                        kPureWhiteColor,
+                                                                    fontSize:
+                                                                        12),
+                                                          )
                                                         ],
-                                                      )),
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      kLargeHeightSpacing,
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
-                                                                priceList[index]
-                                                                    .toDouble(),
+                                                      ),
+                                                      kMediumWidthSpacing,
+                                                      kMediumWidthSpacing,
+                                                      kMediumWidthSpacing,
+                                                      Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap:
+                                                                () async {
+                                                              final date =
+                                                                  dateList[
+                                                                      index];
+                                                              final dueDate =
+                                                                  paymentDueDateList[
+                                                                      index];
+
+                                                              showModalBottomSheet(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return Container(
+                                                                      color:
+                                                                          Color(0xFF292929).withOpacity(0.9),
+                                                                      child:
+                                                                          Container(
+                                                                        decoration:
+                                                                            BoxDecoration(color: kPureWhiteColor, borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+                                                                        child:
+                                                                            Padding(
+                                                                          padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
+                                                                          child: Column(
+                                                                            mainAxisSize: MainAxisSize.min,
+                                                                            children: [
+                                                                              buildButton(context, 'Invoice', Iconsax.printer, () async {
+                                                                                Navigator.pop(context);
+                                                                                Navigator.pop(context);
+
+                                                                                final invoice = Invoice(
+                                                                                    supplier: Supplier(
+                                                                                      name: storeName,
+                                                                                      address: location,
+                                                                                      phoneNumber: phoneNumber,
+                                                                                      paymentInfo: phoneNumber,
+                                                                                    ),
+                                                                                    customer: Customer(
+                                                                                      name: clientList[index],
+                                                                                      address: clientLocationList[index],
+                                                                                      phone: clientPhoneList[index],
+                                                                                    ),
+                                                                                    info: InvoiceInfo(
+                                                                                      date: date,
+                                                                                      dueDate: dueDate,
+                                                                                      description: '',
+                                                                                      number: '${transIdList[index]}',
+                                                                                    ),
+                                                                                    items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
+                                                                                    template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
+                                                                                    paid: Receipt(amount: paidAmountList[index] / 1.0));
+                                                                                final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
+                                                                                PdfHelper.openFile(pdfFile);
+                                                                              }),
+                                                                              const SizedBox(height: 16.0),
+                                                                              paidAmountList[index] >= priceList[index]
+                                                                                  ? buildButton(context, 'Receipt', Iconsax.receipt, () async {
+                                                                                      Navigator.pop(context);
+                                                                                      Navigator.pop(context);
+                                                                                      final invoice = Invoice(
+                                                                                          supplier: Supplier(
+                                                                                            name: storeName,
+                                                                                            address: location,
+                                                                                            phoneNumber: phoneNumber,
+                                                                                            paymentInfo: phoneNumber,
+                                                                                          ),
+                                                                                          customer: Customer(
+                                                                                            name: clientList[index],
+                                                                                            address: clientLocationList[index],
+                                                                                            phone: clientPhoneList[index],
+                                                                                          ),
+                                                                                          info: InvoiceInfo(
+                                                                                            date: date,
+                                                                                            dueDate: dueDate,
+                                                                                            description: '',
+                                                                                            number: '${transIdList[index]}',
+                                                                                          ),
+                                                                                          items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
+                                                                                          template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due"),
+                                                                                          paid: Receipt(amount: paidAmountList[index] / 1.0));
+                                                                                      final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
+                                                                                      PdfHelper.openFile(pdfFile);
+                                                                                    })
+                                                                                  : Container(),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  });
+                                                            },
+                                                            child:
+                                                                CircleAvatar(
+                                                                    radius:
+                                                                        30,
+                                                                    backgroundColor:
+                                                                        kCustomColor.withOpacity(
+                                                                            1),
+                                                                    child:
+                                                                        const Icon(
+                                                                      Iconsax
+                                                                          .printer,
+                                                                      color:
+                                                                          kBlack,
+                                                                      size:
+                                                                          20,
+                                                                    )),
+                                                          ),
+                                                          Text(
+                                                            "Invoice/ Receipt",
+                                                            style: kNormalTextStyle
+                                                                .copyWith(
+                                                                    color:
+                                                                        kPureWhiteColor,
+                                                                    fontSize:
+                                                                        12),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )),
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  Center(
+                                                      child: Column(
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Provider.of<StyleProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false)
+                                                              .setInvoicedPriceToPay(priceList[
+                                                                          index]
+                                                                      .toDouble() -
+                                                                  paidAmountList[
+                                                                          index]
+                                                                      .toDouble());
+                                                          Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
+                                                              priceList[index]
+                                                                  .toDouble(),
+                                                              paidAmountList[
+                                                                      index]
+                                                                  .toDouble(),
+                                                              clientList[
+                                                                  index],
+                                                              transIdList[
+                                                                  index],
+                                                              smsList[
+                                                                  index],
+                                                              clientPhoneList[
+                                                                  index],
+                                                              dateList[
+                                                                  index],
+                                                              priceList[index]
+                                                                      .toDouble() -
+                                                                  paidAmountList[
+                                                                          index]
+                                                                      .toDouble(),
+                                                              customerIdList[
+                                                                  index]);
+                                                          Navigator.pop(
+                                                              context);
+
+                                                          showModalBottomSheet(
+                                                              context:
+                                                                  context,
+                                                              isScrollControlled:
+                                                                  true,
+                                                              builder:
+                                                                  (context) {
+                                                                return Scaffold(
+                                                                    appBar:
+                                                                        AppBar(
+                                                                      automaticallyImplyLeading:
+                                                                          false,
+                                                                      elevation:
+                                                                          0,
+                                                                      backgroundColor:
+                                                                          kPureWhiteColor,
+                                                                    ),
+                                                                    body:
+                                                                        MessagesPage());
+                                                              });
+                                                        },
+                                                        child: CircleAvatar(
+                                                            backgroundColor:
+                                                                kBiegeThemeColor
+                                                                    .withOpacity(
+                                                                        1),
+                                                            radius: 30,
+                                                            child:
+                                                                const Icon(
+                                                              Iconsax
+                                                                  .message,
+                                                              color: kBlack,
+                                                              size: 20,
+                                                            )),
+                                                      ),
+                                                      paidAmountList[
+                                                                  index] >=
+                                                              priceList[
+                                                                  index]
+                                                          ? Text(
+                                                              "Send Thank You",
+                                                              style: kNormalTextStyle
+                                                                  .copyWith(
+                                                                      color:
+                                                                          kPureWhiteColor,
+                                                                      fontSize:
+                                                                          12),
+                                                            )
+                                                          : Text(
+                                                              "Send Reminder",
+                                                              style: kNormalTextStyle
+                                                                  .copyWith(
+                                                                      color:
+                                                                          kPureWhiteColor,
+                                                                      fontSize:
+                                                                          12),
+                                                            )
+                                                    ],
+                                                  )),
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  TextButton(
+                                                      onPressed: () {
+                                                        Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
+                                                            priceList[index]
+                                                                .toDouble(),
+                                                            paidAmountList[
+                                                                    index]
+                                                                .toDouble(),
+                                                            clientList[
+                                                                index],
+                                                            transIdList[
+                                                                index],
+                                                            smsList[index],
+                                                            clientPhoneList[
+                                                                index],
+                                                            dateList[index],
+                                                            priceList[index]
+                                                                    .toDouble() -
                                                                 paidAmountList[
                                                                         index]
                                                                     .toDouble(),
-                                                                clientList[
-                                                                    index],
-                                                                transIdList[
-                                                                    index],
-                                                                smsList[index],
-                                                                clientPhoneList[
-                                                                    index],
-                                                                dateList[index],
-                                                                priceList[index]
-                                                                        .toDouble() -
-                                                                    paidAmountList[
-                                                                            index]
-                                                                        .toDouble(),
-                                                                customerIdList[
-                                                                    index]);
+                                                            customerIdList[
+                                                                index]);
 
-                                                            Navigator.pop(
-                                                                context);
+                                                        Navigator.pop(
+                                                            context);
 
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            EditInvoicePage()));
-                                                          },
-                                                          child: Text(
-                                                              "Edit this Transaction",
-                                                              style: kNormalTextStyle.copyWith(
-                                                                  color:
-                                                                      kPureWhiteColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)))
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                      },
-                                      child: Card(
-                                        margin: const EdgeInsets.fromLTRB(
-                                            0.0, 8.0, 0.0, 8.0),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        shadowColor: kAppPinkColor,
-                                        elevation: 0.0,
-                                        child: Column(
-                                          children: [
-                                            ListTile(
-                                              title: Row(
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        EditInvoicePage()));
+                                                      },
+                                                      child: Text(
+                                                          "Edit this Transaction",
+                                                          style: kNormalTextStyle.copyWith(
+                                                              color:
+                                                                  kPureWhiteColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)))
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  },
+                                  child: Card(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        0.0, 8.0, 0.0, 8.0),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    shadowColor: kAppPinkColor,
+                                    elevation: 0.0,
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          title: Row(
+                                            children: [
+                                              priceList[index] !=
+                                                      paidAmountList[index]
+                                                  ? Icon(
+                                                      Icons.flag_circle,
+                                                      color: Colors.red,
+                                                      size: 15,
+                                                    )
+                                                  : Icon(
+                                                      Icons
+                                                          .check_circle_outline,
+                                                      color:
+                                                          kGreenThemeColor,
+                                                      size: 15,
+                                                    ),
+                                              kSmallWidthSpacing,
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
                                                 children: [
-                                                  priceList[index] !=
-                                                          paidAmountList[index]
-                                                      ? Icon(
-                                                          Icons.flag_circle,
-                                                          color: Colors.red,
-                                                          size: 15,
-                                                        )
-                                                      : Icon(
-                                                          Icons
-                                                              .check_circle_outline,
-                                                          color:
-                                                              kGreenThemeColor,
-                                                          size: 15,
-                                                        ),
+                                                  // priceList[index]!= paidAmountList[index]?Icon(Icons.flag_circle,color: Colors.red, size: 15,):Container(),
                                                   kSmallWidthSpacing,
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      // priceList[index]!= paidAmountList[index]?Icon(Icons.flag_circle,color: Colors.red, size: 15,):Container(),
-                                                      kSmallWidthSpacing,
-                                                      Text(
-                                                          "${productList[index][0]['product']}",
-                                                          overflow:
-                                                              TextOverflow.clip,
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  fontFamilyMont,
-                                                              fontSize: 14)),
-                                                      Text(
-                                                        clientList[index],
-                                                        overflow:
-                                                            TextOverflow.fade,
-                                                        style: kNormalTextStyle
-                                                            .copyWith(
-                                                                fontSize: 14,
-                                                                color: kBlack),
-                                                      ),
-                                                      Text(
-                                                        '${DateFormat('d/MMM k:mm').format(dateList[index])}',
-                                                        style: kNormalTextStyle
-                                                            .copyWith(
-                                                                fontSize: 12),
-                                                      ),
-                                                    ],
+                                                  Text(
+                                                      "${productList[index][0]['product']}",
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              fontFamilyMont,
+                                                          fontSize: 14)),
+                                                  Text(
+                                                    clientList[index],
+                                                    overflow:
+                                                        TextOverflow.fade,
+                                                    style: kNormalTextStyle
+                                                        .copyWith(
+                                                            fontSize: 14,
+                                                            color: kBlack),
+                                                  ),
+                                                  Text(
+                                                    '${DateFormat('d/MMM k:mm').format(dateList[index])}',
+                                                    style: kNormalTextStyle
+                                                        .copyWith(
+                                                            fontSize: 12),
                                                   ),
                                                 ],
                                               ),
-                                              trailing: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 10, top: 10),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      "${CommonFunctions().formatter.format(priceList[index])} Ugx",
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12),
-                                                    ),
-                                                    // If price list is not equal to the paid amount
-                                                    priceList[index] !=
-                                                            paidAmountList[
-                                                                index]
-                                                        ?
-                                                        // If the amount paid is not equal to zeto
-                                                        paidAmountList[index] !=
-                                                                0
-                                                            ? paidAmountList[
-                                                                        index] >=
-                                                                    priceList[
-                                                                        index]
-                                                                ? Text(
-                                                                    "Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .blue,
-                                                                        fontSize:
-                                                                            12),
-                                                                  )
-                                                                : Text(
-                                                                    "Partial ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .red,
-                                                                        fontSize:
-                                                                            12),
-                                                                  )
-                                                            : Text(
-                                                                "No Payment Recieved",
+                                            ],
+                                          ),
+                                          trailing: Padding(
+                                            padding: const EdgeInsets.only(
+                                                right: 10, top: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  "${CommonFunctions().formatter.format(priceList[index])} Ugx",
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12),
+                                                ),
+                                                // If price list is not equal to the paid amount
+                                                priceList[index] !=
+                                                        paidAmountList[
+                                                            index]
+                                                    ?
+                                                    // If the amount paid is not equal to zeto
+                                                    paidAmountList[index] !=
+                                                            0
+                                                        ? paidAmountList[
+                                                                    index] >=
+                                                                priceList[
+                                                                    index]
+                                                            ? Text(
+                                                                "Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
                                                                 style: TextStyle(
-                                                                    color:
-                                                                        kCustomColorPink,
+                                                                    color: Colors
+                                                                        .blue,
                                                                     fontSize:
                                                                         12),
                                                               )
-                                                        : Text("Paid",
+                                                            : Text(
+                                                                "Partial ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontSize:
+                                                                        12),
+                                                              )
+                                                        : Text(
+                                                            "No Payment Recieved",
                                                             style: TextStyle(
                                                                 color:
-                                                                    kGreenThemeColor,
-                                                                fontSize: 10))
-                                                  ],
-                                                ),
-                                              ),
+                                                                    kCustomColorPink,
+                                                                fontSize:
+                                                                    12),
+                                                          )
+                                                    : Text("Paid",
+                                                        style: TextStyle(
+                                                            color:
+                                                                kGreenThemeColor,
+                                                            fontSize: 10))
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 );
                               }),
                         ),
-                        kSmallHeightSpacing,
+                        // kSmallHeightSpacing,
                         productList.length >= 4
                             ? GestureDetector(
                                 onTap: () {

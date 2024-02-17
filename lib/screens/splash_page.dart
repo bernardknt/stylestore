@@ -191,6 +191,7 @@ class _SplashPageState extends State<SplashPage> {
       querySnapshot.docs.forEach((doc) async {
         prefs.setString(kPhoneNumberConstant, doc['phone']);
         prefs.setString(kImageConstant, doc['image']);
+        prefs.setDouble(kSmsAmount, doc['sms']);
         Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
             doc['active'],
             doc['blackout'],

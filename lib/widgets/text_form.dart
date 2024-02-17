@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class TextForm extends StatelessWidget {
   final String label;
   final TextEditingController controller;
+  final TextInputType keyBoardType;
 
-  const TextForm(this.label, this.controller);
+ TextForm({required this.label, required this.controller,this.keyBoardType = TextInputType.text, });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class TextForm extends StatelessWidget {
         ),
         TextFormField(
           controller: controller,
+          keyboardType: keyBoardType,
           decoration: InputDecoration(
             hintText: 'Enter $label',
           ),

@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:stylestore/screens/home_pages/home_page.dart';
+import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 
 import '../screens/menu_page.dart';
 import 'home_page_controllers/home_controller_mobile.dart';

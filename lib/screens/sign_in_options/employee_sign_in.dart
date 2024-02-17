@@ -17,7 +17,7 @@ import '../../controllers/responsive/responsive_page.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/user_constants.dart';
-import '../home_pages/home_page.dart';
+import '../home_pages/home_page_mobile.dart';
 
 
 
@@ -254,27 +254,27 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
                             child:
 
                             TextFormField(
-                              validator: (value){
-                                List letters = List<String>.generate(
-                                    value!.length,
-                                        (index) => value[index]);
-                                print(letters);
-
-
-                                if (value!=null && value.length > 10){
-                                  return 'Number is too long';
-                                }else if (value == "") {
-                                  return 'Enter phone number';
-                                } else if (letters[0] == '0'){
-                                  return 'Number cannot start with a 0';
-                                } else if (value!= null && value.length < 9){
-                                  return 'Number short';
-
-                                }
-                                else {
-                                  return null;
-                                }
-                              },
+                              // validator: (value){
+                              //   List letters = List<String>.generate(
+                              //       value!.length,
+                              //           (index) => value[index]);
+                              //   print(letters);
+                              //
+                              //
+                              //   if (value!=null && value.length > 10){
+                              //     return 'Number is too long';
+                              //   }else if (value == "") {
+                              //     return 'Enter phone number';
+                              //   } else if (letters[0] == '0'){
+                              //     return 'Number cannot start with a 0';
+                              //   } else if (value!= null && value.length < 9){
+                              //     return 'Number short';
+                              //
+                              //   }
+                              //   else {
+                              //     return null;
+                              //   }
+                              // },
 
                               onChanged: (value){
                                 phoneNumber = countryCode + value;

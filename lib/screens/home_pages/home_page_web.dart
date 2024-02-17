@@ -123,6 +123,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                               actions: [
                                 CupertinoDialogAction(isDestructiveAction: true,
                                     onPressed: (){
+
                                       Navigator.pop(context);
 
                                     },
@@ -132,7 +133,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                                 CupertinoDialogAction(isDefaultAction: true,
                                   onPressed: (){
 
-                                    Navigator.pop(context);
+                                    // Navigator.pop(context);
                                     CommonFunctions().signOutUser(context);
 
                                   }, child: Text(cSignOut.tr),)
@@ -140,24 +141,21 @@ class _HomePageWebState extends State<HomePageWeb> {
                             );
                           });
 
-                        },
-                        child: Tooltip(
-                          message: cSignOutOfWork.tr,
-                          child: Container(
-                            height: 50,
-                            width: 100,
 
-                            decoration: BoxDecoration(
-                              color: kBlack,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(child: Text(cSignOutOfWork.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),)),
-                            // color: kAirPink,
+
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 100,
+                          decoration: BoxDecoration(
+                            color: kBlack,
+                            borderRadius: BorderRadius.circular(10),
                           ),
+                          child: Center(child: Text(cSignOutOfWork.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),)),
+                          // color: kAirPink,
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ),

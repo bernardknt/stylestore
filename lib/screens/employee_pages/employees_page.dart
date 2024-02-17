@@ -1,9 +1,12 @@
-import 'dart:typed_data';
+// import 'dart:typed_data';
 import 'dart:html' as html;
-
+import 'dart:io';
+// Make this an html branch
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
+// import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -210,7 +213,60 @@ class _EmployeesPageState extends State<EmployeesPage> {
     return newEmployees.where((employee) => employee.gender == gender).length;
   }
 
+
+
   void generateExcel() async {
+    var excel = Excel.createExcel();
+    var sheet = excel['Sheet1'];
+
+    // Add headers for employee data
+    sheet.appendRow([
+      'Name',
+      'Phone',
+      'Email',
+      'Department',
+      'Position',
+      'Gender',
+      'Marital Status',
+      'National Id Number',
+      'Kin',
+      'Kin Number',
+      'Tin',
+      'Birthday',
+    ]);
+
+    // Add employee data
+    for (var employee in filteredEmployees) {
+      sheet.appendRow([
+        employee.fullNames,
+        employee.phone,
+        employee.email,
+        employee.department,
+        employee.position,
+        employee.gender,
+        employee.maritalStatus,
+        employee.nationalIdNumber,
+        employee.kin,
+        employee.kinNumber,
+        employee.tin,
+        employee.birthday.toString(),
+      ]);
+    }
+
+    // Save the Excel file
+    final excelData = excel.encode();
+
+    // Get the directory for storing files on the device
+    final directory = await getExternalStorageDirectory();
+    final filePath = '${directory?.path}/employee_data.xlsx';
+
+    // Write the Excel data to a file
+    final excelFile = File(filePath);
+    await excelFile.writeAsBytes(excelData!);
+  }
+
+
+  void generateExcelWeb() async {
     var excel = Excel.createExcel();
     var sheet = excel['Sheet1'];
 
@@ -289,7 +345,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                     color: kAppPinkColor,
                   )),
               onPressed: () {
-                generateExcel();
+                generateExcelWeb();
                 // Implement download action here
               },
             ),

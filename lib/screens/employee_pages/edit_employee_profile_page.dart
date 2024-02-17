@@ -13,7 +13,7 @@ import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../Utilities/constants/color_constants.dart';
@@ -96,8 +96,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       if (kIsWeb) {
         PickedFile pickedFile = PickedFile(file.path);
-        final blob = await pickedFileToBlob(pickedFile);
-        uploadTask = storage.ref('employees/$fileName').putBlob(blob);
+        // final blob = await pickedFileToBlob(pickedFile);
+        // uploadTask = storage.ref('employees/$fileName').putBlob(blob);
       } else {
         uploadTask = storage.ref('employees/$fileName').putFile(file);
       }
@@ -108,28 +108,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
       print(urlDownload); // this is the downloadable url for the image uploaded
       // show a snackbar to the user to show that the upload was successful
       CommonFunctions().showSuccessNotification('New Image for ${businessProvider.employeeInformation?.fullNames} Uploaded Successfully', context);
-      putStoreProfilePicture(businessProvider.employeeInformation?.documentId, urlDownload);
+      // putStoreProfilePicture(businessProvider.employeeInformation?.documentId, urlDownload);
     } catch(e){
       print(e);
     }
   }
 
-  Future<html.Blob> pickedFileToBlob(PickedFile pickedFile) async {
-    final data = await pickedFile.readAsBytes();
-    final blob = html.Blob([data]);
-    return blob;
-  }
-
-  CollectionReference storeLocation = FirebaseFirestore.instance.collection('employees');
-  Future<void> putStoreProfilePicture(userId, image) async{
-    return storeLocation.doc(userId)
-        .update({
-      'picture': image,
-    })
-        .then((value) {
-    })
-        .catchError((error) => print("Failed to add Item: $error"));
-  }
+  // Future<html.Blob> pickedFileToBlob(PickedFile pickedFile) async {
+  //   final data = await pickedFile.readAsBytes();
+  //   final blob = html.Blob([data]);
+  //   return blob;
+  // }
+  //
+  // CollectionReference storeLocation = FirebaseFirestore.instance.collection('employees');
+  // Future<void> putStoreProfilePicture(userId, image) async{
+  //   return storeLocation.doc(userId)
+  //       .update({
+  //     'picture': image,
+  //   })
+  //       .then((value) {
+  //   })
+  //       .catchError((error) => print("Failed to add Item: $error"));
+  // }
 
 
 
@@ -284,7 +284,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               kIsWeb? Image.network(image!.path, height: 180,):Image.file(image!, height: 180,)
                           ),
                           kMediumWidthSpacing,
-                          TextForm('Full Names', fullNameController),
+                          TextForm(  label: 'Full Names', controller: fullNameController,),
                           Text("Birthday", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
                           GestureDetector(
                               onTap: (){
@@ -331,13 +331,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             hint: Text('Select Department'), // Placeholder text before a department is selected
                           ),
 
-                          TextForm('Position', positionController),
-                          TextForm('Nationality', nationalityController),
-                          TextForm('Phone Contacts', phoneController),
-                          TextForm('Email', emailController),
-                          TextForm('Physical Address', addressController),
-                          TextForm('Next of Kin', kinController),
-                          TextForm('Next of Kin Number', kinNumberController),
+                          TextForm(label: 'Position', controller: positionController),
+                          TextForm(label:'Nationality', controller:nationalityController),
+                          TextForm(label:'Phone Contacts', controller:phoneController),
+                          TextForm(label:'Email',controller: emailController),
+                          TextForm(label:'Physical Address', controller:addressController),
+                          TextForm(label:'Next of Kin', controller:kinController),
+                          TextForm(label:'Next of Kin Number',controller: kinNumberController),
                           Text(
                             'Marital Status',
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -367,8 +367,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               Text('Married'),
                             ],
                           ),
-                          TextForm('TIN', tinController),
-                          TextForm('National ID', nationaldController),
+                          TextForm(label: 'TIN',controller: tinController),
+                          TextForm(label: 'National ID', controller:nationaldController),
                         ])
                 )
             )

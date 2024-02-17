@@ -303,10 +303,9 @@ class _HomePageState extends State<HomePage> {
                     actions: [
                       CupertinoDialogAction(isDestructiveAction: true,
                           onPressed: (){
-                            // _btnController.reset();
+
                             Navigator.pop(context);
 
-                            // Navigator.pushNamed(context, SuccessPageHiFive.id);
                           },
 
                           child: Text(cCancel.tr)
@@ -314,7 +313,7 @@ class _HomePageState extends State<HomePage> {
                       CupertinoDialogAction(isDefaultAction: true,
                         onPressed: (){
 
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
                           CommonFunctions().signOutUser(context);
 
                         }, child: Text(cSignOut.tr),)
@@ -393,7 +392,7 @@ class _HomePageState extends State<HomePage> {
             kLargeHeightSpacing,
 
             SizedBox(
-              height: 400,
+              height: 500,
               child: TasksController()
             ),
 

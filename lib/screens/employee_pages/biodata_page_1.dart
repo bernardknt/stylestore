@@ -197,7 +197,7 @@ class _BioDataFormState extends State<BioDataForm> {
                     ),
 
                     kLargeHeightSpacing,
-                    TextForm('Full Name *', fullNameController),
+                    TextForm(label:'Full Name *', controller:fullNameController),
                     Text(
                       'Gender *',
                       style:
@@ -336,7 +336,7 @@ class _BioDataFormState extends State<BioDataForm> {
                       ),
                     ),
                     // TextForm('Other Names', otherNamesController),
-                    TextForm('Position', positionController),
+                    TextForm(label:'Position',controller: positionController),
                     Row(
                       children: [
                         Text(
@@ -364,10 +364,10 @@ class _BioDataFormState extends State<BioDataForm> {
                       hint: Text(
                           'Select Department'), // Placeholder text before a department is selected
                     ),
-                    TextForm('Email', emailController),
-                    TextForm('Physical Address', addressController),
-                    TextForm('Next of Kin', kinController),
-                    TextForm('Next of Kin Number', kinNumberController),
+                    TextForm(label: 'Email',controller: emailController),
+                    TextForm(label:'Physical Address', controller:addressController),
+                    TextForm(label: 'Next of Kin', controller:kinController),
+                    TextForm(label:'Next of Kin Number', controller:kinNumberController),
                     Text('Nationality',
                         style: kNormalTextStyle.copyWith(
                           color: kBlack,
@@ -387,11 +387,11 @@ class _BioDataFormState extends State<BioDataForm> {
                       hint: Text(
                           'Select Nationality'), // Placeholder text before a department is selected
                     ),
-                    TextForm('National ID Number', nationalIdNumberController),
+                    TextForm(label:'National ID Number', controller:nationalIdNumberController),
 
                     // TextForm('Home District', districtController),
 
-                    TextForm('TIN', tinController),
+                    TextForm(label:'TIN',controller: tinController),
                     // TextForm('NSSF Number', nssfNumberController),
 
                     SizedBox(height: 16),
