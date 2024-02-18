@@ -19,6 +19,8 @@ class StyleProvider extends ChangeNotifier{
   }
   ;
 
+  List  bulkNumbers = [];
+
   String userName = '';
   String userEmail = '';
   String userToken = '';
@@ -149,6 +151,15 @@ class StyleProvider extends ChangeNotifier{
   Map youtubeVideos = {};
 
   String expense = "";
+
+  void addBulkSmsList(value) {
+    if (bulkNumbers.contains(value)) {
+      bulkNumbers.remove(value);
+    } else {
+      bulkNumbers.add(value);
+    }
+    notifyListeners();
+  }
 
   void enterKDSmode (value){
     kdsMode = value;

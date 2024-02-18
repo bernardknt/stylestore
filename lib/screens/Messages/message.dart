@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/screens/Messages/bulk_message.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/widgets/success_hi_five.dart';
 
@@ -264,31 +265,18 @@ class _MessagesPageState extends State<MessagesPage> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kCustomColor,
         onPressed: () {
-          showDialog(context: context, builder: (BuildContext context){
-            return
-              CupertinoAlertDialog(
-                title: const Text('YOUR MESSAGES'),
-                content: Text("You have 3 messages left", style: kNormalTextStyle.copyWith(color: kBlack),),
-                actions: [
-
-                  CupertinoDialogAction(isDestructiveAction: true,
-                    onPressed: (){
-                      // _btnController.reset();
-                      // Navigator.pop(context);
-                      CommonFunctions().sendBulkSms();
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-                  CupertinoDialogAction(isDefaultAction: true,
-                      onPressed: (){
-                        // _btnController.reset();
-                        Navigator.pushNamed(context, MobileMoneyPage.id);
-                      },
-                      child: const Text('Buy Bundle')),
-
-                ],
-              );
-          });
+          showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (context) {
+                return Scaffold(
+                    // appBar: AppBar(
+                    //   elevation: 0,
+                    //   backgroundColor: kPureWhiteColor,
+                    //   automaticallyImplyLeading: false,
+                    // ),
+                    body: BulkSmsPage());
+              });
 
         },
         label: Text("Send Bulk Message"),
@@ -391,7 +379,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                           // _btnController.reset();
                                           Navigator.pop(context);
 
-                                          // Navigator.pushNamed(context, SuccessPageHiFive.id);
+
                                         },
                                         child: const Text('Cancel'))],
                                   );
@@ -411,8 +399,6 @@ class _MessagesPageState extends State<MessagesPage> {
                                             content: Column(
                                               children: [
                                                 Text("${beauticianDataListen.textMessage}\n_________________________\nTo: $countryCode$phoneNumber\n_________________________\n@ 40 Ugx", style: kNormalTextStyle.copyWith(color: kBlack),),
-
-
 
                                               ],
                                             ),

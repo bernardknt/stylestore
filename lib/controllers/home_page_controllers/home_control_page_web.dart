@@ -8,6 +8,7 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
 import 'package:stylestore/screens/Documents_Pages/documents.dart';
+import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos2.dart';
 import 'package:stylestore/screens/wallets_page.dart';
@@ -251,6 +252,17 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                   });
                 },
               ),
+              // SidebarXItem(
+              //   label: 'Analytics',
+              //   // page: ReportsPage(),
+              //   icon: Icons.pie_chart,
+              //   onTap: () {
+              //     setState(() {
+              //       _selectedWidget = AnalysisPage() ;
+              //
+              //     });
+              //   },
+              // ),
 
             ],
           ),

@@ -1,5 +1,5 @@
 // import 'dart:typed_data';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'dart:io';
 // Make this an html branch
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -266,64 +266,64 @@ class _EmployeesPageState extends State<EmployeesPage> {
   }
 
 
-  void generateExcelWeb() async {
-    var excel = Excel.createExcel();
-    var sheet = excel['Sheet1'];
-
-    // Add headers for employee data
-    sheet.appendRow([
-      'Name',
-      'Phone',
-      'Email',
-      'Department',
-      'Position',
-      'Gender',
-      'Marital Status',
-      'National Id Number',
-      'Kin',
-      'Kin Number',
-      'Tin',
-      'Birthday',
-    ]);
-
-    // Add employee data
-    for (var employee in filteredEmployees) {
-      sheet.appendRow([
-        employee.fullNames,
-        employee.phone,
-        employee.email,
-        employee.department,
-        employee.position,
-        employee.gender,
-        employee.maritalStatus,
-        employee.nationalIdNumber,
-        employee.kin,
-        employee.kinNumber,
-        employee.tin,
-        employee.birthday.toString(),
-      ]);
-    }
-
-    // Save the Excel file
-    final List<int>? excelData = excel.encode();
-
-    // Create a blob from the bytes and create a download link
-    final blob = html.Blob([excelData]);
-    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create a link element and trigger the download
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..target = 'download'
-      ..download = 'employee_data.xlsx';
-
-    // Trigger the click event to start the download
-    html.document.body?.append(anchor);
-    anchor.click();
-
-    // Clean up the temporary link
-    html.Url.revokeObjectUrl(blobUrl);
-    anchor.remove();
-  }
+  // void generateExcelWeb() async {
+  //   var excel = Excel.createExcel();
+  //   var sheet = excel['Sheet1'];
+  //
+  //   // Add headers for employee data
+  //   sheet.appendRow([
+  //     'Name',
+  //     'Phone',
+  //     'Email',
+  //     'Department',
+  //     'Position',
+  //     'Gender',
+  //     'Marital Status',
+  //     'National Id Number',
+  //     'Kin',
+  //     'Kin Number',
+  //     'Tin',
+  //     'Birthday',
+  //   ]);
+  //
+  //   // Add employee data
+  //   for (var employee in filteredEmployees) {
+  //     sheet.appendRow([
+  //       employee.fullNames,
+  //       employee.phone,
+  //       employee.email,
+  //       employee.department,
+  //       employee.position,
+  //       employee.gender,
+  //       employee.maritalStatus,
+  //       employee.nationalIdNumber,
+  //       employee.kin,
+  //       employee.kinNumber,
+  //       employee.tin,
+  //       employee.birthday.toString(),
+  //     ]);
+  //   }
+  //
+  //   // Save the Excel file
+  //   final List<int>? excelData = excel.encode();
+  //
+  //   // Create a blob from the bytes and create a download link
+  //   final blob = html.Blob([excelData]);
+  //   final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+  //
+  //   // Create a link element and trigger the download
+  //   final anchor = html.AnchorElement(href: blobUrl)
+  //     ..target = 'download'
+  //     ..download = 'employee_data.xlsx';
+  //
+  //   // Trigger the click event to start the download
+  //   html.document.body?.append(anchor);
+  //   anchor.click();
+  //
+  //   // Clean up the temporary link
+  //   html.Url.revokeObjectUrl(blobUrl);
+  //   anchor.remove();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -345,7 +345,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                     color: kAppPinkColor,
                   )),
               onPressed: () {
-                generateExcelWeb();
+                generateExcel();
                 // Implement download action here
               },
             ),

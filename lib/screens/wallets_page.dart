@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
-import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/widgets/credit_card.dart';
 

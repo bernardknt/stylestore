@@ -483,9 +483,9 @@ class _AnalysisPageState extends State<AnalysisPage> {
     bool newUser = prefs.getBool(kStartAnayltics) ?? false;
     analysisMode =  prefs.getBool(kAnalysisMode) ?? false;
     print(prefs.getBool(kStartAnayltics));
-    if(newUser == false) {
-      Navigator.push(context, MaterialPageRoute(builder: (context)=> AnalysisIntroPage()));
-    }
+    // if(newUser == false) {
+    //   Navigator.push(context, MaterialPageRoute(builder: (context)=> AnalysisIntroPage()));
+    // }
 
     setState(() {
 
@@ -803,32 +803,32 @@ class _AnalysisPageState extends State<AnalysisPage> {
                               ),
 
                               kLargeHeightSpacing,
-                              Card(
-                                elevation: 1,
-                                color: kCustomColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Text("Cash", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
-                                        trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
-                                        ),),
-                                      ListTile(
-                                        title: Text("Mobile Money", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
-                                        trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
-                                        ),),
-                                      ListTile(
-                                        title: Text("Credit", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
-                                        trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
-                                        ),),
-
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              // Card(
+                              //   elevation: 1,
+                              //   color: kCustomColor,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(8.0),
+                              //     child: Column(
+                              //       mainAxisAlignment: MainAxisAlignment.start,
+                              //       crossAxisAlignment: CrossAxisAlignment.start,
+                              //       children: [
+                              //         ListTile(
+                              //           title: Text("Cash", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
+                              //           trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
+                              //           ),),
+                              //         ListTile(
+                              //           title: Text("Mobile Money", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
+                              //           trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
+                              //           ),),
+                              //         ListTile(
+                              //           title: Text("Credit", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),),
+                              //           trailing: Text("Ugx 90,000", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14),
+                              //           ),),
+                              //
+                              //       ],
+                              //     ),
+                              //   ),
+                              // ),
 
                               kLargeHeightSpacing,
                               SizedBox(

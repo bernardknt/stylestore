@@ -106,7 +106,7 @@ Widget _buildLogo(String bankName) {
   // Replace with actual logo asset or network image
   return Image.asset(
     // 'assets/images/bank_logo_$bankName.png',
-     'images/new_logo.png',
+     'images/bp_white.png',
     width: 40.0,
     height: 20.0,
   );
