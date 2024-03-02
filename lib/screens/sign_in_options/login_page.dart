@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/model/common_functions.dart';
 
 import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
@@ -41,22 +42,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
 
-  Future deliveryStream() async {
-    var prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString(kStoreIdConstant)!;
-    // Provider.of<StyleProvider>(context, listen: false).clearSpecialityList();
-    var start = FirebaseFirestore.instance.collection('medics').where('id', isEqualTo: id).
-    snapshots().listen((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) async {
-        Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(doc['active'], doc['blackout'], doc['clients'], doc['close'], doc['open'], doc['doesMobile'], doc['location'],doc['modes'], doc['phone'], doc['name'], doc['image'], doc['transport']);
-      });
-      setState(() {
 
-      });
-    });
-
-    return start;
-  }
 
   void defaultsInitiation () async{
     final prefs = await SharedPreferences.getInstance();
@@ -290,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
                                     prefs.setString(kPhoneNumberConstant, users['phoneNumber']);
                                     prefs.setBool(kIsLoggedInConstant, true);
                                     // subscribeToTopic();
-                                    deliveryStream();
+                                    CommonFunctions().deliveryStream(context);
 
                                     Navigator.pushNamed(context, SuperResponsiveLayout.id);
                                   } else {

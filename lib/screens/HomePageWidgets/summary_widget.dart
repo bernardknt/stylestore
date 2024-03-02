@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +14,7 @@ import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
 import 'package:stylestore/screens/payment_pages/record_payment_widget.dart';
 import '../../Utilities/constants/color_constants.dart';
@@ -400,8 +402,16 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                                     items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
                                                                                     template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
                                                                                     paid: Receipt(amount: paidAmountList[index] / 1.0));
-                                                                                final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
-                                                                                PdfHelper.openFile(pdfFile);
+                                                                                if(kIsWeb){
+                                                                                  print("WEB PDF PRINT ACTIVATED") ;
+
+
+                                                                                    final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "invoice_${transIdList[index]}", "INVOICE");
+                                                                                }else{
+                                                                                  final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
+                                                                                  PdfHelper.openFile(pdfFile);
+                                                                                }
+
                                                                               }),
                                                                               const SizedBox(height: 16.0),
                                                                               paidAmountList[index] >= priceList[index]
@@ -429,8 +439,16 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                                           items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
                                                                                           template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due"),
                                                                                           paid: Receipt(amount: paidAmountList[index] / 1.0));
-                                                                                      final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
-                                                                                      PdfHelper.openFile(pdfFile);
+
+                                                                                      if(kIsWeb){
+                                                                                        print("WEB PDF PRINT ACTIVATED") ;
+
+
+                                                                                        final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "receipt_${transIdList[index]}", "RECEIPT");
+                                                                                      }else{
+                                                                                        final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
+                                                                                        PdfHelper.openFile(pdfFile);
+                                                                                      }
                                                                                     })
                                                                                   : Container(),
                                                                             ],
@@ -728,7 +746,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                         12),
                                                               )
                                                             : Text(
-                                                                "Partial ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
+                                                                "${cPartialPayment.tr} ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .red,
@@ -736,14 +754,14 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                         12),
                                                               )
                                                         : Text(
-                                                            "No Payment Recieved",
+                                                            cNoPaymentReceived.tr,
                                                             style: TextStyle(
                                                                 color:
                                                                     kCustomColorPink,
                                                                 fontSize:
                                                                     12),
                                                           )
-                                                    : Text("Paid",
+                                                    : Text(cPaymentReceived,
                                                         style: TextStyle(
                                                             color:
                                                                 kGreenThemeColor,
@@ -766,7 +784,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                       context, TransactionsController.id);
                                 },
                                 child: Text(
-                                  "See all Transctions",
+                                  cSeeAllTransactions,
                                   style: kNormalTextStyle.copyWith(
                                       color: Colors.blue),
                                 ))

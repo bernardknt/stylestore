@@ -77,6 +77,31 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
+<script>
+function download(data, filename) {
+  // Convert the data (assumed to be bytes) into a Blob
+  const blob = new Blob([data], { type: 'application/pdf' });
+
+  // Create a temporary download link
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+
+  // Append the link (this won't make it visible on the page)
+  document.body.appendChild(link);
+
+  // "Click" the link to initiate the download
+  link.click();
+
+  // Clean up (revoke the temporary link)
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+    link.remove();
+  }, 100);
+}
+
+</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 <script type="text/javascript">
    pdfjsLib.GlobalWorkerOptions.workerSrc = "//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js";

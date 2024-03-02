@@ -86,7 +86,37 @@ class CommonFunctions {
       ),
     );
   }
+// This function gets the list of phoneNumbers and processes it
+  List<String> processPhoneNumbers(List<String> phoneNumbers) {
+    List<String> processedNumbers = [];
+    for (String number in phoneNumbers) {
+      // Remove spaces
+      String cleanNumber = number.replaceAll(" ", "");
+      // Check if already processed or empty
+      if(cleanNumber.isEmpty){
+        continue;
+      }
+      if (cleanNumber.startsWith("256")) {
+        processedNumbers.add(cleanNumber); // Pass through unchanged
+        continue;
+      }
 
+      // Standardize format
+      if (cleanNumber.startsWith("0")) {
+        cleanNumber = "256" + cleanNumber.substring(1);
+      } else {
+        cleanNumber = "256" + cleanNumber;
+      }
+      processedNumbers.add(cleanNumber);
+    }
+
+    return processedNumbers;
+  }
+
+// This removes duplicates from Lists
+  List removeDuplicates(List originalList) {
+    return originalList.toSet().toList();
+  }
 
   // Sign out of work
   Future<void> signOutUser (context)async {
@@ -417,11 +447,30 @@ class CommonFunctions {
   }
 
   String smsJustPaid (business, businessNumber, customerName, countryCode){
-
-
     businessNumber = '$countryCode${formatPhoneNumber(businessNumber, countryCode)}';
     var sms = '{"thankyou": "Dear $customerName, Your order has been received. Thank you for choosing $business! For any assistance, contact us on $businessNumber.","reminder": "Dear $customerName, kindly make payment for your outstanding purchase with $business. For any assistance, please call $businessNumber.","options": ["We value your business $customerName! Thank you for choosing $business. For any assistance, reach out on $businessNumber.","Your Order is ready. $customerName! Thank you for your support, $business is here to serve you. For any assistance, contact us on $businessNumber.","Your order is on its way $customerName! Thank you for choosing $business. For any assistance, reach out on $businessNumber.","We appreciate your trust in $business! For any assistance, call $businessNumber."]}';
     return sms;
+  }
+
+  Future<void> reduceSmsBalance(double deductionAmount) async {
+    print("WE STARTED HERE");
+    final prefs = await SharedPreferences.getInstance();
+    var docId = prefs.getString(kStoreIdConstant);
+    print("The STORE ID is : $docId");
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      CollectionReference storesCollection = firestore.collection('medics');
+      DocumentReference storeRef = storesCollection.doc(docId);
+
+      await storeRef.update({
+        'sms': FieldValue.increment(-deductionAmount)
+      });
+
+      print('SMS balance updated successfully');
+    } on FirebaseException catch (e) {
+      print('Error updating SMS balance: ${e.message}');
+
+    }
   }
 
   void sendCustomerSms(message, number, context) async {
@@ -431,29 +480,71 @@ class CommonFunctions {
 
     }).catchError((error){
     }).whenComplete(() {
-      Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
+     // Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
       Navigator.pop(context);
       Navigator.pop(context);
       Navigator.pushNamed(context, SuccessPageHiFive.id);
     });
   }
 
-  void sendBulkSms() async {
+  CollectionReference messagesCollection = FirebaseFirestore.instance.collection('sms');
+  Future<void> uploadMessageToServer (context, String phoneNumber, bool isBulk, List numbers, double cost )async {
+    showDialog(context: context, builder:
+        ( context) {
+      return const Center(child: CircularProgressIndicator(
+        color: kAppPinkColor,
+      ));
+    });
+
+    final prefs =  await SharedPreferences.getInstance();
+    var providerData = Provider.of<StyleProvider>(context, listen: false);
+    var beauticianDataListen = Provider.of<BeauticianData>(context, listen: false);
+    var id = "sms_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
+    return messagesCollection.doc(id)
+        .set({
+      'status': true,
+      'client': providerData.invoicedCustomer,
+      'clientPhone': phoneNumber, // John Doe
+      'message': beauticianDataListen.textMessage,
+      'sender_id': prefs.getString(kStoreIdConstant),
+      'isBulk': isBulk,
+      'numbers' : numbers,
+      'date': DateTime.now(),
+      'sender':  prefs.getString(kLoginPersonName),
+      'id': id,
+      'cost': cost,
+      'delivery': false
+
+    }).then((value) {
+      print("WOOOOOOOWWEEE THIS RUN");
+      reduceSmsBalance(cost);
+      Navigator.pop(context);
+      Navigator.pop(context);
+      // Navigator.pushNamed(context, SuccessPageHiFive.id);
+
+    } ).catchError((error) {
+      print(error);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Check your Internet Connection')));
+
+      Navigator.pop(context);
+
+    } );
+  }
+
+  void sendBulkSms(List<String> processedNumbers, String message, String senderId, String priority) async {
     try {
       // Dummy Message Data - Adjust for your actual use case
-      final messageData = [
-        { 'number': '256705894258',
-          'message': 'Jesus you are faithful',
-          'senderid': 'Frutsexpress',
-          'priority': '0'
-        },
-        { 'number': '256782081219',
-          'message': 'It is my time to thrive',
-          'senderid': 'Kangaves',
-          'priority': '0'
+      List<Map<String, String>> messageData = [];
 
-        },
-      ];
+      for (String number in processedNumbers) {
+        messageData.add({
+          'number': number,
+          'message': message,
+          'senderid': senderId,
+          'priority': priority
+        });
+      }
+
       final HttpsCallable bulkSmsCallable = FirebaseFunctions.instance.httpsCallable(
         'sendBulkSmsToCustomer',
       );
@@ -614,6 +705,43 @@ class CommonFunctions {
       total += price.toDouble(); // Convert int to double.
     }
     return total;
+  }
+
+  // Loading Store defaults
+  Future deliveryStream(context) async {
+    var prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString(kStoreIdConstant)!;
+
+    var start = FirebaseFirestore.instance
+        .collection('medics')
+        .where('id', isEqualTo: id)
+        .snapshots()
+        .listen((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) async {
+        prefs.setString(kPhoneNumberConstant, doc['phone']);
+        prefs.setString(kImageConstant, doc['image']);
+        prefs.setDouble(kSmsAmount, doc['sms']);
+        Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
+            doc['active'],
+            doc['blackout'],
+            doc['clients'],
+            doc['close'],
+            doc['open'],
+            doc['doesMobile'],
+            doc['location'],
+            doc['modes'],
+            doc['phone'],
+            doc['name'],
+            doc['image'],
+            doc['transport'],
+            doc['sms'],
+
+
+        );
+      });
+    });
+
+    return start;
   }
 
 

@@ -1,8 +1,10 @@
 
 // Home Text
-String cNoPaymentReceived = "No Payment Received";
+String cNoPaymentReceived = "No Payment";
+String cPartialPayment= "Partial Payment";
 String cPaymentReceived = "Paid";
 String cPaymentOverpaid = "Overpaid";
+String cSeeAllTransactions = "See all Transctions";
 String cWelcome = "Welcome";
 String cHi = "Hi";
 String cCustomers = "Customers";
@@ -20,7 +22,7 @@ String cSignOut = "Sign Out";
 String cSignOutInstructions = "Are you Sure you want Sign Out at";
 String cSale= "Sale";
 String cDepartment= "Department";
-String cCheckinTime= "Check In Time";
+String cCheckinTime= "In";
 String cTaskBoard= "Task Board";
 String cLatestTransactions= "Latest Transactions";
 

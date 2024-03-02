@@ -32,6 +32,7 @@ String kStoreClosingTime = 'closing';
 String kPermissions = 'permissions';
 String kWalkthroughVideos = 'kWalkthroughVideos';
 String kLoginPersonName = 'loggedInPerson';
+String kSignInTime = 'kSignInTime';
 String kFirstNameConstant = 'kFirstNameConstant';
 String kUniqueUserPhoneId = 'kUniqueUserPhoneId';
 String kLiveString = 'liveString';

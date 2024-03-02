@@ -4,3 +4,4 @@ const mobileWidth = 700;
 const int screenDisplayWidth = 632;
 const desktopWidth = 900;
 const screenLength = 600;
+const boxCurve = 10.0;

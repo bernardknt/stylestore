@@ -67,15 +67,20 @@ dependencies:
 #  fancy_on_boarding: ^1.8.0-nullsafety.0
   fl_chart: ^0.62.0
   simple_circular_progress_bar: ^1.0.2
-  syncfusion_flutter_pdfviewer: ^24.2.4
-  syncfusion_flutter_calendar: ^24.2.4
-  syncfusion_flutter_core: ^24.2.4
+  syncfusion_flutter_calendar: ^24.2.8
+#  syncfusion_flutter_pdfviewer: ^latest_version
+#  syncfusion_flutter_calendar: ^latest_version
+#  syncfusion_flutter_datepicker: ^latest_version
+#  syncfusion_flutter_pdfviewer: ^24.2.4
+#  syncfusion_flutter_calendar: ^24.2.4
+#  syncfusion_flutter_core: ^24.2.4
   location: ^4.3.0
   uuid: ^4.1.0
   share_plus: ^7.2.2
   slidable_button: ^1.0.1+2
   slider_button: ^2.0.0
   stop_watch_timer: ^1.3.1
+  syncfusion_flutter_pdf: ^24.2.7
 #  blue_thermal_printer: ^1.2.3
   flutter_local_notifications: ^15.1.1
   firebase_messaging: ^14.7.15
@@ -117,6 +122,8 @@ dependencies:
   audioplayers: 3.0.1
 
 
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -143,6 +150,8 @@ flutter:
   assets:
     - images/
     - assets/
+    - assets/pdf/
+#    - .env
   fonts:
     - family: Futura
       fonts:

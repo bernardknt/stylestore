@@ -1,25 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:provider/provider.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/bulk_message.dart';
-import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/widgets/success_hi_five.dart';
-
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../utilities/constants/user_constants.dart';
@@ -66,7 +58,8 @@ class _MessagesPageState extends State<MessagesPage> {
     } else {
       jsonMessage = jsonMap['thankyou'];
     }
-    options = jsonMap['options'];
+    // options = jsonMap['options'];
+    options = ['This is a test Message', 'This is another test of what us needed', 'Can I know what to do'];
     print(options);
 
 
@@ -80,45 +73,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
     });
   }
-  CollectionReference messagesCollection = FirebaseFirestore.instance.collection('sms');
-  Future<void> upLoadOrder ()async {
-    showDialog(context: context, builder:
-        ( context) {
-      return const Center(child: CircularProgressIndicator(
-        color: kAppPinkColor,
-      ));
-    });
 
-    final prefs =  await SharedPreferences.getInstance();
-    var providerData = Provider.of<StyleProvider>(context, listen: false);
-    var beauticianDataListen = Provider.of<BeauticianData>(context, listen: false);
-    var id = "sms_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
-    return messagesCollection.doc(id)
-        .set({
-      'status': true,
-      'client': providerData.invoicedCustomer,
-      'clientPhone': phoneNumber, // John Doe
-      'message': beauticianDataListen.textMessage,
-      'sender_id': prefs.getString(kStoreIdConstant),
-      'date': DateTime.now(),
-      'sender':  prefs.getString(kLoginPersonName),
-      'id': id
-      
-    }).then((value) {
-
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pop(context);
-      Navigator.pushNamed(context, SuccessPageHiFive.id);
-
-    } ).catchError((error) {
-      print(error);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Check your Internet Connection')));
-
-      Navigator.pop(context);
-
-    } );
-  }
 
 
   @override
@@ -139,8 +94,6 @@ class _MessagesPageState extends State<MessagesPage> {
   animationTimer() async{
     final prefs = await SharedPreferences.getInstance();
     _timer = Timer(const Duration(milliseconds: 1000), () {
-      // prefs.setBool(kChallengeActivated, true);
-      // Navigator.pop(context);
       opacityValue = 1.0;
       setState(() {
 
@@ -158,107 +111,72 @@ class _MessagesPageState extends State<MessagesPage> {
   Widget build(BuildContext context) {
     // var beauticianData = Provider.of<BeauticianData>(context, listen: false);
     var beauticianDataListen = Provider.of<BeauticianData>(context);
-    // message = beauticianDataListen.textMessage;
-
-
     return Scaffold(
       backgroundColor: kPureWhiteColor,
       appBar: AppBar(
         backgroundColor: kPureWhiteColor,
         foregroundColor: kBlack,
         elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left:20.0, right: 20, bottom: 5, top: 5),
-          child: Container(
-            height: 50,
-            width: 250,
-            // height: 53,
-
-            decoration: BoxDecoration(
-                color: kBackgroundGreyColor,
-                border: Border.all(width: 1, color: Colors.grey),
-                borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 10,
-                ),
-                CountryCodePicker(
-                  onInit: (value){
-                    countryCode = value!.dialCode!;
-                    countryName = value!.name!;
-                    countryFlag = value!.flagUri!;
-
+        title: Icon(Icons.mark_email_read_rounded, color: kAppPinkColor,),
+        actions: [
+          TextButton(onPressed: (){
+            showDialog(context: context, builder: (BuildContext context){
+              return
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
                   },
-                  onChanged: (value){
-                    countryCode = value.dialCode!;
-                    countryName = value.name!;
-                    countryFlag = value.flagUri!;
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
 
-                  },
-                  // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                  initialSelection: 'UG',
-                  favorite: const ['+254','+255',"US"],
-                  // optional. Shows only country name and flag
-                  showCountryOnly: false,
-                  // optional. Shows only country name and flag when popup is closed.
-                  showOnlyCountryWhenClosed: false,
-                  // optional. aligns the flag and the Text left
-                  alignLeft: false,
-                ),
-                Text(
-                  "|",
-                  style: TextStyle(fontSize: 25, color: Colors.grey),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                    child:
+                              // height: 250,
+                              margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
+                              decoration: BoxDecoration(
+                                color: kAppPinkColor.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: GestureDetector(
+                                onTap: (){
+                                  controller = TextEditingController()..text = options[index];
+                                  beauticianDataListen.setTextMessage(options[index]);
+                                  Navigator.pop(context);
+                                  setState(() {
 
-                    TextFormField(
-                      controller: phoneNumberController,
-                      validator: (value){
-                        List letters = List<String>.generate(
-                            value!.length,
-                                (index) => value[index]);
-                        print(letters);
-
-
-                        if (value!=null && value.length > 10){
-                          return 'Number is too long';
-                        }else if (value == "") {
-                          return 'Enter phone number';
-                        } else if (letters[0] == '0'){
-                          return 'Number cannot start with a 0';
-                        } else if (value!= null && value.length < 9){
-                          return 'Number short';
-
-                        }
-                        else {
-                          return null;
-                        }
-                      },
-
-
-                      onChanged: (value){
-                        phoneNumber = value;
-                        Provider.of<StyleProvider>(context, listen: false).setInvoicedPhoneNumber(value);
-                      },
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-
-                          border: InputBorder.none,
-                          hintText: "771234567",
-                          hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
-
+                                  });
+                                  // Provider.of<StyleProvider>(context, listen: false).set
+                                },
+                                child: ListTile(
+                                  title: Text(
+                                    options[index],
+                                    style: TextStyle(color: Colors.white, fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    ))
-              ],
-            ),
-          ),
-        ),
+                    ),
+                  ),
+                );
+
+            });
+
+
+          }, child: Text("Message Variations", style: kNormalTextStyle.copyWith(color: Colors.blue),))
+
+        ],
 
 
       ),
@@ -269,17 +187,12 @@ class _MessagesPageState extends State<MessagesPage> {
               isScrollControlled: true,
               context: context,
               builder: (context) {
-                return Scaffold(
-                    // appBar: AppBar(
-                    //   elevation: 0,
-                    //   backgroundColor: kPureWhiteColor,
-                    //   automaticallyImplyLeading: false,
-                    // ),
+                return const Scaffold(
                     body: BulkSmsPage());
               });
 
         },
-        label: Text("Send Bulk Message"),
+        label: const Text("Send Bulk Message"),
 
 
       ),
@@ -297,36 +210,122 @@ class _MessagesPageState extends State<MessagesPage> {
 
 
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Container(
+                      height: 50,
+                      width: double.maxFinite,
+                      // height: 53,
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Lottie.asset('images/talk.json', height: 150, width: 150, fit: BoxFit.contain ),
-                      Expanded(
-                        child: Card(
-
-                          color: kCustomColor,
-                          shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(20))),
-                          // shadowColor: kGreenThemeColor,
-                          // color: kBeigeColor,
-                          elevation: 1.0,
-
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(child:
-                            Text(beauticianDataListen.textMessage, style: TextStyle(fontWeight: FontWeight.w400),)
-                              // GlidingText(
-                              //   text: inspiration,
-                              //   delay: const Duration(seconds: 1),
-                              // ),
-
-                            ),
+                      decoration: BoxDecoration(
+                          color: kBackgroundGreyColor,
+                          border: Border.all(width: 1, color: Colors.grey),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 10,
                           ),
-                        ),
+                          CountryCodePicker(
+                            onInit: (value){
+                              countryCode = value!.dialCode!;
+                              countryName = value!.name!;
+                              countryFlag = value!.flagUri!;
+
+                            },
+                            onChanged: (value){
+                              countryCode = value.dialCode!;
+                              countryName = value.name!;
+                              countryFlag = value.flagUri!;
+
+                            },
+                            // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                            initialSelection: 'UG',
+                            favorite: const ['+254','+255',"US"],
+                            // optional. Shows only country name and flag
+                            showCountryOnly: false,
+                            // optional. Shows only country name and flag when popup is closed.
+                            showOnlyCountryWhenClosed: false,
+                            // optional. aligns the flag and the Text left
+                            alignLeft: false,
+                          ),
+                          Text(
+                            "|",
+                            style: TextStyle(fontSize: 25, color: Colors.grey),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                              child:
+
+                              TextFormField(
+                                controller: phoneNumberController,
+                                validator: (value){
+                                  List letters = List<String>.generate(
+                                      value!.length,
+                                          (index) => value[index]);
+                                  print(letters);
+
+
+                                  if (value!=null && value.length > 10){
+                                    return 'Number is too long';
+                                  }else if (value == "") {
+                                    return 'Enter phone number';
+                                  } else if (letters[0] == '0'){
+                                    return 'Number cannot start with a 0';
+                                  } else if (value!= null && value.length < 9){
+                                    return 'Number short';
+
+                                  }
+                                  else {
+                                    return null;
+                                  }
+                                },
+
+
+                                onChanged: (value){
+                                  phoneNumber = value;
+                                  Provider.of<StyleProvider>(context, listen: false).setInvoicedPhoneNumber(value);
+                                },
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration(
+
+                                    border: InputBorder.none,
+                                    hintText: "771234567",
+                                    hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
+
+                                ),
+                              ))
+                        ],
                       ),
-                    ],
+                    ),
                   ),
+
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   children: [
+                  //     // Lottie.asset('images/talk.json', height: 150, width: 150, fit: BoxFit.contain ),
+                  //     Expanded(
+                  //       child: Card(
+                  //
+                  //         color: kCustomColor,
+                  //         shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(20))),
+                  //         elevation: 1.0,
+                  //
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.all(8.0),
+                  //           child: Center(child:
+                  //           Text(beauticianDataListen.textMessage, style: TextStyle(fontWeight: FontWeight.w400),)
+                  //
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   kSmallHeightSpacing,
 
                   Column(
@@ -372,11 +371,11 @@ class _MessagesPageState extends State<MessagesPage> {
                               if (message == ''|| phoneNumber.length != 9){
                                 showDialog(context: context, builder: (BuildContext context){
                                   return CupertinoAlertDialog(
-                                    title: const Text('Something is wrong'),
-                                    content: Text('Ensure a message has been typed and the phone number is correct', style: kNormalTextStyle.copyWith(color: kBlack),),
+                                    title: message == ''?Text('No Message entered!'):phoneNumber.length != 9?Text('Phone number needs checking'):Text("Something seems wrong"),
+                                    content: message == ''?Text('Ensure a message has been typed', style: kNormalTextStyle.copyWith(color: kBlack),):phoneNumber.length != 9?Text('Ensure the number is entered or complete', style: kNormalTextStyle.copyWith(color: kBlack),):Text("Something seems wrong"),
                                     actions: [CupertinoDialogAction(isDestructiveAction: true,
                                         onPressed: (){
-                                          // _btnController.reset();
+
                                           Navigator.pop(context);
 
 
@@ -415,11 +414,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                                     // _btnController.reset();
                                                     Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
                                                     CommonFunctions().sendCustomerSms(beauticianDataListen.textMessage, phoneNumber, context);
-                                                    upLoadOrder();
-                                                    print(phoneNumber);
-
-
-
+                                                    CommonFunctions().uploadMessageToServer(context, phoneNumber, false, [phoneNumber], 40.0);
                                                   },
                                                   child: const Text('Send')),
 
@@ -447,63 +442,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               ),
                             )
                         ),
-                        TextButton(onPressed: (){
-                          showDialog(context: context, builder: (BuildContext context){
-                            return
-                            GestureDetector(
-                              onTap: (){
-                                Navigator.pop(context);
-                              },
-                              child: Material(
-                                color: Colors.transparent,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ListView.builder(
-                                    itemCount: options.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return GestureDetector(
-                                        onTap: (){
-                                          Navigator.pop(context);
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
-
-                                          // height: 250,
-                                          margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
-                                          decoration: BoxDecoration(
-                                            color: kAppPinkColor.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(20.0),
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: (){
-                                              controller = TextEditingController()..text = options[index];
-                                              beauticianDataListen.setTextMessage(options[index]);
-                                              Navigator.pop(context);
-                                              setState(() {
-
-                                              });
-                                              // Provider.of<StyleProvider>(context, listen: false).set
-                                            },
-                                            child: ListTile(
-                                              title: Text(
-                                                options[index],
-                                                style: TextStyle(color: Colors.white, fontSize: 14),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            );
-
-                          });
-
-
-                        }, child: Text("Message Variations", style: kNormalTextStyle.copyWith(color: Colors.blue),))
-                      ]
+                          ]
                   ),
                   kSmallHeightSpacing,
 

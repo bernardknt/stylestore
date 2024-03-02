@@ -12,6 +12,8 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
+import 'package:stylestore/screens/Messages/sms_class.dart';
+import 'package:stylestore/screens/Messages/sms_details_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
@@ -29,6 +31,10 @@ import '../MobileMoneyPages/make_custom_mobile_money_payment.dart';
 
 class MessageHistoryPage extends StatefulWidget {
   static String id = 'message_history';
+  final bool showBackButton;
+
+  const MessageHistoryPage({Key? key, this.showBackButton = true}) : super(key: key);
+
 
   @override
   _MessageHistoryPageState createState() => _MessageHistoryPageState();
@@ -67,8 +73,9 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   var productList = [];
   var orderStatusList = [];
   var clientList = [];
+  var costList = [];
   var phoneList = [];
-  var descList = [];
+  var messageList = [];
   var transIdList = [];
   var dateList = [];
   var paidStatusList = [];
@@ -89,6 +96,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   return Scaffold(
     backgroundColor: kBlack,
       appBar: AppBar(
+        automaticallyImplyLeading: widget.showBackButton,
         actions: [
           GestureDetector(
             onTap: (){
@@ -106,7 +114,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   });
             },
             child: Tooltip(
-              message: "${cSmsAccountBalance.tr} ${CommonFunctions().formatter.format(smsAmount)} Ugx",
+              message: "${cSmsAccountBalance.tr} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} Ugx",
               child: Padding(
                 padding: const EdgeInsets.only(right: 10.0),
                 child: Row(
@@ -114,7 +122,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   children: [
                     const Icon(Icons.wallet),
                     kMediumWidthSpacing,
-                    Text('${CommonFunctions().formatter.format(smsAmount)} Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                    Text('${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
                   ],
                 ),
               ),
@@ -130,6 +138,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Navigate to the MessagesPage
+          Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
           var sms = '{"thankyou": "Dear Customer! We appreciate your business. For any assistance, please call $business.","reminder": "Dear Customer, kindly make payment for your outstanding purchase with $business. For any assistance.","options": ["We value your business! Thank you for choosing $business. For any assistance, please call.","Thank you for your support! $business is here to serve you. For any assistance, please call.","Your order is on its way! Thank you for choosing $business. For any assistance, please call.","We appreciate your trust in $business! For any assistance, please call."]}';
           Provider.of<StyleProvider>(context, listen: false).setSms(sms);
           Navigator.pushNamed(context, MessagesPage.id);
@@ -167,13 +176,14 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
             }else{
 
               phoneList = [];
-              descList = [];
+              messageList = [];
               transIdList = [];
               dateList = [];
               paidStatusList = [];
               paidStatusListColor = [];
               opacityList = [];
               clientList = [];
+              costList = [];
 
               var dateSeparator = '';
               var orders = snapshot.data?.docs;
@@ -182,14 +192,12 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
 
 
                   phoneList.add(doc['clientPhone']);
-                  descList.add(doc['message']);
+                  messageList.add(doc['message']);
                   transIdList.add(doc['id']);
                   orderStatusList.add(doc['status']);
                   dateList.add(doc['date'].toDate());
-                  clientList.add(doc['client']);
-
-
-
+                  clientList.add(doc['numbers']);
+                  costList.add(doc['cost']);
 
               }
               // return Text('Let us understand this ${deliveryTime[3]} ', style: TextStyle(color: Colors.white, fontSize: 25),);
@@ -201,7 +209,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                       children: [Lottie.asset("images/mailtime.json",height: 100), Text(cNoMessages.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),) ]),
                 ):ListView.builder(
                   shrinkWrap: true,
-                  itemCount: descList.length,
+                  itemCount: messageList.length,
 
                   itemBuilder: (context, index){
                     var transactionDate = DateTime(dateList[index].year, dateList[index].month, dateList[index].day);
@@ -228,38 +236,54 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                           ),
                           kLargeHeightSpacing,
                         ],
-                        Card(
+                        GestureDetector(
+                          onTap: (){
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return Scaffold(
+                                      appBar: AppBar(
+                                        elevation: 0,
+                                        backgroundColor: kAppPinkColor,
+                                        automaticallyImplyLeading: false,
+                                      ),
+                                      body: SmsDetailsPage(smsMessage: SmsMessage(message:messageList[index], recipients: clientList[index], timestamp: dateList[index], delivered: true, cost: costList[index])),);
+                                });
+                          },
+                          child: Card(
 
-                          color: kPureWhiteColor.withOpacity(0.8),
-                          margin: const EdgeInsets.fromLTRB(25.0, 8.0, 25.0, 8.0),
-                          shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
-                          shadowColor: kAppPinkColor,
-                          elevation: 1.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: 300,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text('"${descList[index]}"', style: const TextStyle( fontSize: 14, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),),
-                                      kSmallHeightSpacing,
-                                      Text('To:  ${clientList[index]} .No.:  ${phoneList[index]}', style: TextStyle(fontSize: 12, color: kBlack)),
-                                      // Text('No.:  ${phoneList[index]}', style: TextStyle(fontSize: 13, color: kBlack)),
-                                      Text('Sent: ${DateFormat('EE, dd, MMM, hh:mm a').format(dateList[index])}', style: TextStyle(fontSize: 12, color: kBlack),),
+                            color: kPureWhiteColor.withOpacity(0.8),
+                            margin: const EdgeInsets.fromLTRB(25.0, 8.0, 25.0, 8.0),
+                            shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
+                            shadowColor: kAppPinkColor,
+                            elevation: 1.0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                children: [
+                                  SizedBox(
+                                    width: 300,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('"${messageList[index]}"', style: const TextStyle( fontSize: 14, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),),
+                                        kSmallHeightSpacing,
+                                        Text('To: ${phoneList[index]}', style: TextStyle(fontSize: 12, color: kBlack)),
+                                        // Text('No.:  ${phoneList[index]}', style: TextStyle(fontSize: 13, color: kBlack)),
+                                        Text('Sent: ${DateFormat('EE, dd, MMM, kk:mm a').format(dateList[index])}', style: TextStyle(fontSize: 12, color: kBlack),),
 
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Positioned(
-                                    bottom: 2,
-                                    right: 5,
+                                  Positioned(
+                                      bottom: 2,
+                                      right: 5,
 
-                                    child: Icon(Icons.check_circle, color: kGreenThemeColor,size: 15,))
-                              ],
+                                      child: Icon(Icons.check_circle, color: kGreenThemeColor,size: 15,))
+                                ],
+                              ),
                             ),
                           ),
                         ),

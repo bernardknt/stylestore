@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
@@ -22,6 +23,7 @@ import '../../model/pdf_files/invoice_customer.dart';
 import '../../model/pdf_files/invoice_supplier.dart';
 import '../../model/pdf_files/pdf_api.dart';
 import '../../model/pdf_files/pdf_invoice_api.dart';
+import '../Messages/bulk_message.dart';
 import '../edit_invoice_pages/edit_invoice.dart';
 
 
@@ -135,11 +137,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
 
   return Scaffold(
       backgroundColor: kPureWhiteColor,
-      // appBar: AppBar(
-      //   title: Text("Transactions History", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),),
-      //   backgroundColor: kPureWhiteColor,
-      //   elevation: 0,
-      // ),
+
 
       body:
       Column(
@@ -265,27 +263,61 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                 ),
                               ),
                             ),
-                            PopupMenuButton<String>(
-                              icon: Icon(Icons.filter_list),
-                              onSelected: (String result) {
-                                setState(() {
-                                  _selectedDateRange = result;
-                                });
-                              },
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                PopupMenuItem<String>(
-                                  value: 'All',
-                                  child: Text('All'),
-                                ),
-                                PopupMenuItem<String>(
-                                  value: '1 month',
-                                  child: Text('Last 1 month'),
-                                ),
-                                PopupMenuItem<String>(
-                                  value: '1 week',
-                                  child: Text('Last 1 week'),
-                                ),
+                            Row(
+                              children: [
+                                GestureDetector(
 
+                                  onTap: (){
+
+
+                                    Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
+                                   // var sms = '{"thankyou": "Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.","reminder": "Dear Customer, kindly make payment for your outstanding purchase with $storeName. For any assistance.","options": ["We value your business! Thank you for choosing $storeName. For any assistance, please call.","Thank you for your support! $storeName is here to serve you. For any assistance, please call.","Your order is on its way! Thank you for choosing $storeName. For any assistance, please call.","We appreciate your trust in $storeName! For any assistance, please call."]}';
+                                   //  clientPhoneList;
+                                    Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(CommonFunctions().removeDuplicates(clientPhoneList));
+                                  Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
+                                    showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return const Scaffold(
+                                              body: BulkSmsPage());
+                                        });
+                                  },
+                                  child: Tooltip(
+                                    message: "Send Reminder to all Debtors",
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CircleAvatar(
+                                          backgroundColor: kAppPinkColor,
+                                          child: Icon(Icons.message,size: 16, color: kPureWhiteColor,)),
+                                    ),
+                                  ),
+                                ),
+                                kMediumWidthSpacing,
+                                PopupMenuButton<String>(
+                                  tooltip: "Filter Transactions",
+                                  icon: Icon(Icons.filter_list),
+                                  onSelected: (String result) {
+                                    setState(() {
+                                      _selectedDateRange = result;
+                                    });
+                                  },
+                                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                    PopupMenuItem<String>(
+                                      value: 'All',
+                                      child: Text('All'),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: '1 month',
+                                      child: Text('Last 1 month'),
+                                    ),
+                                    PopupMenuItem<String>(
+                                      value: '1 week',
+                                      child: Text('Last 1 week'),
+                                    ),
+
+                                  ],
+                                ),
                               ],
                             ),
                           ],

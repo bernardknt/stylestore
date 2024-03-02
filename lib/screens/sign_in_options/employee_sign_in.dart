@@ -103,11 +103,11 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
           prefs.setString(kEmployeeId,  users['id'] );
           prefs.setBool(kIsOwner,  false );
           prefs.setBool(kIsCheckedIn, false);
-          // prefs.setString(kPhoneNumberConstant,users['phoneNumber']);
           prefs.setString(kPhoneNumberConstant,store['businessPhone']);
           prefs.setBool(kIsLoggedInConstant, true);
+          Provider.of<StyleProvider>(context, listen: false).setStoreName(store['name']);
 
-          deliveryStream();
+          CommonFunctions().deliveryStream(context);
           updateNotificationsIfAdmin(storeId);
           Navigator.pushNamed(context, SignInUserPage.id);
 
@@ -146,34 +146,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
     );
   }
 
-  Future deliveryStream() async {
 
-    var prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString(kStoreIdConstant)!;
-
-    var start = FirebaseFirestore.instance.collection('medics').where(
-        'id', isEqualTo: id).
-    snapshots().listen((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) async {
-        Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
-            doc['active'],
-            doc['blackout'],
-            doc['clients'],
-            doc['close'],
-            doc['open'],
-            doc['doesMobile'],
-            doc['location'],
-            doc['modes'],
-            doc['phone'],
-            doc['name'],
-            doc['image'],
-            doc['transport']);
-      });
-      setState(() {
-
-      });
-    });
-  }
 
 
 
@@ -254,27 +227,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
                             child:
 
                             TextFormField(
-                              // validator: (value){
-                              //   List letters = List<String>.generate(
-                              //       value!.length,
-                              //           (index) => value[index]);
-                              //   print(letters);
-                              //
-                              //
-                              //   if (value!=null && value.length > 10){
-                              //     return 'Number is too long';
-                              //   }else if (value == "") {
-                              //     return 'Enter phone number';
-                              //   } else if (letters[0] == '0'){
-                              //     return 'Number cannot start with a 0';
-                              //   } else if (value!= null && value.length < 9){
-                              //     return 'Number short';
-                              //
-                              //   }
-                              //   else {
-                              //     return null;
-                              //   }
-                              // },
+
 
                               onChanged: (value){
                                 phoneNumber = countryCode + value;

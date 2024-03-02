@@ -7,7 +7,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:slider_button/slider_button.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/tasks_pages/add_tasks.dart';
@@ -29,15 +28,12 @@ class _TasksWidgetState extends State<TasksWidget> {
   var location = [];
   var storeLocation = "";
   var createdBy = [];
-
   var idList = [];
   var fromList = [];
   var formatter = NumberFormat('#,###,000');
-
-
-  // var orderContents = [];
   var instructions = [];
   var createdDate = [];
+  var completedTasks = [];
   var dueDate = [];
   var bookingFee = [];
   var taskList = [];
@@ -47,7 +43,6 @@ class _TasksWidgetState extends State<TasksWidget> {
   var names = [];
   var appointmentsToday = [];
   List taskDates = [];
-  // var customerPhone = [];
   var statusList = [];
   var bellOpacity = [];
   var datesColor = [];
@@ -68,9 +63,6 @@ class _TasksWidgetState extends State<TasksWidget> {
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     userName = prefs.getString(kLoginPersonName) ?? "";
     employeeId = prefs.getString(kEmployeeId) ?? "";
-
-
-
     setState(() {});
   }
 
@@ -146,86 +138,94 @@ class _TasksWidgetState extends State<TasksWidget> {
                 bookingFee = [];
                 fromList = [];
                 taskDates = [];
+                completedTasks = [];
 
                 var orders = snapshot.data?.docs;
                 for (var order in orders!) {
                   if (order.get('status') != true) {
-                    if (order.get('to') == "Everyone" ||
-                        order.get('to') == userName ||
-                        order.get('from') == employeeId) {
-                      DateTime appointmentDateTime =
-                          order.get('dueDate').toDate();
-                      createdBy.add(order.get('createdBy'));
-                      idList.add(order.get('id'));
-                      fromList.add(order.get('from'));
-                      orderStatus.add(order.get('status'));
-                      createdDate.add(order.get('createdDate').toDate());
-                      dueDate.add(order.get('dueDate').toDate());
-                      taskList.add(order.get('task'));
-                      statusList.add(order.get("toName"));
-                      // List<Timestamp> firestoreTimestamps = order.get('selectedDates');
+                    if( order.get('completed').every((element) => element == true)){
 
-                      taskDates.add(order
-                          .get('selectedDates')
-                          .map((timestamp) => timestamp.toDate())
-                          .toList());
+                    }else{
+                      if (order.get('to') == "Everyone" ||
+                          order.get('to') == userName ||
+                          order.get('from') == employeeId) {
+                        DateTime appointmentDateTime =
+                        order.get('dueDate').toDate();
+                        createdBy.add(order.get('createdBy'));
+                        idList.add(order.get('id'));
+                        fromList.add(order.get('from'));
+                        orderStatus.add(order.get('status'));
+                        createdDate.add(order.get('createdDate').toDate());
+                        dueDate.add(order.get('dueDate').toDate());
+                        taskList.add(order.get('task'));
+                        statusList.add(order.get("toName"));
+                        completedTasks.add(order.get("completed"));
+                        // List<Timestamp> firestoreTimestamps = order.get('selectedDates');
 
-                      String datesReceived = order
-                          .get('selectedDates')
-                          .map((timestamp) => DateFormat('d-MM-yyyy')
-                              .format(timestamp.toDate()))
-                          .toList()
-                          .join(',');
-                      // convert the lists of datesReceived to a list
-                      List<String> datesReceivedList =
-                          datesReceived.split(', ');
+                        taskDates.add(order
+                            .get('selectedDates')
+                            .map((timestamp) => timestamp.toDate())
+                            .toList());
 
-                      String currentDateTime =
-                          DateFormat('d-MM-yyyy').format(DateTime.now());
+                        String datesReceived = order
+                            .get('selectedDates')
+                            .map((timestamp) => DateFormat('d-MM-yyyy')
+                            .format(timestamp.toDate()))
+                            .toList()
+                            .join(',');
+                        // convert the lists of datesReceived to a list
+                        List<String> datesReceivedList = datesReceived.split(', ');
 
-                      print(datesReceivedList);
-                      // IF KDS MODE IS ACTIVE
-                      if(styleDataDisplay.kdsMode == false){
-                        if (datesReceivedList.any((dates) => dates.contains(currentDateTime))) {
+                        String currentDateTime = DateFormat('d-MM-yyyy').format(DateTime.now());
 
-                          bellOpacity.add(1.0);
-                          onlineStatusColour.add(kGreenThemeColor);
-                          appointmentsToday.add(order.get('toName'));
-                          cardColor.add(kBlueDarkColorOld);
-                          phoneCircleColor.add(kAppPinkColor);
-                          textColor.add(kPureWhiteColor);
-                          datesColor.add(kAppPinkColor);
-                        }
-                        else {
-                          bellOpacity.add(0.0);
-                          onlineStatusColour.add(kAppPinkColor);
-                          cardColor.add(kPlainBackground);
-                          phoneCircleColor.add(kBlueDarkColorOld);
-                          textColor.add(kBlack);
-                          datesColor.add(kBeigeColor);
-                        }
-                      }else {
-                        if (datesReceivedList.any((dates) => dates.contains(currentDateTime)))
-                        {
+                        // print(datesReceivedList);
+                        // IF KDS MODE IS ACTIVE
+                        if(styleDataDisplay.kdsMode == false){
+                          if (datesReceivedList.any((dates) => dates.contains(currentDateTime))) {
 
-                          bellOpacity.add(1.0);
-                          onlineStatusColour.add(kGreenThemeColor);
-                          appointmentsToday.add(order.get('toName'));
-                          cardColor.add(kPureWhiteColor);
-                          phoneCircleColor.add(kAppPinkColor);
-                          textColor.add(kBlack);
-                          datesColor.add(kAppPinkColor);
-                        }
-                        else {
-                          bellOpacity.add(0.0);
-                          onlineStatusColour.add(kAppPinkColor);
-                          cardColor.add(kPlainBackground);
-                          phoneCircleColor.add(kBlueDarkColorOld);
-                          textColor.add(kBlack);
-                          datesColor.add(kBeigeColor);
+                            bellOpacity.add(1.0);
+                            onlineStatusColour.add(kGreenThemeColor);
+                            appointmentsToday.add(order.get('toName'));
+                            cardColor.add(kBlueDarkColorOld);
+                            phoneCircleColor.add(kAppPinkColor);
+                            textColor.add(kPureWhiteColor);
+                            datesColor.add(kAppPinkColor);
+                          }
+                          else {
+                            bellOpacity.add(0.0);
+                            onlineStatusColour.add(kAppPinkColor);
+                            cardColor.add(kPlainBackground);
+                            phoneCircleColor.add(kBlueDarkColorOld);
+                            textColor.add(kBlack);
+                            datesColor.add(kBeigeColor);
+                          }
+                        }else {
+                          if (datesReceivedList.any((dates) => dates.contains(currentDateTime)))
+
+                          {
+                            var number =  completedTasks[datesReceivedList.indexWhere((dates) => dates.contains(currentDateTime))];
+                             var checkIndex = datesReceivedList.indexWhere((dates) => dates.contains(currentDateTime));
+                            int indexOfCurrentDate = datesReceivedList.indexWhere((element) => element.contains(currentDateTime));
+                           print("index: $indexOfCurrentDate , For: $datesReceivedList");
+
+                            bellOpacity.add(1.0);
+                            onlineStatusColour.add(kGreenThemeColor);
+                            appointmentsToday.add(order.get('toName'));
+                            cardColor.add(kPureWhiteColor);
+                            phoneCircleColor.add(kAppPinkColor);
+                            textColor.add(kPureWhiteColor);
+                            datesColor.add(kAppPinkColor);
+                          }
+                          else {
+                            bellOpacity.add(0.0);
+                            onlineStatusColour.add(kAppPinkColor);
+                            cardColor.add(kPlainBackground);
+                            phoneCircleColor.add(kBlueDarkColorOld);
+                            textColor.add(kBlack);
+                            datesColor.add(kBeigeColor);
+                          }
                         }
                       }
-
                     }
                   }
                 }
@@ -258,9 +258,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                           return Stack(children: [
                             GestureDetector(
                               onTap: () {
-                                //  Provider.of<BeauticianData>(context, listen: false).changeOrderDetails(createdBy[index], location[index], idList[index], createdDate[index], taskList[index], orderContents[index], orderStatus[index], customerPhone[index], totalBill[index].toDouble(), bookingFee[index].toDouble(), dueDate[index]);
-                                //  showDialogFunc(context, orderStatus[index], location[index], createdBy[index], idList[index], orderContents[index], taskList[index], createdDate[index] );
-                                showDialog(
+                                    showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return GestureDetector(
@@ -272,89 +270,66 @@ class _TasksWidgetState extends State<TasksWidget> {
                                               child: Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
+
                                                 children: [
+                                                  Container(
+                                                      width: 500,
+                                                      child: activeDatesWidget(taskDates: taskDates, index: index, datesColor: datesColor, textColor: textColor, taskCompleted: completedTasks, idList: idList, mainPage: false, )),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             15.0),
-                                                    child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color:
-                                                                kPlainBackground,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10))),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Text(
-                                                            '${taskList[index]}',
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            style: kNormalTextStyleDark
-                                                                .copyWith(
-                                                                    color:
-                                                                        kBlack,
-                                                                    fontSize:
-                                                                        20),
-                                                          ),
-                                                        )),
+                                                    child: Stack(
+                                                      children: [
+
+                                                        Container(
+                                                            decoration:const BoxDecoration(
+                                                                color:
+                                                                    kPlainBackground,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .all(Radius
+                                                                            .circular(
+                                                                                10))),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Text(
+                                                                '${taskList[index]}',
+                                                                textAlign: TextAlign
+                                                                    .center,
+                                                                style: kNormalTextStyleDark
+                                                                    .copyWith(
+                                                                        color:
+                                                                            kBlack,
+                                                                        fontSize:
+                                                                            20),
+                                                              ),
+                                                            )),
+                                                        Positioned(
+                                                          right: 5,
+                                                          top: 5,
+                                                          child:  GestureDetector(
+                                                            onTap: (){
+                                                              print("Edit Button Pressed");
+                                                            },
+                                                            child: CircleAvatar(
+                                                                backgroundColor: kBlueDarkColor,
+                                                                child: Icon(Icons.edit, color: kPureWhiteColor,)),
+                                                          ),)
+                                                      ],
+                                                    ),
                                                   ),
                                                   kLargeHeightSpacing,
                                                   kLargeHeightSpacing,
                                                   kLargeHeightSpacing,
-                                                  SliderButton(
-                                                    action: () async {
-                                                      // changeOrderStatus();
-                                                      Navigator.pop(context);
-                                                      CommonFunctions()
-                                                          .updateDocumentFromServer(
-                                                              idList[index],
-                                                              "tasks",
-                                                              "status",
-                                                              true);
-                                                      // print(time);
-                                                      // Navigator.pushNamed(context, AppointmentSummary.id);
-                                                    },
 
-                                                    ///Put label over here
-                                                    label: Text(
-                                                      "Mark Task as Done",
-                                                      style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 17),
-                                                    ),
-                                                    icon: Icon(
-                                                      Iconsax.tick_circle,
-                                                      color: kPureWhiteColor,
-                                                      size: 30,
-                                                    ),
-
-                                                    //Put BoxShadow here
-                                                    boxShadow: BoxShadow(
-                                                      color: Colors.black,
-                                                      blurRadius: 4,
-                                                    ),
-
-                                                    width: 250,
-                                                    radius: 100,
-                                                    buttonColor: kAppPinkColor,
-                                                    backgroundColor:
-                                                        kBiegeThemeColor,
-                                                    highlightedColor:
-                                                        Colors.black,
-                                                    baseColor: kAppPinkColor,
-                                                  ),
                                                 ],
                                               )));
                                     });
                               },
-                              child: taskContainers(cardColor: cardColor, fromList: fromList, employeeId: employeeId, createdBy: createdBy, textColor: textColor, taskList: taskList, taskDates: taskDates, datesColor: datesColor, index: index,),
+                              child: taskContainers(cardColor: cardColor, fromList: fromList, employeeId: employeeId, createdBy: createdBy, textColor: textColor, taskList: taskList, taskDates: taskDates, datesColor: datesColor, index: index, completedTasks: completedTasks, idList: idList,),
                             ),
                             Positioned(
                               left: 10,
@@ -392,6 +367,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                                     height: 30),
                               ),
                             ),
+
                           ]);
                         },
                         staggeredTileBuilder: (index) => StaggeredTile.fit(1));
@@ -408,32 +384,32 @@ class taskContainers extends StatelessWidget {
     required this.cardColor,
     required this.fromList,
     required this.employeeId,
+    required this.idList,
     required this.createdBy,
     required this.textColor,
     required this.taskList,
     required this.taskDates,
+    required this.completedTasks,
     required this.datesColor,
     required this.index,
+
   });
 
   final List cardColor;
+  final List idList;
   final List fromList;
   final String employeeId;
   final List createdBy;
   final List textColor;
   final List taskList;
   final List taskDates;
+  final List completedTasks;
   final List datesColor;
   final int index;
 
   @override
   Widget build(BuildContext context) {
-    return
-
-      Provider.of<StyleProvider>(context).kdsMode == false ?
-      Container(
-      margin: EdgeInsets.only(
-          top: 10, right: 0, left: 0, bottom: 3),
+    return Provider.of<StyleProvider>(context).kdsMode == false ? Container(margin: const EdgeInsets.only(top: 10, right: 0, left: 0, bottom: 3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: cardColor[index],
@@ -441,7 +417,7 @@ class taskContainers extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             //height: 170,
             child: Column(
               mainAxisAlignment:
@@ -482,57 +458,8 @@ class taskContainers extends StatelessWidget {
                             fontWeight:
                                 FontWeight.bold)),
                 kSmallHeightSpacing,
-                SizedBox(
-                  height: 30,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount:
-                        taskDates[index].length,
-                    itemBuilder: (context, i) {
-                      return Padding(
-                        padding:
-                            const EdgeInsets.only(
-                                right: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: datesColor[index],
-                            borderRadius:
-                                BorderRadius.circular(
-                                    10),
-                          ),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.all(
-                                    8.0),
-                            child: Text(
-                              '${DateFormat('d-MMM-yy').format(taskDates[index][i])}',
-                              style:
-                                  kNormalTextStyleDark
-                                      .copyWith(
-                                color:
-                                    textColor[index],
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                activeDatesWidget(taskDates: taskDates, index: index, datesColor: datesColor, textColor: textColor, taskCompleted: completedTasks, idList: idList, mainPage: true,),
                 const DividingLine(),
-                // fromList[index] == employeeId
-                //     ? Text(
-                //         statusList[index],
-                //         style: kNormalTextStyleDark
-                //             .copyWith(
-                //                 color:
-                //                     textColor[index]),
-                //       )
-                //     : SizedBox(),
-
-                // Text('Bill : ${formatter.format(bookingFee[index])} Ugx', style: kNormalTextStyleDark.copyWith(color: textColor[index]),),
                 kLargeHeightSpacing,
                 kLargeHeightSpacing,
               ],
@@ -551,37 +478,154 @@ class taskContainers extends StatelessWidget {
         child: Column(
           children: [
             SerratedTicket(orderDetails: taskList[index])
-            // Container(
-            //   padding: EdgeInsets.all(10),
-            //   //height: 170,
-            //   child: Column(
-            //     mainAxisAlignment:
-            //     MainAxisAlignment.start,
-            //     crossAxisAlignment:
-            //     CrossAxisAlignment.start,
-            //     children: [
-            //
-            //       Text(
-            //         taskList[index],
-            //         style:
-            //         kNormalTextStyleDark.copyWith(
-            //           color: textColor[index],
-            //           fontSize: 20
-            //         ),
-            //       ),
-            //
-            //       const DividingLine(),
-            //
-            //
-            //        kLargeHeightSpacing,
-            //        kLargeHeightSpacing,
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       )
     ;
+  }
+}
+
+class activeDatesWidget extends StatelessWidget {
+  const activeDatesWidget({
+    super.key,
+    required this.taskDates,
+    required this.idList,
+    required this.taskCompleted,
+    required this.index,
+    required this.datesColor,
+    required this.textColor,
+    required this.mainPage,
+
+    
+  });
+
+  final List taskDates;
+  final List taskCompleted;
+  final List idList;
+  final int index;
+  final List datesColor;
+  final List textColor;
+  final bool mainPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 30,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount:
+            taskDates[index].length,
+        itemBuilder: (context, i) {
+          return Padding(
+            padding:
+                const EdgeInsets.only(
+                    right: 8.0),
+            child: GestureDetector(
+              onTap: () {
+              if(taskCompleted[index][i] == false){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Mark Task as Done?",textAlign: TextAlign.center,),
+                      content: Text("Do you want to mark this task as done on ${DateFormat('d, MMMM, yyyy').format(taskDates[index][i])}?"),
+                      actions: [
+                        TextButton(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            Navigator.pop(context); // Close the dialog
+                          },
+                        ),
+                        TextButton(
+                          child: Text("Confirm"),
+                          onPressed: () {
+                            var changedTaskList = taskCompleted[index];
+                            changedTaskList[i] = true;
+                            CommonFunctions()
+                                .updateDocumentFromServer(
+                                idList[index], "tasks", "completed", changedTaskList);
+                            if(mainPage == true){
+                              Navigator.pop(context);
+                            }else {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            }
+                            // Close the dialog
+                            // Navigator.pop(context); // Close the original context (assuming this is in a widget)
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Remove this Task from Completed?",textAlign: TextAlign.center,),
+                      content: Text("Do you want to change this task on ${DateFormat('d, MMMM, yyyy').format(taskDates[index][i])} to NOT DONE?"),
+                      actions: [
+                        TextButton(
+                          child: Text("Cancel"),
+                          onPressed: () {
+                            Navigator.pop(context); // Close the dialog
+                          },
+                        ),
+                        TextButton(
+                          child: Text("Confirm"),
+                          onPressed: () {
+                            var changedTaskList = taskCompleted[index];
+                            changedTaskList[i] = false;
+                            CommonFunctions()
+                                .updateDocumentFromServer(
+                                idList[index], "tasks", "completed", changedTaskList);
+                            if(mainPage == true){
+                              Navigator.pop(context);
+                            }else {
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            }// Close the dialog
+                            // Navigator.pop(context); // Close the original context (assuming this is in a widget)
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: taskCompleted[index][i] == false?datesColor[index]:kGreenThemeColor,
+                  borderRadius:
+                      BorderRadius.circular(
+                          10),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.all(
+                          8.0),
+                  child: taskCompleted[index][i] == false? Text(
+                    '${DateFormat('d-MMM-yy').format(taskDates[index][i])}',
+                    style: kNormalTextStyleDark.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold,),
+                  ):Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('${DateFormat('d').format(taskDates[index][i])}th Done',style: kNormalTextStyleDark.copyWith(color: textColor[index], fontWeight: FontWeight.bold)),
+                      kSmallWidthSpacing,
+                      Icon(Icons.check_circle_outline, color:textColor[index],size: 15,)
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -643,7 +687,7 @@ class SerratedTicket extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             'Order',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -651,12 +695,7 @@ class SerratedTicket extends StatelessWidget {
               fontSize: 18.0,
             ),
           ),
-          SizedBox(height: 8.0),
-          CustomPaint(
-            size: Size(50, 20),
-            painter: SerratedPainter(),
-          ),
-          SizedBox(height: 8.0),
+          kLargeHeightSpacing,
           Text(
             orderDetails,
             textAlign: TextAlign.center,

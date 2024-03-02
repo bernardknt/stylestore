@@ -10,4 +10,13 @@ class Supplier {
     required this.paymentInfo,
     required this.phoneNumber,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'address': address,
+      'paymentInfo': paymentInfo,
+      'phoneNumber': phoneNumber
+    };
+  }
 }

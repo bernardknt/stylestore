@@ -19,6 +19,7 @@ import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../payment_options.dart';
+import '../../utilities/constants/word_constants.dart';
 import '../../widgets/modalButton.dart';
 
 
@@ -37,6 +38,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   var expenseQuantity = "1";
   var expenseOrderNumber = "";
   var originalBasketToPost = [];
+  String? selectedDepartment;
 
   File? image;
   var imageUploaded = false;
@@ -184,14 +186,6 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                           keyboardType: TextInputType.number,
                           onChanged: (value){
                             expenseCost = value;
-                            // print(value);
-                            // if (value!= ""){
-                            //   expenseCost = value;
-                            //   // Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(int.parse(value));
-                            // } else {
-                            //  // Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(int.parse("0"));
-                            // }
-
                           },
                         ),
                       ),
@@ -203,6 +197,34 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                   expenseName = value ;
 
                 },),
+                kLargeHeightSpacing,
+                Row(
+                  children: [
+                    Text(
+                      'Department *',
+                      style: kNormalTextStyle.copyWith(
+                          color: kBlack,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    kSmallWidthSpacing,
+                    DropdownButton<String>(
+                      value:
+                      selectedDepartment, // The currently selected department
+                      items: departments
+                          .map((department) => DropdownMenuItem(
+                        value: department,
+                        child: Text(department),
+                      ))
+                          .toList(),
+                      onChanged: (newDepartment) => setState(() =>
+                      selectedDepartment =
+                          newDepartment), // Update the selected department when a new one is chosen
+                      hint: Text(
+                          'Select Department'), // Placeholder text before a department is selected
+                    ),
+                  ],
+                ),
                 kLargeHeightSpacing,
                 InputFieldWidget(controller: expenseQuantity,labelText:' Expense Quantity' ,hintText: '', keyboardType: TextInputType.number, onTypingFunction: (value){
                   expenseQuantity = value ;
@@ -277,12 +299,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
                   ),
                 ),
-                // Container(
-               //     height: 50,
-               //     child: InputFieldWidget(hintText: "Transport", onTypingFunction:(value){}, keyboardType: TextInputType.text, labelText: " Expense")),
-             //  Text('${Provider.of<StyleProvider>(context, listen: false).invoicedCustomer}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-               // Text('Invoiced Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedTotalPrice)} Ugx',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-             //   Text('Paid Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedPaidPrice)} Ugx',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
+
 
 
               ],

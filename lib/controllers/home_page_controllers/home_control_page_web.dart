@@ -11,6 +11,7 @@ import 'package:stylestore/screens/Documents_Pages/documents.dart';
 import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos2.dart';
+import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import 'package:stylestore/screens/wallets_page.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../screens/documents.dart';
@@ -195,7 +196,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 label: 'Store',
                 onTap: () {
                   setState(() {
-                    _selectedWidget = POS();
+                    _selectedWidget = POS(showBackButton: false,);
                   });
                 },
                 // page: EmployeesPage(),
@@ -215,7 +216,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 label: 'Suppliers',
                 onTap: () {
                   setState(() {
-                    _selectedWidget = EmployeesPage();
+                    _selectedWidget = SuppliersPage();
                   });
                 },
                 // page: EmployeesPage(),
@@ -235,7 +236,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 label: 'Marketing',
                 onTap: () {
                   setState(() {
-                    _selectedWidget = MessageHistoryPage();
+                    _selectedWidget = MessageHistoryPage(showBackButton: false,);
                   });
                 },
                 // page: AttendancePage(),
@@ -252,18 +253,6 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                   });
                 },
               ),
-              // SidebarXItem(
-              //   label: 'Analytics',
-              //   // page: ReportsPage(),
-              //   icon: Icons.pie_chart,
-              //   onTap: () {
-              //     setState(() {
-              //       _selectedWidget = AnalysisPage() ;
-              //
-              //     });
-              //   },
-              // ),
-
             ],
           ),
           Expanded(

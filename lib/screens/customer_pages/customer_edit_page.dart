@@ -162,7 +162,7 @@ class _CustomerEditPageState extends State<CustomerEditPage> {
                             controller: _btnController,
                             onPressed:
                                 () async {
-                              if ( preferences == '' || name == ''){
+                              if (  name == ''){
                                 _btnController.error();
                                 print("Prefs: $preferences , Name: $name, Location: $location, number: $phoneNumber, Note: $note");
                                 showDialog(context: context, builder: (BuildContext context){

@@ -7,9 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
-import 'package:stylestore/model/common_functions.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+// import 'package:stylestore/model/common_functions.dart';
+// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+//
 import '../Utilities/constants/user_constants.dart';
 
 class DocumentsPage extends StatefulWidget {
@@ -146,15 +146,15 @@ class _DocumentsPageState extends State<DocumentsPage> {
                     return Stack(children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SfPdfViewer.network(
-                                urlList[index],
-
-                              ),
-                            ),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => SfPdfViewer.network(
+                          //       urlList[index],
+                          //
+                          //     ),
+                          //   ),
+                          // );
                         },
                         child: Container(
                           margin: EdgeInsets.only(

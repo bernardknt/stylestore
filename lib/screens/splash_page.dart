@@ -111,107 +111,7 @@ class _SplashPageState extends State<SplashPage> {
     });
   }
 
-  // _checkAppVersion() async {
-  //   final newVersion = NewVersion(
-  //     iOSId: "com.kingdomfinanciers.stylestore.stylestore",
-  //     androidId: "com.kingdomfinanciers.stylestore.stylestore",
-  //   );
-  //   final status = await newVersion.getVersionStatus();
-  //   var latest = status!.localVersion;
-  //   if (status.canUpdate!) {
-  //
-  //     // Show bottom sheet for update
-  //     showModalBottomSheet(
-  //       context: context,
-  //       builder: (context) => BottomSheet(
-  //         onClosing: () {},
-  //         builder: (context) => Container(
-  //           padding: const EdgeInsets.all(20),
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             crossAxisAlignment: CrossAxisAlignment.stretch,
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: [
-  //               Text(
-  //                 "New Version Available",
-  //                 style: TextStyle(
-  //                   fontSize: 18,
-  //                   fontWeight: FontWeight.bold,
-  //                 ),
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //               SizedBox(height: 20),
-  //               Text(
-  //                 "We have been hard at work to bring you an amazing new version of our app!\nGet version: ${status.storeVersion} From ${status.localVersion}",
-  //                 textAlign: TextAlign.center,
-  //               ),
-  //               SizedBox(height: 20),
-  //               ElevatedButton(
-  //                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(kGreenThemeColor)),
-  //                 onPressed: () {
-  //                   if (Platform.isAndroid) {
-  //                     newVersion.launchAppStore("https://apps.apple.com/us/app/open-e/id6443682456");
-  //                   } else if (Platform.isIOS) {
-  //                     newVersion.launchAppStore("https://play.google.com/store/apps/details?id=com.kingdomfinanciers.stylestore.stylestore");
-  //                   } else {
-  //                     print("Unknown OS");
-  //                   }
-  //                   newVersion.launchAppStore("https://apps.apple.com/us/app/open-e/id6443682456");
-  //                   Navigator.pop(context); // Close the bottom sheet
-  //                 },
-  //                 child: Text("Update", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-  //               ),
-  //               SizedBox(height: 10),
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pop(context); // Close the bottom sheet
-  //                   // defaultsInitiation();
-  //                 },
-  //                 child: Text("Cancel"),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     // defaultsInitiation(); // Continue with the normal flow if no update is needed
-  //   }
-  // }
 
-  Future deliveryStream() async {
-    var prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString(kStoreIdConstant)!;
-
-    var start = FirebaseFirestore.instance
-        .collection('medics')
-        .where('id', isEqualTo: id)
-        .snapshots()
-        .listen((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) async {
-        prefs.setString(kPhoneNumberConstant, doc['phone']);
-        prefs.setString(kImageConstant, doc['image']);
-        prefs.setDouble(kSmsAmount, doc['sms']);
-        Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
-            doc['active'],
-            doc['blackout'],
-            doc['clients'],
-            doc['close'],
-            doc['open'],
-            doc['doesMobile'],
-            doc['location'],
-            doc['modes'],
-            doc['phone'],
-            doc['name'],
-            doc['image'],
-            doc['transport']);
-      });
-
-      setState(() {});
-    });
-
-    return start;
-  }
 
   bool userLoggedIn = false;
   @override
@@ -219,7 +119,7 @@ class _SplashPageState extends State<SplashPage> {
     // TODO: implement initState
     super.initState();
     defaultsInitiation();
-    deliveryStream();
+    CommonFunctions().deliveryStream(context);
   }
 
   @override

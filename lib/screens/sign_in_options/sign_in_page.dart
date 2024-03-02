@@ -16,10 +16,12 @@ import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/sign_in_options/login_page.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';
+
 import 'package:uuid/uuid.dart';
 
 import '../../Utilities/constants/color_constants.dart';
-import '../../Utilities/constants/user_constants.dart';
+
+import '../../utilities/constants/user_constants.dart';
 import '../tasks_pages/tasks_widget.dart';
 
 
@@ -348,7 +350,9 @@ class _SignInUserPageState extends State<SignInUserPage> {
     CollectionReference userOrder = FirebaseFirestore.instance.collection('attendance');
     final prefs =  await SharedPreferences.getInstance();
     ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Welcome aboard $companyName, $name.')));
-
+    // This sets the current date time in shared preferences
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    prefs.setInt(kSignInTime, timestamp);
     String orderId = '${DateTime.now()}${uuid.v1().split("-")[0]}';
 
     try {

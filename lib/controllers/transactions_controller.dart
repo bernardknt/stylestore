@@ -63,14 +63,7 @@ class _TransactionsControllerState extends State<TransactionsController> {
               labelColor: kBlueDarkColorOld,
               unselectedLabelColor: kBlueDarkColorOld,
               tabs: [
-                // ),),
-                // Tab(child: Column(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children:[
-                //       Icon(Icons.settings_input_antenna, size: 16,),
-                //       SizedBox(width: 4,),
-                //       Text('Online')]
-                // ),),
+
                 Tab(child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
@@ -17,15 +17,15 @@ class CompanyDocumentationWidget extends StatelessWidget {
         onTap: () async {
           final url = 'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf';
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SfPdfViewer.network(
-                url,
-
-              ),
-            ),
-          );
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => SfPdfViewer.network(
+          //       url,
+          //
+          //     ),
+          //   ),
+          // );
         },
         child: Row(
           children: [

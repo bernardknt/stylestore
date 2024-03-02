@@ -71,6 +71,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       'dueDate':
           Provider.of<StyleProvider>(context, listen: false).invoicedDate,
       'selectedDates': _selectedDates,
+      'completed': List.filled(_selectedDates.length, false),
       'status': false,
       'id': orderId,
       'storeId': prefs.getString(kStoreIdConstant),

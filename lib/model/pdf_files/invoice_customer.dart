@@ -8,6 +8,13 @@ class Customer {
     required this.address,
     required this.phone,
   });
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'address': address,
+      'phone': phone
+    };
+  }
 }
 
 class InvoiceTemplate {
@@ -26,12 +33,12 @@ class InvoiceTemplate {
 
 class Receipt {
   final double amount;
-
-
-
   const Receipt({
     required this.amount,
-
-
   });
+  Map<String, dynamic> toJson() {
+    return {
+      'amount': amount
+    };
+  }
 }

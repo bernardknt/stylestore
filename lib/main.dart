@@ -48,6 +48,8 @@ import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
 import 'package:stylestore/screens/sign_in_options/sign_in_page.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
 import 'package:stylestore/screens/store_setup.dart';
+import 'package:stylestore/screens/suppliers/supplier_form.dart';
+import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import 'package:stylestore/screens/team_pages/team_page.dart';
 import 'package:stylestore/screens/transactions_online_page.dart';
 import 'package:stylestore/screens/calendar_pages/calendar_page.dart';
@@ -85,6 +87,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   if(kIsWeb){
     await Firebase.initializeApp(
@@ -200,8 +203,10 @@ class MyApp extends StatelessWidget {
           LoginPageNewWeb.id: (context) => LoginPageNewWeb(),
           DocumentsPage.id: (context) => DocumentsPage(),
           EmployeesPage.id: (context) => EmployeesPage(),
+          SuppliersPage.id: (context) => SuppliersPage(),
           WalletsPage.id: (context) => WalletsPage(),
           BioDataForm.id: (context) => BioDataForm(),
+          SupplierForm.id: (context) => SupplierForm(),
           EditProfilePage.id: (context) => EditProfilePage(),
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),

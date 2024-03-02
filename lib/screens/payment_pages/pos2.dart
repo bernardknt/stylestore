@@ -33,6 +33,11 @@ import '../barcode_page.dart';
 
 class POS extends StatefulWidget {
   static String id = 'pos_widget';
+
+  final bool showBackButton;
+
+  const POS({Key? key, this.showBackButton = true}) : super(key: key);
+
   @override
   State<POS> createState() => _POSState();
 }
@@ -244,12 +249,13 @@ class _POSState extends State<POS> {
   @override
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context);
-
     return Scaffold(
+
       backgroundColor: kBackgroundGreyColor,
       appBar: AppBar(
         foregroundColor: kBlack,
         backgroundColor: kPlainBackground,
+        automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
         title: permissionsMap['sales'] == false
             ? Container()

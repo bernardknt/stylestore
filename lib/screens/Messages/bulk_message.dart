@@ -1,20 +1,15 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/screens/customer_pages/customer_data.dart';
-import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
-import '../../widgets/locked_widget.dart';
-import '../../widgets/modalButton.dart';
 import '../../widgets/rounded_icon_widget.dart';
-import '../employee_pages/employee_details.dart';
-import '../team_pages/employee_permissions_page.dart';
+import '../MobileMoneyPages/make_custom_mobile_money_payment.dart';
 
 
 class BulkSmsPage extends StatefulWidget {
@@ -126,17 +121,134 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
 
 
 
-
-
   @override
   Widget build(BuildContext context) {
     var beauticianDataListen = Provider.of<BeauticianData>(context);
+    var beauticianData = Provider.of<BeauticianData>(context, listen: false);
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
+    var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
     return Scaffold(
       // floatingActionButtonLocation: FloatingActionButtonLocation.,
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: kAppPinkColor,
         onPressed: () {
+          print(Provider.of<StyleProvider>(context, listen: false).bulkNumbers);
+          print(CommonFunctions().processPhoneNumbers(Provider.of<StyleProvider>(context, listen: false).bulkNumbers));
 
+          // If the store balance is less than the cost of the sms going out then
+          if(styleDataListen.storeSmsBalance< 40 * CommonFunctions().processPhoneNumbers(styleData.bulkNumbers).length)
+            {
+              showDialog(context: context, builder: (BuildContext context) {
+                return
+                  Material(
+                    color: Colors.transparent,
+
+                    child: Stack(
+                      children: [
+
+                        CupertinoAlertDialog(
+                          title: const Text('LOW SMS BALANCE'),
+                          content: Column(
+                            children: [
+                              Text("Oops looks like your SMS Balance is not enough\n${40 *
+                                  CommonFunctions()
+                                      .processPhoneNumbers(styleData.bulkNumbers)
+                                      .length} Ugx is the cost for sending this message to ${CommonFunctions()
+                                  .processPhoneNumbers(styleData.bulkNumbers)
+                                  .length} Numbers\n_________________________\nYour account balance is ${styleData.storeSmsBalance} Ugx ",
+                                style: kNormalTextStyle.copyWith(color: kBlack),),
+
+                            ],
+                          ),
+                          actions: [
+                            CupertinoDialogAction(isDestructiveAction: true,
+                                onPressed: () {
+                                  // _btnController.reset();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel')),
+                            CupertinoDialogAction(isDefaultAction: true,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      context: context,
+                                      builder: (context) {
+                                        return Scaffold(
+                                            appBar: AppBar(
+                                              elevation: 0,
+                                              backgroundColor: kPureWhiteColor,
+                                              automaticallyImplyLeading: false,
+                                            ),
+                                            body: CustomMobileMoneyPage());
+                                      });
+
+                                },
+                                child: const Text('Load Bundles')),
+
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+              });
+
+            }else {
+            showDialog(context: context, builder: (BuildContext context) {
+              return
+                Material(
+                  color: Colors.transparent,
+
+                  child: Stack(
+                    children: [
+
+                      CupertinoAlertDialog(
+                        title: const Text('SENDING MESSAGE'),
+                        content: Column(
+                          children: [
+                            Text("${beauticianDataListen
+                                .textMessage}\n_________________________\nTo: ${CommonFunctions()
+                                .processPhoneNumbers(styleData.bulkNumbers)
+                                .length} Numbers\n_________________________\n@ ${40 *
+                                CommonFunctions()
+                                    .processPhoneNumbers(styleData.bulkNumbers)
+                                    .length} Ugx",
+                              style: kNormalTextStyle.copyWith(color: kBlack),),
+
+                          ],
+                        ),
+                        actions: [
+                          CupertinoDialogAction(isDestructiveAction: true,
+                              onPressed: () {
+                                // _btnController.reset();
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel')),
+                          CupertinoDialogAction(isDefaultAction: true,
+                              onPressed: () {
+                                Provider.of<BeauticianData>(
+                                    context, listen: false).setLottieImage(
+                                    'images/sending.json', "Message Sent");
+                                CommonFunctions().sendBulkSms(
+                                    CommonFunctions().processPhoneNumbers(
+                                        styleData.bulkNumbers),
+                                    beauticianDataListen.textMessage,
+                                    "Frutsexpress", "0");
+
+                                // This function sends the message to the server and records the list of those numbers sent.
+                                final double costOfMessages = 40.0 * CommonFunctions().processPhoneNumbers(styleData.bulkNumbers).length;
+                                CommonFunctions().uploadMessageToServer(context, "Bulk Numbers", true,CommonFunctions().processPhoneNumbers(styleData.bulkNumbers), costOfMessages);
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Send')),
+
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+            });
+          }
         },
         label: Text("Send", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
 
@@ -279,14 +391,20 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
                   ),
                   Positioned(
                     right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: kCustomersButtonColor,
-                          borderRadius: BorderRadius.all(Radius.circular(5))
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Text("Select All", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12),),
+                    child: GestureDetector(
+                      onTap: (){
+
+                        styleDataListen.addEntireContactToSmsList(filteredCustomers);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: kCustomersButtonColor,
+                            borderRadius: BorderRadius.all(Radius.circular(5))
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text("Select All", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12),),
+                        ),
                       ),
                     )
                   ),
@@ -310,11 +428,11 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
                         "${filteredCustomers[index].fullNames}",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      trailing: Provider.of<StyleProvider>(context, listen: true).bulkNumbers.contains(filteredCustomers[index].phone)?Icon(Icons.check_circle_outline, color: kGreenThemeColor,size: 14,):Icon(Icons.add, size: 14,),
+                      trailing:styleData.bulkNumbers.contains(filteredCustomers[index].phone)?Icon(Icons.check_circle_outline, color: kGreenThemeColor,size: 14,):Icon(Icons.add, size: 14,),
                       subtitle: Text('Phone: ${filteredCustomers[index].phone}'),
                       onTap: () {
                         // Handle employee item tap
-                        Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(filteredCustomers[index].phone);
+                        styleDataListen.addBulkSmsList(filteredCustomers[index].phone);
                       },
                     ),
                   );

@@ -337,17 +337,12 @@ class _BioDataFormState extends State<BioDataForm> {
                     ),
                     // TextForm('Other Names', otherNamesController),
                     TextForm(label:'Position',controller: positionController),
-                    Row(
-                      children: [
-                        Text(
-                          'Department *',
-                          style: kNormalTextStyle.copyWith(
-                              color: kBlack,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        kMediumWidthSpacing,
-                      ],
+                    Text(
+                      'Department *',
+                      style: kNormalTextStyle.copyWith(
+                          color: kBlack,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                     ),
                     DropdownButton<String>(
                       value:

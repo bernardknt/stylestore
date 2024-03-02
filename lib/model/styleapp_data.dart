@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:stylestore/model/pdf_files/invoice.dart';
 import 'package:stylestore/model/stock_items.dart';
+import 'package:stylestore/screens/customer_pages/customer_data.dart';
 import '../Utilities/constants/color_constants.dart';
 import '../utilities/basket_items.dart';
 import '../utilities/customer_items.dart';
@@ -19,7 +20,7 @@ class StyleProvider extends ChangeNotifier{
   }
   ;
 
-  List  bulkNumbers = [];
+  List<String>  bulkNumbers = [];
 
   String userName = '';
   String userEmail = '';
@@ -53,6 +54,8 @@ class StyleProvider extends ChangeNotifier{
   String beauticianName = '';
   String beauticianImageUrl = '';
   int beauticianTransport = 0;
+  double storeSmsBalance = 0.0;
+
   List beauticianClients = [];
   List beauticianServices = [];
   List beauticianOperationModes = [];
@@ -160,6 +163,35 @@ class StyleProvider extends ChangeNotifier{
     }
     notifyListeners();
   }
+
+  void clearBulkSmsList() {
+    bulkNumbers.clear();
+    notifyListeners();
+  }
+
+  void addEntireContactToSmsList(List<AllCustomerData> value) {
+    for (AllCustomerData contact in value) {
+      if (bulkNumbers.contains(contact.phone)) {
+        bulkNumbers.remove(contact.phone);
+      } else {
+        bulkNumbers.add(contact.phone);
+      }
+    }
+    notifyListeners();
+  }
+
+  void addNormalContactToSmsList(List value) {
+    for (String contact in value) {
+      if (bulkNumbers.contains(value)) {
+        // print( "$value FOUND");
+        continue;
+      } else {
+        bulkNumbers.add(contact);
+      }
+    }
+    notifyListeners();
+  }
+
 
   void enterKDSmode (value){
     kdsMode = value;
@@ -536,6 +568,10 @@ class StyleProvider extends ChangeNotifier{
     reviewsNumber = newRatingNumber;
     notifyListeners();
   }
+  void setStoreName (name){
+    beauticianName = name;
+    notifyListeners();
+  }
   void resetRatingsNumber(){
     reviewsNumber = 0;
     notifyListeners();
@@ -567,7 +603,7 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport){
+  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport, smsBalance){
     isActive = active;
     calendarBlackouts = blackoutDates;
     beauticianClients = beauticianImages;
@@ -580,7 +616,9 @@ class StyleProvider extends ChangeNotifier{
     beauticianName = name;
     beauticianImageUrl = image;
     beauticianTransport = transport;
-    print("KOKOKOKOKO This code run");
+    storeSmsBalance = smsBalance;
+
+    print("New value Updated on store");
     notifyListeners();
   }
 
