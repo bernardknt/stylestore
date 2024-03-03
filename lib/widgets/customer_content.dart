@@ -37,10 +37,12 @@ class CustomerContentsWidget extends StatelessWidget {
       ),
       child: ListTile(
         // leading: Text('$orderIndex', style: kNormalTextStyle.copyWith(fontSize: 8),),
-        title: Text('$optionName', style:kHeading2TextStyleBold.copyWith(color: kBlack,fontSize: fontSize) ,),
-        // subtitle: Text('$productDescription', style:kHeading2TextStyleBold.copyWith(color: kFontGreyColor,fontSize: 15) ,),
-        trailing: Text(optionValue, style: kHeading2TextStyleBold.copyWith(color: kBlack,fontSize: fontSize) ,),
-
+        title: Row(
+          children: [
+            Text('$optionName', style:kHeading2TextStyleBold.copyWith(color: kBlack,fontSize: fontSize, fontWeight: FontWeight.w800) ,),
+            Text(" x $optionValue", style: kHeading2TextStyleBold.copyWith(color: kBlack,fontSize: fontSize) ,),
+          ],
+        ),
       ),
     );
   }

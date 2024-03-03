@@ -11,12 +11,14 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/customer_pages/add_customers_page.dart';
 import 'package:stylestore/screens/customer_pages/customer_edit_page.dart';
 import 'package:stylestore/screens/customer_pages/customer_transactions.dart';
+import 'package:stylestore/screens/customer_pages/customer_transactions_web.dart';
 import 'package:stylestore/screens/customer_pages/search_detailed_customer.dart';
 
 import 'package:stylestore/utilities/constants/color_constants.dart';
@@ -25,6 +27,7 @@ import 'package:stylestore/widgets/TicketDots.dart';
 import 'package:stylestore/widgets/customer_content.dart';
 import 'package:stylestore/widgets/rounded_buttons.dart';
 import '../../Utilities/InputFieldWidget.dart';
+import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../utilities/constants/icon_constants.dart';
 import '../../utilities/constants/user_constants.dart';
 import 'package:intl/intl.dart';
@@ -407,332 +410,425 @@ class _CustomerPageState extends State<CustomerPage> {
                           itemCount: id.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onLongPress: () {
-                                  Provider.of<BeauticianData>(context,
-                                      listen: false)
-                                      .setClientName(
-                                      customerNameList[index],
-                                      id[index]);
-                                  Navigator.pushNamed(
-                                      context,
-                                      CustomerTransactionsProducts
-                                          .id);
-                                },
-                                onTap: () {
-                                  storeData
-                                      .changeCustomerDetailsVisibility(
-                                      index);
-                                  showModalBottomSheet(
-                                      context: context,
-                                      builder:
-                                          (BuildContext context) {
-                                        return Container(
-                                          color: Color(0xFF292929)
-                                              .withOpacity(0.6),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                                color:
-                                                kPureWhiteColor,
-                                                borderRadius:
-                                                BorderRadius.only(
-                                                    topLeft: Radius
-                                                        .circular(
-                                                        30),
-                                                    topRight: Radius
-                                                        .circular(
-                                                        30))),
-                                            child: Padding(
-                                              padding:
-                                              const EdgeInsets
-                                                  .only(
-                                                  top: 20.0,
-                                                  bottom: 50,
-                                                  left: 20),
-                                              child: Column(
-                                                mainAxisSize:
-                                                MainAxisSize.min,
-                                                children: [
-                                                  buildButton(
-                                                      context,
-                                                      'Edit ${customerNameList[index]}',
-                                                      Icons.edit,
-                                                          () async {
-                                                        Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(
-                                                            customerNameList[
-                                                            index],
-                                                            phoneNumberList[
-                                                            index],
-                                                            infoList[
-                                                            index],
-                                                            items[index]
-                                                                .toString()
-                                                                .replaceAll(
-                                                                '{',
-                                                                '')
-                                                                .replaceAll(
-                                                                '}',
-                                                                ''),
-                                                            photoImage[
-                                                            index],
-                                                            locationList[
-                                                            index],
-                                                            id[index]);
-                                                        Navigator.pop(
-                                                            context);
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                    CustomerEditPage()));
-                                                      }),
-                                                  SizedBox(
-                                                      height: 16.0),
-                                                  buildButton(
-                                                      context,
-                                                      'Buying History of ${customerNameList[index]}',
-                                                      Icons.send,
-                                                          () async {
-                                                        Navigator.pop(
-                                                            context);
+                            return LayoutBuilder(
+                              builder: (BuildContext context, BoxConstraints constraints){
+                                if (constraints.maxWidth<screenDisplayWidth){
+                                  return
+                                    GestureDetector(
 
-                                                        Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(
-                                                            customerNameList[
-                                                            index],
-                                                            phoneNumberList[
-                                                            index],
-                                                            infoList[
-                                                            index],
-                                                            items[index]
-                                                                .toString()
-                                                                .replaceAll(
-                                                                '{',
-                                                                '')
-                                                                .replaceAll(
-                                                                '}',
-                                                                ''),
-                                                            photoImage[
-                                                            index],
-                                                            locationList[
-                                                            index],
-                                                            id[index]);
-                                                        Provider.of<BeauticianData>(
-                                                            context,
-                                                            listen:
-                                                            false)
-                                                            .setClientName(
-                                                            customerNameList[
-                                                            index],
-                                                            id[index]);
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            CustomerTransactionsProducts
-                                                                .id);
-                                                      }),
-                                                  items.length != 0
-                                                      ? buildButton(
-                                                      context,
-                                                      '${customerNameList[index]} Extra Details',
-                                                      Icons
-                                                          .person_add,
-                                                          () async {
-                                                        Navigator.pop(
-                                                            context);
-                                                        showDialog(
-                                                            context:
-                                                            context,
-                                                            builder:
-                                                                (BuildContext
-                                                            context) {
-                                                              return GestureDetector(
-                                                                onTap:
-                                                                    () {
-                                                                  Navigator.pop(context);
-                                                                },
-                                                                child:
-                                                                Material(
-                                                                  color: Colors.transparent,
-                                                                  child: Stack(
-                                                                    children: [
-                                                                      CupertinoAlertDialog(
-                                                                        title: Column(
-                                                                          children: [
-                                                                            Text(customerNameList[index]),
-                                                                            Text(
-                                                                              "Key Details",
-                                                                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        content: Container(
-                                                                          width: 100,
-                                                                          height: 300,
-                                                                          // color: Colors.teal,
-                                                                          child: ListView.builder(
-                                                                              shrinkWrap: true,
-                                                                              itemCount: items[index].keys.toList().length,
-                                                                              itemBuilder: (context, i) {
-                                                                                return CustomerContentsWidget(orderIndex: i + 1, optionName: items[index].keys.toList()[i], optionValue: items[index].values.toList()[i]);
-                                                                              }),
-                                                                        ),
-                                                                        actions: [
-                                                                          CupertinoDialogAction(
-                                                                              isDestructiveAction: true,
-                                                                              onPressed: () {
-                                                                                // _btnController.reset();
-                                                                                Navigator.pop(context);
-                                                                              },
-                                                                              child: const Text('Cancel'))
-                                                                        ],
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            });
-                                                      })
-                                                      : Container(),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                },
-                                child: Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: Column(
-                                      children: [
-                                        TicketDots(
-                                          mainColor: kFaintGrey,
-                                          circleColor:
-                                          kPureWhiteColor,
-                                        ),
-                                        Stack(
-                                          children: [
-                                            ListTile(
-                                              //title: Text(itemName[index]),
-                                              leading: Text(
-                                                  '${index + 1}'),
-                                              title: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Text(
-                                                    capitalizeString(
-                                                        customerNameList[
-                                                        index]),
-                                                    style: kNormalTextStyleMoney
-                                                        .copyWith(
-                                                        fontSize:
-                                                        14),
-                                                  ),
-                                                  Text(
-                                                    '${phoneNumberList[index]}',
-                                                    style:
-                                                    kNormalTextStyleDark,
-                                                  ),
-                                                  Text(
-                                                    'Location: ${capitalizeString(locationList[index])}',
-                                                    style:
-                                                    kNormalTextStyleDark,
-                                                  ),
-                                                  Text(
-                                                    'Note: ${capitalizeString(infoList[index])}',
-                                                    style:
-                                                    kNormalTextStyleDark,
-                                                  ),
-                                                ],
-                                              ),
-                                              subtitle: phoneNumberList[index] !=
-                                                  ""? Padding(padding: const EdgeInsets.only(right: 80.0, top: 10), child: RoundedButtons(
-                                                        buttonColor:
-                                                        kBlueDarkColor,
-                                                        title:
-                                                        "Call",
-                                                        onPressedFunction:
-                                                            () {
-                                                          CommonFunctions()
-                                                              .callPhoneNumber(phoneNumberList[index]);
-                                                        },
-                                                        buttonHeight: 30,
+                                      onTap: ()
+                                      {
+                                        storeData.changeCustomerDetailsVisibility(index);
+                                        if (constraints.maxWidth <
+                                            screenDisplayWidth){
+                                          showModalBottomSheet(
+                                              context: context,
+                                              builder:
+                                                  (BuildContext context) {
+                                                return Container(
+                                                  color: Color(0xFF292929)
+                                                      .withOpacity(0.6),
+                                                  child: Container(
+                                                    decoration: const BoxDecoration(
+                                                        color:
+                                                        kPureWhiteColor,
+                                                        borderRadius:
+                                                        BorderRadius.only(
+                                                            topLeft: Radius
+                                                                .circular(
+                                                                30),
+                                                            topRight: Radius
+                                                                .circular(
+                                                                30))),
+                                                    child: Padding(
+                                                      padding:
+                                                      const EdgeInsets
+                                                          .only(
+                                                          top: 20.0,
+                                                          bottom: 50,
+                                                          left: 20),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                        MainAxisSize.min,
+                                                        children: [
+                                                          buildButton(context, 'Edit ${customerNameList[index]}', Icons.edit, () async {
+                                                                Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(customerNameList[index], phoneNumberList[index], infoList[index], items[index].toString().replaceAll('{', '').replaceAll('}', ''), photoImage[index], locationList[index], id[index]);
+                                                                Navigator.pop(context);
+                                                                Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerEditPage()));}), SizedBox(height: 16.0),
+                                                          buildButton(context, 'Buying History of ${customerNameList[index]}', Icons.send,
+                                                                  () async {
+                                                                Navigator.pop(context);
 
+                                                                Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(customerNameList[index], phoneNumberList[index], infoList[index], items[index].toString().replaceAll('{', '').replaceAll('}', ''), photoImage[index], locationList[index], id[index]);
+                                                                Provider.of<BeauticianData>(context, listen: false).setClientName(customerNameList[index], id[index]);
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(builder: (context) => SuperResponsiveLayout(mobileBody: CustomerTransactionsProducts(), desktopBody: CustomerTransactionsWeb())),
+                                                                );
+                                                              }),
+                                                          items.length != 0
+                                                              ? buildButton(
+                                                              context,
+                                                              '${customerNameList[index]} Extra Details',
+                                                              Icons
+                                                                  .person_add,
+                                                                  () async {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                showDialog(
+                                                                    context:
+                                                                    context,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                    context) {
+                                                                      return GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.pop(context);
+                                                                        },
+                                                                        child:
+                                                                        Material(
+                                                                          color: Colors.transparent,
+                                                                          child: Stack(
+                                                                            children: [
+                                                                              CupertinoAlertDialog(
+                                                                                title: Column(
+                                                                                  children: [
+                                                                                    Text(customerNameList[index]),
+                                                                                    Text(
+                                                                                      "Key Details",
+                                                                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
+                                                                                content: Container(
+                                                                                  width: 100,
+                                                                                  height: 300,
+                                                                                  // color: Colors.teal,
+                                                                                  child: ListView.builder(
+                                                                                      shrinkWrap: true,
+                                                                                      itemCount: items[index].keys.toList().length,
+                                                                                      itemBuilder: (context, i) {
+                                                                                        return CustomerContentsWidget(orderIndex: i + 1, optionName: items[index].keys.toList()[i], optionValue: items[index].values.toList()[i]);
+                                                                                      }),
+                                                                                ),
+                                                                                actions: [
+                                                                                  CupertinoDialogAction(
+                                                                                      isDestructiveAction: true,
+                                                                                      onPressed: () {
+                                                                                        // _btnController.reset();
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                      child: const Text('Cancel'))
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    });
+                                                              })
+                                                              : Container(),
+                                                        ],
                                                       ),
-                                              )
-                                                  : Container(),
-                                              // Text("${items[index].keys.toList()}", style: kNormalTextStyleMoney.copyWith(color: kFaintGrey)),
-                                              trailing: Container(
-                                                height: 70,
-                                                width: 70,
-                                                margin:
-                                                const EdgeInsets
-                                                    .only(
-                                                    top: 10,
-                                                    right: 0,
-                                                    left: 0,
-                                                    bottom: 3), decoration: BoxDecoration(borderRadius: BorderRadius.circular(25),
-                                                    image:
-                                                    DecorationImage(
-                                                      image: CachedNetworkImageProvider(
-                                                          photoImage[
-                                                          index]),
-                                                    )),
-                                              ),
-                                            ),
-                                            Positioned(
-                                                right: 10,
-                                                top: 5,
-                                                child:
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      CoolAlert.show(
-                                                          lottieAsset: 'images/question.json',
-                                                          context: context,
-                                                          type: CoolAlertType.success,
-                                                          text: "Are you sure you want to remove this from your customers list",
-                                                          title: "Remove Item?",
-                                                          confirmBtnText: 'Yes',
-                                                          confirmBtnColor: Colors.red,
-                                                          cancelBtnText: 'Cancel',
-                                                          showCancelBtn: true,
-                                                          backgroundColor: kAppPinkColor,
-                                                          onConfirmBtnTap: () {
-                                                            // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
-                                                            // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
-                                                            CommonFunctions().removeDocumentFromServer(
-                                                                id[index],
-                                                                'customers');
+                                                    ),
+                                                  ),
+                                                );
+                                              });
+                                        }else{
+                                          Provider.of<BeauticianData>(context).setCustomerDetails(customerNameList[index], phoneNumberList[index], infoList[index], items[index].toString().replaceAll('{', '').replaceAll('}', ''), photoImage[index], locationList[index], id[index]);
+                                          Provider.of<BeauticianData>(context).setClientName(customerNameList[index], id[index]);
 
-                                                            Navigator.pop(
-                                                                context);
-                                                          });
-                                                    },
-                                                    child:
-                                                    kIconCancel)),
-                                            Positioned(
-                                                left: 10,
-                                                bottom: 8,
-                                                child: GestureDetector(
-                                                    onTap: () {
-                                                      Share.share(
-                                                          'Name: ${customerNameList[index]}\nNumber: ${phoneNumberList[index]}\nLocation: ${locationList[index]}',
-                                                          subject:
-                                                          'Here are the customer details of ${customerNameList[index]}');
-                                                    },
-                                                    child: CircleAvatar(
-                                                        backgroundColor: kCustomColor,
-                                                        radius: 15,
-                                                        child: Icon(
-                                                          Icons
-                                                              .share_outlined,
-                                                          size: 15,
-                                                        )))),
-                                          ],
-                                        ),
-                                      ],
-                                    )));
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => SuperResponsiveLayout(mobileBody: CustomerTransactionsProducts(), desktopBody: CustomerTransactionsWeb())),
+                                          );
+
+                                        }
+
+                                      },
+                                      child:
+                                      Container(
+                                          padding: EdgeInsets.all(20),
+                                          child: Column(
+                                            children: [
+                                              TicketDots(
+                                                mainColor: kFaintGrey,
+                                                circleColor:
+                                                kPureWhiteColor,
+                                              ),
+                                              Stack(
+                                                children: [
+                                                  ListTile(
+                                                    //title: Text(itemName[index]),
+                                                    leading: Text(
+                                                        '${index + 1}'),
+                                                    title: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        Text(
+                                                          capitalizeString(
+                                                              customerNameList[
+                                                              index]),
+                                                          style: kNormalTextStyleMoney
+                                                              .copyWith(
+                                                              fontSize:
+                                                              14),
+                                                        ),
+                                                        Text(
+                                                          '${phoneNumberList[index]}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                        Text(
+                                                          'Location: ${capitalizeString(locationList[index])}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                        Text(
+                                                          'Note: ${capitalizeString(infoList[index])}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    subtitle: phoneNumberList[index] !=
+                                                        ""? Padding(padding: const EdgeInsets.only(right: 80.0, top: 10), child: RoundedButtons(
+                                                      buttonColor:
+                                                      kBlueDarkColor,
+                                                      title:
+                                                      "Call",
+                                                      onPressedFunction:
+                                                          () {
+                                                        CommonFunctions()
+                                                            .callPhoneNumber(phoneNumberList[index]);
+                                                      },
+                                                      buttonHeight: 30,
+
+                                                    ),
+                                                    )
+                                                        : Container(),
+                                                    // Text("${items[index].keys.toList()}", style: kNormalTextStyleMoney.copyWith(color: kFaintGrey)),
+                                                    trailing: Container(
+                                                      height: 70,
+                                                      width: 70,
+                                                      margin:
+                                                      const EdgeInsets
+                                                          .only(
+                                                          top: 10,
+                                                          right: 0,
+                                                          left: 0,
+                                                          bottom: 3), decoration: BoxDecoration(borderRadius: BorderRadius.circular(25),
+                                                        image:
+                                                        DecorationImage(
+                                                          image: CachedNetworkImageProvider(
+                                                              photoImage[
+                                                              index]),
+                                                        )),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      right: 10,
+                                                      top: 5,
+                                                      child:
+                                                      GestureDetector(
+                                                          onTap: () {
+                                                            CoolAlert.show(
+                                                                lottieAsset: 'images/question.json',
+                                                                context: context,
+                                                                type: CoolAlertType.success,
+                                                                text: "Are you sure you want to remove this from your customers list",
+                                                                title: "Remove Item?",
+                                                                confirmBtnText: 'Yes',
+                                                                confirmBtnColor: Colors.red,
+                                                                cancelBtnText: 'Cancel',
+                                                                showCancelBtn: true,
+                                                                backgroundColor: kAppPinkColor,
+                                                                onConfirmBtnTap: () {
+                                                                     CommonFunctions().removeDocumentFromServer(
+                                                                      id[index],
+                                                                      'customers');
+
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                });
+                                                          },
+                                                          child:
+                                                          kIconCancel)),
+                                                  Positioned(
+                                                      left: 10,
+                                                      bottom: 8,
+                                                      child: GestureDetector(
+                                                          onTap: () {
+                                                            Share.share(
+                                                                'Name: ${customerNameList[index]}\nNumber: ${phoneNumberList[index]}\nLocation: ${locationList[index]}',
+                                                                subject:
+                                                                'Here are the customer details of ${customerNameList[index]}');
+                                                          },
+                                                          child: CircleAvatar(
+                                                              backgroundColor: kCustomColor,
+                                                              radius: 15,
+                                                              child: Icon(
+                                                                Icons
+                                                                    .share_outlined,
+                                                                size: 15,
+                                                              )))),
+                                                ],
+                                              ),
+                                            ],
+                                          ))
+                                  );
+                                }else {
+                                  return
+                                    GestureDetector(
+                                    onTap: (){
+                                      Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(customerNameList[index], phoneNumberList[index], infoList[index], items[index].toString().replaceAll('{', '').replaceAll('}', ''), photoImage[index], locationList[index], id[index]);
+                                      Provider.of<BeauticianData>(context, listen: false).setClientName(customerNameList[index], id[index]);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => SuperResponsiveLayout(mobileBody: CustomerTransactionsProducts(), desktopBody: CustomerTransactionsWeb())),
+                                      );
+                                    },
+                                      child: Container(
+                                          padding: EdgeInsets.all(20),
+                                          child: Column(
+                                            children: [
+                                              TicketDots(
+                                                mainColor: kFaintGrey,
+                                                circleColor:
+                                                kPureWhiteColor,
+                                              ),
+                                              Stack(
+                                                children: [
+                                                  ListTile(
+                                                    //title: Text(itemName[index]),
+                                                    leading: Text(
+                                                        '${index + 1}'),
+                                                    title: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        Text(
+                                                          capitalizeString(
+                                                              customerNameList[
+                                                              index]),
+                                                          style: kNormalTextStyleMoney
+                                                              .copyWith(
+                                                              fontSize:
+                                                              14),
+                                                        ),
+                                                        Text(
+                                                          '${phoneNumberList[index]}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                        Text(
+                                                          'Location: ${capitalizeString(locationList[index])}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                        Text(
+                                                          'Note: ${capitalizeString(infoList[index])}',
+                                                          style:
+                                                          kNormalTextStyleDark,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    subtitle: phoneNumberList[index] !=
+                                                        ""? Padding(padding: const EdgeInsets.only(right: 80.0, top: 10), child: RoundedButtons(
+                                                      buttonColor:
+                                                      kBlueDarkColor,
+                                                      title:
+                                                      "Call",
+                                                      onPressedFunction:
+                                                          () {
+                                                        CommonFunctions()
+                                                            .callPhoneNumber(phoneNumberList[index]);
+                                                      },
+                                                      buttonHeight: 30,
+
+                                                    ),
+                                                    )
+                                                        : Container(),
+                                                    // Text("${items[index].keys.toList()}", style: kNormalTextStyleMoney.copyWith(color: kFaintGrey)),
+                                                    trailing: Container(
+                                                      height: 70,
+                                                      width: 70,
+                                                      margin:
+                                                      const EdgeInsets
+                                                          .only(
+                                                          top: 10,
+                                                          right: 0,
+                                                          left: 0,
+                                                          bottom: 3), decoration: BoxDecoration(borderRadius: BorderRadius.circular(25),
+                                                        image:
+                                                        DecorationImage(
+                                                          image: CachedNetworkImageProvider(
+                                                              photoImage[
+                                                              index]),
+                                                        )),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      right: 10,
+                                                      top: 5,
+                                                      child:
+                                                      GestureDetector(
+                                                          onTap: () {
+                                                            CoolAlert.show(
+                                                                lottieAsset: 'images/question.json',
+                                                                context: context,
+                                                                type: CoolAlertType.success,
+                                                                text: "Are you sure you want to remove this from your customers list",
+                                                                title: "Remove Item?",
+                                                                confirmBtnText: 'Yes',
+                                                                confirmBtnColor: Colors.red,
+                                                                cancelBtnText: 'Cancel',
+                                                                showCancelBtn: true,
+                                                                backgroundColor: kAppPinkColor,
+                                                                onConfirmBtnTap: () {
+                                                                  // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
+                                                                  // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
+                                                                  CommonFunctions().removeDocumentFromServer(
+                                                                      id[index],
+                                                                      'customers');
+
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                });
+                                                          },
+                                                          child:
+                                                          kIconCancel)),
+                                                  Positioned(
+                                                      left: 10,
+                                                      bottom: 8,
+                                                      child: GestureDetector(
+                                                          onTap: () {
+                                                            Share.share(
+                                                                'Name: ${customerNameList[index]}\nNumber: ${phoneNumberList[index]}\nLocation: ${locationList[index]}',
+                                                                subject:
+                                                                'Here are the customer details of ${customerNameList[index]}');
+                                                          },
+                                                          child: CircleAvatar(
+                                                              backgroundColor: kCustomColor,
+                                                              radius: 15,
+                                                              child: Icon(
+                                                                Icons
+                                                                    .share_outlined,
+                                                                size: 15,
+                                                              )))),
+                                                ],
+                                              ),
+                                            ],
+                                          )),
+                                  );
+                                }
+                              }
+
+                            );
                           });
                     }
                   }),

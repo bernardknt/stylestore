@@ -122,13 +122,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                           "$cHi $userName", style: kHeading2TextStyleBold.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
                         Row(
                                       children: [
-                                        // Text(
-                                        //   cCheckinTime.tr,
-                                        //   style: kNormalTextStyle.copyWith(
-                                        //       color: kBlack,
-                                        //       fontWeight: FontWeight.bold),
-                                        // ),
-                                        // kSmallWidthSpacing,
                                         Container(
                                             decoration: BoxDecoration(
                                               color: kBlueDarkColor,
@@ -200,63 +193,6 @@ class _HomePageWebState extends State<HomePageWeb> {
                     flex: 2,
                     child: Column(
                       children: [
-                        // Row(
-                        //   children: [
-                        //     Container(
-                        //       margin:
-                        //           EdgeInsets.only(left: 2, right: 2, top: 2),
-                        //       padding: EdgeInsets.all(16),
-                        //       decoration: BoxDecoration(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         color:
-                        //             kPureWhiteColor, // Use Colors.white instead of kPureWhiteColor
-                        //       ),
-                        //       child: Column(
-                        //         children: [
-                        //           Row(
-                        //             children: [
-                        //               Text(
-                        //                 cDepartment.tr,
-                        //                 style: kNormalTextStyle.copyWith(
-                        //                     color: kGreenThemeColor,
-                        //                     fontWeight: FontWeight.bold),
-                        //               ),
-                        //               kMediumWidthSpacing,
-                        //               Text("Operations"),
-                        //             ],
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     Container(
-                        //       margin:
-                        //       EdgeInsets.only(left: 2, right: 2, top: 2),
-                        //       padding: EdgeInsets.all(16),
-                        //       decoration: BoxDecoration(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         color:
-                        //             kPureWhiteColor, // Use Colors.white instead of kPureWhiteColor
-                        //       ),
-                        //       child: Column(
-                        //         children: [
-                        //           Row(
-                        //             children: [
-                        //               Text(
-                        //                 cCheckinTime.tr,
-                        //                 style: kNormalTextStyle.copyWith(
-                        //                     color: kBlack,
-                        //                     fontWeight: FontWeight.bold),
-                        //               ),
-                        //               kSmallWidthSpacing,
-                        //               Text(checkInTime),
-                        //             ],
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //
-                        //   ],
-                        // ),
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Column(

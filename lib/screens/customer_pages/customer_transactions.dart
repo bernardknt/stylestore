@@ -42,7 +42,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(Provider.of<StyleProvider>(context, listen: false).beauticianId);
+    print("ID IS THIS: ${Provider.of<StyleProvider>(context, listen: false).beauticianId}");
 
   }
 

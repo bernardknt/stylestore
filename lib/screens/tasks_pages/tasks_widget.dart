@@ -609,7 +609,7 @@ class activeDatesWidget extends StatelessWidget {
                           8.0),
                   child: taskCompleted[index][i] == false? Text(
                     '${DateFormat('d-MMM-yy').format(taskDates[index][i])}',
-                    style: kNormalTextStyleDark.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold,),
+                    style: kNormalTextStyleDark.copyWith(color:textColor[index], fontWeight: FontWeight.bold,),
                   ):Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
