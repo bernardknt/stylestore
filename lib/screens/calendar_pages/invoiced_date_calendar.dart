@@ -2,9 +2,7 @@
 
 
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
-// import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/font_constants.dart';
@@ -47,10 +45,8 @@ class _InvoicedDateCalendarPageState extends State<InvoicedDateCalendarPage> {
         body: Container()
         // SfCalendar(
         //   showDatePickerButton: true,
-        //   // minDate: DateTime.now(),
         //   todayHighlightColor: kBlueDarkColorOld,
         //   todayTextStyle: kNormalTextStyleWhiteButtons,
-        //
         //   onTap: (value){
         //
         //     Provider.of<StyleProvider>(context, listen: false).setInvoicedTimeDate(value.date);
@@ -59,7 +55,7 @@ class _InvoicedDateCalendarPageState extends State<InvoicedDateCalendarPage> {
         //
         //   },
         //   view: CalendarView.month,
-        //   // initialSelectedDate: DateTime.now(),
+        //
         //   cellBorderColor: kBackgroundGreyColor,
         //   backgroundColor: kBackgroundGreyColor,
         //   selectionDecoration: BoxDecoration(
@@ -67,14 +63,8 @@ class _InvoicedDateCalendarPageState extends State<InvoicedDateCalendarPage> {
         //     color: Colors.pink.withOpacity(0.5),
         //     border:
         //     Border.all(color: kGreyLightThemeColor,
-        //         //const Color.fromARGB(255, 68, 140, 255),
         //         width: 2),
         //   ),
-        //   // blackoutDates:
-        //   // styleDataDisplay.convertedCalendarBlackouts,
-        //
-        //   // blackoutDatesTextStyle: kNormalTextStyleDatesUnavailable,
-        //   //
         // )
     );
   }

@@ -1,14 +1,8 @@
-
-
-
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:uuid/uuid.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/basket_items.dart';
@@ -25,98 +19,71 @@ class CalendarPageOld extends StatefulWidget {
 }
 
 class _CalendarPageOldState extends State<CalendarPageOld> {
-
-  void defaultsInitiation()async{
-    final prefs = await SharedPreferences.getInstance();
-    //providerLocation = Provider.of<StyleProvider>(context).beauticianLocation;x
-    prefs.setString(kOrderId, 'OL${date.day}'+'${uuid.v1().split("-")[0]}'+'${uuid.v4().split("-")[0]}'+'${date.month}');
-
-  }
-
-  DateTime date = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
   var uuid = Uuid();
+
+  void defaultsInitiation() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+        kOrderId,
+        'OL${_selectedDay.day}' +
+            '${uuid.v1().split("-")[0]}' +
+            '${uuid.v4().split("-")[0]}' +
+            '${_selectedDay.month}');
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     defaultsInitiation();
-    List<BasketItem> products = Provider.of<StyleProvider>(context, listen: false).basketItems;
-
   }
 
   @override
-
   Widget build(BuildContext context) {
     var styleDataDisplay = Provider.of<StyleProvider>(context);
     var styleData = Provider.of<StyleProvider>(context, listen: false);
-    // var styleData = Provider.of<StyleProvider>(context,listen:false);
+
     return Scaffold(
-        appBar: AppBar(backgroundColor: kPureWhiteColor ,
-          title: const Text('Appointment Date & Time',style: kHeadingTextStyle,),
+      appBar: AppBar(
+        backgroundColor: kPureWhiteColor,
+        title: const Text('Appointment Date & Time', style: kHeadingTextStyle),
+      ),
+      body: TableCalendar(
+        focusedDay: _focusedDay,
+        firstDay: DateTime.now().subtract(const Duration(days: 365)),
+        lastDay: DateTime.now().add(const Duration(days: 365)),
+        selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+        calendarFormat: CalendarFormat.month,
+        headerStyle: const HeaderStyle(formatButtonVisible: false),
 
-        ),
+        // Customization for blackout dates (if needed)
+        availableCalendarFormats: const { // Restrict to month view only
+          CalendarFormat.month: 'Month',
+        },
+        //... Other styling options
 
-        body: Container()
-        // SfCalendar(
-        //   showDatePickerButton: true,
-        //   minDate: DateTime.now(),
-        //   todayHighlightColor: kBlueDarkColorOld,
-        //   todayTextStyle: kNormalTextStyleWhiteButtons,
-        //
-        //   onTap: (value){
-        //
-        //     styleData.setBookingPrice(styleDataDisplay.totalPrice);
-        //
-        //
-        //     //
-        //     // DatePicker.showTimePicker(context,
-        //     //     currentTime: DateTime(2022,12,9,10,00),
-        //     //     showSecondsColumn: false,
-        //     //     // theme: DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
-        //     //
-        //     //     //showTitleActions: t,
-        //     //
-        //     //     onConfirm: (time){
-        //     //       // deliveryTime = date;
-        //     //      Provider.of<StyleProvider>(context, listen: false).setAppointmentTimeDate(value.date, time);
-        //     //       Navigator.pushNamed(context, SuccessPage.id);
-        //     //
-        //     //
-        //     //
-        //     //      // Navigator.pushNamed(context, SummaryPage.id);
-        //     //
-        //     //
-        //     //
-        //     //     });
-        //
-        //
-        //   },
-        //   view: CalendarView.month,
-        //   initialSelectedDate: DateTime.now(),
-        //   cellBorderColor: kBackgroundGreyColor,
-        //   backgroundColor: kBackgroundGreyColor,
-        //   selectionDecoration: BoxDecoration(
-        //     borderRadius: BorderRadius.all(Radius.circular(8)),
-        //     color: Colors.pink.withOpacity(0.5),
-        //     border:
-        //     Border.all(color: kGreyLightThemeColor,
-        //         //const Color.fromARGB(255, 68, 140, 255),
-        //         width: 2),
-        //   ),
-        //   blackoutDates:
-        //   styleDataDisplay.convertedCalendarBlackouts,
-        //   // blackoutDates:  [
-        //   //
-        //   //   DateTime.now().add(Duration(days: 3, hours: 14) ),
-        //   //   DateTime.now().add(Duration(days: 6)),
-        //   //   DateTime.now().add(Duration(days: 7)),
-        //   //   DateTime.now().add(Duration(days: 12)),
-        //   // ],
-        //   blackoutDatesTextStyle: kNormalTextStyleDatesUnavailable,
-        //   //
-        // )
+        // Blackout Date Functionality
+        // disabledDaysOfWeek: _convertBlackoutDatesToDaysOfWeek(styleDataDisplay.convertedCalendarBlackouts),
+
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay;
+            defaultsInitiation(); // Update Order ID
+          });
+
+          // Price update logic
+          styleData.setBookingPrice(styleDataDisplay.totalPrice);
+        },
+      ),
     );
   }
+
+  // Assuming convertedCalendarBlackouts is a list of DateTime objects.
+  List<int> _convertBlackoutDatesToDaysOfWeek(List<DateTime> blackouts) {
+    return blackouts.map((date) => date.weekday).toSet().toList();
+  }
 }
+
 
