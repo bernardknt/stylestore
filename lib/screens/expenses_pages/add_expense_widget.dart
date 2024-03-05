@@ -4,23 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/Utilities/InputFieldWidget.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
-import 'package:stylestore/screens/payment_pages/update_payment_option.dart';
-import 'package:stylestore/widgets/success_hi_five.dart';
-
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
-import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
-import '../../payment_options.dart';
-import '../../utilities/constants/word_constants.dart';
-import '../../widgets/modalButton.dart';
+import '../../widgets/text_form.dart';
 
 
 class AddExpenseWidget extends StatefulWidget {
@@ -38,7 +30,14 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   var expenseQuantity = "1";
   var expenseOrderNumber = "";
   var originalBasketToPost = [];
+  var storeId = "";
   String? selectedDepartment;
+  List<String> supplierDisplayNames = [];
+  List<String> supplierIds = ["default"];
+  List<String> supplierRealNames = ["Supplier"];
+  String? selectedSupplierDisplayName;
+  String? selectedSupplierId;
+  String? selectedSupplierRealName;
 
   File? image;
   var imageUploaded = false;
@@ -48,15 +47,11 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   Future pickImage(ImageSource source)async{
     try {
       final image = await ImagePicker().pickImage(source: source);
-      // await ImagePicker().pickImage(source: ImageSource.gallery);
-
       if (image == null){
         return ;
       }else {
         var file = File(image.path);
-
         final compressedImage = await CommonFunctions().compressImage(File(image.path));
-
         setState(() {
           imageUploaded = true;
           this.image = compressedImage;
@@ -68,18 +63,32 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     }
   }
 
+  Future<void> _fetchSupplierNames() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('suppliers')
+        .where("storeId", isEqualTo: storeId)
+        .get();
+    List<String> supplierData = querySnapshot.docs.map((doc) {
+      String name = doc['name'] as String;
+      String supplies = doc['supplies'] as String;
+      supplierIds.add(doc.id);
+      supplierRealNames.add(doc['name']);
+      return "$name ($supplies)";
+    }).toList();
+    setState(() {
+      supplierDisplayNames = ["Supplier",...supplierData];
+    });
+  }
+
   Future<void> uploadPhoto(String filePath, String fileName)async {
     File file = File(filePath);
     try {
-      uploadTask  = storage.ref('customer/$fileName').putFile(file);
+      uploadTask  = storage.ref('receipt/$fileName').putFile(file);
       final snapshot = await uploadTask!.whenComplete((){
 
       });
       final urlDownload = await snapshot.ref.getDownloadURL();
-      print("KIWEEEEEEDDDEEEEEEEEEEEEEE: $urlDownload");
-      CommonFunctions().uploadExpense(originalBasketToPost, context, expenseOrderNumber, urlDownload);
-      // addCustomer(urlDownload);
-      // Navigator.pushNamed(context, ControlPage.id);
+      CommonFunctions().uploadExpense(originalBasketToPost, context, expenseOrderNumber, urlDownload, selectedSupplierRealName, selectedSupplierId);
     }  catch(e){
       print(e);
     }
@@ -87,7 +96,9 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
   defaultInitilization()async {
     final prefs = await SharedPreferences.getInstance();
+    storeId = prefs.getString(kStoreIdConstant) ?? "";
     expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
+    _fetchSupplierNames();
     setState(() {
 
     });
@@ -106,6 +117,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
     TextEditingController controller = TextEditingController(text: expenseCost);
     TextEditingController expenseController = TextEditingController(text: "${Provider.of<StyleProvider>(context).expense}");
+    TextEditingController quantityController = TextEditingController(text: "1");
     // Move the cursor to the end of the text
     controller.selection = TextSelection.fromPosition(
       TextPosition(offset: controller.text.length),
@@ -119,32 +131,43 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         splashColor: kBlueDarkColor,
-        // foregroundColor: Colors.black,
         backgroundColor: kAppPinkColor,
-        //blendedData.saladButtonColour,
         onPressed: () {
-          // incrementPaidAmount(styleData.invoiceTransactionId, styleData.invoicedPriceToPay);
-          if(expenseName!=""&&expenseCost!="0.0"){
-
+          if(expenseController.text!=""&&expenseCost!="0.0"&&selectedSupplierDisplayName!=null){
             var basketToPost = [
               {
-                'product': expenseName,
+                'product': expenseController.text,
                 'description': "",
-                'quantity': double.tryParse(expenseQuantity) ?? 0,
-                'totalPrice': double.tryParse(expenseCost) ?? 0
-              }
+                'quantity': double.tryParse(quantityController.text) ?? 0,
+                'totalPrice': double.tryParse(expenseCost) ?? 0,
 
+              }
             ];
             originalBasketToPost = basketToPost;
-            image == null ? CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber, "") : uploadPhoto(image!.path, expenseOrderNumber);
+            image == null ? CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber, "",selectedSupplierRealName, selectedSupplierId) : uploadPhoto(image!.path, expenseOrderNumber);
             // CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber);
+          }else {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Missing Information"),
+                  content: const Text("Please fill in all required fields (Expense, Cost, Supplier)"),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text("OK"),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
           }
 
         },
-        // icon:  CircleAvatar(
-        //     radius: 12,
-        //     child: Text("${Provider.of<StyleProvider>(context).basketItems.length}", style:kNormalTextStyle.copyWith(color: kBlack) ,)),
-        label: expenseName != ""?Text(
+             label: expenseName != ""?Text(
           '$expenseName worth Ugx $expenseCost',
           style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
         ):Text("Enter Expense", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
@@ -152,14 +175,13 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20.0),
+          padding: const EdgeInsets.only(left: 20.0, right: 20),
           child: Container(
             height: 450,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-              //  Text('Enter Expense Details',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 25, color: kBlack),),
                 kLargeHeightSpacing,
                 Padding(
                   padding: const EdgeInsets.only(left:20.0),
@@ -167,10 +189,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                     // mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Ugx',
-                        style: kNormalTextStyle.copyWith(fontSize: 18),
-                      ),
+                      Text('Ugx', style: kNormalTextStyle.copyWith(fontSize: 18),),
                       kSmallWidthSpacing,
 
                       Expanded(
@@ -193,115 +212,41 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                   ),
                 ),
                 kLargeHeightSpacing,
-                InputFieldWidget(controller: expenseName,labelText:' Expense Name' ,hintText: 'Transport', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  expenseName = value ;
-
-                },),
+                TextForm(label: 'Expense Name',controller: expenseController),
                 kLargeHeightSpacing,
-                Row(
-                  children: [
-                    Text(
-                      'Department *',
-                      style: kNormalTextStyle.copyWith(
-                          color: kBlack,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    kSmallWidthSpacing,
-                    DropdownButton<String>(
-                      value:
-                      selectedDepartment, // The currently selected department
-                      items: departments
-                          .map((department) => DropdownMenuItem(
-                        value: department,
-                        child: Text(department),
-                      ))
-                          .toList(),
-                      onChanged: (newDepartment) => setState(() =>
-                      selectedDepartment =
-                          newDepartment), // Update the selected department when a new one is chosen
-                      hint: Text(
-                          'Select Department'), // Placeholder text before a department is selected
-                    ),
-                  ],
-                ),
+                TextForm(label: 'Quantity',controller: quantityController),
                 kLargeHeightSpacing,
-                InputFieldWidget(controller: expenseQuantity,labelText:' Expense Quantity' ,hintText: '', keyboardType: TextInputType.number, onTypingFunction: (value){
-                  expenseQuantity = value ;
-
-                },),
-                kLargeHeightSpacing,
-                InputFieldWidget(controller: expenseName,labelText:' Supplier' ,hintText: 'House of Plastics', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  supplierName = value ;
-
-                },),
                 kSmallHeightSpacing,
-
-                image != null ?
-                Image.file(image!, height: 150,) :
-                GestureDetector(
-                  onTap: (){
-
-                    showModalBottomSheet(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Container(
-                            color: Color(0xFF292929).withOpacity(0.6),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: kPureWhiteColor,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children:
-                                  [
-                                    buildButton(context, 'Select from Gallery', Iconsax.gallery,
-                                            () async {
-                                          Navigator.pop(context);
-                                          pickImage(ImageSource.gallery);
-
-
-                                        }
-                                    ),
-                                    SizedBox(height: 16.0),
-                                    buildButton(context, 'Select from Camera', Iconsax.camera,  () async {
-                                      Navigator.pop(context);
-                                      pickImage(ImageSource.camera);
-                                    } ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ); });
+                DropdownButton<String>(
+                  value: selectedSupplierDisplayName,
+                  onTap: () {
+                    // Provider.of<StyleProvider>(context, listen: false)
+                    //     .setTaskToDo(taskToDo);
+                    setState(() {});
                   },
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    // Lottie.asset('images/scan.json'),
-                    decoration: BoxDecoration(
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedSupplierDisplayName = newValue!;
+                      int position = supplierDisplayNames.indexOf(newValue);
+                      selectedSupplierRealName= supplierRealNames[position];
+                      selectedSupplierId = supplierIds[position];
 
-                        border: Border.all(color: kFontGreyColor),
-
-                        borderRadius: const BorderRadius.all(Radius.circular(0)),
-                        color: kBlack),
-                    child:
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Icon(Icons.photo_camera_front_outlined, color: kBlack,size: 30,),
-                        Text("Add Receipt\nOr Payment proof",textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500, fontSize: 14,),),
-                      ],
-                    ),
+                      print("$selectedSupplierRealName: $selectedSupplierId");
 
 
+                    });
+                  },
+                  hint: Text(
+                    'Select Supplier',
                   ),
+                  items: supplierDisplayNames
+                      .map<DropdownMenuItem<String>>((String name) {
+                    return DropdownMenuItem<String>(
+                      value: name,
+                      child: Text(name),
+                    );
+                  }).toList(),
                 ),
-
-
-
               ],
             ),
           ),

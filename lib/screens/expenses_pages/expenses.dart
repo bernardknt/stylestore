@@ -56,7 +56,21 @@ class _ExpensesPageState extends State<ExpensesPage> {
     setState(() {
     });
   }
+  Future<void> updatePurchasesWithSupplierId() async {
+    // Get a reference to the 'purchases' collection
+    CollectionReference purchasesCollection = FirebaseFirestore.instance.collection('purchases');
 
+    // Get all documents in the 'purchases' collection
+    QuerySnapshot querySnapshot = await purchasesCollection.get();
+
+    // Loop through each document
+    for (var doc in querySnapshot.docs) {
+      // Update the document with the 'supplierId' field
+      await doc.reference.update({
+        'supplier': 'Suppliers'
+      });
+    }
+  }
 
 
   @override
@@ -71,6 +85,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   var productList = [];
   var activityList = [];
   var createdByList = [];
+  var supplierList = [];
   var listOfProducts = [];
   var listOfPriceOfProducts = [];
 
@@ -106,6 +121,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
           backgroundColor: kAppPinkColor,
           onPressed: (){
             // add Ingredient Here
+            updatePurchasesWithSupplierId();
+
             Provider.of<StyleProvider>(context, listen: false).resetCustomerUploadItem();
             // Navigator.pushNamed(context, AddCustomersPage.id);
             showDialog(context: context, builder: (BuildContext context){
@@ -238,6 +255,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               dateList = [];
               createdByList = [];
               listOfPriceOfProducts = [];
+              supplierList = [];
 
 
 
@@ -249,7 +267,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                 if (doc['activity']== 'Restocked'||doc['activity'] == 'Expense') {
                   productList.add(doc['items']);
                   transIdList.add(doc['id']);
-                  // activityList.add(doc['activity']);
+                  supplierList.add(doc['supplier']);
                   dateList.add(doc['date'].toDate());
                   createdByList.add(doc['requestBy']);
                   List dynamicList = doc['items'];
@@ -380,8 +398,9 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                                     width: 200,
                                                     child: Text( "${listOfProducts[index].join(", ")}",overflow: TextOverflow.fade, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize))),
                                                 //Text( "${listOfItems[index]}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize)),
+                                                Text("Supplier:${supplierList[index]}", style: kNormalTextStyle.copyWith(fontSize: 12),),
                                                 Text("Done by:${createdByList[index]}", style: kNormalTextStyle.copyWith(fontSize: 12),),
-                                                Text('${DateFormat('d/MMM hh:mm a').format(dateList[index])}', style: kNormalTextStyle.copyWith(fontSize: 11),),
+                                                Text('${DateFormat('d/MMM kk:mm a').format(dateList[index])}', style: kNormalTextStyle.copyWith(fontSize: 11),),
                                               ],
                                             ),
                                           ],

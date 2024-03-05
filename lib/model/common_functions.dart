@@ -964,7 +964,7 @@ class CommonFunctions {
     // Navigator.pop(context);
   }
 
-  Future<void> uploadExpense( basketToPost, context, docId, image) async {
+  Future<void> uploadExpense( basketToPost, context, docId, image, supplier, supplierId) async {
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
@@ -978,7 +978,8 @@ class CommonFunctions {
         'items': basketToPost,
         'date': DateTime.now(),
         'requestBy': prefs.getString(kLoginPersonName)!,
-        'supplier': "",
+        'supplier': supplier,
+        'supplierId': supplierId,
         'storeId':  prefs.getString(kStoreIdConstant)!,
         'name':  prefs.getString(kBusinessNameConstant)!,
         'activity': "Expense",
