@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
@@ -31,21 +32,14 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
     MerchantStorePage(),
     // AnalysisPage()
   ];
-  String getFirstWord(String sentence) {
-    if (sentence.isNotEmpty) {
-      List<String> words = sentence.split(' ');
-      return words[0];
-    }
-    return "";
-  }
+
 
   var storeName = "";
 
   void defaultInitialization()async {
     final prefs = await SharedPreferences.getInstance();
-    storeName = getFirstWord(prefs.getString(kBusinessNameConstant)??"");
+    storeName = CommonFunctions().getFirstWord(prefs.getString(kBusinessNameConstant)??"");
     setState(() {
-
     });
   }
   @override
@@ -79,11 +73,9 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
 
           BottomNavigationBarItem(
               icon: Icon(Icons.storefront),label:'$storeName Store',
-              // icon: Icon(LineIcons.warehouse),label:'Store',
+
               backgroundColor: Colors.black),
-          // BottomNavigationBarItem(
-          //     icon: Icon(Icons.trending_up_outlined),label:'Analytics',
-          //     backgroundColor: Colors.black),
+
 
         ],
         onTap: (index){

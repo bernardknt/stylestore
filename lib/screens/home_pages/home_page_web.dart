@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -208,20 +209,11 @@ class _HomePageWebState extends State<HomePageWeb> {
                                         permissionsMap['sales'] == true
                                             ? PhotoWidget(
                                                 onTapFunction: () {
-                                                  Provider.of<StyleProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .resetSelectedStockBasket();
-                                                  Provider.of<StyleProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .resetCustomerDetails();
-                                                  Provider.of<StyleProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .clearLists();
+                                                  Provider.of<StyleProvider>(context, listen: false).resetSelectedStockBasket();
+                                                  Provider.of<StyleProvider>(context, listen: false).resetCustomerDetails();
+                                                  Provider.of<StyleProvider>(context, listen: false).clearLists();
                                                   Navigator.pushNamed(
-                                                      context, POS.id);
+                                                      context, PosWeb.id);
                                                 },
                                                 footer: cSale.tr,
                                                 iconToUse: Icons.point_of_sale,
@@ -359,14 +351,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                         color: Colors
                             .white, // Use Colors.white instead of kPureWhiteColor
                         borderRadius: BorderRadius.circular(boxCurve),
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //     color: Colors.grey.withOpacity(0.5),
-                        //     spreadRadius: 1,
-                        //     blurRadius: 1,
-                        //     offset: Offset(0, 1),
-                        //   ),
-                        // ],
+
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

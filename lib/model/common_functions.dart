@@ -76,6 +76,14 @@ class CommonFunctions {
     return number;
   }
 
+  String getFirstWord(String sentence) {
+    if (sentence.isNotEmpty) {
+      List<String> words = sentence.split(' ');
+      return words[0];
+    }
+    return "";
+  }
+
   showSuccessNotification (message, context){
     // snackbar to show success message at the top of the screen
     ScaffoldMessenger.of(context).showSnackBar(
@@ -86,32 +94,6 @@ class CommonFunctions {
       ),
     );
   }
-// This function gets the list of phoneNumbers and processes it
-//   List<String> processPhoneNumbers(List<String> phoneNumbers) {
-//     List<String> processedNumbers = [];
-//     for (String number in phoneNumbers) {
-//       // Remove spaces
-//       String cleanNumber = number.replaceAll(" ", "");
-//       // Check if already processed or empty
-//       if(cleanNumber.isEmpty){
-//         continue;
-//       }
-//       if (cleanNumber.startsWith("256")) {
-//         processedNumbers.add(cleanNumber); // Pass through unchanged
-//         continue;
-//       }
-//
-//       // Standardize format
-//       if (cleanNumber.startsWith("0")) {
-//         cleanNumber = "256" + cleanNumber.substring(1);
-//       } else {
-//         cleanNumber = "256" + cleanNumber;
-//       }
-//       processedNumbers.add(cleanNumber);
-//     }
-//     return processedNumbers;
-//   }
-
   List<String> processPhoneNumbers(List<String> phoneNumbers) {
     List<String> processedNumbers = [];
 

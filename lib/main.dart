@@ -21,6 +21,7 @@ import 'package:stylestore/screens/employee_pages/biodata_page_1.dart';
 import 'package:stylestore/screens/employee_pages/employees_page.dart';
 import 'package:stylestore/screens/expenses_pages/expenses.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
+import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/products_pages/product_edit_page.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
@@ -203,6 +204,8 @@ class MyApp extends StatelessWidget {
           LoginPageNewWeb.id: (context) => LoginPageNewWeb(),
           DocumentsPage.id: (context) => DocumentsPage(),
           EmployeesPage.id: (context) => EmployeesPage(),
+          PosWeb.id: (context) => PosWeb(),
+
           SuppliersPage.id: (context) => SuppliersPage(),
           WalletsPage.id: (context) => WalletsPage(),
           BioDataForm.id: (context) => BioDataForm(),

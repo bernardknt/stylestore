@@ -423,54 +423,90 @@ class _POSState extends State<POS> {
                   right: 50,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                        onTap: () async {
-                          final prefs = await SharedPreferences.getInstance();
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () async {
+                              final prefs =
+                              await SharedPreferences.getInstance();
 
-                          Provider.of<BeauticianData>(context, listen: false)
-                              .setStoreId(prefs.getString(kStoreIdConstant));
-                          Provider.of<BeauticianData>(context, listen: false)
-                              .setProductItems(products);
+                              Provider.of<BeauticianData>(context,
+                                  listen: false)
+                                  .setStoreId(
+                                  prefs.getString(kStoreIdConstant));
+                              Provider.of<BeauticianData>(context,
+                                  listen: false)
+                                  .setProductItems(products);
 
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (context) {
-                                return Scaffold(
-                                    appBar: AppBar(
-                                      backgroundColor: kPureWhiteColor,
-                                      automaticallyImplyLeading: false,
-                                    ),
-                                    body: ProductsSearchPage());
-                              });
-                        },
-                        child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              // border: OutlineInputBorder(
-                              //   borderRadius: BorderRadius.all(Radius.circular(15)),
-                              // ),
-                              border:
-                                  Border.all(width: 1, color: kFontGreyColor),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(20),
-                              ),
+                              showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return Scaffold(
+                                        appBar: AppBar(
+                                          backgroundColor:
+                                          kPureWhiteColor,
+                                          automaticallyImplyLeading:
+                                          false,
+                                        ),
+                                        body: ProductsSearchPage());
+                                  });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  // border: OutlineInputBorder(
+                                  //   borderRadius: BorderRadius.all(Radius.circular(15)),
+                                  // ),
+                                  border: Border.all(
+                                      width: 0.5, color: kFontGreyColor),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
 
-                              color: kBackgroundGreyColor,
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.search,
-                                  color: kFontGreyColor,
+                                  color: kBackgroundGreyColor,
                                 ),
-                                kSmallWidthSpacing,
-                                Text(
-                                  "Search Items",
-                                  style: kNormalTextStyle,
-                                )
-                              ],
-                            ))),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.search,
+                                      color: kFontGreyColor,
+                                    ),
+                                    kSmallWidthSpacing,
+                                    Text(
+                                      "Search Items",
+                                      style: kNormalTextStyle,
+                                    )
+                                  ],
+                                )),
+                          ),
+                        ),
+                        kSmallWidthSpacing,
+                        GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return Scaffold(
+                                        appBar: AppBar(
+                                          automaticallyImplyLeading:
+                                          false,
+                                          backgroundColor: kBlack,
+                                        ),
+                                        body: ProductUpload());
+                                  });
+                            },
+                            child: Tooltip(
+                                message: "Add a new Product",
+                                child: Icon(
+                                  Iconsax.box,
+                                  size: 40,
+                                  color: kAppPinkColor,
+                                )))
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -718,7 +754,6 @@ class _POSState extends State<POS> {
                                                                                     onPressed: () async {
                                                                                       final prefs = await SharedPreferences.getInstance();
                                                                                       Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
-
                                                                                       Navigator.pop(context);
                                                                                       Navigator.pop(context);
                                                                                       Navigator.pushNamed(context, UpdateStockPage.id);
@@ -730,22 +765,14 @@ class _POSState extends State<POS> {
                                                                     }
                                                                   } else {
                                                                     Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                                                                        name: nameList[
-                                                                            index],
-                                                                        quantity:
-                                                                            quantity,
-                                                                        amount:
-                                                                            amount,
-                                                                        details:
-                                                                            description,
-                                                                        tracking:
-                                                                            trackingList[index]));
+                                                                        name: nameList[index], quantity: quantity,
+                                                                        amount: amount,
+                                                                        details: description,
+                                                                        tracking: trackingList[index]));
                                                                     Navigator.pop(
                                                                         context);
                                                                   }
-                                                                  print(
-                                                                      "THIS IS AT POS STAGE $selectedStocks with quantity to reduce ${selectedStocks[0].restock}");
-                                                                },
+                                                                  },
                                                                 style: ElevatedButton
                                                                     .styleFrom(
                                                                   shape:
@@ -768,87 +795,76 @@ class _POSState extends State<POS> {
                                                             ],
                                                           ),
 
-                                                          // Text('Price: \$100'),
-                                                          // SizedBox(height: 10),
-                                                          // Text('Amount: 5'),
                                                         ],
                                                       ),
                                                     ),
-                                                    // actions: [
-                                                    //   TextButton(
-                                                    //     onPressed: () {
-                                                    //       Navigator.of(context).pop();
-                                                    //     },
-                                                    //     child: Text('Close'),
-                                                    //   ),
-                                                    // ],
+
                                                   );
                                                 });
                                           },
                                           child: Column(
                                             children: [
-                                              ListTile(
-                                                  title: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        nameList[index],
-                                                        overflow:
-                                                            TextOverflow.clip,
-                                                        style:
-                                                            kHeadingTextStyle,
-                                                      ),
-                                                      trackingList[index] ==
-                                                              false
-                                                          ? Container()
-                                                          :
-                                                          // If the minimum quantity at index is greater or equal to the current quantity
-                                                          minimumList[index] >=
-                                                                  quantityList[
-                                                                      index]
-                                                              ? Text(
-                                                                  "Qty: ${quantityList[index].toString()}",
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                  style: kHeadingTextStyle.copyWith(
-                                                                      fontSize:
-                                                                          12,
-                                                                      color: Colors
-                                                                          .red),
-                                                                )
-                                                              : Text(
-                                                                  "Qty: ${quantityList[index].toString()}",
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .clip,
-                                                                  style: kHeadingTextStyle
-                                                                      .copyWith(
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              kGreenThemeColor),
-                                                                ),
-                                                    ],
+                                              Card(
+                                                child: SizedBox(
+                                                  height: 100,
+                                                  child: ListTile(
+                                                    title: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: [
+                                                            Text(
+                                                              nameList[
+                                                              index],
+                                                              overflow:
+                                                              TextOverflow
+                                                                  .clip,
+                                                              style:
+                                                              kHeadingTextStyle,
+                                                            ),
+                                                            trackingList[
+                                                            index] ==
+                                                                false
+                                                                ? Container()
+                                                                :
+                                                            // If the minimum quantity at index is greater or equal to the current quantity
+                                                            minimumList[index] >=
+                                                                quantityList[index]
+                                                                ? Text(
+                                                              "Qty: ${quantityList[index].toString()}",
+                                                              overflow: TextOverflow.clip,
+                                                              style: kHeadingTextStyle.copyWith(fontSize: 12, color: Colors.red),
+                                                            )
+                                                                : Text(
+                                                              "Qty: ${quantityList[index].toString()}",
+                                                              overflow: TextOverflow.clip,
+                                                              style: kHeadingTextStyle.copyWith(fontSize: 12, color: kGreenThemeColor),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Text(
+                                                          "Ugx ${CommonFunctions().formatter.format(amountList[index])}",
+                                                          style: kNormalTextStyle.copyWith(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              color:
+                                                              kBlack,
+                                                              fontSize:
+                                                              15),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                  trailing: Text(
-                                                    "Ugx ${CommonFunctions().formatter.format(amountList[index])}",
-                                                    style: kNormalTextStyle
-                                                        .copyWith(
-                                                            color:
-                                                                kGreenThemeColor,
-                                                            fontSize: 13),
-                                                  )),
-                                              TicketDots(
-                                                mainColor: kFaintGrey,
-                                                circleColor:
-                                                    kBackgroundGreyColor,
-                                                backgroundColor:
-                                                    kBackgroundGreyColor,
+                                                ),
                                               )
                                             ],
                                           ));
@@ -856,37 +872,7 @@ class _POSState extends State<POS> {
                               );
                       }),
                 ),
-                isStoreEmpty == true
-                    ? Container()
-                    : Positioned(
-                        bottom: 50,
-                        right: 5,
-                        child: Column(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (context) {
-                                      return Scaffold(
-                                          appBar: AppBar(
-                                            automaticallyImplyLeading: false,
-                                            backgroundColor: kBlack,
-                                          ),
-                                          body: ProductUpload());
-                                    });
-                              },
-                              child:
-                                  Lottie.asset('images/round.json', height: 50),
-                            ),
-                            Text(
-                              "Create Product",
-                              style: kNormalTextStyle.copyWith(
-                                  color: kBlueDarkColor, fontSize: 10),
-                            )
-                          ],
-                        ))
+
               ],
             ),
     );

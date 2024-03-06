@@ -250,58 +250,27 @@ class _PosWebState extends State<PosWeb> {
     var styleData = Provider.of<StyleProvider>(context);
     return Scaffold(
       backgroundColor: kPlainBackground,
-      // appBar: AppBar(
-      //   foregroundColor: kBlack,
-      //   backgroundColor: kPlainBackground,
-      //   automaticallyImplyLeading: widget.showBackButton,
-      //   elevation: 0,
-      //   title: permissionsMap['sales'] == false ? Container() : GestureDetector(onTap: () async {
-      //       final prefs = await SharedPreferences.getInstance();
-      //       Provider.of<BeauticianData>(context, listen: false)
-      //           .setStoreId(prefs.getString(kStoreIdConstant));
-      //       showModalBottomSheet(
-      //           isScrollControlled: true,
-      //           context: context,
-      //           builder: (context) {
-      //             return Scaffold(
-      //                 appBar: AppBar(
-      //                   elevation: 0,
-      //                   backgroundColor: kPureWhiteColor,
-      //                   automaticallyImplyLeading: false,
-      //                 ),
-      //                 body: CustomerSearchPage());
-      //           });
-      //     },
-      //     child: Container(
-      //         padding: EdgeInsets.all(10),
-      //         decoration: BoxDecoration(
-      //           borderRadius: BorderRadius.all(
-      //             Radius.circular(5),
-      //           ),
-      //           color: kAppPinkColor,
-      //         ),
-      //         child: Text(
-      //           '+ Add Customer',
-      //           style: kNormalTextStyle.copyWith(
-      //               color: kPureWhiteColor, fontSize: 13),
-      //         )),
-      //   ),
-      //   centerTitle: true,
-      //   actions: [
-      //     if (!kIsWeb)
-      //       Padding(
-      //         padding: const EdgeInsets.only(right: 30.0, top: 10),
-      //         child: GestureDetector(
-      //             onTap: () {
-      //               _startBarcodeScan();
-      //             },
-      //             child: Icon(
-      //               Iconsax.scan,
-      //               size: 40,
-      //             )),
-      //       )
-      //   ],
-      // ),
+      appBar: AppBar(
+        foregroundColor: kBlack,
+        backgroundColor: kPlainBackground,
+        automaticallyImplyLeading: widget.showBackButton,
+        elevation: 0,
+        centerTitle: true,
+        actions: [
+          if (!kIsWeb)
+            Padding(
+              padding: const EdgeInsets.only(right: 30.0, top: 10),
+              child: GestureDetector(
+                  onTap: () {
+                    _startBarcodeScan();
+                  },
+                  child: Icon(
+                    Iconsax.scan,
+                    size: 40,
+                  )),
+            )
+        ],
+      ),
       // floatingActionButton: permissionsMap['sales'] == false ? Container() : isStoreEmpty == true ? Container() : FloatingActionButton.extended(
       //   splashColor: Colors.green,
       //
@@ -766,21 +735,10 @@ class _PosWebState extends State<PosWeb> {
                                                                     ),
                                                                   ],
                                                                 ),
-
-                                                                // Text('Price: \$100'),
-                                                                // SizedBox(height: 10),
-                                                                // Text('Amount: 5'),
                                                               ],
                                                             ),
                                                           ),
-                                                          // actions: [
-                                                          //   TextButton(
-                                                          //     onPressed: () {
-                                                          //       Navigator.of(context).pop();
-                                                          //     },
-                                                          //     child: Text('Close'),
-                                                          //   ),
-                                                          // ],
+
                                                         );
                                                       });
                                                 },

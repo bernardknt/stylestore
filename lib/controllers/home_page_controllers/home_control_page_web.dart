@@ -7,16 +7,16 @@ import 'package:sidebarx/sidebarx.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
-import 'package:stylestore/screens/Documents_Pages/documents.dart';
-import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/suppliers/supplier_page.dart';
-import 'package:stylestore/screens/wallets_page.dart';
 import '../../Utilities/constants/user_constants.dart';
+import '../../model/common_functions.dart';
+import '../../model/styleapp_data.dart';
 import '../../screens/documents.dart';
 import '../../screens/employee_pages/employees_page.dart';
+import '../../screens/products_pages/store_page.dart';
 import '../../screens/sign_in_options/logi_new_layout_web.dart';
 import '../../screens/sign_in_options/login_page.dart';
 import '../../utilities/constants/color_constants.dart';
@@ -38,7 +38,6 @@ class _ControlPageWebState extends State<ControlPageWeb> {
       kGreenThemeColor.withOpacity(0.5); // Default selected widget
   final auth = FirebaseAuth.instance;
   final divider = Divider(color: kBlack.withOpacity(0.3), height: 1);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,31 +143,6 @@ class _ControlPageWebState extends State<ControlPageWeb> {
 
 
                           );
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (BuildContext context) {
-                          //     return AlertDialog(
-                          //       title: const Text('Log out'),
-                          //       content: const Text('Are you sure you want to log out?'),
-                          //       actions: [
-                          //         TextButton(
-                          //           onPressed: () async {
-                          //             await auth.signOut().then((value) {
-                          //               // Navigator.pushNamed(context, LoginPage.id);
-                          //             });
-                          //           },
-                          //           child: const Text('Yes'),
-                          //         ),
-                          //         TextButton(
-                          //           onPressed: () {
-                          //             Navigator.pop(context);
-                          //           },
-                          //           child: const Text('No'),
-                          //         ),
-                          //       ],
-                          //     );
-                          //   },
-                          // );
                         },
                         child: const Text('Log out', style: kNormalTextStyle,))
                   ),
@@ -196,14 +170,25 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 icon: Icons.home,
               ),
               SidebarXItem(
-                label: 'Store',
+                label: 'Point of Sale',
                 onTap: () {
                   setState(() {
-                    _selectedWidget = PosWeb(showBackButton: false,);
+                    _selectedWidget = SuperResponsiveLayout(mobileBody: POS(), desktopBody: PosWeb(showBackButton: false,));
                   });
                 },
                 // page: EmployeesPage(),
-                icon: Icons.storefront,
+                icon:Icons.point_of_sale
+                //Icons.storefront,
+              ),
+              SidebarXItem(
+                  label: '${CommonFunctions().getFirstWord(Provider.of<StyleProvider>(context, listen: false).beauticianName)} Store',
+                  onTap: () {
+                    setState(() {
+                      _selectedWidget = SuperResponsiveLayout(mobileBody: MerchantStorePage(), desktopBody: MerchantStorePage(),);
+                    });
+                  },
+                  // page: EmployeesPage(),
+                  icon: Icons.storefront,
               ),
               SidebarXItem(
                 label: 'Team',
