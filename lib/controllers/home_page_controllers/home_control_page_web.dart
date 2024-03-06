@@ -10,7 +10,8 @@ import 'package:stylestore/screens/Messages/message_history.dart';
 import 'package:stylestore/screens/Documents_Pages/documents.dart';
 import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
-import 'package:stylestore/screens/payment_pages/pos2.dart';
+import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
+import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import 'package:stylestore/screens/wallets_page.dart';
 import '../../Utilities/constants/user_constants.dart';
@@ -104,6 +105,8 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                         onTap: () async {
 
                           CoolAlert.show(
+                              width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+
                               context: context,
                               type: CoolAlertType.success,
                               widget: Column(
@@ -196,7 +199,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 label: 'Store',
                 onTap: () {
                   setState(() {
-                    _selectedWidget = POS(showBackButton: false,);
+                    _selectedWidget = PosWeb(showBackButton: false,);
                   });
                 },
                 // page: EmployeesPage(),
@@ -222,16 +225,16 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 // page: EmployeesPage(),
                 icon: Icons.supervised_user_circle,
               ),
-              SidebarXItem(
-                label: 'Business Wallet',
-                onTap: () {
-                  setState(() {
-                    _selectedWidget = WalletsPage();
-                  });
-                },
-                // page: EmployeesPage(),
-                icon: Icons.monetization_on_outlined,
-              ),
+              // SidebarXItem(
+              //   label: 'Business Wallet',
+              //   onTap: () {
+              //     setState(() {
+              //       _selectedWidget = WalletsPage();
+              //     });
+              //   },
+              //   // page: EmployeesPage(),
+              //   icon: Icons.monetization_on_outlined,
+              // ),
               SidebarXItem(
                 label: 'Marketing',
                 onTap: () {

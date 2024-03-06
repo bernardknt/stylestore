@@ -19,7 +19,7 @@ import '../../widgets/rounded_icon_widget.dart';
 import '../HomePageWidgets/summary_widget.dart';
 import '../customer_pages/customers_page.dart';
 import '../expenses_pages/expenses.dart';
-import '../payment_pages/pos2.dart';
+import '../payment_pages/pos_mobile.dart';
 import '../sign_in_options/sign_in_page.dart';
 import '../tasks_pages/tasks_widget.dart';
 

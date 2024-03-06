@@ -34,6 +34,9 @@ class StyleProvider extends ChangeNotifier{
   String customerLocation  = '';
   bool isStoreEmpty = false;
   bool kdsMode = false;
+  bool supplierButton = false;
+  String supplierId = "";
+  String supplierName = "";
 
 
   String speciality = '';
@@ -155,6 +158,17 @@ class StyleProvider extends ChangeNotifier{
 
   String expense = "";
 
+
+  void setSupplierButton(bool value){
+    supplierButton = value;
+    notifyListeners();
+  }
+
+  void setSupplierValues(id, name){
+    supplierId = id;
+    supplierName = name;
+    notifyListeners();
+  }
   void addBulkSmsList(value) {
     if (bulkNumbers.contains(value)) {
       bulkNumbers.remove(value);

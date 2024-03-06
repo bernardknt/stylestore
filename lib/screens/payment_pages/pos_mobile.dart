@@ -257,7 +257,8 @@ class _POSState extends State<POS> {
         backgroundColor: kPlainBackground,
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
-        title: permissionsMap['sales'] == false
+        title:
+        permissionsMap['sales'] == false
             ? Container()
             : GestureDetector(
                 onTap: () async {

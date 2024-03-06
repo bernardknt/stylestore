@@ -67,7 +67,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     for (var doc in querySnapshot.docs) {
       // Update the document with the 'supplierId' field
       await doc.reference.update({
-        'supplier': 'Suppliers'
+        'paid':true
       });
     }
   }
@@ -86,6 +86,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   var activityList = [];
   var createdByList = [];
   var supplierList = [];
+  var paidList = [];
   var listOfProducts = [];
   var listOfPriceOfProducts = [];
 
@@ -118,10 +119,11 @@ class _ExpensesPageState extends State<ExpensesPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: permissionsMap['expenses'] == false ?Container(): FloatingActionButton(
+
           backgroundColor: kAppPinkColor,
           onPressed: (){
             // add Ingredient Here
-            updatePurchasesWithSupplierId();
+            // updatePurchasesWithSupplierId();
 
             Provider.of<StyleProvider>(context, listen: false).resetCustomerUploadItem();
             // Navigator.pushNamed(context, AddCustomersPage.id);
@@ -256,6 +258,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               createdByList = [];
               listOfPriceOfProducts = [];
               supplierList = [];
+              paidList  = [];
 
 
 
@@ -268,6 +271,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   productList.add(doc['items']);
                   transIdList.add(doc['id']);
                   supplierList.add(doc['supplier']);
+                  paidList .add(doc['paid']);
                   dateList.add(doc['date'].toDate());
                   createdByList.add(doc['requestBy']);
                   List dynamicList = doc['items'];
@@ -405,7 +409,16 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                             ),
                                           ],
                                         ),
-                                        trailing: Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: 14, color: kGreenThemeColor)),
+                                        trailing:
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: 14, color: kGreenThemeColor)),
+                                            paidList[index] == true? TextButton(onPressed: (){}, child: Text("Pay")):Container()
+
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),

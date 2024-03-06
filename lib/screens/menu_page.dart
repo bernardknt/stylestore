@@ -1,30 +1,17 @@
 
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/model/styleapp_data.dart';
-import 'package:stylestore/screens/calendar_pages/calendar_page.dart';
-import 'package:stylestore/screens/customer_care_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/employee_pages/employees_page.dart';
-import 'package:stylestore/screens/reviews_page.dart';
-import 'package:stylestore/screens/services_page.dart';
 import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
-import 'package:stylestore/screens/team_pages/team_page.dart';
-import 'package:stylestore/screens/tutorials_page.dart';
-import 'package:stylestore/screens/wallets_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';
-import 'package:stylestore/screens/videos/tutorials_page_new.dart';
-
 import '../Utilities/constants/user_constants.dart';
 import '../controllers/responsive/responsive_page.dart';
 import '../model/common_functions.dart';
@@ -41,13 +28,12 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  //MenuItem('Payment', Icons.payment);
   List <SideMenuItem> all = [
     SideMenuItem(title: 'Edit Store', icon: Icons.business_outlined),
     SideMenuItem(title: 'Transactions', icon: Icons.money),
     SideMenuItem(title: 'Marketing', icon: Icons.chat_outlined),
     SideMenuItem(title: 'Team', icon: Icons.people_alt_outlined),
-    SideMenuItem(title: 'Business Wallet', icon: Icons.monetization_on_outlined),
+    // SideMenuItem(title: 'Business Wallet', icon: Icons.monetization_on_outlined),
 
   ];
 
@@ -56,7 +42,7 @@ class _MenuPageState extends State<MenuPage> {
     TransactionsController.id,
     MessageHistoryPage.id,
     EmployeesPage.id,
-    WalletsPage.id
+    // WalletsPage.id
     // NewTutorialPage.id,
 
   ];

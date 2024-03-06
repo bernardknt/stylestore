@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../screens/payment_pages/pos2.dart';
+import '../screens/payment_pages/pos_mobile.dart';
 import '../utilities/constants/color_constants.dart';
 import '../utilities/constants/font_constants.dart';
 

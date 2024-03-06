@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   var expenseName = "";
   var supplierName = "";
   var expenseCost = "0.0";
+
   var expenseQuantity = "1";
   var expenseOrderNumber = "";
   var originalBasketToPost = [];
@@ -38,6 +40,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   String? selectedSupplierDisplayName;
   String? selectedSupplierId;
   String? selectedSupplierRealName;
+  List<String> _filteredSupplierDisplayNames = [];
 
   File? image;
   var imageUploaded = false;
@@ -63,7 +66,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     }
   }
 
-  Future<void> _fetchSupplierNames() async {
+  Future<void> fetchSupplierNames() async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('suppliers')
         .where("storeId", isEqualTo: storeId)
@@ -98,7 +101,8 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
-    _fetchSupplierNames();
+    fetchSupplierNames();
+    _filteredSupplierDisplayNames = supplierDisplayNames;
     setState(() {
 
     });
@@ -113,11 +117,12 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   }
   @override
   Widget build(BuildContext context) {
-    var styleData = Provider.of<StyleProvider>(context);
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
+    var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
 
     TextEditingController controller = TextEditingController(text: expenseCost);
-    TextEditingController expenseController = TextEditingController(text: "${Provider.of<StyleProvider>(context).expense}");
-    TextEditingController quantityController = TextEditingController(text: "1");
+    TextEditingController expenseController = TextEditingController(text: styleData.expense);
+    TextEditingController quantityController = TextEditingController(text: expenseQuantity);
     // Move the cursor to the end of the text
     controller.selection = TextSelection.fromPosition(
       TextPosition(offset: controller.text.length),
@@ -216,36 +221,35 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 kLargeHeightSpacing,
                 TextForm(label: 'Quantity',controller: quantityController),
                 kLargeHeightSpacing,
-                kSmallHeightSpacing,
-                DropdownButton<String>(
-                  value: selectedSupplierDisplayName,
-                  onTap: () {
-                    // Provider.of<StyleProvider>(context, listen: false)
-                    //     .setTaskToDo(taskToDo);
-                    setState(() {});
-                  },
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedSupplierDisplayName = newValue!;
-                      int position = supplierDisplayNames.indexOf(newValue);
-                      selectedSupplierRealName= supplierRealNames[position];
-                      selectedSupplierId = supplierIds[position];
+                DropdownSearch<String>(
+                    // mode: Mode.MENU,
+                    items: supplierDisplayNames,
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                      dropdownSearchDecoration: InputDecoration(
+                        labelText: "Select Supplier",
+                        hintText: "Supplier for goods",
+                      ),
+                    ),
 
-                      print("$selectedSupplierRealName: $selectedSupplierId");
+                    popupProps: PopupProps.menu(
+                      showSelectedItems: true, // Show selected items at the top
+                    ),
 
-
-                    });
-                  },
-                  hint: Text(
-                    'Select Supplier',
-                  ),
-                  items: supplierDisplayNames
-                      .map<DropdownMenuItem<String>>((String name) {
-                    return DropdownMenuItem<String>(
-                      value: name,
-                      child: Text(name),
-                    );
-                  }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedSupplierDisplayName = newValue!;
+                        int position = supplierDisplayNames.indexOf(newValue);
+                        selectedSupplierRealName = supplierRealNames[position];
+                        selectedSupplierId = supplierIds[position];
+                        print("$selectedSupplierRealName: $selectedSupplierId");
+                      });
+                    },
+                    // hint: Text('Select Supplier'),
+                    // showSearchBox: true,
+                    // dropdownSearchDecoration: InputDecoration(hintText: "Search Supplier"),
+                    filterFn: (item, query) {
+                      return item.toLowerCase().contains(query!.toLowerCase());
+                    }
                 ),
               ],
             ),

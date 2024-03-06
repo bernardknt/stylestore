@@ -40,7 +40,6 @@ class _SuppliersPageState extends State<SuppliersPage> {
       final supplierDataList = snapshot.docs
           .map((doc) => AllSupplierData.fromFirestore(doc))
           .toList();
-
       return supplierDataList;
     } catch (error) {
       print('Error retrieving employee data: $error');

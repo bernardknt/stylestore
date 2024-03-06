@@ -36,7 +36,7 @@ import 'package:stylestore/screens/customer_pages/customer_transactions.dart';
 import 'package:stylestore/screens/customer_pages/customers_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/Messages/message.dart';
-import 'package:stylestore/screens/payment_pages/pos2.dart';
+import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';

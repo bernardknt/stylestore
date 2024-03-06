@@ -16,7 +16,7 @@ import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/customer_pages/customers_page.dart';
 import 'package:stylestore/screens/expenses_pages/expenses.dart';
-import 'package:stylestore/screens/payment_pages/pos2.dart';
+import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/sign_in_options/sign_in_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';

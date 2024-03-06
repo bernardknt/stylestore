@@ -2,6 +2,8 @@
 
 import 'dart:math';
 
+import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +14,9 @@ import 'package:stylestore/model/styleapp_data.dart';
 import 'package:uuid/uuid.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
+import '../../model/beautician_data.dart';
 import '../../model/stock_items.dart';
+import '../customer_pages/search_customer.dart';
 import 'amount_widget.dart';
 
 
@@ -32,7 +36,7 @@ class PosSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context);
     return Container(
-      color: Color(0xFF737373),
+      color: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -46,7 +50,9 @@ class PosSummary extends StatelessWidget {
         padding: EdgeInsets.all(20),
         child: Stack(
             children : [
-              Positioned(
+              styleData.basketNameItems.isEmpty?Container(
+                child: Center(child: Text("Order Details Appear Here", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
+              ):Positioned(
                   bottom: -10,
                   right: 0,
                   left: 0,
@@ -105,7 +111,7 @@ class PosSummary extends StatelessWidget {
                       );
                     }),
               ),
-              Positioned(
+              styleData.basketNameItems.isEmpty? Container(): Positioned(
                   bottom: 30,
                   left: 0,
                   right: 0,
@@ -114,32 +120,90 @@ class PosSummary extends StatelessWidget {
                   Center(
                     child: TextButton.icon(onPressed: ()async{
                       final prefs = await SharedPreferences.getInstance();
-
-                      //'OPR${date.day}'+'${uuid.v1().split("-")[0]}'+'${uuid.v4().split("-")[0]}'+'${date.month}'
                       prefs.setString(kOrderId, CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!));
                       Provider.of<StyleProvider>(context, listen: false).setAppointmentTimeDate(date, date);
                       Provider.of<StyleProvider>(context, listen: false).setInvoicedTimeDate(DateTime.now());
                       Provider.of<StyleProvider>(context, listen: false).setInstructionsInfo('Product');
-                      Provider.of<StyleProvider>(context, listen:false).setPaymentStatus('Product');
-                      Provider.of<StyleProvider>(context, listen:false).setPaidPrice(styleData.totalPrice);
-                      //  Provider.of<StyleProvider>(context, listen:false).setPaidPrice(0);
+                      Provider.of<StyleProvider>(context, listen: false).setPaymentStatus('Product');
+                      Provider.of<StyleProvider>(context, listen: false).setPaidPrice(styleData.totalPrice);
+                      Provider.of<BeauticianData>(context, listen: false)
+                          .setStoreId(prefs.getString(kStoreIdConstant));
+                      if (Provider.of<StyleProvider>(context, listen: false).customerName == ""){
 
-                      Navigator.pop(context); 
-                      // Navigator.pushNamed(context, SuccessPzage.id);
-                      showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return Scaffold(
-                              appBar: AppBar(
-                                automaticallyImplyLeading: false,
-                                backgroundColor: kPureWhiteColor,
-                                elevation: 0,
-                              ),
+                        CoolAlert.show(
+                            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+                            lottieAsset: 'images/leave.json',
+                            context: context,
+                            type: CoolAlertType.success,
+                            text: 'No Customer Added',
+                            title:'Add a Customer',
+                            confirmBtnText: 'Add',
+                            cancelBtnText: "Continue with Customer",
+                            cancelBtnTextStyle: kNormalTextStyle,
+                            confirmBtnTextStyle: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                            showCancelBtn: true,
+                            confirmBtnColor: Colors.green,
+                            backgroundColor: kBlueDarkColor,
+                            onCancelBtnTap: (){
+                              Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
+                              Navigator.pop(context);
+                              Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
+                              showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return Scaffold(
+                                        appBar: AppBar(
+                                          automaticallyImplyLeading: false,
+                                          backgroundColor: kPureWhiteColor,
+                                          elevation: 0,
+                                        ),
 
-                                body: AmountToPayWidget());
-                          });
-                      // Vibration.vibrate();
+                                        body: AmountToPayWidget());
+                                  });
+                            },
+                            onConfirmBtnTap: (){
+                              Navigator.pop(context);
+
+                              showModalBottomSheet(
+                                  isScrollControlled: true,
+                                  context: context,
+                                  builder: (context) {
+                                    return Scaffold(
+                                        appBar: AppBar(
+                                          elevation: 0,
+                                          backgroundColor: kPureWhiteColor,
+                                          automaticallyImplyLeading: false,
+                                        ),
+                                        body: CustomerSearchPage());
+                                  });
+
+                            }
+                        );
+                      } else {
+
+
+                        if (kIsWeb) {
+
+                        } else {
+                          Navigator.pop(context);
+                        }
+
+
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return Scaffold(
+                                  appBar: AppBar(
+                                    automaticallyImplyLeading: false,
+                                    backgroundColor: kPureWhiteColor,
+                                    elevation: 0,
+                                  ),
+
+                                  body: AmountToPayWidget());
+                            });
+                      }// Vibration.vibrate();
                     },
                       style: TextButton.styleFrom(
                         //elevation: ,

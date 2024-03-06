@@ -7,7 +7,7 @@ import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/widgets/select_services.dart';
 import 'package:stylestore/widgets/transaction_button2.dart';
 import '../model/styleapp_data.dart';
-import '../screens/payment_pages/pos2.dart';
+import '../screens/payment_pages/pos_mobile.dart';
 import '../screens/products_pages/store_page.dart';
 import '../widgets/transaction_buttons.dart';
 import 'constants/color_constants.dart';
