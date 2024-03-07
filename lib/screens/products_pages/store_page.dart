@@ -210,10 +210,8 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
               ],
             )
         ),
-        body: WillPopScope(
-          onWillPop: () async {
-            return false; // return a `Future` with false value so this route cant be popped or closed.
-          },
+        body: PopScope(
+          canPop: false,
           child: SafeArea(
             child: permissionsMap['store'] == false ? LockedWidget(page: "Store"):Column(
               children: [
@@ -222,14 +220,20 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: Stack(
                     children: [
-                      TextField(
-                        controller: searchController,
-                        decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          hintText: 'By Name/ Product / Phone Number',
-                          hintFadeDuration: Duration(milliseconds: 100),
-                        ),
-                        onChanged: filterStock,
+                      Row(
+                        children: [
+                          TextField(
+                            controller: searchController,
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              hintText: 'By Name/ Product / Phone Number',
+                              hintFadeDuration: Duration(milliseconds: 100),
+                            ),
+                            onChanged: filterStock,
+                          ),
+
+
+                        ],
                       ),
 
                     ],
