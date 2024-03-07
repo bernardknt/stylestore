@@ -1,0 +1,50 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class AllStockData {
+  final String documentId;
+  final double amount;
+  final double quantity;
+  final double minimum;
+  final String description;
+  final String image;
+  final String name;
+  final String storeId;
+
+  final bool saleable;
+  final bool tracking;
+  final List stockTaking;
+
+  AllStockData({
+    required this.documentId,
+    required this.storeId,
+    required this.amount,
+    required this.quantity,
+    required this.minimum,
+    required this.description,
+    required this.image,
+    required this.name,
+    required this.saleable,
+    required this.tracking,
+    required this.stockTaking,
+
+
+  });
+
+  factory AllStockData.fromFirestore(DocumentSnapshot doc) {
+    return AllStockData(
+      documentId: doc.id,
+      amount: doc['amount'] ?? 0.0,
+      quantity: doc['quantity'] ?? 0.0,
+      minimum: doc['minimum'] ?? 0.0,
+      description: doc['description'] ?? '',
+      image: doc['image'] ?? '',
+      storeId: doc['storeId'] ?? '',
+      name: doc['name'] ?? '',
+      saleable: doc['saleable'] ?? '',
+      tracking: doc['tracking'] ?? '',
+      stockTaking: doc['stockTaking'],
+
+    );
+  }
+}

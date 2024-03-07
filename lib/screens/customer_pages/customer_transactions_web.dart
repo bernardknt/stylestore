@@ -391,13 +391,17 @@ class CustomerTag extends StatelessWidget {
   final String value;
   CustomerTag({required this.iconToUse, required this.value});
 
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         iconToUse,
         kSmallWidthSpacing,
-        Text(value),
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 200), // Adjust max width as needed
+          child: Text(value),
+        ),
       ],
     );
   }

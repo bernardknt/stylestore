@@ -74,7 +74,6 @@ class _SuppliersPageState extends State<SuppliersPage> {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newSuppliers = await retrieveSupplierData();
-    print(newSuppliers);
     filteredSupplier.addAll(newSuppliers);
     setState(() {});
   }

@@ -149,8 +149,6 @@ class _EmployeesPageState extends State<EmployeesPage> {
   }
 
   void defaultInitialization() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // businessId = prefs.getString(kStoreIdConstant) ?? '';
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newEmployees = await retrieveEmployeeData();

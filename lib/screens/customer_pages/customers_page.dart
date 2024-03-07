@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:cool_alert/cool_alert.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -26,12 +23,10 @@ import 'package:stylestore/utilities/constants/font_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
 import 'package:stylestore/widgets/customer_content.dart';
 import 'package:stylestore/widgets/rounded_buttons.dart';
-import '../../Utilities/InputFieldWidget.dart';
 import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../utilities/constants/icon_constants.dart';
 import '../../utilities/constants/user_constants.dart';
 import 'package:intl/intl.dart';
-
 import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
@@ -64,19 +59,7 @@ class _CustomerPageState extends State<CustomerPage> {
   Map<String, dynamic> videoMap = {};
   final RoundedLoadingButtonController _btnController =
   RoundedLoadingButtonController();
-  List<bool> visible = [
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false
-  ];
+  List<bool> visible = [];
   List contactList = [];
   late TextEditingController controller;
 
@@ -772,36 +755,36 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         )),
                                                     ),
                                                   ),
-                                                  Positioned(
-                                                      right: 10,
-                                                      top: 5,
-                                                      child:
-                                                      GestureDetector(
-                                                          onTap: () {
-                                                            CoolAlert.show(
-                                                                lottieAsset: 'images/question.json',
-                                                                context: context,
-                                                                type: CoolAlertType.success,
-                                                                text: "Are you sure you want to remove this from your customers list",
-                                                                title: "Remove Item?",
-                                                                confirmBtnText: 'Yes',
-                                                                confirmBtnColor: Colors.red,
-                                                                cancelBtnText: 'Cancel',
-                                                                showCancelBtn: true,
-                                                                backgroundColor: kAppPinkColor,
-                                                                onConfirmBtnTap: () {
-                                                                  // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
-                                                                  // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
-                                                                  CommonFunctions().removeDocumentFromServer(
-                                                                      id[index],
-                                                                      'customers');
-
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                });
-                                                          },
-                                                          child:
-                                                          kIconCancel)),
+                                                  // Positioned(
+                                                  //     right: 10,
+                                                  //     top: 5,
+                                                  //     child:
+                                                  //     GestureDetector(
+                                                  //         onTap: () {
+                                                  //           CoolAlert.show(
+                                                  //               lottieAsset: 'images/question.json',
+                                                  //               context: context,
+                                                  //               type: CoolAlertType.success,
+                                                  //               text: "Are you sure you want to remove this from your customers list",
+                                                  //               title: "Remove Item?",
+                                                  //               confirmBtnText: 'Yes',
+                                                  //               confirmBtnColor: Colors.red,
+                                                  //               cancelBtnText: 'Cancel',
+                                                  //               showCancelBtn: true,
+                                                  //               backgroundColor: kAppPinkColor,
+                                                  //               onConfirmBtnTap: () {
+                                                  //                 // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
+                                                  //                 // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
+                                                  //                 CommonFunctions().removeDocumentFromServer(
+                                                  //                     id[index],
+                                                  //                     'customers');
+                                                  //
+                                                  //                 Navigator.pop(
+                                                  //                     context);
+                                                  //               });
+                                                  //         },
+                                                  //         child:
+                                                  //         kIconCancel)),
                                                   Positioned(
                                                       left: 10,
                                                       bottom: 8,

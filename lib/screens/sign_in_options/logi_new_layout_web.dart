@@ -56,7 +56,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
             child: Container(
               height: double.infinity,
               color: kAppPinkColor,
-              child: Image.asset("images/lapi.png", fit: BoxFit.fitHeight,),
+              child: Image.asset("images/business_setup.png", fit: BoxFit.fitHeight,),
             ),
           ),
           Expanded(

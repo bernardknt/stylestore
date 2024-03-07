@@ -7,6 +7,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slider_button/slider_button.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/tasks_pages/add_tasks.dart';
@@ -324,6 +325,50 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                   kLargeHeightSpacing,
                                                   kLargeHeightSpacing,
                                                   kLargeHeightSpacing,
+
+                                                  SliderButton(
+                                                    action: () async {
+                                                      // changeOrderStatus();
+                                                      Navigator.pop(context);
+                                                      CommonFunctions().updateDocumentFromServer(
+                                                          idList[index],
+                                                          "tasks",
+                                                          "status",
+                                                          true);
+                                                      // print(time);
+                                                      // Navigator.pushNamed(context, AppointmentSummary.id);
+                                                    },
+
+                                                    ///Put label over here
+                                                    label: Text(
+                                                      "Slide to Delete Task",
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                          FontWeight.w500,
+                                                          fontSize: 17),
+                                                    ),
+                                                    icon: Icon(
+                                                      Iconsax.tick_circle,
+                                                      color: kPureWhiteColor,
+                                                      size: 30,
+                                                    ),
+
+                                                    //Put BoxShadow here
+                                                    boxShadow: BoxShadow(
+                                                      color: Colors.black,
+                                                      blurRadius: 4,
+                                                    ),
+
+                                                    width: 250,
+                                                    radius: 100,
+                                                    buttonColor: kAppPinkColor,
+                                                    backgroundColor:
+                                                    kBiegeThemeColor,
+                                                    highlightedColor:
+                                                    Colors.black,
+                                                    baseColor: kAppPinkColor,
+                                                  ),
 
                                                 ],
                                               )));

@@ -3,18 +3,13 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-// import 'package:new_version/new_version.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/controllers/home_page_controllers/home_control_page_web.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
-
 import '../Utilities/constants/font_constants.dart';
-import '../controllers/home_page_controllers/home_controller_mobile.dart';
 import '../controllers/responsive/responsive_page.dart';
 import '../model/styleapp_data.dart';
 import '../utilities/constants/user_constants.dart';
@@ -139,7 +134,7 @@ class _SplashPageState extends State<SplashPage> {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             // Image.asset('images/logo_white2.png',),
             Text(
-              'Manage and Grow your Business',
+              'Automate and Grow Yours Business',
               style: kHeadingTextStyleWhite.copyWith(color: kPureWhiteColor),
             )
           ]),

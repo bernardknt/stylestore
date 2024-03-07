@@ -7,7 +7,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -18,28 +17,20 @@ import 'package:stylestore/screens/products_pages/search_detailed_products.dart'
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
+import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
 import 'package:flutter/src/painting/box_border.dart' as boxBorder;
-
-import '../../controllers/adding_controller.dart';
 import '../../model/beautician_data.dart';
 import '../../model/excel_model.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/icon_constants.dart';
-import '../../widgets/TicketDots.dart';
 import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
-import '../customer_pages/add_customers_page.dart';
-import '../payment_pages/record_payment_widget.dart';
-import '../../widgets/search_bar.dart';
-import '../customer_pages/search_detailed_customer.dart';
-
 class MerchantStorePage extends StatefulWidget {
 
 
@@ -48,37 +39,58 @@ class MerchantStorePage extends StatefulWidget {
 }
 
 class _MerchantStorePageState extends State<MerchantStorePage> {
-  // VariablesXx
-  // String title = 'Your';
-  late YoutubePlayerController _controller;
-  bool _isPlayerReady = false;
 
-  var amountList = [];
-  var quantityList = [];
-  var storeIdList = [];
-  var descList = [];
-  var imgList = [];
-  var minimumList = [];
-  var nameList = [];
-  var stockTakingList = [];
-  var saleableList = [];
-  var trackingList = [];
+  late YoutubePlayerController _controller;
+
+
   var formatter = NumberFormat('#,###,000');
   String youtubeUrl = 'https://www.youtube.com/watch?v=8DhO5YOhTx4&list=RD8DhO5YOhTx4&start_radio=1&ab_channel=WilliamMcDowellMusic';
 
   Map<String, dynamic> permissionsMap = {};
   Map<String, dynamic> videoMap = {};
-
-  var containerToShow = Padding(padding: EdgeInsets.all(20),
-    child: Container(child: Text(
-      'This Provide has no products', textAlign: TextAlign.center,
-      style: kHeading2TextStyleBold,),),);
+  TextEditingController searchController = TextEditingController();
+  List<AllStockData> filteredStock = [];
+  List<AllStockData> newStock = [];
 
   defaultInitialization()async{
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
+    newStock = await retrieveSupplierData();
+    filteredStock.addAll(newStock);
+
+    print(newStock);
     setState(() {
 
+    });
+  }
+
+  Future<List<AllStockData>> retrieveSupplierData() async {
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
+
+  void filterStock(String query) {
+    setState(() {
+      filteredStock = newStock
+          .where((stock) =>
+      stock.name.toLowerCase().contains(query.toLowerCase()) ||
+          stock.description.toLowerCase().contains(query.toLowerCase())
+          )
+          .toList();
     });
   }
   @override
@@ -86,23 +98,12 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
     // TODO: implement initState
     super.initState();
     defaultInitialization();
-    _controller = YoutubePlayerController(
-      initialVideoId: YoutubePlayer.convertUrlToId(youtubeUrl)! ,
-      flags: YoutubePlayerFlags(
-        mute: false,
-        autoPlay: false,
-      ),
-    );
 
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery
-        .of(context)
-        .size
-        .width * 0.6;
-    var styleData = Provider.of<StyleProvider>(context, listen: false);
+
     var kitchenDataSet = Provider.of<BeauticianData>(context, listen: false);
 
     return
@@ -111,167 +112,6 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
             backgroundColor: kPureWhiteColor,
             elevation: 0,
             automaticallyImplyLeading: false,
-
-            actions: [
-              permissionsMap['takeStock'] == false ? Container():
-              Row(
-
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        Provider.of<BeauticianData>(context, listen: false)
-                            .setStoreId(prefs.getString(kStoreIdConstant));
-
-                        // Navigator.pushNamed(context, ReStockPage.id);
-                        showDialog(context: context,
-                            // barrierLabel: 'Appointment',
-                            builder: (context) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Center(child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-
-                                                  Navigator.pushNamed(
-                                                      context, UpdateStockPage.id);
-                                                },
-                                                child: CircleAvatar(
-                                                    radius: 30,
-                                                    backgroundColor: kCustomColor
-                                                        .withOpacity(1),
-                                                    child: const Icon(
-                                                      Iconsax.box, color: kBlack,
-                                                      size: 20,)),
-                                              ),
-                                              Text("Update / Check\nStock",
-                                                textAlign: TextAlign.center,
-                                                style: kNormalTextStyle.copyWith(
-                                                    color: kPureWhiteColor,
-                                                    fontSize: 12),)
-                                            ],
-                                          ),
-                                          kMediumWidthSpacing,
-                                          kMediumWidthSpacing,
-                                          kMediumWidthSpacing,
-                                          Column(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                  Navigator.pushNamed(
-                                                      context, ReStockPage.id);
-                                                },
-                                                child: CircleAvatar(
-                                                    backgroundColor: kCustomColorPink
-                                                        .withOpacity(1),
-
-                                                    radius: 30,
-                                                    child: const Icon(Iconsax.tag,
-                                                      color: kPureWhiteColor,
-                                                      size: 20,)),
-                                              ),
-                                              Text("Restock / Purchase\nItems",
-                                                textAlign: TextAlign.center,
-                                                style: kNormalTextStyle.copyWith(
-                                                    color: kPureWhiteColor,
-                                                    fontSize: 12),)
-                                            ],
-                                          ),
-
-                                        ],
-                                      )),
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      kLargeHeightSpacing,
-                                      Text("Cancel",
-                                        style: kNormalTextStyle.copyWith(
-                                            color: kPureWhiteColor),)
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                        );
-                      },
-
-                      child: Container(
-                        // height: 10,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: kCustomColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(child: Text("Take Stock",
-                          style: kNormalTextStyle.copyWith(
-                              color: kBlack, fontSize: 16),)),
-                        // color: kAirPink,
-                      ),
-                    ),
-                  ),
-                  kMediumWidthSpacing,
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, StockHistoryPage.id);
-                          // ZoomDrawer.of(context)!.toggle();
-
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-                            Text("History", style: kNormalTextStyle.copyWith(
-                                fontSize: 12,
-                                color: kBlack,
-                                fontWeight: FontWeight.bold),)
-                          ],
-                        )),
-                  ),
-
-                ],
-              ),
-            ],
-            // leading:
-            // permissionsMap['takeStock'] == false ? Container():
-            // GestureDetector(
-            //     onTap: () {
-            //       Navigator.pushNamed(context, StockHistoryPage.id);
-            //       // ZoomDrawer.of(context)!.toggle();
-            //
-            //     },
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.center,
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       children: [
-            //         Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-            //         Text("History", style: kNormalTextStyle.copyWith(
-            //             fontSize: 12,
-            //             color: kBlack,
-            //             fontWeight: FontWeight.bold),)
-            //       ],
-            //     ))
         ),
 
         floatingActionButtonLocation: FloatingActionButtonLocation
@@ -279,8 +119,6 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
         floatingActionButton:permissionsMap['store'] == false ?Container(): FloatingActionButton(
             backgroundColor: kAppPinkColor,
             onPressed: () {
-              // add Ingredient Here
-              // Navigator.pushNamed(context, ProductUpload.id);
               showDialog(context: context, builder: (BuildContext context) {
                 return
                   GestureDetector(
@@ -328,15 +166,6 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                                       Navigator.pop(context);
                                       Navigator.pushNamed(
                                           context, ProductUpload.id);
-                                      // Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(priceList[index] - paidAmountList[index]);
-                                      // Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(priceList[index], paidAmountList[index], clientList[index], transIdList[index]);
-
-                                      // showModalBottomSheet(
-                                      //     context: context,
-                                      //     isScrollControlled: true,
-                                      //     builder: (context) {
-                                      //       return RecordPaymentWidget();
-                                      //     });
 
 
                                     },
@@ -388,474 +217,199 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
           child: SafeArea(
             child: permissionsMap['store'] == false ? LockedWidget(page: "Store"):Column(
               children: [
+
                 Padding(
-                  padding: const EdgeInsets.only(top: 8.0, left: 50, right: 50),
-                  child:
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, left: 10, right: 10),
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'By Name/ Product / Phone Number',
+                          hintFadeDuration: Duration(milliseconds: 100),
+                        ),
+                        onChanged: filterStock,
+                      ),
 
-                    child: GestureDetector(
-                        onTap: () async {
-                          final prefs = await SharedPreferences.getInstance();
-
-                          Provider.of<BeauticianData>(context, listen: false)
-                              .setStoreId(prefs.getString(kStoreIdConstant));
-
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (context) {
-                                return ProductsDetailedSearchPage();
-                              });
-                        },
-                        child:
-                        Container(
-                            padding: EdgeInsets.all(10),
-
-                            decoration: BoxDecoration(
-                              // border: OutlineInputBorder(
-                              //   borderRadius: BorderRadius.all(Radius.circular(15)),
-                              // ),
-                              border: boxBorder.Border.all(width: 1, color: kFontGreyColor),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-
-                              color: kBackgroundGreyColor,
-                            ),
-
-                            child: Row(
-                              children: [
-                                Icon(Icons.search, color: kFontGreyColor,),
-                                kSmallWidthSpacing,
-                                Text("Search Product Items",
-                                  style: kNormalTextStyle,)
-                              ],
-                            ))
-                    ),
+                    ],
                   ),
                 ),
                 Expanded(
                   child:
-                  StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance.collection('stores')
-                          .where('storeId', isEqualTo: Provider
-                          .of<StyleProvider>(context, listen: false)
-                          .beauticianId)
-                          .where('active', isEqualTo: true)
-                          .orderBy('saleable', descending: true)
-                          .orderBy('name', descending: false)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error: ${snapshot.error}'),
-                          );
-                        }
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(color: kAppPinkColor,),
-                          );
-                        }
-                        if (!snapshot.hasData) {
-                          return Container(
-                            color: Colors.white,
-                          );
-                        }
+                  ListView.builder(
 
-                        else {
-                          amountList = [];
-                          quantityList = [];
-                          descList = [];
-                          imgList = [];
-                          nameList = [];
-                          saleableList = [];
-                          trackingList = [];
-                          minimumList = [];
-                          stockTakingList = [];
+                      itemCount: filteredStock.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            // showStoreDialogFunc(context, imgList[index], nameList[index], descList[index], amountList[index]);
+                            kitchenDataSet.changeItemDetails(
+                              filteredStock[index].name,
+                              filteredStock[index].quantity.toDouble(),
+                              filteredStock[index].description,
+                              filteredStock[index].minimum.toDouble(),
+                              filteredStock[index].documentId,
+                              filteredStock[index].amount.toDouble(),
+                              filteredStock[index].image,
+                              filteredStock[index].tracking,
+                              filteredStock[index].saleable,);
 
-                          storeIdList = [];
-                          var appointments = snapshot.data!.docs;
-                          for (var appointment in appointments) {
-                            descList.add(appointment.get('description'));
-                            saleableList.add(appointment.get('saleable'));
-                            trackingList.add(appointment.get('tracking'));
-                            imgList.add(appointment.get('image'));
-                            nameList.add(appointment.get('name'));
-                            storeIdList.add(appointment.get('id'));
-                            amountList.add(appointment.get('amount'));
-                            quantityList.add(appointment.get('quantity'));
-                            minimumList.add(appointment.get('minimum'));
-                            stockTakingList.add(appointment.get('stockTaking'));
-                          }
-                        }
-                        return
-
-                          nameList.isEmpty?
-                          // GestureDetector(
-                          //   onTap: (){
-                          //     // Navigator.pushNamed(context, ProductUpload.id);
-                          //   },
-                          //   child: Column(
-                          //     mainAxisAlignment: MainAxisAlignment.center,
-                          //     children: [
-                          //       GestureDetector(
-                          //           onTap: (){
-                          //             showDialog(
-                          //               context: context,
-                          //               builder: (context) => AlertDialog(
-                          //                 content: Container(
-                          //                   width: MediaQuery.of(context).size.width * 0.8,
-                          //                   child: YoutubePlayerBuilder(
-                          //                     player: YoutubePlayer(
-                          //                       controller: _controller,
-                          //                       onReady: () {
-                          //                         _isPlayerReady = true;
-                          //                       },
-                          //                     ),
-                          //                     builder: (context, player) {
-                          //                       return player;
-                          //                     },
-                          //                   ),
-                          //                 ),
-                          //               ),
-                          //             );
-                          //           },
-                          //           child: Lottie.asset("images/confused.json")),
-                          //       Text("No Items Here. Click here to see how to add Items", style: kNormalTextStyle.copyWith(color: Colors.blue),) ]),
-                          // )
-                          CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Items', subTitle: 'One item at a time', image: 'new_logo.jpg', title: 'Setup a World Class Store', function:
-                              () {
-                            //   showModalBottomSheet(isScrollControlled: true, context: context, builder: (context) {
-                            //   return Scaffold(
-                            //
-                            //       body: AddCustomersPage());
-                            // });
-                            //   }
-                            Navigator.pushNamed(context, ProductUpload.id);
-                          }, youtubeLink: videoMap['store']
-                            ,
-                          )
-                              :
-                          Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: ListView.builder(
-
-                              itemCount: imgList.length,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    // showStoreDialogFunc(context, imgList[index], nameList[index], descList[index], amountList[index]);
-                                    kitchenDataSet.changeItemDetails(
-                                      nameList[index],
-                                      quantityList[index].toDouble(),
-                                      descList[index],
-                                      minimumList[index].toDouble(),
-                                      storeIdList[index],
-                                      amountList[index].toDouble(),
-                                      imgList[index],
-                                      trackingList[index],
-                                      saleableList[index],);
-
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Container(
-                                            color: Color(0xFF292929).withOpacity(0.6),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: kPureWhiteColor,
-                                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children:
-                                                  [
-                                                    buildButton(context, 'Edit ${nameList[index]}', Iconsax.pen_add,
-                                                            () async {
-                                                          Navigator.pop(context);
-                                                          Navigator.pushNamed(context, ProductEditPage.id);
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    color: Colors.transparent,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: kPureWhiteColor,
+                                          borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children:
+                                          [
+                                            buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
+                                                    () async {
+                                                  Navigator.pop(context);
+                                                  Navigator.pushNamed(context, ProductEditPage.id);
 
 
-                                                        }
-                                                    ),
-                                                    SizedBox(height: 16.0),
-                                                    buildButton(context, '${nameList[index]} Stock History', Iconsax.graph,  () async {
-                                                      Navigator.pop(context);
-
-                                                      if (stockTakingList[index].isEmpty){
-                                                        showDialog(context: context, builder: (BuildContext context){
-                                                          return CupertinoAlertDialog(
-                                                            title: const Text('No Stock Data'),
-                                                            content: Text('There is no stock data available for ${nameList[index]}', style: kNormalTextStyle.copyWith(color: kBlack),),
-                                                            actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                                                onPressed: (){
-                                                                  // _btnController.reset();
-                                                                  Navigator.pop(context);
-
-                                                                  // Navigator.pushNamed(context, SuccessPageHiFive.id);
-                                                                },
-                                                                child: const Text('Cancel'))],
-                                                          );
-                                                        });
-                                                      } else {
-                                                        print(storeIdList[index]);
-                                                        Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(storeIdList[index]);
-                                                        Navigator.pushNamed(context, StockManagementPage.id);
-                                                      }
-
-
-
-
-
-                                                    } ),
-
-                                                  ],
-                                                ),
-                                              ),
+                                                }
                                             ),
-                                          ); });
-                                    // Navigator.pushNamed(
-                                    //     context, ProductEditPage.id);
-                                    // THIS CODE HAS BEEN COMMENTED PUT FOR NOW
+                                            SizedBox(height: 16.0),
+                                            buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
+                                              Navigator.pop(context);
 
+                                              if (filteredStock[index].stockTaking.isEmpty){
+                                                showDialog(context: context, builder: (BuildContext context){
+                                                  return CupertinoAlertDialog(
+                                                    title: const Text('No Stock Data'),
+                                                    content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
+                                                    actions: [CupertinoDialogAction(isDestructiveAction: true,
+                                                        onPressed: (){
+                                                          // _btnController.reset();
+                                                          Navigator.pop(context);
 
-                                    // showDialog(context: context, builder: (BuildContext context){
-                                    //   return
-                                    //     GestureDetector(
-                                    //       onTap: (){Navigator.pop(context); },
-                                    //       child:
-                                    //       Material(
-                                    //         color: Colors.transparent,
-                                    //         child: Column(
-                                    //           mainAxisAlignment: MainAxisAlignment.center,
-                                    //           children: [
-                                    //             Center(child: Row(
-                                    //               mainAxisAlignment: MainAxisAlignment.center,
-                                    //               children: [
-                                    //
-                                    //                 Column(
-                                    //                   children: [
-                                    //                     GestureDetector(
-                                    //                       onTap: (){
-                                    //                         Navigator.pop(context);
-                                    //                         if (trackingList[index]!=false){
-                                    //                           showModalBottomSheet(
-                                    //                               context: context,
-                                    //                               isScrollControlled: true,
-                                    //                               builder: (context) {
-                                    //                                 return Scaffold(
-                                    //                                     appBar: AppBar(
-                                    //                                       backgroundColor: kBiegeThemeColor,
-                                    //                                       elevation: 0,
-                                    //                                       automaticallyImplyLeading: false,
-                                    //                                     ),
-                                    //
-                                    //                                     body: StockManagementPage()
-                                    //                                 );
-                                    //                               });
-                                    //                         }else {
-                                    //                           showDialog(context: context, builder: (BuildContext context){
-                                    //                             return
-                                    //                               CupertinoAlertDialog(
-                                    //                                 title: const Text('ITEM NOT TRACKABLE'),
-                                    //                                 content: Text("This item's stock and restock values are not being tracked", style: kNormalTextStyle.copyWith(color: kBlack),),
-                                    //                                 actions: [
-                                    //
-                                    //                                   CupertinoDialogAction(isDestructiveAction: true,
-                                    //                                       onPressed: (){
-                                    //                                         // _btnController.reset();
-                                    //                                         Navigator.pop(context);
-                                    //                                       },
-                                    //                                       child: const Text('Cancel')),
-                                    //
-                                    //
-                                    //                                 ],
-                                    //                               );
-                                    //                           });
-                                    //                         }
-                                    //
-                                    //
-                                    //                       },
-                                    //                       child: CircleAvatar(
-                                    //                           radius: 30,
-                                    //                           backgroundColor: kCustomColor.withOpacity(1),
-                                    //                           child: const Icon(Iconsax.firstline, color: kBlack,size: 20,)),
-                                    //                     ),
-                                    //                     Text("Manage Stock", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),)
-                                    //                   ],
-                                    //                 ),
-                                    //                 kMediumWidthSpacing,
-                                    //                 kMediumWidthSpacing,
-                                    //                 kMediumWidthSpacing,
-                                    //                 Column(
-                                    //                   children: [
-                                    //                     GestureDetector(
-                                    //                       onTap: (){
-                                    //                         Navigator.pop(context);
-                                    //                         Navigator.pushNamed(context, ProductEditPage.id);
-                                    //                         // Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(priceList[index] - paidAmountList[index]);
-                                    //                         // Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(priceList[index], paidAmountList[index], clientList[index], transIdList[index]);
-                                    //
-                                    //                         // showModalBottomSheet(
-                                    //                         //     context: context,
-                                    //                         //     isScrollControlled: true,
-                                    //                         //     builder: (context) {
-                                    //                         //       return RecordPaymentWidget();
-                                    //                         //     });
-                                    //
-                                    //
-                                    //
-                                    //                       },
-                                    //                       child: CircleAvatar(
-                                    //                           backgroundColor: kCustomColorPink.withOpacity(1),
-                                    //
-                                    //                           radius: 30,
-                                    //                           child: const Icon(Iconsax.tag, color: kPureWhiteColor,size: 20,)),
-                                    //                     ),
-                                    //                     Text("Edit Product", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),)
-                                    //                   ],
-                                    //                 ),
-                                    //
-                                    //               ],
-                                    //             )),
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             kLargeHeightSpacing,
-                                    //             Text("Cancel", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
-                                    //           ],
-                                    //         ),
-                                    //       ),
-                                    //     );
-                                    // });
-
-                                    // COMMENTING ENDS HERE
-
-                                  },
-                                  child:
-                                  Stack(
-                                      children: [
-                                        Card(
-                                          color: kBackgroundGreyColor,
-                                          shadowColor: kBackgroundGreyColor,
-                                          child: Row(
-                                            children: [
-
-                                              Padding(
-                                                padding: const EdgeInsets.all(
-                                                    8.0),
-                                                child:
-                                                Column(
-                                                  children: [
-                                                    // SquareImage(networkImageToUse: imgList[index], outsideRingColor: kBeigeThemeColor, radius: 150,),
-
-                                                  ],
-                                                ),
-                                              ),
-                                              Flexible(
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(10.0),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment
-                                                            .spaceBetween,
-                                                        children: [
-                                                          Text(nameList[index],
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
-                                                            style: kHeadingTextStyle,),
-                                                          Text(
-                                                            '${formatter.format(
-                                                                amountList[index])} Ugx',
-                                                            style: kNormalTextStyle
-                                                                .copyWith(
-                                                                color: kGreenThemeColor,
-                                                                fontSize: 14),)
-
-                                                        ],
-                                                      ),
-                                                      kSmallHeightSpacing,
-                                                      Text(descList[index],
-                                                          style: kNormalTextStyleSmallGrey),
-                                                      kSmallHeightSpacing,
-                                                      trackingList[index] == true
-                                                          ? quantityList[index] >=
-                                                          5
-                                                          ? Text(
-                                                          "Qty: ${quantityList[index]
-                                                              .toString()}",
-                                                          style: kNormalTextStyleSmallGrey
-                                                              .copyWith(
-                                                              color: kGreenThemeColor))
-                                                          : Text(
-                                                          "Qty: ${quantityList[index]
-                                                              .toString()}",
-                                                          style: kNormalTextStyleSmallGrey
-                                                              .copyWith(
-                                                              color: Colors.red))
-                                                          : Container(),
-                                                      saleableList[index] == false
-                                                          ? Text("Not for sale",
-                                                          style: kNormalTextStyleSmallGrey
-                                                              .copyWith(
-                                                              color: kAppPinkColor))
-                                                          : Container()
-
-                                                      // PaymentButtons(buttonColor: kNewGreenThemeColor, title: '${formatter.format(amountList[index])} Ugx', onPressedFunction: (){}, buttonHeight: 40,buttonWidth: 130,)
-
-
-                                                    ],
-                                                  ),),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Positioned(
-                                            right: 0,
-                                            top: 0,
-                                            child: GestureDetector(
-                                                onTap: () {
-                                                  CoolAlert.show(
-                                                      lottieAsset: 'images/question.json',
-                                                      context: context,
-                                                      type: CoolAlertType.success,
-                                                      text: "Are you sure you want to remove this from your services list",
-                                                      title: "Remove Item?",
-                                                      confirmBtnText: 'Yes',
-                                                      confirmBtnColor: Colors.red,
-                                                      cancelBtnText: 'Cancel',
-                                                      showCancelBtn: true,
-                                                      backgroundColor: kAppPinkColor,
-                                                      onConfirmBtnTap: () {
-                                                        // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
-                                                        // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
-                                                        CommonFunctions()
-                                                            .removeDocumentFromServer(
-                                                            storeIdList[index],
-                                                            'stores');
-
-                                                        Navigator.pop(context);
-                                                      }
+                                                          // Navigator.pushNamed(context, SuccessPageHiFive.id);
+                                                        },
+                                                        child: const Text('Cancel'))],
                                                   );
-                                                },
+                                                });
+                                              } else {
+                                                print(filteredStock[index].storeId);
+                                                Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
+                                                Navigator.pushNamed(context, StockManagementPage.id);
+                                              }
 
-                                                child: kIconCancel)),
-                                      ]),
-                                );
-                              }),
+                                            } ),
+
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ); });
+
+                          },
+                          child:
+                          Stack(
+                              children: [
+                                Card(
+                                  color: kBackgroundGreyColor,
+                                  shadowColor: kBackgroundGreyColor,
+                                  child: Row(
+                                    children: [
+
+                                      Flexible(
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(filteredStock[index].name,
+                                                    overflow: TextOverflow
+                                                        .ellipsis,
+                                                    style: kHeadingTextStyle,),
+                                                  Text(
+                                                    '${formatter.format(
+                                                        filteredStock[index].amount)} Ugx',
+                                                    style: kNormalTextStyle
+                                                        .copyWith(
+                                                        color: kGreenThemeColor,
+                                                        fontSize: 14),)
+
+                                                ],
+                                              ),
+                                              kSmallHeightSpacing,
+                                              Text(filteredStock[index].description,
+                                                  style: kNormalTextStyleSmallGrey),
+                                              kSmallHeightSpacing,
+                                              filteredStock[index].tracking == true
+                                                  ? filteredStock[index].quantity >=
+                                                  5
+                                                  ? Text(
+                                                  "Qty: ${filteredStock[index].quantity
+                                                      .toString()}",
+                                                  style: kNormalTextStyleSmallGrey
+                                                      .copyWith(
+                                                      color: kGreenThemeColor))
+                                                  : Text(
+                                                  "Qty: ${filteredStock[index].quantity
+                                                      .toString()}",
+                                                  style: kNormalTextStyleSmallGrey
+                                                      .copyWith(
+                                                      color: Colors.red))
+                                                  : Container(),
+                                              filteredStock[index].saleable == false
+                                                  ? Text("Not for sale",
+                                                  style: kNormalTextStyleSmallGrey
+                                                      .copyWith(
+                                                      color: kAppPinkColor))
+                                                  : Container()
+                                            ],
+                                          ),),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          CoolAlert.show(
+                                              lottieAsset: 'images/question.json',
+                                              context: context,
+                                              type: CoolAlertType.success,
+                                              text: "Are you sure you want to remove this from your services list",
+                                              title: "Remove Item?",
+                                              confirmBtnText: 'Yes',
+                                              confirmBtnColor: Colors.red,
+                                              cancelBtnText: 'Cancel',
+                                              showCancelBtn: true,
+                                              backgroundColor: kAppPinkColor,
+                                              onConfirmBtnTap: () {
+                                                CommonFunctions()
+                                                    .removeDocumentFromServer(
+                                                    filteredStock[index].storeId,
+                                                    'stores');
+
+                                                Navigator.pop(context);
+                                              }
+                                          );
+                                        },
+
+                                        child: kIconCancel)),
+                              ]),
                         );
-                      }
-
-                  ),
+                      }),
                 ),
               ],
             ),
@@ -864,81 +418,7 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
       );
   }
 
-  showDialogFunc(context, img, title, desc, amount, id) {
-    Timer _timer;
 
-
-    animationTimer() {
-      _timer = Timer(const Duration(milliseconds: 4000), () {
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pop(context);
-      });
-    }
-    int opacity = 0;
-    String subscribe = '';
-    Function execute;
-
-    return
-      showDialog(
-          context: context, barrierLabel: 'Appointment', builder: (context) {
-        return Center(
-
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Material(
-              elevation: 10.0,
-
-              type: MaterialType.transparency,
-              child: SingleChildScrollView(
-                child: Container(
-
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white
-                  ),
-                  padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  //height: 400,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(25),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'images/loading.gif',
-                          image: img,
-                          width: 200,
-                          height: 200,),
-                      ),
-                      kSmallHeightSpacing,
-                      Text(title,
-                          style: const TextStyle(fontSize: 25, color: Colors
-                              .grey,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center),
-                      kSmallHeightSpacing,
-
-                      Text(desc,
-                        style: kNormalTextStyleSmallGrey,
-                        textAlign: TextAlign.center,),
-                      SizedBox(height: 10,),
-
-                    ],),
-
-
-                ),
-              ),
-
-
-            ),
-          ),
-        );
-      });
-  }
 
   List<ExcelDataRow> dataList = [];
 
