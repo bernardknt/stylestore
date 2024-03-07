@@ -69,7 +69,7 @@ class PosSummary extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18)
                           ),
-                          backgroundColor: Color(0x00F2efe4)),icon: Icon(LineIcons.moneyBill, color: kPureWhiteColor,),
+                          backgroundColor: const Color(0x00F2efe4)),icon: Icon(LineIcons.moneyBill, color: kPureWhiteColor,),
                       label: Text('Total Bill: ${CommonFunctions().formatter.format(styleData.totalPrice)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor) )),
                   )),
               Positioned(

@@ -222,16 +222,157 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                     children: [
                       Row(
                         children: [
-                          TextField(
-                            controller: searchController,
-                            decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.search),
-                              hintText: 'By Name/ Product / Phone Number',
-                              hintFadeDuration: Duration(milliseconds: 100),
+                          Expanded(
+                            child:
+                            TextField(
+                              controller: searchController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.search),
+                                hintText: 'By Product Name / Id',
+                                hintFadeDuration: Duration(milliseconds: 100),
+                              ),
+                              onChanged: filterStock,
                             ),
-                            onChanged: filterStock,
                           ),
+                          permissionsMap['takeStock'] == false ? Container():
+                          Row(
 
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final prefs = await SharedPreferences.getInstance();
+                                    Provider.of<BeauticianData>(context, listen: false)
+                                        .setStoreId(prefs.getString(kStoreIdConstant));
+
+                                    // Navigator.pushNamed(context, ReStockPage.id);
+                                    showDialog(context: context,
+                                        // barrierLabel: 'Appointment',
+                                        builder: (context) {
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Material(
+                                              color: Colors.transparent,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Center(child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+
+                                                      Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.pop(context);
+
+                                                              Navigator.pushNamed(
+                                                                  context, UpdateStockPage.id);
+                                                            },
+                                                            child: CircleAvatar(
+                                                                radius: 30,
+                                                                backgroundColor: kCustomColor
+                                                                    .withOpacity(1),
+                                                                child: const Icon(
+                                                                  Iconsax.box, color: kBlack,
+                                                                  size: 20,)),
+                                                          ),
+                                                          Text("Update / Check\nStock",
+                                                            textAlign: TextAlign.center,
+                                                            style: kNormalTextStyle.copyWith(
+                                                                color: kPureWhiteColor,
+                                                                fontSize: 12),)
+                                                        ],
+                                                      ),
+                                                      kMediumWidthSpacing,
+                                                      kMediumWidthSpacing,
+                                                      kMediumWidthSpacing,
+                                                      Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.pop(context);
+                                                              Navigator.pushNamed(
+                                                                  context, ReStockPage.id);
+                                                            },
+                                                            child: CircleAvatar(
+                                                                backgroundColor: kCustomColorPink
+                                                                    .withOpacity(1),
+
+                                                                radius: 30,
+                                                                child: const Icon(Iconsax.tag,
+                                                                  color: kPureWhiteColor,
+                                                                  size: 20,)),
+                                                          ),
+                                                          Text("Restock / Purchase\nItems",
+                                                            textAlign: TextAlign.center,
+                                                            style: kNormalTextStyle.copyWith(
+                                                                color: kPureWhiteColor,
+                                                                fontSize: 12),)
+                                                        ],
+                                                      ),
+
+                                                    ],
+                                                  )),
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  kLargeHeightSpacing,
+                                                  Text("Cancel",
+                                                    style: kNormalTextStyle.copyWith(
+                                                        color: kPureWhiteColor),)
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                    );
+                                  },
+
+                                  child: Container(
+                                    height: 45,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: kCustomColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(child: Text("Take Stock",
+                                      style: kNormalTextStyle.copyWith(
+                                          color: kBlack, fontSize: 16),)),
+                                    // color: kAirPink,
+                                  ),
+                                ),
+                              ),
+                              kMediumWidthSpacing,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, StockHistoryPage.id);
+                                      // ZoomDrawer.of(context)!.toggle();
+
+                                    },
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
+                                        Text("History", style: kNormalTextStyle.copyWith(
+                                            fontSize: 12,
+                                            color: kBlack,
+                                            fontWeight: FontWeight.bold),)
+                                      ],
+                                    )),
+                              ),
+
+                            ],
+                          ),
 
                         ],
                       ),
@@ -297,7 +438,6 @@ class _MerchantStorePageState extends State<MerchantStorePage> {
                                                           // _btnController.reset();
                                                           Navigator.pop(context);
 
-                                                          // Navigator.pushNamed(context, SuccessPageHiFive.id);
                                                         },
                                                         child: const Text('Cancel'))],
                                                   );
