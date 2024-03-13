@@ -7,7 +7,7 @@ import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
-import '../../screens/products_pages/store_page.dart';
+import '../../screens/store_pages/store_page.dart';
 
 
 
@@ -29,7 +29,7 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
   final tabs = [
     // SuperResponsiveLayout(mobileBody: HomePageController(), desktopBody: ControlPageWeb(),),
     HomePage(),
-    MerchantStorePage(),
+    StorePageMobile(),
     // AnalysisPage()
   ];
 

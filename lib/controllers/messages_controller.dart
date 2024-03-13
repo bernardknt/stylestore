@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:line_icons/line_icons.dart';
+import 'package:stylestore/screens/Messages/bulk_message.dart';
+import 'package:stylestore/screens/Messages/message.dart';
 import 'package:stylestore/screens/transaction_offline.dart';
 
 import 'package:stylestore/screens/transactions_pages/new_transactions_page.dart';
@@ -12,13 +14,13 @@ import '../model/common_functions.dart';
 import '../utilities/constants/color_constants.dart';
 import '../widgets/locked_widget.dart';
 
-class TransactionsController extends StatefulWidget {
-  static String id = 'transactions_controller';
+class MessagesController extends StatefulWidget {
+  static String id = 'messages_controller';
   @override
-  _TransactionsControllerState createState() => _TransactionsControllerState();
+  _MessagesControllerState createState() => _MessagesControllerState();
 }
 
-class _TransactionsControllerState extends State<TransactionsController> {
+class _MessagesControllerState extends State<MessagesController> {
   Map<String, dynamic> permissionsMap = {};
 
   void defaultInitialization()async{
@@ -27,7 +29,7 @@ class _TransactionsControllerState extends State<TransactionsController> {
 
     });
   }
-  
+
   @override
   void initState() {
     // TODO: implement initState
@@ -45,6 +47,7 @@ class _TransactionsControllerState extends State<TransactionsController> {
           appBar: AppBar(
             // automaticallyImplyLeading: false,
             toolbarHeight: 40,
+
             backgroundColor: kBackgroundGreyColor,
             //title: Center(child: Text("Stock Page", style: TextStyle(color: kBiegeThemeColor, fontSize: 13, fontWeight: FontWeight.bold),),),
             bottom: TabBar(
@@ -64,14 +67,14 @@ class _TransactionsControllerState extends State<TransactionsController> {
                     children:[
                       Icon(Icons.check_circle_outline, size: 16,),
                       SizedBox(width: 4,),
-                      Text('All')]
+                      Text('Bulk Message')]
                 ),),
                 Tab(child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[
                       Icon(LineIcons.creditCard, size: 20,),
                       SizedBox(width: 4,),
-                      Text('Unpaid')]
+                      Text('Single')]
                 ),),
 
 
@@ -80,8 +83,8 @@ class _TransactionsControllerState extends State<TransactionsController> {
           ),
           body: TabBarView(
             children: [
-              NewTransactionsPage(),
-              UnpaidTransactionsPage(),
+              BulkSmsPage(),
+              MessagesPage(),
 
             ],
           )

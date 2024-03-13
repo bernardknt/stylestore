@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/controllers/messages_controller.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
@@ -141,7 +142,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
           Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
           var sms = '{"thankyou": "Dear Customer! We appreciate your business. For any assistance, please call $business.","reminder": "Dear Customer, kindly make payment for your outstanding purchase with $business. For any assistance.","options": ["We value your business! Thank you for choosing $business. For any assistance, please call.","Thank you for your support! $business is here to serve you. For any assistance, please call.","Your order is on its way! Thank you for choosing $business. For any assistance, please call.","We appreciate your trust in $business! For any assistance, please call."]}';
           Provider.of<StyleProvider>(context, listen: false).setSms(sms);
-          Navigator.pushNamed(context, MessagesPage.id);
+          Navigator.pushNamed(context, MessagesController.id);
 
         },
         child: const Icon(Icons.sms_outlined, color: kPureWhiteColor,),
@@ -188,8 +189,6 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
               var dateSeparator = '';
               var orders = snapshot.data?.docs;
               for( var doc in orders!){
-
-
 
                   phoneList.add(doc['clientPhone']);
                   messageList.add(doc['message']);

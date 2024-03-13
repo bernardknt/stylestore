@@ -31,7 +31,12 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   var expenseOrderNumber = "";
   var originalBasketToPost = [];
   String? selectedEmployeeName;
-  final Set<DateTime> _selectedDates = {};
+  // final Set<DateTime> _selectedDates = {};
+  // final Set<DateTime> _selectedTime = {};
+  List<DateTime> _selectedDates = [];
+  List<DateTime> _selectedTime = [];
+  // DateTime? _selectedTime;
+
   CalendarFormat _calendarFormat = CalendarFormat.month;
   List<String> employeeNames = [];
 
@@ -48,12 +53,36 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     });
   }
 
+  Future<void> _showTimePicker(BuildContext context, DateTime day) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30)))
+    );
+
+    if (pickedTime != null) {
+      setState(() {
+        _selectedTime.add(DateTime(
+            day.year,
+            day.month,
+            day.day,
+            pickedTime.hour,
+            pickedTime.minute
+        ));
+        print(_selectedTime);
+      });
+    }
+  }
+
+  String _formatTime(DateTime time) {
+    return DateFormat('hh:mm a').format(time);
+  }
+
   Future<void> uploadTask() async {
     final dateNow = new DateTime.now();
     CollectionReference userOrder =
         FirebaseFirestore.instance.collection('tasks');
     final prefs = await SharedPreferences.getInstance();
-    // ignore: use_build_context_synchronously
+
     showDialog(
         context: context,
         builder: (context) {
@@ -68,9 +97,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     return userOrder.doc(orderId).set({
       'createdBy': prefs.getString(kLoginPersonName),
       'createdDate': dateNow,
-      'dueDate':
-          Provider.of<StyleProvider>(context, listen: false).invoicedDate,
-      'selectedDates': _selectedDates,
+      'dueDate': Provider.of<StyleProvider>(context, listen: false).invoicedDate,
+      'selectedDates': _selectedTime,
       'completed': List.filled(_selectedDates.length, false),
       'status': false,
       'id': orderId,
@@ -96,8 +124,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     taskToSend = Provider.of<StyleProvider>(context, listen: false).taskToDo;
     taskToDo = taskToSend;
-    expenseOrderNumber =
-        "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
+    expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
     _fetchEmployeeNames();
     setState(() {});
   }
@@ -107,16 +134,14 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     // TODO: implement initState
     super.initState();
     defaultInitilization();
-    // selectedEmployeeName = 'Everyone';
+
   }
 
   @override
   Widget build(BuildContext context) {
-    var styleData = Provider.of<StyleProvider>(context);
+
 
     TextEditingController controller = TextEditingController(text: taskToSend);
-    TextEditingController expenseController = TextEditingController(
-        text: "${Provider.of<StyleProvider>(context).expense}");
 
     return Scaffold(
       backgroundColor: kPureWhiteColor,
@@ -136,7 +161,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
         onPressed: () {
           if (taskToDo != "" &&
               selectedEmployeeName != null &&
-              _selectedDates.isNotEmpty) {
+              _selectedTime.isNotEmpty) {
             uploadTask();
           } else {
             showDialog(
@@ -249,16 +274,18 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                         return _selectedDates.contains(day);
                       },
                       onDaySelected: (selectedDay, focusedDay) {
-                        // if (selectedDay.isBefore(DateTime.now())) {
-                        //   print("Not allowed");
-                        //   return; // Do not allow selection of past dates
-                        // }
                         if (_selectedDates.contains(selectedDay)) {
-                          setState(() {
-                            _selectedDates.remove(selectedDay);
+
+                          setState(() {int indexToRemove = _selectedDates.indexOf(selectedDay);
+                          _selectedDates.remove(selectedDay);
+                          _selectedTime.removeAt(indexToRemove);
+                          print(_selectedTime);
+
+
                           });
                         } else {
                           setState(() {
+                            _showTimePicker(context, selectedDay);
                             _selectedDates.add(selectedDay);
                           });
                         }

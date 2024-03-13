@@ -10,7 +10,7 @@ class AllStockData {
   final String image;
   final String name;
   final String storeId;
-
+  final String barcode;
   final bool saleable;
   final bool tracking;
   final List stockTaking;
@@ -27,6 +27,7 @@ class AllStockData {
     required this.saleable,
     required this.tracking,
     required this.stockTaking,
+    required this.barcode,
 
 
   });
@@ -44,6 +45,7 @@ class AllStockData {
       saleable: doc['saleable'] ?? '',
       tracking: doc['tracking'] ?? '',
       stockTaking: doc['stockTaking'],
+      barcode: doc['barcode'],
 
     );
   }

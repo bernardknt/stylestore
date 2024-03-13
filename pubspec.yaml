@@ -86,7 +86,9 @@ dependencies:
 #  blue_thermal_printer: ^1.2.3
   flutter_local_notifications: ^15.1.1
   firebase_messaging: ^14.7.15
-  pdf: ^3.6.0
+  pdf: ^3.10.8
+  slide_countdown: ^1.4.0
+#  pdf: ^3.6.0
   open_file: ^3.1.0
   webview_flutter: ^2.0.8
   iconsax: ^0.0.8

@@ -8,6 +8,7 @@ class AllCustomerData {
   final String photo;
   final String info;
   final String phone;
+  // final String options;
 
 
   AllCustomerData({
@@ -17,6 +18,7 @@ class AllCustomerData {
     required this.info,
     required this.phone,
     required this.documentId,
+    // required this.options,
   });
 
   factory AllCustomerData.fromFirestore(DocumentSnapshot doc) {
@@ -27,6 +29,9 @@ class AllCustomerData {
       photo: doc['image'] ?? '',
       info: doc['info'] ?? '',
       phone: doc['phoneNumber'] ?? '',
+      // options: doc['options'] ?? '',
+
+
 
 
 

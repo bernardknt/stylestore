@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'dart:js';
+// import 'dart:js';
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
+import '../../screens/Documents_Pages/dummy_document.dart';
 import 'invoice.dart';
 import 'invoice_customer.dart';
 import 'invoice_supplier.dart';
@@ -30,6 +31,16 @@ class PdfInvoicePdfHelper {
       return bytes;
     }
     throw Exception('Failed to fetch logo image');
+  }
+
+static testWebPdf ()async{
+   final data = CustomData(name: 'Alice');
+   final pdfFile = await generateDocument(PdfPageFormat.a4, data);
+
+   // Decide what to do with the pdfFile (example: save to file system)
+   final pathProvider = await getTemporaryDirectory();
+   final file = File('${pathProvider.path}/sample.pdf');
+   await file.writeAsBytes(pdfFile);
   }
 
   static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
@@ -78,12 +89,6 @@ class PdfInvoicePdfHelper {
 
         ]),
 
-        // pw.Stack(children:[
-
-
-        // ]
-        // ),
-
 
       ],
 
@@ -105,7 +110,8 @@ class PdfInvoicePdfHelper {
       if (response.statusCode == 200) {
         print("HURAAAY a response was received");
         // Handle the PDF file (response.bodyBytes) - example: download it
-        context.callMethod('download', [response.bodyBytes, '$invoiceNumber.pdf']);
+        // Remember to uncomment dart.js
+       // context.callMethod('download', [response.bodyBytes, '$invoiceNumber.pdf']);
         @JS('download')
         void download(dynamic data, String filename){
         }

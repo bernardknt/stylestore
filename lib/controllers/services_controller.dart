@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:stylestore/screens/products_pages/store_page.dart';
+import 'package:stylestore/screens/store_pages/store_page.dart';
 import '../screens/services_page.dart';
 import '../utilities/constants/color_constants.dart';
 import '../utilities/constants/user_constants.dart';
@@ -63,7 +63,7 @@ class _ServicesControllerState extends State<ServicesController> {
           ),
           body: TabBarView(
             children: [
-              MerchantStorePage(),
+              StorePageMobile(),
               ServicesPage(),
 
 

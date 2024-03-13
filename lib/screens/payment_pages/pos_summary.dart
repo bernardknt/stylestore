@@ -85,11 +85,13 @@ class PosSummary extends StatelessWidget {
                             Text("Ugx ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
                           ],
                         ),
-                        title: Row(
+                        title:
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text("Ugx ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
+
+                            Text("Ugx ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
                           ],
                         ),
                         trailing: Checkbox(

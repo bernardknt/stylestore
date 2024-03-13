@@ -12,6 +12,7 @@ import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/purchase_pdf_files/purchase.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
+import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/widgets/supplier_widget.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
@@ -50,6 +51,10 @@ class _ReStockPageState extends State<ReStockPage> {
   var descriptionList = [];
   var quantityList = [];
   var minimumList = [];
+  List<AllStockData> filteredStock = [];
+  List<AllStockData> newStock = [];
+
+
   TextEditingController searchController = TextEditingController();
   List <StockItem>  shoppingList = [];
 
@@ -77,6 +82,34 @@ class _ReStockPageState extends State<ReStockPage> {
     });
   }
 
+  Future<List<AllStockData>> retrieveStockData() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return [];
+    }
+  }
+
+  void filterStock(String query) {
+    setState(() {
+      filteredStock = newStock
+          .where((stock) =>
+      stock.name.toLowerCase().contains(query.toLowerCase()) ||
+          stock.description.toLowerCase().contains(query.toLowerCase())
+      ).toList();
+    });
+  }
+
+
   void defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     purchaseOrderNumber = "PO_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
@@ -84,6 +117,8 @@ class _ReStockPageState extends State<ReStockPage> {
     userName = prefs.getString(kLoginPersonName)!;
     businessName = prefs.getString(kBusinessNameConstant)!;
     businessPhoneNumber = prefs.getString(kPhoneNumberConstant)!;
+    newStock = await retrieveStockData();
+    filteredStock.addAll(newStock);
     Provider.of<StyleProvider>(context, listen: false).setSupplierButton(false);
     fetchSupplierNames();
   }
@@ -270,11 +305,10 @@ class _ReStockPageState extends State<ReStockPage> {
                       // If the stock already exists, update its price and quantity.
                       selectedStocks[existingIndex].price = inputPrice!;
                       selectedStocks[existingIndex].setRestock(inputQuantity!);
-                      // quantityControllers[existingIndex]?.text = inputQuantity.toString();
+
 
                     } else {
-                      // If the stock is not in the list, add it to the list.
-                      // selectedStocks.add(selectedStock);
+
                       print("NOPE THIS RUN INSTEAD");
                     }
                     checkboxStates[index] = true;
@@ -321,7 +355,6 @@ class _ReStockPageState extends State<ReStockPage> {
 
 
   void _handleUpdateStockButton() {
-
     for(var i = 0; i < selectedStocks.length; i ++){
       print("${selectedStocks[i].name}: ${selectedStocks[i].restock}");
       basketToPost.add( {
@@ -332,22 +365,20 @@ class _ReStockPageState extends State<ReStockPage> {
       }
       );
     }
-
     CommonFunctions().uploadRestockedItems(selectedStocks, basketToPost,context, purchaseOrderNumber);
-
   }
 
-  void _searchItems(String query) {
-    final lowercaseQuery = query.toLowerCase();
-    final results = _allItems.where((item) {
-      final itemName = item['name'].toString().toLowerCase();
-      return itemName.contains(lowercaseQuery);
-    }).toList();
-
-    setState(() {
-      _searchResults = results;
-    });
-  }
+  // void _searchItems(String query) {
+  //   final lowercaseQuery = query.toLowerCase();
+  //   final results = _allItems.where((item) {
+  //     final itemName = item['name'].toString().toLowerCase();
+  //     return itemName.contains(lowercaseQuery);
+  //   }).toList();
+  //
+  //   setState(() {
+  //     _searchResults = results;
+  //   });
+  // }
 
   @override
   void initState() {
@@ -585,12 +616,10 @@ class _ReStockPageState extends State<ReStockPage> {
                     controller: searchController,
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
-                      hintText: 'Search Product',
+                      hintText: 'By Product Name / Id',
                       hintFadeDuration: Duration(milliseconds: 100),
                     ),
-                    onChanged: (value) {
-                      _searchItems(value); // Call the search function on change
-                    },
+                    onChanged: filterStock,
                   ),
                 ],
               ),
@@ -615,52 +644,11 @@ class _ReStockPageState extends State<ReStockPage> {
             ),
 
             Expanded(
-              child: _searchResults.isEmpty
-                  ?
-              StreamBuilder<QuerySnapshot>(
-                stream: _customerStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
+              child:
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-                    return Center(
-                      child: Text('No items found.',style: kNormalTextStyle.copyWith(color: mainColor),),
-                    );
-                  }
-                  var stocks = snapshot.data!.docs;
-                  barcodeList = [];
-                  nameList = [];
-                  minimumList = [];
-                  quantityList = [];
-                  for (var stock in stocks) {
-                    barcodeList.add(stock.get('barcode'));
-                    nameList.add(stock.get('name'));
-                    minimumList.add(stock.get('minimum'));
-                    quantityList.add(stock.get('quantity'));
-                    descriptionList.add(stock.get('description'));
-                    itemIdList.add(stock.get('id'));
-
-                  }
-                  return ListView.builder(
-                    itemCount: snapshot.data!.docs.length,
+                    ListView.builder(
+                    itemCount: filteredStock.length,
                     itemBuilder: (context, index) {
-
-                      var item = snapshot.data!.docs[index];
-                      var name = item['name'];
-                      var amount = item['amount'];
-                      var description = item['description'];
-                      var quantity = item['quantity'];
-                      var minimum = item['minimum'];
 
                       // Define a TextEditingController to handle the quantity input in the TextField.
                       TextEditingController quantityController = TextEditingController();
@@ -697,13 +685,13 @@ class _ReStockPageState extends State<ReStockPage> {
                                   checkboxStates[index] = newValue;
 
                                   if (newValue) {
-                                    _showPriceAndQuantityDialog(index, name, item.id, description );
+                                    _showPriceAndQuantityDialog(index, filteredStock[index].name, filteredStock[index].documentId,filteredStock[index].description );
                                     quantityControllers[index]?.text = '0';
-                                    selectedStocks.add(Stock(name: name, id: item.id, restock: 0, description: description));
+                                    selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
                                     print(selectedStocks);
                                   } else {
                                     quantityControllers[index]?.text = '';
-                                    selectedStocks.removeWhere((stock) => stock.id == item.id);
+                                    selectedStocks.removeWhere((stock) => stock.id == filteredStock[index].documentId);
                                     print(selectedStocks);
                                   }
                                 });
@@ -712,14 +700,14 @@ class _ReStockPageState extends State<ReStockPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('$name', style: kNormalTextStyle.copyWith(color: mainColor)),
-                                Text('$description', style: kNormalTextStyle.copyWith()),
+                                Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
+                                Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
                               ],
                             ),
 
 
                             Spacer(),
-                            minimum  < quantity ? Text('$quantity ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('$quantity ', style: kNormalTextStyle.copyWith(color: Colors.red)),
+                            filteredStock[index].minimum  < filteredStock[index].quantity ? Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
                             kSmallWidthSpacing,
                             kSmallWidthSpacing,
                             kSmallWidthSpacing,
@@ -749,7 +737,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                       // Update the restock value of the corresponding Stock instance in the list.
                                       double restockValue = double.tryParse(value) ?? 0;
                                       selectedStocks
-                                          .firstWhere((stock) => stock.id == item.id, orElse: () => Stock(name: name, id: item.id, restock: 0, description: description))
+                                          .firstWhere((stock) => stock.id == filteredStock[index].documentId, orElse: () => Stock(name:filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description: filteredStock[index].description))
                                           .setRestock(restockValue);
                                     },
                                   ),
@@ -760,11 +748,9 @@ class _ReStockPageState extends State<ReStockPage> {
                         ),
                       );
                     },
-                  );
+                  )
 
-                },
-              ):
-                  Container()
+
             ),
           ],
         ),

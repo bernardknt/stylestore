@@ -289,32 +289,45 @@ class _CustomerPageState extends State<CustomerPage> {
         body: permissionsMap['customers'] == false
             ? const LockedWidget(page: "Customers")
             : Column(
+
           children: [
-            TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText:  "Search Customer by Name / Location",
-                hintFadeDuration: Duration(milliseconds: 100),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: searchController,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  hintText:  "Search Customer by Name / Location",
+                  hintFadeDuration: Duration(milliseconds: 100),
+                ),
+                onChanged: filterCustomers,
               ),
-              onChanged: filterCustomers,
             ),
             Expanded(
-                child: filteredCustomer.isEmpty ? CustomPopupWidget(
-                  backgroundColour: kBlueDarkColor,
-                  actionButton: 'Add Customer',
-                  subTitle: 'Add Customers: Tap and sell',
-                  image: 'customer.jpg',
-                  title: 'Build Loyal Customers',
-                  function: () {
-                    showModalBottomSheet(
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return Scaffold(body: AddCustomersPage());});
-                  },
-                  youtubeLink: videoMap['customers'],
-                ) : ListView.builder(
+                child:
+
+                filteredCustomer.isEmpty ?
+
+                    Container(child: Text("Let us add some customers"),)
+
+                // CustomPopupWidget(
+                //   backgroundColour: kBlueDarkColor,
+                //   actionButton: 'Add Customer',
+                //   subTitle: 'Add Customers: Tap and sell',
+                //   image: 'customer.jpg',
+                //   title: 'Build Loyal Customers',
+                //   function: () {
+                //     showModalBottomSheet(
+                //         isScrollControlled: true,
+                //         context: context,
+                //         builder: (context) {
+                //           return Scaffold(body: AddCustomersPage());});
+                //   },
+                //   youtubeLink: videoMap['customers'],
+                // )
+                    :
+
+                ListView.builder(
                     itemCount: filteredCustomer.length,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
@@ -354,83 +367,21 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       MainAxisSize.min,
                                                       children: [
                                                         buildButton(context, 'Edit ${filteredCustomer[index].fullNames}', Icons.edit, () async {
-                                                          Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, items[index].toString().replaceAll('{', '').replaceAll('}', ''), filteredCustomer[index].photo[index], filteredCustomer[index].location, filteredCustomer[index].documentId);
+                                                          Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, '{}', filteredCustomer[index].photo[index], filteredCustomer[index].location, filteredCustomer[index].documentId);
                                                           Navigator.pop(context);
                                                           Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerEditPage()));}), const SizedBox(height: 16.0),
                                                         buildButton(context, 'Buying History of ${filteredCustomer[index].fullNames}', Icons.send,
                                                                 () async {
                                                               Navigator.pop(context);
 
-                                                              Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, items[index].toString().replaceAll('{', '').replaceAll('}', ''), filteredCustomer[index].photo, filteredCustomer[index].location, filteredCustomer[index].documentId);
+                                                              Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info,'{}', filteredCustomer[index].photo, filteredCustomer[index].location, filteredCustomer[index].documentId);
                                                               Provider.of<BeauticianData>(context, listen: false).setClientName(filteredCustomer[index].fullNames, filteredCustomer[index].documentId);
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(builder: (context) => SuperResponsiveLayout(mobileBody: CustomerTransactionsProducts(), desktopBody: CustomerTransactionsWeb())),
                                                               );
                                                             }),
-                                                        items.isNotEmpty
-                                                            ? buildButton(
-                                                            context,
-                                                            '${filteredCustomer[index].fullNames} Extra Details',
-                                                            Icons
-                                                                .person_add,
-                                                                () async {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              showDialog(
-                                                                  context:
-                                                                  context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                  context) {
-                                                                    return GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child:
-                                                                      Material(
-                                                                        color: Colors.transparent,
-                                                                        child: Stack(
-                                                                          children: [
-                                                                            CupertinoAlertDialog(
-                                                                              title: Column(
-                                                                                children: [
-                                                                                  Text(filteredCustomer[index].fullNames),
-                                                                                  const Text(
-                                                                                    "Key Details",
-                                                                                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                              content: SizedBox(
-                                                                                width: 100,
-                                                                                height: 300,
-                                                                                // color: Colors.teal,
-                                                                                child: ListView.builder(
-                                                                                    shrinkWrap: true,
-                                                                                    itemCount: items[index].keys.toList().length,
-                                                                                    itemBuilder: (context, i) {
-                                                                                      return CustomerContentsWidget(orderIndex: i + 1, optionName: items[index].keys.toList()[i], optionValue: items[index].values.toList()[i]);
-                                                                                    }),
-                                                                              ),
-                                                                              actions: [
-                                                                                CupertinoDialogAction(
-                                                                                    isDestructiveAction: true,
-                                                                                    onPressed: () {
-                                                                                      // _btnController.reset();
-                                                                                      Navigator.pop(context);
-                                                                                    },
-                                                                                    child: const Text('Cancel'))
-                                                                              ],
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  });
-                                                            })
-                                                            : Container(),
+
                                                       ],
                                                     ),
                                                   ),
@@ -438,7 +389,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               );
                                             });
                                       }else{
-                                        Provider.of<BeauticianData>(context).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, items[index].toString().replaceAll('{', '').replaceAll('}', ''), filteredCustomer[index].photo, filteredCustomer[index].location, filteredCustomer[index].documentId);
+                                        Provider.of<BeauticianData>(context).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, '{}', filteredCustomer[index].photo, filteredCustomer[index].location, filteredCustomer[index].documentId);
                                         Provider.of<BeauticianData>(context).setClientName(filteredCustomer[index].fullNames, filteredCustomer[index].documentId);
 
                                         Navigator.push(
@@ -582,7 +533,7 @@ class _CustomerPageState extends State<CustomerPage> {
                               return
                                 GestureDetector(
                                   onTap: (){
-                                    Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, items[index].toString().replaceAll('{', '').replaceAll('}', ''), filteredCustomer[index].photo,filteredCustomer[index].location, filteredCustomer[index].documentId);
+                                    Provider.of<BeauticianData>(context, listen: false).setCustomerDetails(filteredCustomer[index].fullNames, filteredCustomer[index].phone, filteredCustomer[index].info, '{}', filteredCustomer[index].photo,filteredCustomer[index].location, filteredCustomer[index].documentId);
                                     Provider.of<BeauticianData>(context, listen: false).setClientName(filteredCustomer[index].fullNames, filteredCustomer[index].documentId);
                                     Navigator.push(
                                       context,

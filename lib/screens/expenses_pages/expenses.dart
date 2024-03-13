@@ -415,7 +415,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
                                             Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: 14, color: kGreenThemeColor)),
-                                            paidList[index] == true? TextButton(onPressed: (){}, child: Text("Pay")):Container()
+                                            paidList[index] == false? TextButton(onPressed: (){}, child: Text("Pay")):SizedBox()
 
                                           ],
                                         ),

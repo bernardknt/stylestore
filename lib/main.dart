@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:stylestore/controllers/homepage_controller.dart';
+import 'package:stylestore/controllers/messages_controller.dart';
 import 'package:stylestore/controllers/task_controller.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/screens/MobileMoneyPages/make_payment_page.dart';
@@ -182,6 +183,7 @@ class MyApp extends StatelessWidget {
           StoreSetup.id: (context) => StoreSetup(),
           CustomerTransactionsProducts.id: (context) =>
               CustomerTransactionsProducts(),
+          MessagesController.id: (context) => MessagesController(),
           TasksController.id: (context) => TasksController(),
           StockManagementPage.id: (context) => StockManagementPage(),
           MessagesPage.id: (context) => MessagesPage(),

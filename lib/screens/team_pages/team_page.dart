@@ -193,12 +193,9 @@ class _TeamPageState extends State<TeamPage> {
                                                 [
                                                   buildButton(context, 'Change ${nameList[index]} Permissions', Iconsax.edit,
                                                           () async {
-
                                                         Provider.of<BeauticianData>(context, listen: false).setEmployeeDetails(nameList[index], phoneNumberList[index], roleList[index],CommonFunctions().convertJsonString( permissionsList[index]), codeList[index], employeeIdList[index]);
                                                         Navigator.pop(context);
                                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
-
-
                                                       }
                                                   ),
                                                   SizedBox(height: 16.0),
@@ -209,8 +206,10 @@ class _TeamPageState extends State<TeamPage> {
                                               ),
                                             ),
                                           ),
-                                        ); });
-                                },
+                                        );
+                                      }
+                                      );
+                                  },
                                 child: Card(
                                   margin: const EdgeInsets.fromLTRB(25.0, 8.0, 25.0, 8.0),
                                   shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
@@ -232,11 +231,9 @@ class _TeamPageState extends State<TeamPage> {
 
                                               children: [
                                                 Text( "${nameList[index]} ",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize, fontWeight: FontWeight.bold)),
-
-                                                //Text( "${listOfItems[index]}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize)),
                                                 Text("Position: ${roleList[index]}", style: kNormalTextStyle.copyWith(fontSize: 14),),
                                                 Text(phoneNumberList[index], style: kNormalTextStyle.copyWith(fontSize: 12),),
-                                               // Text("Pin: ${codeList[index]}", style: kNormalTextStyle.copyWith(fontSize: 12),),
+
                                               ],
                                             ),
                                           ],

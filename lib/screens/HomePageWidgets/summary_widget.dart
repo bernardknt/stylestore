@@ -1,14 +1,23 @@
+// import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:iconsax/iconsax.dart';
+// import 'package:path_provider/path_provider.dart';
+// import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+// import 'dart:typed_data';
+// import 'package:pdf/widgets.dart' as pw;
+// import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
+import 'package:stylestore/screens/Documents_Pages/dummy_document.dart';
 import 'package:stylestore/screens/edit_invoice_pages/edit_invoice.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
@@ -403,10 +412,20 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                                     template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
                                                                                     paid: Receipt(amount: paidAmountList[index] / 1.0));
                                                                                 if(kIsWeb){
-                                                                                  print("WEB PDF PRINT ACTIVATED") ;
+                                                                                  print("WEEEEE RUN WEEEE RUN");
+                                                                                  PdfInvoicePdfHelper.testWebPdf();
+                                                                                  //final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
+                                                                                  // PdfHelper.openFile(pdfFile);
 
+                                                                                  // generateDocument(format, data);
+                                                                                  // final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "invoice_${transIdList[index]}", "INVOICE");
+                                                                                  // var savedFile = await pdf.save();
+                                                                                  // List<int> fileInts = List.from(savedFile);
+                                                                                  // html.AnchorElement(
+                                                                                  //     href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
+                                                                                  //   ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
+                                                                                  //   ..click();
 
-                                                                                    final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "invoice_${transIdList[index]}", "INVOICE");
                                                                                 }else{
                                                                                   final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
                                                                                   PdfHelper.openFile(pdfFile);

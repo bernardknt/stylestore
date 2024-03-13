@@ -13,7 +13,7 @@ import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:uuid/uuid.dart';
-// import 'dart:html' as html;
+import 'dart:html' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../Utilities/constants/color_constants.dart';
@@ -95,6 +95,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     var businessProvider = Provider.of<BeauticianData>(context, listen: false);
     try {
       if (kIsWeb) {
+        print("WE SURELY REACHED HERE");
         PickedFile pickedFile = PickedFile(file.path);
         // final blob = await pickedFileToBlob(pickedFile);
         // uploadTask = storage.ref('employees/$fileName').putBlob(blob);
@@ -106,7 +107,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       });
       final urlDownload = await snapshot.ref.getDownloadURL();
       print(urlDownload); // this is the downloadable url for the image uploaded
-      // show a snackbar to the user to show that the upload was successful
       CommonFunctions().showSuccessNotification('New Image for ${businessProvider.employeeInformation?.fullNames} Uploaded Successfully', context);
       // putStoreProfilePicture(businessProvider.employeeInformation?.documentId, urlDownload);
     } catch(e){

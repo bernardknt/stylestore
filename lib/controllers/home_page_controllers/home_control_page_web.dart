@@ -7,16 +7,18 @@ import 'package:sidebarx/sidebarx.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
+import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
+import 'package:stylestore/screens/store_pages/store_page_web.dart';
 import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../screens/documents.dart';
 import '../../screens/employee_pages/employees_page.dart';
-import '../../screens/products_pages/store_page.dart';
+import '../../screens/store_pages/store_page.dart';
 import '../../screens/sign_in_options/logi_new_layout_web.dart';
 import '../../screens/sign_in_options/login_page.dart';
 import '../../utilities/constants/color_constants.dart';
@@ -95,59 +97,67 @@ class _ControlPageWebState extends State<ControlPageWeb> {
             footerBuilder: (context, extended) {
               return
 
-                Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                        onTap: () async {
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap:(){
+                          Navigator.pushNamed(context, EditShopPage.id);
 
-                          CoolAlert.show(
-                              width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-
-                              context: context,
-                              type: CoolAlertType.success,
-                              widget: Column(
-                                children: [
-                                  Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
-
-                                ],
-                              ),
-                              title: 'Log Out?',
-
-                              confirmBtnColor: kFontGreyColor,
-                              confirmBtnText: 'Yes',
-                              confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
-                              lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
-
-
-                              onConfirmBtnTap: () async{
-                                final prefs = await SharedPreferences.getInstance();
-                                prefs.setBool(kIsLoggedInConstant, false);
-                                prefs.setBool(kIsFirstTimeUser, true);
-                                await auth.signOut().then((value) => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SuperResponsiveLayout(
-                                      mobileBody: LoginPage(),
-                                      desktopBody: LoginPageNewWeb(),
-                                    ),
-                                  ),
-                                )
-                                );
-
-
-
-                              }
-
-
-                          );
                         },
-                        child: const Text('Log out', style: kNormalTextStyle,))
-                  ),
-                ],
-              );
+                          child: Icon(Icons.settings)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                          onTap: () async {
+
+                            CoolAlert.show(
+                                width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: Column(
+                                  children: [
+                                    Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
+
+                                  ],
+                                ),
+                                title: 'Log Out?',
+
+                                confirmBtnColor: kFontGreyColor,
+                                confirmBtnText: 'Yes',
+                                confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
+                                lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
+
+
+                                onConfirmBtnTap: () async{
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setBool(kIsLoggedInConstant, false);
+                                  prefs.setBool(kIsFirstTimeUser, true);
+                                  await auth.signOut().then((value) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SuperResponsiveLayout(
+                                        mobileBody: LoginPage(),
+                                        desktopBody: LoginPageNewWeb(),
+                                      ),
+                                    ),
+                                  )
+                                  );
+
+
+
+                                }
+
+
+                            );
+                          },
+                          child: const Text('Log out', style: kNormalTextStyle,))
+                    ),
+                  ],
+                );
             },
 
             headerBuilder: (context, extended) {
@@ -184,7 +194,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                   label: '${CommonFunctions().getFirstWord(Provider.of<StyleProvider>(context, listen: false).beauticianName)} Store',
                   onTap: () {
                     setState(() {
-                      _selectedWidget = SuperResponsiveLayout(mobileBody: MerchantStorePage(), desktopBody: MerchantStorePage(),);
+                      _selectedWidget = SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb(),);
                     });
                   },
                   // page: EmployeesPage(),

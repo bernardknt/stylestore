@@ -255,191 +255,196 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
 
       ),
 
-      body:  Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+      body:  Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 1.5,
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            child: Column(
 
-
-            // Row of four cards
-            Text("Type your message here",style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child:
-              TextField(
-                controller:controller,
-                maxLength: 160,
-                onChanged: (enteredQuestion){
-                  print(enteredQuestion);
-                  message = enteredQuestion;
-                  beauticianDataListen.setTextMessage(enteredQuestion);
-                },
-                maxLines: null,
-                decoration: InputDecoration(
-                  border:
-                  //InputBorder.none,
-                  OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.green, width: 2),
-                  ),
-                  labelText: 'Message',
-                  labelStyle: kNormalTextStyleExtraSmall,
-                  hintText: '',
-                  hintStyle: kNormalTextStyle,
-
-                ),
-
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+
+
+                // Row of four cards
+                Text("Type your message here",style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child:
+                  TextField(
+                    controller:controller,
+                    maxLength: 160,
+                    onChanged: (enteredQuestion){
+                      print(enteredQuestion);
+                      message = enteredQuestion;
+                      beauticianDataListen.setTextMessage(enteredQuestion);
+                    },
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      border:
+                      //InputBorder.none,
+                      OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.green, width: 2),
+                      ),
+                      labelText: 'Message',
+                      labelStyle: kNormalTextStyleExtraSmall,
+                      hintText: '',
+                      hintStyle: kNormalTextStyle,
+                    ),
+                  ),
+                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Send the message to:",style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
-                    kSmallWidthSpacing,
+                    Row(
+                      children: [
+                        Text("Send the message to:",style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+                        kSmallWidthSpacing,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: kPlainBackground,
+                            borderRadius: BorderRadius.all(Radius.circular(5))
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(5),
+                            child: Row(
+                              children: [
+                                Icon(Icons.people_alt_outlined),
+                                kSmallWidthSpacing,
+                                Text("${Provider.of<StyleProvider>(context).bulkNumbers.length}")
+                              ]
+
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+
                     Container(
                       decoration: BoxDecoration(
-                        color: kPlainBackground,
+                        color: kGreenThemeColor,
                         borderRadius: BorderRadius.all(Radius.circular(5))
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(5),
-                        child: Row(
-                          children: [
-                            Icon(Icons.people_alt_outlined),
-                            kSmallWidthSpacing,
-                            Text("${Provider.of<StyleProvider>(context).bulkNumbers.length}")
-                          ]
-
-                        ),
+                        padding: EdgeInsets.all(8),
+                        child: Text("Add Manually", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
                       ),
                     )
                   ],
                 ),
-
-                Container(
-                  decoration: BoxDecoration(
-                    color: kGreenThemeColor,
-                    borderRadius: BorderRadius.all(Radius.circular(5))
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Text("Add Manually", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                  ),
-                )
-              ],
-            ),
-            kSmallHeightSpacing,
-            SizedBox(
-              height: 30,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: Provider.of<StyleProvider>(context).bulkNumbers.length,
-                itemBuilder: (context, i) {
-                  return GestureDetector(
-                    onTap: (){
-                      Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i]);
-                    },
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.only(
-                          right: 3.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: kSalesButtonColor,
-                          borderRadius:
-                          BorderRadius.circular(
-                              10),
-                        ),
+                kSmallHeightSpacing,
+                SizedBox(
+                  height: 30,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: Provider.of<StyleProvider>(context).bulkNumbers.length,
+                    itemBuilder: (context, i) {
+                      return GestureDetector(
+                        onTap: (){
+                          Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i]);
+                        },
                         child: Padding(
                           padding:
-                          const EdgeInsets.all(
-                              8.0),
-                          child: Text(
-                            Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],
-                            style:
-                            kNormalTextStyleDark
-                                .copyWith(
-                              color:
-                              kBlack,
-                              fontWeight:
-                              FontWeight.bold,
+                          const EdgeInsets.only(
+                              right: 3.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: kSalesButtonColor,
+                              borderRadius:
+                              BorderRadius.circular(
+                                  10),
+                            ),
+                            child: Padding(
+                              padding:
+                              const EdgeInsets.all(
+                                  8.0),
+                              child: Text(
+                                Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],
+                                style:
+                                kNormalTextStyleDark
+                                    .copyWith(
+                                  color:
+                                  kBlack,
+                                  fontWeight:
+                                  FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Stack(
-                children: [
-                  TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search Customer',
-                      hintFadeDuration: Duration(milliseconds: 100),
-                    ),
-                    onChanged: filterEmployees,
+                      );
+                    },
                   ),
-                  Positioned(
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: (){
-
-                        styleDataListen.addEntireContactToSmsList(filteredCustomers);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: kCustomersButtonColor,
-                            borderRadius: BorderRadius.all(Radius.circular(5))
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search Customer',
+                          hintFadeDuration: Duration(milliseconds: 100),
                         ),
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text("Select All", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12),),
-                        ),
+                        onChanged: filterEmployees,
                       ),
-                    )
+                      Positioned(
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: (){
+
+                            styleDataListen.addEntireContactToSmsList(filteredCustomers);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: kCustomersButtonColor,
+                                borderRadius: BorderRadius.all(Radius.circular(5))
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text("Select All", style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12),),
+                            ),
+                          ),
+                        )
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredCustomers.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: ListTile(
-                      leading: RoundImageRing(
-                        networkImageToUse: filteredCustomers[index].photo,
-                        outsideRingColor: kBackgroundGreyColor,
-                        radius: 48,
-                      ),
-                      title: Text(
-                        "${filteredCustomers[index].fullNames}",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      trailing:styleData.bulkNumbers.contains(filteredCustomers[index].phone)?Icon(Icons.check_circle_outline, color: kGreenThemeColor,size: 14,):Icon(Icons.add, size: 14,),
-                      subtitle: Text('Phone: ${filteredCustomers[index].phone}'),
-                      onTap: () {
-                        // Handle employee item tap
-                        styleDataListen.addBulkSmsList(filteredCustomers[index].phone);
-                      },
-                    ),
-                  );
-                },
-              ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredCustomers.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                        child: ListTile(
+                          leading: RoundImageRing(
+                            networkImageToUse: filteredCustomers[index].photo,
+                            outsideRingColor: kBackgroundGreyColor,
+                            radius: 48,
+                          ),
+                          title: Text(
+                            "${filteredCustomers[index].fullNames}",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing:styleData.bulkNumbers.contains(filteredCustomers[index].phone)?Icon(Icons.check_circle_outline, color: kGreenThemeColor,size: 14,):Icon(Icons.add, size: 14,),
+                          subtitle: Text('Phone: ${filteredCustomers[index].phone}'),
+                          onTap: () {
+                            // Handle employee item tap
+                            styleDataListen.addBulkSmsList(filteredCustomers[index].phone);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

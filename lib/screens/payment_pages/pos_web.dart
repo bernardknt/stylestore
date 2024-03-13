@@ -276,6 +276,13 @@ class _PosWebState extends State<PosWeb> {
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
         centerTitle: true,
+        title:  Text(
+          '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
+          style: kNormalTextStyle.copyWith(
+              fontWeight: FontWeight.bold,
+              color: kBlack,
+              fontSize: 20),
+        ),
         actions: [
           if (!kIsWeb)
             Padding(
@@ -300,27 +307,6 @@ class _PosWebState extends State<PosWeb> {
             child:
             Column(
               children: [
-                Container(
-                  height: 100,
-                  decoration: const BoxDecoration(
-                    color: kPlainBackground,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10, right: 10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
-                          style: kNormalTextStyle.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: kBlack,
-                              fontSize: 20),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -350,6 +336,7 @@ class _PosWebState extends State<PosWeb> {
                                         automaticallyImplyLeading:
                                         false,
                                         backgroundColor: kBlack,
+
                                       ),
                                       body: ProductUpload());
                                 });
