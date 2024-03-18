@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:lottie/lottie.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slide_countdown/slide_countdown.dart';
@@ -43,10 +43,16 @@ class _TasksWidgetState extends State<TasksWidget> {
   var textColor = [];
   var phoneCircleColor = [];
   var names = [];
+  List<String> datesReceivedInStringList = [];
   var appointmentsToday = [];
   List taskDates = [];
   var statusList = [];
   var bellOpacity = [];
+  var taskStatus = [];
+  var executionAtList = [];
+  var executionByList = [];
+  var finishedAtList = [];
+  var finishedByList = [];
   var datesColor = [];
   List<Color> onlineStatusColour = [];
   var totalBill = [];
@@ -59,6 +65,16 @@ class _TasksWidgetState extends State<TasksWidget> {
   String image = '';
   String storeId = '';
   bool kdsMode = false;
+
+  int indexOfCurrentDate(List datesReceivedList) {
+    String currentDateTime = DateFormat('d-MM-yyyy').format(DateTime.now());
+    int index = datesReceivedList.indexOf(currentDateTime);
+
+    return index;
+  }
+
+
+  
 
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
@@ -140,7 +156,12 @@ class _TasksWidgetState extends State<TasksWidget> {
                 bookingFee = [];
                 fromList = [];
                 taskDates = [];
+                taskStatus = [];
                 completedTasks = [];
+                executionAtList = [];
+                executionByList = [];
+                finishedAtList = [];
+                finishedByList = [];
 
                 var orders = snapshot.data?.docs;
                 for (var order in orders!) {
@@ -148,9 +169,10 @@ class _TasksWidgetState extends State<TasksWidget> {
                     if( order.get('completed').every((element) => element == true)){
 
                     }else{
-                      if (order.get('to') == "Everyone" ||
-                          order.get('to') == userName ||
-                          order.get('from') == employeeId) {
+                      if (
+                          order.get('toName').contains( userName )||
+                          order.get('from') == employeeId)
+                      {
                         createdBy.add(order.get('createdBy'));
                         idList.add(order.get('id'));
                         fromList.add(order.get('from'));
@@ -158,8 +180,15 @@ class _TasksWidgetState extends State<TasksWidget> {
                         createdDate.add(order.get('createdDate').toDate());
                         dueDate.add(order.get('dueDate').toDate());
                         taskList.add(order.get('task'));
-                        statusList.add(order.get("toName"));
+                       // statusList.add(order.get("toName"));
+                        statusList.add(order.get('toName').join(", "));
                         completedTasks.add(order.get("completed"));
+                        taskStatus.add(order.get("track"));
+                        executionAtList.add(order.get("executedAt").map((timestamp) => timestamp.toDate()).toList());
+                        finishedAtList.add(order.get("finishedAt").map((timestamp) => timestamp.toDate()).toList());
+                        finishedByList.add(order.get("finishedBy"));
+                        executionByList.add(order.get("executedBy"));
+
                         // List<Timestamp> firestoreTimestamps = order.get('selectedDates');
 
                         taskDates.add(order
@@ -175,6 +204,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                             .join(',');
                         // convert the lists of datesReceived to a list
                         List<String> datesReceivedList = datesReceived.split(', ');
+                        datesReceivedInStringList = datesReceivedList;
 
                         String currentDateTime = DateFormat('d-MM-yyyy').format(DateTime.now());
 
@@ -189,7 +219,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                             cardColor.add(kBlueDarkColorOld);
                             phoneCircleColor.add(kAppPinkColor);
                             textColor.add(kPureWhiteColor);
-                            datesColor.add(kAppPinkColor);
+                            datesColor.add(kFontGreyColor);
                           }
                           else {
                             bellOpacity.add(0.0);
@@ -268,8 +298,8 @@ class _TasksWidgetState extends State<TasksWidget> {
 
                                                   children: [
                                                     Positioned(
-                                                      top: 70,
-                                                      left: 10,
+                                                      top: 10,
+                                                      // left: 10,
                                                       right: 10,
                                                       child: TextButton(
                                                         onPressed: () {
@@ -326,35 +356,37 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                             15.0),
                                                         child: Stack(
                                                           children: [
-
-                                                            Container(
-                                                                decoration:const BoxDecoration(
-                                                                    color:
-                                                                    kPlainBackground,
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .all(Radius
-                                                                        .circular(
-                                                                        10))),
-                                                                child: Padding(
-                                                                  padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                                  child: Text(
-                                                                    '${taskList[index]}',
-                                                                    textAlign: TextAlign
-                                                                        .center,
-                                                                    style: kNormalTextStyleDark
-                                                                        .copyWith(
-                                                                        color:
-                                                                        kBlack,
-                                                                        fontSize:
-                                                                        20),
-                                                                  ),
-                                                                )),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(50.0),
+                                                              child: Container(
+                                                                  decoration:const BoxDecoration(
+                                                                      color:
+                                                                      kPlainBackground,
+                                                                      borderRadius:
+                                                                      BorderRadius
+                                                                          .all(Radius
+                                                                          .circular(
+                                                                          10))),
+                                                                  child: Padding(
+                                                                    padding:
+                                                                    const EdgeInsets
+                                                                        .all(8.0),
+                                                                    child: Text(
+                                                                      '${taskList[index]}',
+                                                                      textAlign: TextAlign
+                                                                          .center,
+                                                                      style: kNormalTextStyleDark
+                                                                          .copyWith(
+                                                                          color:
+                                                                          kBlack,
+                                                                          fontSize:
+                                                                          20),
+                                                                    ),
+                                                                  )),
+                                                            ),
                                                             Positioned(
-                                                              right: 5,
-                                                              top: 5,
+                                                              right: 33,
+                                                              top: 27,
                                                               child:  GestureDetector(
                                                                 onTap: (){
 
@@ -362,59 +394,113 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                                 child: const CircleAvatar(
                                                                     backgroundColor: kBlueDarkColor,
                                                                     child: Icon(Icons.edit, color: kPureWhiteColor,)),
-                                                              ),)
+                                                              ),), 
+                                                            Positioned(
+                                                                left:0,
+                                                                top: 8,
+
+                                                                child: ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList, indexOfProgress: CommonFunctions().convertDatesToString(taskDates[index])),
+                                                            )
                                                           ],
                                                         ),
                                                       ),
                                                     ),
                                                     Positioned(
-                                                      top: 70,
+                                                      bottom: 70,
                                                       left: 10,
                                                       right: 10,
-                                                      child: TextButton(
-                                                        onPressed: () {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext context) {
-                                                              return AlertDialog(
-                                                                title: const Text("Confirm Deletion"),
-                                                                content: const Text("Are you sure you want to delete this task?"),
-                                                                actions: <Widget>[
-                                                                  TextButton(
-                                                                    child: const Text("Cancel"),
-                                                                    onPressed: () => Navigator.pop(context),
-                                                                  ),
-                                                                  TextButton(
-                                                                    child: const Text("Delete"),
-                                                                    onPressed: () {
-                                                                      Navigator.pop(context); // Close the dialog
-                                                                      Navigator.pop(context);  // Execute original pop
-                                                                      CommonFunctions().updateDocumentFromServer(
-                                                                          idList[index],
-                                                                          "tasks",
-                                                                          "status",
-                                                                          true);
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        child: const Text("Delete This Task",
-                                                          style: TextStyle(
-                                                              color: kPureWhiteColor,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontSize: 17),
+                                                      child:
+                                                      Center(
+                                                        child: CommonFunctions().convertDatesToString(taskDates[index]) == -1?Container(): taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="Done"?Text("This task is completed", style: kNormalTextStyle.copyWith(fontSize: 14, color: kPureWhiteColor),):SliderButton(
+                                                          action: () async {
+                                                            int mainIndex = CommonFunctions().convertDatesToString(taskDates[index]);
+                                                            print("Here is the taskStatus: ${taskStatus[index][mainIndex ]} ... ");
+                                                            if(taskStatus[index][mainIndex ] =="In Progress"){
+                                                              final prefs = await SharedPreferences.getInstance();
+                                                              var changedFinishedAtList  = executionAtList[index];
+                                                              var changedFinishedByList = executionByList[index];
+                                                              var changedTaskList = completedTasks[index];
+                                                              var changedTaskStatusList = taskStatus[index];
+
+                                                              changedTaskStatusList[mainIndex] = "Done";
+                                                              changedTaskList[mainIndex] = true;
+                                                              changedFinishedAtList[index] = DateTime.now();
+
+                                                              CommonFunctions().updateTaskDone(idList[index], "tasks", changedFinishedAtList, changedFinishedByList,changedTaskStatusList,changedTaskList, context);
+                                                              // Navigator.pop(context);
+                                                             // CommonFunctions().updateTaskInProgress(idList[index], "tasks", changedExecutionAtList, changedExecutionByList,changedTaskStatusList,context);
+
+
+                                                            }else{
+                                                              print("This run");
+                                                              final prefs = await SharedPreferences.getInstance();
+                                                              var changedExecutionAtList = executionAtList[index];
+                                                              var changedExecutionByList = executionByList[index];
+                                                              var changedTaskStatusList = taskStatus[index];
+                                                              print("taskStatus: ${changedTaskStatusList}, executionBy: $changedExecutionByList, executionAt: $changedExecutionAtList, main: $mainIndex, index: $index");
+                                                              print("index: $index");
+                                                              print("mainIndex: $mainIndex");
+
+
+
+                                                              changedTaskStatusList[mainIndex] = "In Progress";
+                                                              changedExecutionAtList[mainIndex] = DateTime.now();
+                                                              changedExecutionByList[mainIndex] = prefs.getString(kLoginPersonName);
+                                                              print("$changedTaskStatusList $changedExecutionAtList $changedExecutionByList");
+                                                              CommonFunctions().updateTaskInProgress(idList[index], "tasks", changedExecutionAtList, changedExecutionByList,changedTaskStatusList,context);
+                                                            }
+                                                            return null;
+                                                          },
+                                                          ///Put label over here
+                                                          label:
+                                                          // Text("data"),
+                                                         taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"? Text("Slide to Finish Task", style: kNormalTextStyle.copyWith(fontSize: 14),):Text("Slide to Start Task", style: kNormalTextStyle.copyWith(fontSize: 14),),
+                                                          icon: Center(
+                                                            // child: Image.asset('images/logo.png',height: 40,)
+                                                              child:
+
+                                                              taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"? Icon(LineIcons.flag, color: Colors.white, size: 30.0,):
+                                                              Icon(LineIcons.tasks, color: Colors.white, size: 30.0,)
+                                                          ),
+
+                                                          //Put BoxShadow here
+                                                          boxShadow: BoxShadow(
+                                                            color: Colors.black,
+                                                            blurRadius: 4,
+                                                          ),
+                                                          width: 250,
+                                                          radius: 100,
+                                                          buttonColor: taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"?kAppPinkColor:kGreenThemeColor,
+                                                          backgroundColor: kBiegeThemeColor,
+                                                          highlightedColor: Colors.black,
+                                                          baseColor: kAppPinkColor,
                                                         ),
+
                                                       ),
-                                                    ),
+
+                                                    )
 
                                                   ],
                                                 )));
                                       });
                                 },
-                                child: taskContainers(cardColor: cardColor, fromList: fromList, employeeId: employeeId, createdBy: createdBy, textColor: textColor, taskList: taskList, taskDates: taskDates, datesColor: datesColor, index: index, completedTasks: completedTasks, idList: idList,),
+                                child: taskContainers(
+                                  cardColor: cardColor,
+                                  fromList: fromList,
+                                  employeeId: employeeId,
+                                  createdBy: createdBy,
+                                  textColor: textColor,
+                                  taskList: taskList,
+                                  taskDates: taskDates,
+                                  datesColor: datesColor,
+                                  index: index,
+                                  completedTasks: completedTasks, 
+                                  idList: idList, 
+                                  taskStatus: taskStatus, 
+                                  executionByList: executionByList,
+                                  indexWhereDateOfTodayAppears: CommonFunctions().convertDatesToString(taskDates[index]),
+                                
+                                ),
                               ),
                               Positioned(
                                 left: 10,
@@ -443,16 +529,6 @@ class _TasksWidgetState extends State<TasksWidget> {
                                   ),
                                 ),
                               ),
-                              // Positioned(
-                              //   right: 12,
-                              //   bottom: 5,
-                              //   child: Opacity(
-                              //     opacity: bellOpacity[index],
-                              //     child: Lottie.asset('images/ring.json',
-                              //         height: 30),
-                              //   ),
-                              // ),
-
                             ]);
                     },
                     staggeredTileBuilder: (index) => StaggeredTile.fit(1));
@@ -460,6 +536,50 @@ class _TasksWidgetState extends State<TasksWidget> {
             }),
       ),
     );
+  }
+}
+
+class ProgressMadeWidget extends StatelessWidget {
+  const ProgressMadeWidget({
+    super.key,
+    required this.taskStatus,
+    required this.index,
+    required this.indexOfProgress,
+    required this.executedByList
+
+
+
+  });
+
+  final List taskStatus;
+  final int index;
+  final int indexOfProgress;
+  final List executedByList;
+
+  @override
+  Widget build(BuildContext context) {
+    // int existingIndex = taskStatus.indexWhere((stock) => stock == );
+    return indexOfProgress == -1 ?Container():taskStatus[index][indexOfProgress] =="In Progress" ?
+    Container(
+      decoration:BoxDecoration(
+          color: kAppPinkColor,
+          borderRadius:
+          BorderRadius
+              .all(Radius
+              .circular(
+              2))),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Text(taskStatus[index][indexOfProgress], style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+            Text(executedByList[index][indexOfProgress], style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
+          ],
+        ),
+      ),
+
+
+    ): Container();
   }
 }
 
@@ -477,6 +597,10 @@ class taskContainers extends StatelessWidget {
     required this.completedTasks,
     required this.datesColor,
     required this.index,
+    required this.taskStatus, 
+    required this.indexWhereDateOfTodayAppears,
+    required this.executionByList,
+
 
   });
 
@@ -490,14 +614,25 @@ class taskContainers extends StatelessWidget {
   final List taskDates;
   final List completedTasks;
   final List datesColor;
+  final List taskStatus;
   final int index;
+  final List executionByList;
+  final int indexWhereDateOfTodayAppears;
+
+
 
   @override
   Widget build(BuildContext context) {
+    // int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
+    print("THE Val for this is : $indexWhereDateOfTodayAppears : ${taskList[index]}");
+  
     return Provider.of<StyleProvider>(context).kdsMode == false ? Container(margin: const EdgeInsets.only(top: 10, right: 0, left: 0, bottom: 3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: cardColor[index],
+        color:
+            indexWhereDateOfTodayAppears != -1 ?
+        taskStatus[index][indexWhereDateOfTodayAppears] =="In Progress" ?kAppPinkColor :
+        cardColor[index]:cardColor[index]
       ),
       child: Column(
         children: [
@@ -510,14 +645,10 @@ class taskContainers extends StatelessWidget {
               crossAxisAlignment:
               CrossAxisAlignment.start,
               children: [
-                fromList[index] == employeeId
-                    ? Text(
-                  'Sent By You',
-                  style: kNormalTextStyleDark
-                      .copyWith(
-                      color: kRedColor),
-                )
-                    : Text(
+                // fromList[index] == employeeId ? taskStatus[index][index] =="In Progress" ?
+                // Text("In Progress", style: kNormalTextStyleDark.copyWith(color: kGreenThemeColor, fontWeight: FontWeight.w500), ):Text('Sent By You', style: kNormalTextStyleDark.copyWith(color: kRedColor, fontSize: 10),)
+                //     :
+                Text(
                   'By: ${createdBy[index]}',
                   style: kNormalTextStyleDark
                       .copyWith(
@@ -553,6 +684,7 @@ class taskContainers extends StatelessWidget {
         ],
       ),
     ):
+    completedTasks[index][index] == false ?
     cardColor[index] == kPlainBackground?Container():Container(
       margin: EdgeInsets.only(
           top: 10, right: 0, left: 0, bottom: 3),
@@ -562,10 +694,11 @@ class taskContainers extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SerratedTicket(orderDetails: taskList[index], dates: taskDates[index],)
+          SerratedTicket(orderDetails: taskList[index], dates: taskDates[index], taskStatus: taskStatus, executionByList: executionByList, index: index,)
         ],
       ),
-    )
+    ):
+        Container()
     ;
   }
 }
@@ -626,17 +759,14 @@ class activeDatesWidget extends StatelessWidget {
                             onPressed: () {
                               var changedTaskList = taskCompleted[index];
                               changedTaskList[i] = true;
-                              CommonFunctions()
-                                  .updateDocumentFromServer(
-                                  idList[index], "tasks", "completed", changedTaskList);
+                              CommonFunctions().updateDocumentFromServer(idList[index], "tasks", "completed", changedTaskList);
                               if(mainPage == true){
                                 Navigator.pop(context);
                               }else {
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               }
-                              // Close the dialog
-                              // Navigator.pop(context); // Close the original context (assuming this is in a widget)
+
                             },
                           ),
                         ],
@@ -681,18 +811,17 @@ class activeDatesWidget extends StatelessWidget {
                 }
 
               },
-              child: Container(
+              child:
+              // If the current date is the date of the task it should look different 
+              DateFormat('d-MMM-yy').format(taskDates[index][i] )==DateFormat('d-MMM-yy').format(DateTime.now()) ? 
+              Container(
                 decoration: BoxDecoration(
                   color: taskCompleted[index][i] == false?datesColor[index]:kGreenThemeColor,
                   borderRadius:
-                  BorderRadius.circular(
-                      10),
-                ),
-                child: Padding(
-                  padding:
+                  BorderRadius.circular(10),),
+                child: Padding(padding:
                   const EdgeInsets.all(
-                      8.0),
-                  child: taskCompleted[index][i] == false? Text(
+                      8.0), child: taskCompleted[index][i] == false? Text(
                     '${DateFormat('d-MMM-yy').format(taskDates[index][i])}',
                     style: kNormalTextStyleDark.copyWith(color:textColor[index], fontWeight: FontWeight.bold,),
                   ):Row(
@@ -705,7 +834,23 @@ class activeDatesWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
+              ): taskCompleted[index][i] == false ? Center(child: Text(DateFormat('d-MMM-yy').format(taskDates[index][i]), style: kNormalTextStyleDark.copyWith(color: textColor[index]))):
+              Center(child: Stack(
+                children: [
+
+                  Container(
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(DateFormat('d-MMM-yy').format(taskDates[index][i]), style: kNormalTextStyleDark.copyWith(color: kGreenThemeColor)),
+                      )),
+                  Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Icon(Icons.check_circle_outline,size:10, color: kGreenThemeColor,))
+                ],
+              ))
+              ,
             ),
           );
         },
@@ -715,49 +860,16 @@ class activeDatesWidget extends StatelessWidget {
 }
 
 
-class SerratedPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 2.0;
-
-    final double width = size.width;
-    final double height = size.height;
-
-    final double unitWidth = width / 10;
-
-    final Path path = Path()
-      ..moveTo(0, 0)
-      ..lineTo(0, height)
-      ..moveTo(0, height)
-      ..lineTo(width, height)
-      ..moveTo(width, height)
-      ..lineTo(width, 0);
-
-    for (int i = 1; i < 10; i++) {
-      if (i % 2 != 0) {
-        path.moveTo(i * unitWidth, height);
-        path.lineTo((i + 1) * unitWidth, 0);
-      } else {
-        path.moveTo(i * unitWidth, 0);
-        path.lineTo((i + 1) * unitWidth, height);
-      }
-    }
-
-    canvas.drawPath(path, paint);
-  }
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
 class SerratedTicket extends StatelessWidget {
   final String orderDetails;
-  final List<dynamic> dates; // Renamed to 'dates' for clarity
+  final List<dynamic> dates;
+  final List taskStatus;
+  final List executionByList;
+  final int index;
 
-  SerratedTicket({required this.orderDetails, required this.dates});
+  // ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList,  )
+
+  SerratedTicket({required this.orderDetails, required this.dates, required this.taskStatus, required this.executionByList, required this.index});
   Color countdownColor = kGreenThemeColor;
   Color secondsColor = kAppPinkColor;
   String dueStatement = "Due at";
@@ -812,6 +924,8 @@ class SerratedTicket extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList, indexOfProgress: CommonFunctions().convertDatesToString(dates[index]) ,  ),
+                  kSmallHeightSpacing,
                   RawSlideCountdown(
                     streamDuration: streamDuration,
                     builder: (context, duration, countUp) {
@@ -966,4 +1080,5 @@ class SerratedTicket extends StatelessWidget {
     }
     return null; // No matching date found
   }
+
 }

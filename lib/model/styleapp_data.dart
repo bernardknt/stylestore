@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:stylestore/model/pdf_files/invoice.dart';
 import 'package:stylestore/model/stock_items.dart';
 import 'package:stylestore/screens/customer_pages/customer_data.dart';
+import 'package:stylestore/screens/products_pages/stock_items.dart';
 import '../Utilities/constants/color_constants.dart';
 import '../utilities/basket_items.dart';
 import '../utilities/customer_items.dart';
@@ -21,6 +22,7 @@ class StyleProvider extends ChangeNotifier{
   ;
 
   List<String>  bulkNumbers = [];
+  List<String> selectedStock = [];
 
   String userName = '';
   String userEmail = '';
@@ -180,6 +182,20 @@ class StyleProvider extends ChangeNotifier{
 
   void clearBulkSmsList() {
     bulkNumbers.clear();
+    notifyListeners();
+  }
+
+  void addSelectedStockList(String value) {
+    if (selectedStock.contains(value)) {
+      selectedStock.remove(value);
+    } else {
+      selectedStock.add(value);
+    }
+    notifyListeners();
+  }
+
+  void clearSelectedStockList() {
+    selectedStock.clear();
     notifyListeners();
   }
 
@@ -558,26 +574,6 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  // void setSelectedBeauticianInfo(location, modesOfOperation, name, imageUrl, rating, id, clients, services, reviewNumber, calendar){
-  //   beauticianLocation = location;
-  //   beauticianOperationModes = modesOfOperation;
-  //   beauticianName = name;
-  //   beauticianImageUrl = imageUrl;
-  //   beauticianRating = rating;
-  //   beauticianId = id;
-  //   beauticianClients = clients;
-  //   beauticianServices = services;
-  //   beauticianReviewNumber = reviewNumber;
-  //   calendarBlackouts = calendar;
-  //   convertCalendarValues(calendarBlackouts);
-  //
-  //   notifyListeners();
-  // }
-  // void setBeauticianInfo(name, id){
-  //   beauticianName = name;
-  //   beauticianId = id;
-  //   notifyListeners();
-  // }
   void setRatingsNumber (newRatingNumber){
     reviewsNumber = newRatingNumber;
     notifyListeners();
@@ -739,55 +735,7 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  // Post and likes
-  void resetPostLikes (){
-    postLikes.clear();
-    notifyListeners();
-  }
-  void setChangePostLikes(value, index){
-    if (value == true ){
-      postLikes[index] = Icon(CupertinoIcons.heart_fill, color: kAppPinkColor,);
 
-    }else {
-      postLikes[index] = Icon(CupertinoIcons.heart, color: kPureWhiteColor,);
-
-    }
-    notifyListeners();
-  }
-  void setPostLikes(value){
-    if (value == true ){
-      postLikes.add(Icon(CupertinoIcons.heart_fill, color: kAppPinkColor,));
-
-    }else {
-      postLikes.add(Icon(CupertinoIcons.heart, color: kPureWhiteColor,));
-
-    }
-    notifyListeners();
-  }
-  // For the favourite button
-  void resetPostFavourites (){
-    postFavourites.clear();
-    notifyListeners();
-  }
-  void setChangeFavourite(value, index){
-    if (value == true ){
-      postFavourites[index] = Icon(Iconsax.star1, color: kAppPinkColor,size: 28,);
-
-    }else {
-      postFavourites[index] = Icon(Iconsax.star, color: kPureWhiteColor,size: 23,);
-
-    }
-    notifyListeners();
-  }
-  void setPostFavourites(value){
-    if (value == true ){
-      postFavourites.add(Icon(Iconsax.star1, color: kAppPinkColor,size: 23,));
-
-    }else {
-      postFavourites.add(Icon(Iconsax.star, color: kPureWhiteColor,size: 23,));
-    }
-    notifyListeners();
-  }
 }
 
 

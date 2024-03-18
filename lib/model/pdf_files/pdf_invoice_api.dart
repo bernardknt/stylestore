@@ -14,7 +14,7 @@ import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
-import 'package:js/js.dart';
+// import 'package:js/js.dart';
 
 
 
@@ -99,28 +99,28 @@ static testWebPdf ()async{
   }
 
   static Future<void >buildWebPdf (Invoice invoice, String logoUrl, String invoiceNumber, String type)async{
-    final url = Uri.parse('https://us-central1-doctor-booking-aa868.cloudfunctions.net/generatePDF'); // Replace with your function URL
-    try {
-      final response = await http.post(url, body: {
-        'invoiceData': jsonEncode(invoice.toJson()), // Serialize your invoice object
-        'imageUrl': logoUrl,
-        'invoiceNumber': invoiceNumber,
-        'type': type
-      });
-      if (response.statusCode == 200) {
-        print("HURAAAY a response was received");
-        // Handle the PDF file (response.bodyBytes) - example: download it
-        // Remember to uncomment dart.js
-       // context.callMethod('download', [response.bodyBytes, '$invoiceNumber.pdf']);
-        @JS('download')
-        void download(dynamic data, String filename){
-        }
-      } else {
-        // Handle PDF generation error
-      }
-    }catch(error) {
-      print("THIS IS THE ERROR: $error");
-    }
+    // final url = Uri.parse('https://us-central1-doctor-booking-aa868.cloudfunctions.net/generatePDF'); // Replace with your function URL
+    // try {
+    //   final response = await http.post(url, body: {
+    //     'invoiceData': jsonEncode(invoice.toJson()), // Serialize your invoice object
+    //     'imageUrl': logoUrl,
+    //     'invoiceNumber': invoiceNumber,
+    //     'type': type
+    //   });
+    //   if (response.statusCode == 200) {
+    //     print("HURAAAY a response was received");
+    //     // Handle the PDF file (response.bodyBytes) - example: download it
+    //     // Remember to uncomment dart.js
+    //    // context.callMethod('download', [response.bodyBytes, '$invoiceNumber.pdf']);
+    //     @JS('download')
+    //     void download(dynamic data, String filename){
+    //     }
+    //   } else {
+    //     // Handle PDF generation error
+    //   }
+    // }catch(error) {
+    //   print("THIS IS THE ERROR: $error");
+    // }
   }
 
   static Widget buildHeader(Invoice invoice) => Column(

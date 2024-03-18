@@ -33,8 +33,7 @@ class ControlPageWeb extends StatefulWidget {
 
 class _ControlPageWebState extends State<ControlPageWeb> {
   Widget _selectedWidget = HomePageWeb();
-  final _controller =
-      SidebarXController(selectedIndex: 0); // Initialize controller
+  final _controller = SidebarXController(selectedIndex: 0, extended: true); // Initialize controller
 
   Color selectedColor =
       kGreenThemeColor.withOpacity(0.5); // Default selected widget
@@ -146,9 +145,6 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                                     ),
                                   )
                                   );
-
-
-
                                 }
 
 
@@ -220,16 +216,6 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 // page: EmployeesPage(),
                 icon: Icons.supervised_user_circle,
               ),
-              // SidebarXItem(
-              //   label: 'Business Wallet',
-              //   onTap: () {
-              //     setState(() {
-              //       _selectedWidget = WalletsPage();
-              //     });
-              //   },
-              //   // page: EmployeesPage(),
-              //   icon: Icons.monetization_on_outlined,
-              // ),
               SidebarXItem(
                 label: 'Marketing',
                 onTap: () {

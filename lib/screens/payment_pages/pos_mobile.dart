@@ -430,7 +430,8 @@ class _POSState extends State<POS> {
                       '${Provider.of<StyleProvider>(context).basketNameItems.join(", ")}',
                       textAlign: TextAlign.center,
                       style: kNormalTextStyle.copyWith(
-                          color: kBlack, fontSize: 12),
+                        fontWeight: FontWeight.w500,
+                          color: kBlack, fontSize: 14),
                     ),
                     // Text('${Provider.of<StyleProvider>(context).basketNameItems}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kPureWhiteColor ,fontSize: 12),),
                   ],

@@ -13,6 +13,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -490,9 +491,9 @@ class CommonFunctions {
 
     }).catchError((error){
     }).whenComplete(() {
-     // Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
-      Navigator.pop(context);
-      Navigator.pop(context);
+      Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/message.json', "Message Sent");
+      //  Navigator.pop(context);
+      // Navigator.pop(context);
       Navigator.pushNamed(context, SuccessPageHiFive.id);
     });
   }
@@ -539,6 +540,17 @@ class CommonFunctions {
       Navigator.pop(context);
 
     } );
+  }
+
+  int convertDatesToString(List dateList) {
+    // Create a DateFormat object to define the output format
+    final DateFormat formatter = DateFormat('dd,MM,yyyy');
+    var today = formatter.format(DateTime.now());
+    var datesInString = dateList.map((date) => formatter.format(date)).toList();
+
+
+    // Convert each DateTime to a string and return the list
+    return datesInString.indexWhere((date) => date == today);
   }
 
   void sendBulkSms(List<String> processedNumbers, String message, String senderId, String priority) async {
@@ -1174,19 +1186,61 @@ class CommonFunctions {
         .then((value) =>print(collection));
   }
 
-  // This removes favourites in Tab
-  Future <dynamic> removeFavouritesInTab(postId, email){
+  Future <dynamic> updateTaskInProgress(String docId, String collection, List executionAt, List executionBy, List taskTrack, context){
+    showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
+      color: kAppPinkColor,));});
     return FirebaseFirestore.instance
-        .collection('trends')
-        .doc(postId)
+        .collection(collection)
+        .doc(docId)
         .update({
-      'favourites':  FieldValue.arrayRemove([email])
+      "executedBy" :  executionBy,
+      "executedAt" :  executionAt,
+      "track": taskTrack
+
     })
-        .then((value) => print('Favourites Updated'))
-        .catchError((error) => print('Failed to update')
-    );// //.update({'company':'Stokes and Sons'}
+        .whenComplete(() {
+      Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/Hi5.json', "Task Started");
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pushNamed(context, SuccessPageHiFive.id);
+
+
+    });
   }
 
+  Future <dynamic> updateTaskDone(String docId, String collection, List finishedAt, List finishedBy, List taskTrack, List completed, context){
+    showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
+      color: kAppPinkColor,));});
+    return FirebaseFirestore.instance
+        .collection(collection)
+        .doc(docId)
+        .update({
+      "finishedBy" :  finishedBy,
+      "finishedAt" :  finishedAt,
+      "track": taskTrack,
+      "completed": completed
+
+    }).whenComplete(() {
+      Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/tasks.json', "Task Completed");
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pushNamed(context, SuccessPageHiFive.id);
+    });
+  }
+  void updateUserNotificationToken(documentId)async{
+    var token = "this_is_a_web_token";
+    final prefs = await SharedPreferences.getInstance();
+    if(kIsWeb){
+      token = token;
+    }else{
+      token = prefs.getString(kToken)??"";
+    }
+    FirebaseFirestore.instance.collection('employees').doc(documentId)
+        .update({
+      'token': token,
+    });
+
+  }
   Future <dynamic> updateOnlineStoreInfo(docId, field, fieldValue ){
 
     return FirebaseFirestore.instance

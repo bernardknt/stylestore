@@ -9,6 +9,7 @@ class AllEmployeeData {
   final String nationality;
   final String phone;
   final String address;
+  final String token;
   late final String department;
   final String tin;
   final String maritalStatus;
@@ -41,6 +42,7 @@ class AllEmployeeData {
     required this.documentId,
     required this.nationalIdNumber,
     required this.code,
+    required this.token,
     required this.permissions,
 
   });
@@ -64,6 +66,7 @@ class AllEmployeeData {
       birthday:doc['dateOfBirth'].toDate(),
       nationalIdNumber:doc['nationalIdNumber'] ??'',
       code:doc['code'] ??'',
+      token:doc['token'] ??'',
       maritalStatus: doc['maritalStatus'] ??'Single',
       permissions: doc['permissions'] ??'{}',
 

@@ -35,9 +35,9 @@ class AllStockData {
   factory AllStockData.fromFirestore(DocumentSnapshot doc) {
     return AllStockData(
       documentId: doc.id,
-      amount: doc['amount'] ?? 0.0,
-      quantity: doc['quantity'] ?? 0.0,
-      minimum: doc['minimum'] ?? 0.0,
+      amount: doc['amount']/1.0 ?? 0.0,
+      quantity: doc['quantity']/1.0 ?? 0.0,
+      minimum: doc['minimum']/1.0 ?? 0.0,
       description: doc['description'] ?? '',
       image: doc['image'] ?? '',
       storeId: doc['storeId'] ?? '',

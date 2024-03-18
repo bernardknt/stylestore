@@ -37,7 +37,7 @@ class _MessagesPageState extends State<MessagesPage> {
   var countryCode = "+256";
   var name = "";
   var random = Random();
-  var inspiration = "Dear Customer, Thank you for choosing Fruts Express! We appreciate your purchase and hope our product brings you joy. For any inquiries call us on 0700457826";
+ // var inspiration = "Dear Customer, Thank you for choosing Fruts Express! We appreciate your purchase and hope our product brings you joy. For any inquiries call us on 0700457826";
   var message  = "";
   var jsonMessage ="";
   var options =[];
@@ -58,9 +58,9 @@ class _MessagesPageState extends State<MessagesPage> {
     } else {
       jsonMessage = jsonMap['thankyou'];
     }
-    // options = jsonMap['options'];
-    options = ['This is a test Message', 'This is another test of what us needed', 'Can I know what to do'];
-    print(options);
+    options = jsonMap['options'];
+    // options = ['This is a test Message', 'This is another test of what us needed', 'Can I know what to do'];
+    // print(options);
 
 
 

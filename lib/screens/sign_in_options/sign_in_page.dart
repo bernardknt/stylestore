@@ -374,6 +374,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
         Navigator.pop(context);
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
         CommonFunctions().updateEmployeeSignInAndOutDoc(true);
+        CommonFunctions().updateUserNotificationToken(prefs.getString(kEmployeeId));
 
 
       } )

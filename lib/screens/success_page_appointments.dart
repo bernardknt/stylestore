@@ -131,6 +131,7 @@ class _SuccessPageState extends State<SuccessPage> {
           );
         }
 
+
         CommonFunctions().uploadReducedStockItems(selectedStocks, context, itemsWhoStockChanged, prefs.getString(kOrderId));
       } else {
 
@@ -191,41 +192,71 @@ class _SuccessPageState extends State<SuccessPage> {
                 kLargeHeightSpacing,
                 Text("Incase this takes too long please check your internet connection",textAlign:TextAlign.center,style: kNormalTextStyle,)
               ],
-            ):Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            ):
+            Column(
               children: [
-                ElevatedButton(
-                  style:ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      style:ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
 
-                    onPressed:(){
-                    // Navigator.pop(context);
-                    // Navigator.pushNamed(context, ControlPageMobile.id);
-                      Navigator.pushNamed(context, SuperResponsiveLayout.id);
+                        onPressed:(){
+                        // Navigator.pop(context);
+                        // Navigator.pushNamed(context, ControlPageMobile.id);
+                          Navigator.pushNamed(context, SuperResponsiveLayout.id);
 
-                }, child: Text('Go Home',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
-                kSmallWidthSpacing,
-                kSmallWidthSpacing,
+                    }, child: Text('Go Home',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+                    kSmallWidthSpacing,
+                    kSmallWidthSpacing,
+                    ElevatedButton(
+                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBlueDarkColor)),
+                        onPressed:() async {
+                          final prefs = await SharedPreferences.getInstance();
+                          var countryCode = prefs.getString(kCountryCode)?? "+256";
+                          var providerData = Provider.of<StyleProvider>(context, listen: false);
+
+                          Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(providerData.invoicedPriceToPay);
+
+                          Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
+
+                          // Navigator.pop(context);
+                          Navigator.pushNamed(context, SuperResponsiveLayout.id);
+                          final orderText = StringBuffer();
+                          basketToPost.length == 1 ? orderText.writeln('Order has ${basketToPost.length} item'):orderText.writeln('Order has ${basketToPost.length} items');
+                          for (var i = 0; i < basketToPost.length; i++) {
+                            final item = basketToPost[i];
+                            orderText.writeln('${i + 1}. ${item['product']} (${item['description']}) x ${item['quantity'].toInt()}');
+                          }
+                          Provider.of<StyleProvider>(context, listen: false).setTaskToDo("No. $orderId\nOrder For ${providerData.customerName}: ${providerData.customerNumber}\n_____________________\nLocation: ${providerData.customerLocation} \n_____________________\n${orderText.toString()}\n_____________________\nNote: ${providerData.transactionNote}");
+                          showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (context) {
+                                return Scaffold(
+                                    appBar: AppBar(
+                                      automaticallyImplyLeading: false,
+                                      backgroundColor: kPureWhiteColor,
+                                      elevation: 0,
+                                    ),
+                                    body: AddTasksWidget());
+                              });
+                    }, child: Text('Create Task from Order', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+
+                  ],
+                ),
+                kLargeHeightSpacing,
+                Provider.of<StyleProvider>(context, listen: false).customerNumber !=""?
                 ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBlueDarkColor)),
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBeigeThemeColor)),
                     onPressed:() async {
                       final prefs = await SharedPreferences.getInstance();
                       var countryCode = prefs.getString(kCountryCode)?? "+256";
                       var providerData = Provider.of<StyleProvider>(context, listen: false);
-
-                      Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(providerData.invoicedPriceToPay);
-
                       Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
-
-                      // Navigator.pop(context);
-                      Navigator.pushNamed(context, SuperResponsiveLayout.id);
-                      final orderText = StringBuffer();
-                      basketToPost.length == 1 ? orderText.writeln('Order has ${basketToPost.length} item'):orderText.writeln('Order has ${basketToPost.length} items');
-                      for (var i = 0; i < basketToPost.length; i++) {
-                        final item = basketToPost[i];
-                        orderText.writeln('${i + 1}. ${item['product']} (${item['description']}) x ${item['quantity'].toInt()}');
-                      }
-                      Provider.of<StyleProvider>(context, listen: false).setTaskToDo("No. $orderId\nOrder For ${providerData.customerName}: ${providerData.customerNumber}\n_____________________\nLocation: ${providerData.customerLocation} \n_____________________\n${orderText.toString()}\n_____________________\nNote: ${providerData.transactionNote}");
-                      showModalBottomSheet(
+                      //
+                      // Navigator.pushNamed(context, SuperResponsiveLayout.id);
+                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
                           builder: (context) {
@@ -235,9 +266,11 @@ class _SuccessPageState extends State<SuccessPage> {
                                   backgroundColor: kPureWhiteColor,
                                   elevation: 0,
                                 ),
-                                body: AddTasksWidget());
+                                body: MessagesPage());
                           });
-                }, child: Text('Create Task from Order', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+                    }, child: Text('Send Customer Message', style: kNormalTextStyle.copyWith(color: kBlack),)
+                ): SizedBox(),
+
               ],
             ),
           ],

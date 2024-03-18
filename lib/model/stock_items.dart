@@ -4,11 +4,13 @@ class Stock {
   double _restock;
   double price;
   String description;
+  String quality;
 
   Stock({
     required this.name,
     this.price = 0.0,
     this.description = "",
+    this.quality = "",
     required this.id,
     required double restock,
   }) : _restock = restock;

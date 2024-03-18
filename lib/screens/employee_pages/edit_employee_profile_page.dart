@@ -13,7 +13,7 @@ import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../Utilities/constants/color_constants.dart';

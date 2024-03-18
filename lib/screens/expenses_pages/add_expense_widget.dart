@@ -145,6 +145,8 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 'description': "",
                 'quantity': double.tryParse(quantityController.text) ?? 0,
                 'totalPrice': double.tryParse(expenseCost) ?? 0,
+                'quality': 'Ok',
+                'paid': false
 
               }
             ];

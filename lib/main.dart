@@ -78,6 +78,7 @@ import 'controllers/home_page_controllers/home_control_page_web.dart';
 import 'controllers/responsive/responsive_page.dart';
 import 'controllers/services_controller.dart';
 import 'model/beautician_data.dart';
+import 'model/push_notification_model.dart';
 import 'model/translations_model.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -105,12 +106,16 @@ void main() async {
     await Firebase.initializeApp();
   }
 
-  runApp(MyApp());
+  // Initialize your PushNotificationService and register background message handler
+  PushNotificationService pushNotificationService = PushNotificationService();
+  pushNotificationService.setupBackgroundMessageHandler();
   RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
+  await FirebaseMessaging.instance.getInitialMessage();
   if (initialMessage != null) {
     // App received a notification when it was killed
   }
+  runApp(MyApp());
+
 }
 
 class MyApp extends StatelessWidget {

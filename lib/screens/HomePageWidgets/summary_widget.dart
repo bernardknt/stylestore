@@ -515,56 +515,29 @@ class _SummaryPageState extends State<SummaryPage> {
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          Provider.of<StyleProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false)
-                                                              .setInvoicedPriceToPay(priceList[
-                                                                          index]
+                                                          Provider.of<StyleProvider>(context, listen: false).setInvoicedPriceToPay(priceList[index]
                                                                       .toDouble() -
-                                                                  paidAmountList[
-                                                                          index]
-                                                                      .toDouble());
+                                                                  paidAmountList[index].toDouble());
                                                           Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(
-                                                              priceList[index]
-                                                                  .toDouble(),
-                                                              paidAmountList[
-                                                                      index]
-                                                                  .toDouble(),
-                                                              clientList[
-                                                                  index],
-                                                              transIdList[
-                                                                  index],
-                                                              smsList[
-                                                                  index],
-                                                              clientPhoneList[
-                                                                  index],
-                                                              dateList[
-                                                                  index],
-                                                              priceList[index]
-                                                                      .toDouble() -
-                                                                  paidAmountList[
-                                                                          index]
-                                                                      .toDouble(),
-                                                              customerIdList[
-                                                                  index]);
-                                                          Navigator.pop(
-                                                              context);
+                                                              priceList[index].toDouble(),
+                                                              paidAmountList[index].toDouble(),
+                                                              clientList[index],
+                                                              transIdList[index],
+                                                              smsList[index],
+                                                              clientPhoneList[index],
+                                                              dateList[index],
+                                                              priceList[index].toDouble() - paidAmountList[index].toDouble(),
+                                                              customerIdList[index]);
+                                                          Navigator.pop(context);
 
-                                                          showModalBottomSheet(
-                                                              context:
-                                                                  context,
-                                                              isScrollControlled:
-                                                                  true,
+                                                          showModalBottomSheet(context: context,
+                                                              isScrollControlled: true,
                                                               builder:
-                                                                  (context) {
-                                                                return Scaffold(
+                                                                  (context) {return Scaffold(
                                                                     appBar:
                                                                         AppBar(
-                                                                      automaticallyImplyLeading:
-                                                                          false,
-                                                                      elevation:
-                                                                          0,
+                                                                      automaticallyImplyLeading: false,
+                                                                      elevation: 0,
                                                                       backgroundColor:
                                                                           kPureWhiteColor,
                                                                     ),

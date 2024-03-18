@@ -167,8 +167,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
     return Tooltip(
       message: title,
       child: Card(
-        // Add a tooltip that appears when the user holds the mouse button down over the card
-        // This tooltip should show the title of the card
+
         color: cardColor.withOpacity(0.2),
         elevation: 0,
         child: Padding(

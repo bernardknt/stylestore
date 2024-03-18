@@ -517,35 +517,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                       ],
                                     ),
                                   ),
-                                  // Positioned(
-                                  //     right: 0,
-                                  //     top: 0,
-                                  //     child:
-                                  //     GestureDetector(
-                                  //         onTap: () {
-                                  //           CoolAlert.show(
-                                  //               lottieAsset: 'images/question.json',
-                                  //               context: context,
-                                  //               type: CoolAlertType.success,
-                                  //               text: "Are you sure you want to remove this from your services list",
-                                  //               title: "Remove Item?",
-                                  //               confirmBtnText: 'Yes',
-                                  //               confirmBtnColor: Colors.red,
-                                  //               cancelBtnText: 'Cancel',
-                                  //               showCancelBtn: true,
-                                  //               backgroundColor: kAppPinkColor,
-                                  //               onConfirmBtnTap: () {
-                                  //                 CommonFunctions()
-                                  //                     .removeDocumentFromServer(
-                                  //                     filteredStock[index].storeId,
-                                  //                     'stores');
-                                  //
-                                  //                 Navigator.pop(context);
-                                  //               }
-                                  //           );
-                                  //         },
-                                  //
-                                  //         child: kIconCancel)),
+
                                 ]),
                           );
                         }),
@@ -656,23 +628,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
   Future<void> uploadDataToFirebase(List<ExcelDataRow> dataList) async {
     Navigator.pop(context);
     try {
-      // showDialog(context: context, builder: (context) {
-      //   return Center(
-      //       child:
-      //       Column(
-      //         mainAxisSize: MainAxisSize.min,
-      //         children: [
-      //           CircularProgressIndicator(color: kAppPinkColor,),
-      //           kSmallHeightSpacing,
-      //           DefaultTextStyle(
-      //             style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-      //             child: Text("Updating products to your store",
-      //               textAlign: TextAlign.center,),
-      //           )
-      //           // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
-      //         ],
-      //       ));
-      // });
+
       final prefs = await SharedPreferences.getInstance();
 
       CollectionReference dataCollection = FirebaseFirestore.instance

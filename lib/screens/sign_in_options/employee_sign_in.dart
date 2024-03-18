@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,7 @@ class EmployeeSignIn extends StatefulWidget {
 class _EmployeeSignInState extends State<EmployeeSignIn> {
   TextEditingController countryController = TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  String token = "this_is_a_web_token";
+  String token = "this_is_a_web_token_updated";
   Map<String, dynamic> permissionsMap = {};
 
 
@@ -47,6 +48,9 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
       });
     }
   }
+
+
+
 
   @override
   void initState() {
@@ -106,9 +110,9 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
           prefs.setString(kPhoneNumberConstant,store['businessPhone']);
           prefs.setBool(kIsLoggedInConstant, true);
           Provider.of<StyleProvider>(context, listen: false).setStoreName(store['name']);
-
           CommonFunctions().deliveryStream(context);
           updateNotificationsIfAdmin(storeId);
+          CommonFunctions().updateUserNotificationToken(users['id']);
           Navigator.pushNamed(context, SignInUserPage.id);
 
         } else {

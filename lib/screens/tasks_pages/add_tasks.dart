@@ -15,6 +15,7 @@ import '../../model/styleapp_data.dart';
 import 'package:intl/intl.dart';
 import '../MobileMoneyPages/mobile_money_page.dart';
 import '../calendar_pages/invoiced_date_calendar.dart';
+import '../employee_pages/employee_details.dart';
 
 class AddTasksWidget extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class AddTasksWidget extends StatefulWidget {
 
 class _AddTasksWidgetState extends State<AddTasksWidget> {
   var taskToDo = "";
-
+  TextEditingController controller = TextEditingController(text: "");
   var supplierName = "";
   var storeId = "";
   var taskToSend = "";
@@ -31,32 +32,46 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   var expenseOrderNumber = "";
   var originalBasketToPost = [];
   String? selectedEmployeeName;
-  // final Set<DateTime> _selectedDates = {};
-  // final Set<DateTime> _selectedTime = {};
   List<DateTime> _selectedDates = [];
   List<DateTime> _selectedTime = [];
-  // DateTime? _selectedTime;
-
+  late TextEditingController _textFieldController;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   List<String> employeeNames = [];
+  List<AllEmployeeData> employeeListRetrieved = [];
+  List<String> selectedEmployeeNames = [];
+  List<String> selectedEmployeeTokens = [];
+  List<String> selectedEmployeePhone = [];
+  List<String> selectedEmployeeEmail= [];
 
-  Future<void> _fetchEmployeeNames() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('employees')
-        .where("storeId", isEqualTo: storeId)
-        .get();
-    List<String> names =
-        querySnapshot.docs.map((doc) => doc['name'] as String).toList();
-    setState(() {
-      employeeNames = ['Everyone', ...names];
-      // selectedEmployeeName = (names.isNotEmpty ? names[0] : null)!;
-    });
+  Future<List<AllEmployeeData>> retrieveEmployeeData() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('employees')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+
+      final employeeDataList = snapshot.docs
+          .map((doc) => AllEmployeeData.fromFirestore(doc))
+          .toList();
+      return employeeDataList;
+    } catch (error) {
+      return [];
+    }
   }
+
 
   Future<void> _showTimePicker(BuildContext context, DateTime day) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30)))
+      initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30))),
+    //   builder: (BuildContext context, Widget? child) {
+    //   return MediaQuery(
+    //     // Wrap the time picker in a MediaQuery
+    //     data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+    //     child: child!,
+    //   );
+    // },
     );
 
     if (pickedTime != null) {
@@ -72,6 +87,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       });
     }
   }
+
+
 
   String _formatTime(DateTime time) {
     return DateFormat('hh:mm a').format(time);
@@ -100,14 +117,22 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       'dueDate': Provider.of<StyleProvider>(context, listen: false).invoicedDate,
       'selectedDates': _selectedTime,
       'completed': List.filled(_selectedDates.length, false),
+      'track':List.filled(_selectedDates.length, "do"),
+      'executedAt': List.filled(_selectedDates.length, DateTime.now()),
+      'finishedAt': List.filled(_selectedDates.length, DateTime.now()),
+      'executedBy': List.filled(_selectedDates.length, "Blank"),
+      'finishedBy': List.filled(_selectedDates.length, "Blank"),
       'status': false,
       'id': orderId,
       'storeId': prefs.getString(kStoreIdConstant),
       'token': prefs.getString(kToken),
       'task': taskToDo,
       'from': prefs.getString(kEmployeeId),
-      'to': selectedEmployeeName,
-      'toName': selectedEmployeeName
+      'to': selectedEmployeeNames,
+      'toName': selectedEmployeeNames,
+      'toEmail': selectedEmployeeEmail,
+      'toPhone': selectedEmployeePhone,
+      'toId': selectedEmployeeTokens
     }).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Task created and ready for action.')));
@@ -123,17 +148,89 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     taskToSend = Provider.of<StyleProvider>(context, listen: false).taskToDo;
+    _textFieldController = TextEditingController();
+
     taskToDo = taskToSend;
+    controller.text = taskToDo;
+    employeeListRetrieved = await retrieveEmployeeData();
     expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
-    _fetchEmployeeNames();
+
+
     setState(() {});
   }
+
+  @override
+  void dispose() {
+    _textFieldController.dispose();
+    super.dispose();
+  }
+
+
+  void _showEmployeeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder( // Introduce StatefulBuilder
+          builder: (context, setStateForModal) { // Get a setState for the modal
+            return
+              AlertDialog(
+              title: const Text("Assign Task To"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: employeeListRetrieved.map((name) {
+                  return CheckboxListTile(
+                    title: Text(name.fullNames),
+                    value: selectedEmployeeNames.contains(name.fullNames),
+                    onChanged: (bool? newValue) {
+                      setState(() {
+                        if (newValue!) {
+                          selectedEmployeeNames.add(name.fullNames);
+                          selectedEmployeeTokens.add(name.token);
+                          selectedEmployeeEmail.add(name.email);
+                          selectedEmployeePhone.add(name.phone);
+                        } else {
+                          selectedEmployeeNames.remove(name.fullNames);
+                          selectedEmployeeTokens.add(name.token);
+                          selectedEmployeeEmail.add(name.email);
+                          selectedEmployeePhone.add(name.phone);
+
+
+                        }
+                      });
+                      setStateForModal(() {}); // Force modal rebuild
+                    },
+
+                  );
+                }).toList(),
+              ),
+                        actions: [
+                          TextButton(
+                            child: Text("Cancel"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          ElevatedButton(
+                            child: Text("Assign"),
+                            onPressed: () {
+                              _textFieldController.text = selectedEmployeeNames.join(", ");
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+              // ... rest of your AlertDialog code ...
+            );
+          },
+        );
+      },
+    );
+  }
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     defaultInitilization();
+    _textFieldController = TextEditingController();
 
   }
 
@@ -141,7 +238,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   Widget build(BuildContext context) {
 
 
-    TextEditingController controller = TextEditingController(text: taskToSend);
+
 
     return Scaffold(
       backgroundColor: kPureWhiteColor,
@@ -160,7 +257,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
         backgroundColor: kAppPinkColor,
         onPressed: () {
           if (taskToDo != "" &&
-              selectedEmployeeName != null &&
+              selectedEmployeeNames.isNotEmpty &&
               _selectedTime.isNotEmpty) {
             uploadTask();
           } else {
@@ -205,31 +302,18 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                   ),
                   kMediumWidthSpacing,
                   kMediumWidthSpacing,
-                  DropdownButton<String>(
-                    value: selectedEmployeeName,
-                    onTap: () {
-                      Provider.of<StyleProvider>(context, listen: false)
-                          .setTaskToDo(taskToDo);
-                      setState(() {});
-                    },
-                    onChanged: (newValue) {
-                      Provider.of<StyleProvider>(context, listen: false)
-                          .setTaskToDo(taskToDo);
-                      setState(() {
-                        selectedEmployeeName = newValue!;
-                      });
-                    },
-                    hint: Text(
-                      'Select Employee',
+                  Expanded( // Makes TextField take available space
+                    child: TextField(
+                      controller: _textFieldController,
+                      readOnly: true, // Make the text field read-only
+                      onTap: _showEmployeeDialog,
+                      decoration: InputDecoration(
+                          hintText: "Select Employees",
+                          suffixIcon: Icon(Icons.arrow_drop_down) // Add a dropdown icon
+                      ),
                     ),
-                    items: employeeNames
-                        .map<DropdownMenuItem<String>>((String name) {
-                      return DropdownMenuItem<String>(
-                        value: name,
-                        child: Text(name),
-                      );
-                    }).toList(),
                   ),
+
                 ],
               ),
               Padding(
@@ -279,7 +363,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                           setState(() {int indexToRemove = _selectedDates.indexOf(selectedDay);
                           _selectedDates.remove(selectedDay);
                           _selectedTime.removeAt(indexToRemove);
-                          print(_selectedTime);
+
 
 
                           });

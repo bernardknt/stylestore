@@ -55,6 +55,8 @@ class _ReStockPageState extends State<ReStockPage> {
   List<AllStockData> newStock = [];
 
 
+
+
   TextEditingController searchController = TextEditingController();
   List <StockItem>  shoppingList = [];
 
@@ -150,7 +152,7 @@ class _ReStockPageState extends State<ReStockPage> {
           print(nameList);
           quantityControllers[index]?.text = '0';
           // Add the selected stock to the list.
-          selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index]));
+          selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index], quality: 'Ok'));
           print(selectedStocks);
 
           showPriceAndQuantityDialogForBarScanner(index, nameList[index], itemIdList[index], descriptionList[index] );
@@ -183,14 +185,15 @@ class _ReStockPageState extends State<ReStockPage> {
   }
 
 
-  Future<void> _showPriceAndQuantityDialog(int index, String name, id, description) async {
+  Future<void> _showPriceAndQuantityDialog(int index, String name, id, description, AllStockData stockItem) async {
     double? inputPrice;
     double? inputQuantity;
     await
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return
+          AlertDialog(
           title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -216,6 +219,24 @@ class _ReStockPageState extends State<ReStockPage> {
                   hintText: 'Enter the quantity bought',
                 ),
               ),
+              DropdownButtonFormField<Quality>(
+                value: selectedQuality,  // Current selected value
+                decoration: InputDecoration(
+                  labelText: 'Quality',
+                  labelStyle: TextStyle(fontSize: 14)
+                ),
+                items: Quality.values.map((quality) {
+                  return DropdownMenuItem(
+                    value: quality,
+                    child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedQuality = newValue;
+                  });
+                },
+              ),
             ],
           ),
           actions: [
@@ -223,7 +244,7 @@ class _ReStockPageState extends State<ReStockPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel'),
+              child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
             ),
             TextButton(
               onPressed: () {
@@ -233,7 +254,10 @@ class _ReStockPageState extends State<ReStockPage> {
                     print("EXISTING INDEX = $existingIndex");
                     if (existingIndex != -1) {
                       selectedStocks[existingIndex].price = inputPrice!;
+                      selectedStocks[existingIndex].quality = selectedQuality!.name;
+                      print(selectedQuality.toString());
                       selectedStocks[existingIndex].setRestock(inputQuantity!);
+                      Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
 
                     } else {
                       // If the stock is not in the list, add it to the list.
@@ -245,9 +269,12 @@ class _ReStockPageState extends State<ReStockPage> {
                     print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
                   });
                 }
+                setState(() {
+
+                });
                 Navigator.pop(context);
               },
-              child: Text('OK'),
+              child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
             ),
           ],
         );
@@ -286,6 +313,26 @@ class _ReStockPageState extends State<ReStockPage> {
                   hintText: 'Enter the quantity bought',
                 ),
               ),
+
+              DropdownButtonFormField<Quality>(
+                value: selectedQuality,  // Current selected value
+                decoration: InputDecoration(
+                    labelText: 'Quality',
+                    labelStyle: TextStyle(fontSize: 14)
+                ),
+                items: Quality.values.map((quality) {
+                  return DropdownMenuItem(
+                    value: quality,
+                    child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedQuality = newValue;
+                  });
+                },
+              ),
+
             ],
           ),
           actions: [
@@ -304,6 +351,8 @@ class _ReStockPageState extends State<ReStockPage> {
                     if (existingIndex != -1) {
                       // If the stock already exists, update its price and quantity.
                       selectedStocks[existingIndex].price = inputPrice!;
+                      selectedStocks[existingIndex].quality = selectedQuality!.name;
+                      print(selectedQuality.toString());
                       selectedStocks[existingIndex].setRestock(inputQuantity!);
 
 
@@ -361,24 +410,14 @@ class _ReStockPageState extends State<ReStockPage> {
         'product' : selectedStocks[i].name,
         'description':selectedStocks[i].description,
         'quantity': selectedStocks[i].restock,
-        'totalPrice':selectedStocks[i].price
+        'totalPrice':selectedStocks[i].price,
+        'quality': selectedStocks[i].quality
       }
       );
     }
     CommonFunctions().uploadRestockedItems(selectedStocks, basketToPost,context, purchaseOrderNumber);
   }
 
-  // void _searchItems(String query) {
-  //   final lowercaseQuery = query.toLowerCase();
-  //   final results = _allItems.where((item) {
-  //     final itemName = item['name'].toString().toLowerCase();
-  //     return itemName.contains(lowercaseQuery);
-  //   }).toList();
-  //
-  //   setState(() {
-  //     _searchResults = results;
-  //   });
-  // }
 
   @override
   void initState() {
@@ -391,12 +430,13 @@ class _ReStockPageState extends State<ReStockPage> {
   Map<int, bool> checkboxStates = {}; // Map to track checkbox states.
   Map<int, TextEditingController> quantityControllers = {}; // Map to track quantity text controllers.
   List<Stock> selectedStocks = []; // List to store selected stocks.
+  Quality? selectedQuality = Quality.ok;  // Default value as OK
 
 
 
   @override
   Widget build(BuildContext context) {
-
+    var styleData = Provider.of<StyleProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: kPureWhiteColor,
       appBar: AppBar(
@@ -490,10 +530,10 @@ class _ReStockPageState extends State<ReStockPage> {
                             // Display the button conditionally
                             Provider.of<StyleProvider>(context, listen: true).supplierButton == false
                                 ?SizedBox.shrink():
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: kAppPinkColor, // Set the background color
-                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kAppPinkColor, // Set the background color
+                              ),
                               onPressed: () {
                                 Navigator.pop(context); // Close the sheet
                                 // Execute your function
@@ -502,7 +542,7 @@ class _ReStockPageState extends State<ReStockPage> {
                               },
                               child: Text('Upload Stock', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
                             )
-                               // : SizedBox.shrink(),
+                            // : SizedBox.shrink(),
                           ],
                         ),
                       )
@@ -531,21 +571,21 @@ class _ReStockPageState extends State<ReStockPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   kIsWeb?Container():GestureDetector(
-                      onTap: (){
-                        _startBarcodeScan();
-                      },
-                      child:
-                      Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                            color: kCustomColor,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
+                    onTap: (){
+                      _startBarcodeScan();
+                    },
+                    child:
+                    Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                          color: kCustomColor,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
 
-                        ),
-                        child: Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
-                      ),),
+                      ),
+                      child: Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
+                    ),),
 
                   selectedStocks.length != 0?
                   Padding(
@@ -644,111 +684,102 @@ class _ReStockPageState extends State<ReStockPage> {
             ),
 
             Expanded(
-              child:
+                child:
 
-                    ListView.builder(
-                    itemCount: filteredStock.length,
-                    itemBuilder: (context, index) {
+                ListView.builder(
+                  itemCount: filteredStock.length,
+                  itemBuilder: (context, index) {
 
-                      // Define a TextEditingController to handle the quantity input in the TextField.
-                      TextEditingController quantityController = TextEditingController();
+                    // Define a TextEditingController to handle the quantity input in the TextField.
+                    TextEditingController quantityController = TextEditingController();
 
-                      if (!checkboxStates.containsKey(index)) {
-                        // Initialize checkbox state when the item is first shown.
-                        checkboxStates[index] = false;
-                      }
+                    if (!checkboxStates.containsKey(index)) {
+                      // Initialize checkbox state when the item is first shown.
+                      checkboxStates[index] = false;
+                    }
 
-                      if (!quantityControllers.containsKey(index)) {
-                        // Initialize quantity text controller when the item is first shown.
-                        quantityControllers[index] = TextEditingController();
-                      }
+                    if (!quantityControllers.containsKey(index)) {
+                      // Initialize quantity text controller when the item is first shown.
+                      quantityControllers[index] = TextEditingController();
+                    }
 
-                      return ListTile(
-                        // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                        subtitle: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            // Text('${CommonFunctions().formatter.format(amount)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                            Checkbox(
-                              activeColor: kBlack,
-                              fillColor: CommonFunctions().convertToMaterialStateProperty(
-                                checkboxStates[index] ?? false  ? kAppPinkColor: kPlainBackground, // Dynamic color change
-                              ),
-                              checkColor: kPureWhiteColor,
+                    return ListTile(
+                      // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+                      subtitle: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
 
-                              value: checkboxStates[index],
-                              onChanged: (value) {
+                          GestureDetector(
+                            onTap: (){
 
-                                setState(() {
-                                  bool newValue = value ?? false;
-                                  checkboxStates[index] = newValue;
+                              if(!styleData.selectedStock.contains(filteredStock[index].name)){
+                                _showPriceAndQuantityDialog(index, filteredStock[index].name, filteredStock[index].documentId,filteredStock[index].description, filteredStock[index] );
+                                quantityControllers[index]?.text = '0';
+                                selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
 
-                                  if (newValue) {
-                                    _showPriceAndQuantityDialog(index, filteredStock[index].name, filteredStock[index].documentId,filteredStock[index].description );
-                                    quantityControllers[index]?.text = '0';
-                                    selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
-                                    print(selectedStocks);
-                                  } else {
-                                    quantityControllers[index]?.text = '';
-                                    selectedStocks.removeWhere((stock) => stock.id == filteredStock[index].documentId);
-                                    print(selectedStocks);
-                                  }
-                                });
-                              },
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              }
+                            },
+                            child: Row(
                               children: [
-                                Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
-                                Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
+                                styleData.selectedStock.contains(filteredStock[index].name)?Icon(Icons.check_box_outlined):Icon(Icons.check_box_outline_blank_outlined),
+                                kMediumWidthSpacing,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
+                                    Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
+                                  ],
+                                ),
                               ],
                             ),
+                          ),
 
 
-                            Spacer(),
-                            filteredStock[index].minimum  < filteredStock[index].quantity ? Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
-                            kSmallWidthSpacing,
-                            kSmallWidthSpacing,
-                            kSmallWidthSpacing,
-                            GestureDetector(
-                              onTap: (){
-                                if (!checkboxStates[index]!) {
-                                  // Show the popup only when the TextField is disabled (checkbox is unchecked).
-                                  _showPopup(context);
-                                }
-                              },
-                              child: Container(
-                                width: 60,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: Center(
-                                  child: TextField(
 
-                                    enabled: checkboxStates[index], // Set the TextField's editable state based on checkbox state.
-                                    controller: _getOrCreateController(index),
-                                    //quantityControllers[index],
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                    style: kNormalTextStyle.copyWith(color: mainColor),
-                                    onChanged: (value) {
-                                      // Update the restock value of the corresponding Stock instance in the list.
-                                      double restockValue = double.tryParse(value) ?? 0;
-                                      selectedStocks
-                                          .firstWhere((stock) => stock.id == filteredStock[index].documentId, orElse: () => Stock(name:filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description: filteredStock[index].description))
-                                          .setRestock(restockValue);
-                                    },
-                                  ),
+                          Spacer(),
+                          filteredStock[index].minimum  < filteredStock[index].quantity ? Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
+                          kSmallWidthSpacing,
+                          kSmallWidthSpacing,
+                          kSmallWidthSpacing,
+                          GestureDetector(
+                            onTap: (){
+                              if (!checkboxStates[index]!) {
+                                // Show the popup only when the TextField is disabled (checkbox is unchecked).
+                                _showPopup(context);
+                              }
+                            },
+                            child: Container(
+                              width: 60,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Center(
+                                child: TextField(
+
+                                  enabled: checkboxStates[index], // Set the TextField's editable state based on checkbox state.
+                                  controller: _getOrCreateController(index),
+                                  //quantityControllers[index],
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  style: kNormalTextStyle.copyWith(color: mainColor),
+                                  onChanged: (value) {
+                                    // Update the restock value of the corresponding Stock instance in the list.
+                                    double restockValue = double.tryParse(value) ?? 0;
+                                    selectedStocks
+                                        .firstWhere((stock) => stock.id == filteredStock[index].documentId, orElse: () => Stock(name:filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description: filteredStock[index].description))
+                                        .setRestock(restockValue);
+                                  },
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  )
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                )
 
 
             ),
@@ -758,3 +789,4 @@ class _ReStockPageState extends State<ReStockPage> {
     );
   }
 }
+enum Quality { good, bad, ok }
