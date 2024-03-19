@@ -147,7 +147,6 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 'totalPrice': double.tryParse(expenseCost) ?? 0,
                 'quality': 'Ok',
                 'paid': false
-
               }
             ];
             originalBasketToPost = basketToPost;

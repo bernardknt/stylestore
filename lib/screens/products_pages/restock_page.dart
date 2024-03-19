@@ -89,6 +89,7 @@ class _ReStockPageState extends State<ReStockPage> {
       final snapshot = await FirebaseFirestore.instance
           .collection('stores')
           .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .where('tracking', isEqualTo: true)
           .orderBy('name', descending: false)
           .get();
       final stockDataList = snapshot.docs

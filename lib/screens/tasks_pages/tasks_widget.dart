@@ -681,8 +681,8 @@ class taskContainers extends StatelessWidget {
           ),
         ],
       ),
-    ):
-    completedTasks[index][index] == false ?
+    ):indexWhereDateOfTodayAppears == -1?Container():
+    completedTasks[index][indexWhereDateOfTodayAppears] == false ?
     cardColor[index] == kPlainBackground?Container():Container(
       margin: EdgeInsets.only(
           top: 10, right: 0, left: 0, bottom: 3),
@@ -859,8 +859,9 @@ class activeDatesWidget extends StatelessWidget {
 
 
 class SerratedTicket extends StatelessWidget {
+
   final String orderDetails;
-  final List<dynamic> dates;
+  final List dates;
   final List taskStatus;
   final List executionByList;
   final int index;
@@ -871,6 +872,7 @@ class SerratedTicket extends StatelessWidget {
   Color countdownColor = kGreenThemeColor;
   Color secondsColor = kAppPinkColor;
   String dueStatement = "Due at";
+
   Duration timeUntil (DateTime targetTime) {
     final now = DateTime.now();
     final diff = targetTime.difference(now);
@@ -893,10 +895,9 @@ class SerratedTicket extends StatelessWidget {
     return diff;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
+
     DateTime? dueDate = _findDateMatchingToday(dates);
     StreamDuration streamDuration = StreamDuration(
       config: StreamDurationConfig(
@@ -906,7 +907,7 @@ class SerratedTicket extends StatelessWidget {
     );
 
     return Container(
-      padding: EdgeInsets.all(8.0),
+
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
@@ -917,152 +918,148 @@ class SerratedTicket extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (dueDate != null) // Display 'Due at' only if a matching date is found
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList, indexOfProgress: CommonFunctions().convertDatesToString(dates[index]) ,  ),
-                  kSmallHeightSpacing,
-                  RawSlideCountdown(
-                    streamDuration: streamDuration,
-                    builder: (context, duration, countUp) {
-                      return Row(
+          // Display 'Due at' only if a matching date is found
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList, indexOfProgress: CommonFunctions().convertDatesToString(dates) ,  ),
+                kSmallHeightSpacing,
+                RawSlideCountdown(
+                  streamDuration: streamDuration,
+                  builder: (context, duration, countUp) {
+                    return Row(
 
-                        children: [
-                          Column(
+                      children: [
+                        Column(
 
-                            children: [
-                              Text("HRS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
-                              kSmallHeightSpacing,
-                              Container(
-                                height: 30,
+                          children: [
+                            Text("HRS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
+                            kSmallHeightSpacing,
+                            Container(
+                              height: 30,
 
-                                decoration: BoxDecoration(
-                                    color: countdownColor,
+                              decoration: BoxDecoration(
+                                  color: countdownColor,
 
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                child:
-                                Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Row(
-                                    children: [
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.hours,
-                                        digitType: DigitType.first,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.hours,
-                                        digitType: DigitType.second,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child:
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Row(
+                                  children: [
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.hours,
+                                      digitType: DigitType.first,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.hours,
+                                      digitType: DigitType.second,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Center(child: Text(":")),
-                          Column(
-                            children: [
-                              Text("MINS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
-                              kSmallHeightSpacing,
-                              Container(
-                                height: 30,
+                            ),
+                          ],
+                        ),
+                        Center(child: Text(":")),
+                        Column(
+                          children: [
+                            Text("MINS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
+                            kSmallHeightSpacing,
+                            Container(
+                              height: 30,
 
-                                decoration: BoxDecoration(
-                                    color: countdownColor,
+                              decoration: BoxDecoration(
+                                  color: countdownColor,
 
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                child:
-                                Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Row(
-                                    children: [
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.minutes,
-                                        digitType: DigitType.first,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.minutes,
-                                        digitType: DigitType.second,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child:
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Row(
+                                  children: [
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.minutes,
+                                      digitType: DigitType.first,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.minutes,
+                                      digitType: DigitType.second,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Text(":"),
-                          Column(
-                            children: [
-                              Text("SECS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
-                              kSmallHeightSpacing,
-                              Container(
-                                height: 30,
+                            ),
+                          ],
+                        ),
+                        Text(":"),
+                        Column(
+                          children: [
+                            Text("SECS", style: kNormalTextStyle.copyWith(fontSize: 8, fontWeight: FontWeight.bold),),
+                            kSmallHeightSpacing,
+                            Container(
+                              height: 30,
 
-                                decoration: BoxDecoration(
-                                    color: secondsColor,
+                              decoration: BoxDecoration(
+                                  color: secondsColor,
 
-                                    borderRadius: BorderRadius.circular(5)
-                                ),
-                                child:
-                                Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Row(
-                                    children: [
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.seconds,
-                                        digitType: DigitType.first,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                      RawDigitItem(
-                                        duration: duration,
-                                        timeUnit: TimeUnit.seconds,
-                                        digitType: DigitType.second,
-                                        countUp: countUp,
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
-                                      ),
-                                    ],
-                                  ),
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child:
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Row(
+                                  children: [
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.seconds,
+                                      digitType: DigitType.first,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                    RawDigitItem(
+                                      duration: duration,
+                                      timeUnit: TimeUnit.seconds,
+                                      digitType: DigitType.second,
+                                      countUp: countUp,
+                                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  Text('$dueStatement: ${DateFormat('hh:mm a').format(dueDate)}',
-                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-
-                  ),
-
-
-                ]
-            ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                Text('$dueStatement: ${DateFormat('hh:mm a').format(dueDate)}',
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                ),
+              ]
+          ),
           kLargeHeightSpacing,
           Text(
             orderDetails,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 20.0),
           ),
-
         ],
       ),
     );

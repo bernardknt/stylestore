@@ -303,13 +303,16 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                   kMediumWidthSpacing,
                   kMediumWidthSpacing,
                   Expanded( // Makes TextField take available space
-                    child: TextField(
-                      controller: _textFieldController,
-                      readOnly: true, // Make the text field read-only
-                      onTap: _showEmployeeDialog,
-                      decoration: InputDecoration(
-                          hintText: "Select Employees",
-                          suffixIcon: Icon(Icons.arrow_drop_down) // Add a dropdown icon
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: TextField(
+                        controller: _textFieldController,
+                        readOnly: true, // Make the text field read-only
+                        onTap: _showEmployeeDialog,
+                        decoration: InputDecoration(
+                            hintText: "Select Employees",
+                            suffixIcon: Icon(Icons.arrow_drop_down) // Add a dropdown icon
+                        ),
                       ),
                     ),
                   ),
