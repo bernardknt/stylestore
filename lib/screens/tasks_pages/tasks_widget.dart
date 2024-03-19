@@ -630,9 +630,7 @@ class taskContainers extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color:
-            indexWhereDateOfTodayAppears != -1 ?
-        taskStatus[index][indexWhereDateOfTodayAppears] =="In Progress" ?kAppPinkColor :
-        cardColor[index]:cardColor[index]
+            indexWhereDateOfTodayAppears != -1 ? taskStatus[index][indexWhereDateOfTodayAppears] == "Done"?kGreenThemeColor:taskStatus[index][indexWhereDateOfTodayAppears] =="In Progress" ?kAppPinkColor : cardColor[index]:cardColor[index]
       ),
       child: Column(
         children: [
