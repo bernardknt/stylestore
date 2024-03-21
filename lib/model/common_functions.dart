@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -19,6 +19,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -606,6 +607,30 @@ class CommonFunctions {
     return token;
   }
 
+  Future<void> triggerSendEmail({
+    required String name,
+    required String emailAddress,
+    required String subject,
+  }) async {
+    try {
+      // Get reference to callable Cloud Function
+      final callable = FirebaseFunctions.instance.httpsCallable('sendEmail');
+
+      // Call the Cloud Function with the data
+      final response = await callable({
+        'name': name,
+        'emailAddress': emailAddress,
+        'subject': subject,
+      });
+
+      // Extract the result from the response
+      final result = response.data as String;
+      print(result);
+    } on FirebaseFunctionsException catch (e) {
+      print('Error triggering Cloud Function: ${e.code} - ${e.message}');
+    }
+  }
+
   Future<void> addCustomer( nameOfCustomer, phoneNumberOfCustomer, context, customerId) async{
     CollectionReference customerProvided = FirebaseFirestore.instance.collection('customers');
     final prefs = await SharedPreferences.getInstance();
@@ -640,6 +665,19 @@ class CommonFunctions {
         .catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Error creating Customer')));
     });
+  }
+
+  Future<Uint8List> fetchLogoBytes(String imageUrl) async {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+
+      final Uint8List bytes = response.bodyBytes;
+      final String dir = (await getTemporaryDirectory()).path;
+      final String path = '$dir/logo.png';
+      File(path).writeAsBytesSync(bytes);
+      return bytes;
+    }
+    throw Exception('Failed to fetch logo image');
   }
 
   Future<dynamic> AlertPopUpDialogueMain(BuildContext context,

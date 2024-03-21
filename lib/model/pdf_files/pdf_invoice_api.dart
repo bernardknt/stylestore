@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
 import '../../screens/Documents_Pages/dummy_document.dart';
 import 'invoice.dart';
@@ -13,6 +14,7 @@ import 'invoice_supplier.dart';
 import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
+import 'dart:html' as html;
 import 'dart:convert';
 // import 'package:js/js.dart';
 
@@ -44,22 +46,11 @@ static testWebPdf ()async{
   }
 
   static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
-    Future<Uint8List> _fetchLogoBytes(String imageUrl) async {
-      final response = await http.get(Uri.parse(imageUrl));
-      if (response.statusCode == 200) {
-        print("WAKANDA: ${invoice.paid.amount}");
-        final Uint8List bytes = response.bodyBytes;
-        final String dir = (await getTemporaryDirectory()).path;
-        final String path = '$dir/logo.png';
-        File(path).writeAsBytesSync(bytes);
-        return bytes;
-      }
-      throw Exception('Failed to fetch logo image');
-    }
+
 
     final pdf = Document();
     final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
-    final Uint8List logoBytes = await _fetchLogoBytes(logo);
+    final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
 
     // final response = await http.get(Uri.parse(logo));
 
@@ -94,9 +85,80 @@ static testWebPdf ()async{
 
       footer: (context) => buildFooter(invoice),
     ));
-
     return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
   }
+
+  static Future<void> generateAndDownloadPdf(Invoice invoice, String pdfFileName, String logo) async {
+
+
+    final pdf = Document();
+    final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
+    //final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
+    final Uint8List logoBytes = (await rootBundle.load("images/okola_logo.png")).buffer.asUint8List();
+
+
+    // ... (Rest of your PDF generation logic) ...
+    pdf.addPage(MultiPage(
+      build: (context) => [
+        Image(MemoryImage(logoBytes), height: 70, alignment: Alignment.centerRight),
+        buildHeader(invoice), // Your header building logic
+        SizedBox(height: 2 * PdfPageFormat.cm),
+        buildTitle(invoice), // Your title building logic
+        buildInvoice(invoice), // Your invoice details building logic
+        Divider(),
+        Stack(children: [
+          buildTotal(invoice), // Your total building logic
+          Positioned(bottom: 0,
+              left:0,
+              child: invoice.paid.amount > 0 && invoice.template.type == "RECEIPT"?
+              Image(MemoryImage(imagePng), height: 100, alignment: Alignment.centerRight)
+                  : Container()
+
+          )
+
+        ]),
+      ],
+      footer: (context) => buildFooter(invoice), // Your footer building logic
+    ));
+
+    // Generate PDF data in-memory
+    final pdfData = await pdf.save();
+
+    // Create a Blob for download
+    final blob = html.Blob([pdfData], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement()
+      ..href = url
+      ..style.display = 'none'
+      ..download = pdfFileName;
+    html.document.body!.children.add(anchor);
+
+    // Trigger download
+    anchor.click();
+
+    // Cleanup
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+  }
+
+  // static Future<void> webPDFdownload ()async{
+  //   // Here you'd need logic to generate the PDF data as bytes
+  //   // Let's assume you have it in a variable called 'pdfData'
+  //   final blob = html.Blob([pdfData]);
+  //   final url = html.Url.createObjectUrlFromBlob(blob);
+  //   final anchor = html.document.createElement('a') as html.AnchorElement
+  //     ..href = url
+  //     ..style.display = 'none'
+  //     ..download = 'generated_document.pdf';
+  //   html.document.body!.children.add(anchor);
+  //
+  //   // Download starts automatically
+  //   anchor.click();
+  //
+  //   // Cleanup
+  //   html.document.body!.children.remove(anchor);
+  //   html.Url.revokeObjectUrl(url);
+  // }
 
   static Future<void >buildWebPdf (Invoice invoice, String logoUrl, String invoiceNumber, String type)async{
     // final url = Uri.parse('https://us-central1-doctor-booking-aa868.cloudfunctions.net/generatePDF'); // Replace with your function URL
@@ -291,17 +353,6 @@ static testWebPdf ()async{
                   value: Utils.formatPrice(billTotal),
                   unite: true,
                 ),
-                // pw.SizedBox(height: 10),
-                // buildText(
-                //   title: 'Paid',
-                //   value: Utils.formatPrice(receiptAmount),
-                //   unite: true,
-                // ),
-                // buildText(
-                //   title: 'Vat ${vatPercent * 100} %',
-                //   value: Utils.formatPrice(vat),
-                //   unite: true,
-                // ),
                 Divider(),
                 buildText(
                   title: invoice.template.totalStatement,

@@ -104,13 +104,13 @@ class PushNotificationService {
       );
 
   void setupBackgroundMessageHandler() {
-    print("TATA this run");
+
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
   Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     // Handle background message here
-    print("TATA this run 2");
+
     print("Handling background message: ${message.messageId}");
 
     // Display a local notification to the user

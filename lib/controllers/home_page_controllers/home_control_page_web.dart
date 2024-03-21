@@ -226,17 +226,17 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 // page: AttendancePage(),
                 icon: Icons.mark_email_read,
               ),
-              SidebarXItem(
-                label: 'Documentation',
-                // page: ReportsPage(),
-                icon: Icons.file_copy,
-                onTap: () {
-                  setState(() {
-                    _selectedWidget = DocumentsPage() ;
-
-                  });
-                },
-              ),
+              // SidebarXItem(
+              //   label: 'Documentation',
+              //   // page: ReportsPage(),
+              //   icon: Icons.file_copy,
+              //   onTap: () {
+              //     setState(() {
+              //       _selectedWidget = DocumentsPage() ;
+              //
+              //     });
+              //   },
+              // ),
             ],
           ),
           Expanded(

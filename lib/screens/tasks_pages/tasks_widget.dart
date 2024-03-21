@@ -73,6 +73,10 @@ class _TasksWidgetState extends State<TasksWidget> {
     return index;
   }
 
+  String getFirstNames(List names) {
+    return names.map((name) => name.split(' ')[0]).join(', ');
+  }
+
 
   
 
@@ -181,7 +185,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                         dueDate.add(order.get('dueDate').toDate());
                         taskList.add(order.get('task'));
                        // statusList.add(order.get("toName"));
-                        statusList.add(order.get('toName').join(", "));
+                        statusList.add(getFirstNames(order.get('toName')));
                         completedTasks.add(order.get("completed"));
                         taskStatus.add(order.get("track"));
                         executionAtList.add(order.get("executedAt").map((timestamp) => timestamp.toDate()).toList());
@@ -507,23 +511,26 @@ class _TasksWidgetState extends State<TasksWidget> {
                                 bottom: 10,
                                 child: Opacity(
                                   opacity: 1,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: onlineStatusColour[index],
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(6))),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(3.0),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            statusList[index],
-                                            style:
-                                            kNormalTextStyleWhitePendingLabel
-                                                .copyWith(fontSize: 10),
-                                          ),
-                                          // Lottie.asset('images/new_order.json',height: 20)
-                                        ],
+                                  child: Tooltip(
+                                    message: "Assigned to: ${statusList[index]}",
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: onlineStatusColour[index],
+                                          borderRadius:
+                                          BorderRadius.all(Radius.circular(6))),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(3.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              statusList[index],
+                                              style:
+                                              kNormalTextStyleWhitePendingLabel
+                                                  .copyWith(fontSize: 10),
+                                            ),
+                                            // Lottie.asset('images/new_order.json',height: 20)
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -623,9 +630,7 @@ class taskContainers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-    print("THE Val for this is : $indexWhereDateOfTodayAppears : ${taskList[index]}");
-  
+
     return Provider.of<StyleProvider>(context).kdsMode == false ? Container(margin: const EdgeInsets.only(top: 10, right: 0, left: 0, bottom: 3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -646,15 +651,15 @@ class taskContainers extends StatelessWidget {
                 // fromList[index] == employeeId ? taskStatus[index][index] =="In Progress" ?
                 // Text("In Progress", style: kNormalTextStyleDark.copyWith(color: kGreenThemeColor, fontWeight: FontWeight.w500), ):Text('Sent By You', style: kNormalTextStyleDark.copyWith(color: kRedColor, fontSize: 10),)
                 //     :
-                Text(
-                  'By: ${createdBy[index]}',
-                  style: kNormalTextStyleDark
-                      .copyWith(
-                      color:
-                      textColor[index],
-                      fontWeight:
-                      FontWeight.bold),
-                ),
+                // Text(
+                //   'By: ${createdBy[index]}',
+                //   style: kNormalTextStyleDark
+                //       .copyWith(
+                //       color:
+                //       textColor[index],
+                //       fontWeight:
+                //       FontWeight.bold),
+                // ),
                 // DividingLine(),
                 Text(
                   '${taskList[index].length > 50 ? taskList[index].substring(0, 50) + "..." : taskList[index]}',
@@ -866,9 +871,8 @@ class SerratedTicket extends StatelessWidget {
   final List executionByList;
   final int index;
 
-  // ProgressMadeWidget(taskStatus: taskStatus, index: index, executedByList:executionByList,  )
 
-  SerratedTicket({required this.orderDetails, required this.dates, required this.taskStatus, required this.executionByList, required this.index});
+  SerratedTicket({super.key, required this.orderDetails, required this.dates, required this.taskStatus, required this.executionByList, required this.index});
   Color countdownColor = kGreenThemeColor;
   Color secondsColor = kAppPinkColor;
   String dueStatement = "Due at";

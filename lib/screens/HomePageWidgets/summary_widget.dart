@@ -412,19 +412,8 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                                     template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
                                                                                     paid: Receipt(amount: paidAmountList[index] / 1.0));
                                                                                 if(kIsWeb){
-                                                                                  print("WEEEEE RUN WEEEE RUN");
-                                                                                  PdfInvoicePdfHelper.testWebPdf();
-                                                                                  //final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
-                                                                                  // PdfHelper.openFile(pdfFile);
 
-                                                                                  // generateDocument(format, data);
-                                                                                  // final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "invoice_${transIdList[index]}", "INVOICE");
-                                                                                  // var savedFile = await pdf.save();
-                                                                                  // List<int> fileInts = List.from(savedFile);
-                                                                                  // html.AnchorElement(
-                                                                                  //     href: "data:application/octet-stream;charset=utf-16le;base64,${base64.encode(fileInts)}")
-                                                                                  //   ..setAttribute("download", "${DateTime.now().millisecondsSinceEpoch}.pdf")
-                                                                                  //   ..click();
+                                                                                  final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "invoice_${transIdList[index]}", logo);
 
                                                                                 }else{
                                                                                   final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
@@ -463,7 +452,12 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                                         print("WEB PDF PRINT ACTIVATED") ;
 
 
-                                                                                        final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "receipt_${transIdList[index]}", "RECEIPT");
+                                                                                        //final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "receipt_${transIdList[index]}", "RECEIPT");
+                                                                                        final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "receipt_${transIdList[index]}", logo);
+
+
+
+
                                                                                       }else{
                                                                                         final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
                                                                                         PdfHelper.openFile(pdfFile);

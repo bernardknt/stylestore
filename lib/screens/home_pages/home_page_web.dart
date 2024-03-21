@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,11 +98,36 @@ class _HomePageWebState extends State<HomePageWeb> {
     super.initState();
   }
 
+  Future sendEmail ()async {
+    final message = Message();
+    // final smtpServer = gmailSaslXoauth2(userEmail, accessToken);
+    final mailAddress = "kangavebnt@gmail.com";
+    message.from = Address(mailAddress, "Bernard");
+    message.recipients = ['bernardnt@yahoo.co.uk'];
+
+    message.subject = 'Hello Bernard';
+    message.text = "This is the beginning of the message";
+
+    try{
+      // await send(message, smtpServer);
+      ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Email sent successfully')));
+    } on MailerException catch (e){
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: kPlainBackground,
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
+        },
+        child: Icon(Icons.mail, color: kPureWhiteColor,),
+        backgroundColor: kBlack,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

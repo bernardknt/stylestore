@@ -116,6 +116,7 @@ dependencies:
   permission_handler: ^10.4.3
   intl_phone_number_input: ^0.7.0
   excel: ^2.0.4
+  mailer: ^6.1.0
   table_calendar: ^3.0.9
 #  new_version: ^0.3.1
   circular_countdown_timer: ^0.2.0
