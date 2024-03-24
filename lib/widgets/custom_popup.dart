@@ -82,8 +82,8 @@ class CustomPopupWidget extends StatelessWidget {
                         // Add your continue button functionality here
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: kCustomColor,
-                        onPrimary: Colors.black,
+                        backgroundColor: kCustomColor,
+                        foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -99,8 +99,8 @@ class CustomPopupWidget extends StatelessWidget {
                         // Add your continue button functionality here
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
-                        onPrimary: backgroundColour,
+                        backgroundColor: Colors.white,
+                        foregroundColor: backgroundColour,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

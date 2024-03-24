@@ -174,8 +174,8 @@ class ReportPopupWidget extends StatelessWidget {
                       // Add your continue button functionality here
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: kCustomColor,
-                      onPrimary: Colors.black,
+                      backgroundColor: kCustomColor,
+                      foregroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),

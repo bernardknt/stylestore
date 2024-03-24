@@ -274,7 +274,7 @@ class _SupplierFormState extends State<SupplierForm> {
                               color: kPureWhiteColor,
                               fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
-                        primary: kAppPinkColor,
+                        backgroundColor: kAppPinkColor,
                       ),
                     ),
                   ],

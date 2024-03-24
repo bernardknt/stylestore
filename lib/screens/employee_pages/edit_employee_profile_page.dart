@@ -203,7 +203,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               kMediumWidthSpacing,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: kFontGreyColor,
+                  backgroundColor: kFontGreyColor,
                   textStyle: TextStyle(
                     color: Colors.white,
                   ),

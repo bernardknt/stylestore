@@ -470,7 +470,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              color: Color(0xFF292929).withOpacity(0.6),
+                              color: Colors.transparent,
                               child: Container(
                                 decoration: BoxDecoration(
                                     color: kPureWhiteColor,

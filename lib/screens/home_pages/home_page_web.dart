@@ -121,13 +121,13 @@ class _HomePageWebState extends State<HomePageWeb> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: kPlainBackground,
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
-        },
-        child: Icon(Icons.mail, color: kPureWhiteColor,),
-        backgroundColor: kBlack,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
+      //   },
+      //   child: Icon(Icons.mail, color: kPureWhiteColor,),
+      //   backgroundColor: kBlack,
+      // ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

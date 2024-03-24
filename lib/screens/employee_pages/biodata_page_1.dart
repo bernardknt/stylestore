@@ -465,7 +465,7 @@ class _BioDataFormState extends State<BioDataForm> {
                               color: kPureWhiteColor,
                               fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
-                        primary: kAppPinkColor,
+                        backgroundColor: kAppPinkColor,
                       ),
                     ),
                   ],
