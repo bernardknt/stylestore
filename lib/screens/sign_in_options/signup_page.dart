@@ -1,11 +1,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/store_setup.dart';
@@ -13,7 +13,7 @@ import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../../../Utilities/InputFieldWidget.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
 
 
 

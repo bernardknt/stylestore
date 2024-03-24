@@ -285,12 +285,9 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   List<double> prices = [];
                   for (var i = 0; i < doc['items'].length; ++i){
 
-
-                    // print("${dynamicList[i]['product']}");
                     array.add(dynamicList[i]['product']) ;
                     prices.add(dynamicList[i]['totalPrice']/1.0) ;
                     listOfPriceOfProducts.add(dynamicList[i]['totalPrice']) ;
-
 
                   }
                   listOfProducts.add(array);
@@ -302,9 +299,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               }
 
               return
-                productList.isEmpty?
-
-                CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Expense', subTitle: 'No matter how small', image: 'expense.jpg', title: 'Track Every Expense', function:
+                productList.isEmpty? CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Expense', subTitle: 'No matter how small', image: 'expense.jpg', title: 'Track Every Expense', function:
                     () {
 
                       showModalBottomSheet(

@@ -8,13 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lottie/lottie.dart';
-
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
-import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
-
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
 import '../controllers/responsive/responsive_page.dart';

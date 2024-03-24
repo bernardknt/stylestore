@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../Utilities/constants/color_constants.dart';

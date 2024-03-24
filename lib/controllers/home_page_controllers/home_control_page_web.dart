@@ -7,6 +7,7 @@ import 'package:sidebarx/sidebarx.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
+import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
@@ -16,6 +17,8 @@ import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
+import '../../screens/analytics/deeper_analytics/analysis_page_web.dart';
+import '../../screens/analytics/deeper_analytics/analytics_new_web.dart';
 import '../../screens/documents.dart';
 import '../../screens/employee_pages/employees_page.dart';
 import '../../screens/store_pages/store_page.dart';
@@ -161,7 +164,13 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 height: 50,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Image.asset('images/new_logo.png'),
+                  child: Row(
+                    children: [
+                      Image.asset('images/new_logo.png'),
+                      kSmallWidthSpacing,
+                      Text("BASIC",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                    ],
+                  ),
                 ),
               );
             },
@@ -226,17 +235,17 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 // page: AttendancePage(),
                 icon: Icons.mark_email_read,
               ),
-              // SidebarXItem(
-              //   label: 'Documentation',
-              //   // page: ReportsPage(),
-              //   icon: Icons.file_copy,
-              //   onTap: () {
-              //     setState(() {
-              //       _selectedWidget = DocumentsPage() ;
-              //
-              //     });
-              //   },
-              // ),
+              SidebarXItem(
+                label: 'Analytics',
+                // page: ReportsPage(),
+                icon: Icons.auto_graph,
+                onTap: () {
+                  setState(() {
+                    _selectedWidget = AnalyticsNewWeb() ;
+                  });
+                },
+              ),
+
             ],
           ),
           Expanded(

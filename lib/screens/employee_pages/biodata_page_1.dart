@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pinput/pinput.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -61,8 +61,7 @@ class _BioDataFormState extends State<BioDataForm> {
   DateTime selectedBirthday =
   DateTime(1998, 1, 16); // Variable to store the selected birthday
 
-  final RoundedLoadingButtonController _btnController =
-  RoundedLoadingButtonController();
+  final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   File? image;
   var imageUploaded = false;
   var code = "";

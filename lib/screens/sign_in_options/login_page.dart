@@ -1,24 +1,14 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
-
 import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
-import 'package:stylestore/screens/tasks_pages/tasks_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../../controllers/home_page_controllers/home_controller_mobile.dart';
 import '../../controllers/responsive/responsive_page.dart';
-import '../../model/styleapp_data.dart';
 import '../../utilities/constants/color_constants.dart';
-import '../../utilities/constants/icon_constants.dart';
 import '../../utilities/constants/user_constants.dart';
 import'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

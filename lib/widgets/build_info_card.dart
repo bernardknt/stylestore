@@ -24,7 +24,7 @@ Widget buildInfoCard({required String title, required String value, Color cardCo
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
               ),
               kSmallHeightSpacing,
-              Icon(cardIcon, color: cardColor.withOpacity(0.6),),
+              cardIcon == Icons.accessibility?SizedBox():Icon(cardIcon, color: cardColor.withOpacity(0.6),),
               kSmallHeightSpacing,
               Text(
                   value,

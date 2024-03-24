@@ -1,18 +1,16 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cool_alert/cool_alert.dart';
-import 'package:iconsax/iconsax.dart';
+
 import 'package:provider/provider.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/upload_trend.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
-import 'package:stylestore/utilities/constants/icon_constants.dart';
-import 'package:stylestore/widgets/order_contents.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math';
 

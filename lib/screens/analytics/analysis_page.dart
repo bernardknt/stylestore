@@ -266,8 +266,6 @@ class _AnalysisPageState extends State<AnalysisPage> {
 
     return jsonString ;
 
-    // You can now save the JSON string to a file or send it to a server as required.
-    // For example, you could save it to a file using the 'path_provider' package.
   }
 
   String createMonthReportJson() {

@@ -153,7 +153,8 @@ class _StorePageWebState extends State<StorePageWeb> {
 
       floatingActionButtonLocation: FloatingActionButtonLocation
           .miniCenterFloat,
-      floatingActionButton:permissionsMap['store'] == false ?Container(): FloatingActionButton(
+      floatingActionButton:permissionsMap['store'] == false ?
+      Container(): FloatingActionButton(
           backgroundColor: kAppPinkColor,
           onPressed: () {
             showDialog(context: context, builder: (BuildContext context) {
@@ -176,7 +177,7 @@ class _StorePageWebState extends State<StorePageWeb> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    // Navigator.pop(context);
+
                                     _uploadExcelFile();
                                   },
                                   child: CircleAvatar(
