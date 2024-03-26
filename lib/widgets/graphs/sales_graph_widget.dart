@@ -62,7 +62,6 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
       }
     }
 
-
     // **2. Populate topCustomersData (Assuming top5Customers is available)**
     for (final customer in topCustomers) {
       topCustomersData.add({
@@ -71,7 +70,6 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
       });
     }
 
-    // ... rest of your JSON
     return {
       // ... other variables
       "salesData": salesData,
@@ -97,6 +95,9 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
         _sales = snapshot.docs.map((doc) => Sales.fromSnapshot(doc)).toList();
         _isLoading = false;
         _calculateTopCustomers();
+        _calculateTopProducts();
+        Provider.of<StyleProvider>(context, listen: false).setSalesJSON(_createReportJson());
+        _createReportJson();
       });
     });
   }
@@ -156,8 +157,6 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
   }
 
   Widget _buildGraph() {
-    // Map<String, double> salesByPaymentMethod = {};
-    print(_createReportJson());
     final data = _prepareGraphData();
     final _cumulativeData = _prepareCumulativeGraphData();
     List<PaymentData> paymentChartData = salesByPaymentMethod.entries.map((entry) =>
@@ -312,8 +311,6 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
                 ]
             ),
 
-            Text("Top Customers",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kPureWhiteColor
-              , ),),
            // buildTopCustomersList()
 
 
@@ -335,9 +332,7 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
       dailySales[dateKey] = (dailySales[dateKey] ?? 0) + _calculateSalesTotal(sale);
       // Here are the calculations for the top Customers
       customerSpending[sale.client] = (customerSpending[sale.client] ?? 0) + sale.totalFee;
-      // var sortedCustomers = customerSpending.entries.toList(); // Convert to list
-      // sortedCustomers.sort((e1, e2) => e2.value.compareTo(e1.value));
-      //Provider.of<StyleProvider>(context, listen: false).setBestCustomerResults(sortedCustomers);
+
 
       // End of calculations for top Customers
       if (sale.paidAmount > 0) { // Filter by paidAmount
@@ -374,10 +369,29 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
     // Get top 5 (adjust as needed)
     topCustomers= sortedCustomers;
     List<MapEntry<String, double>> top5Customers = sortedCustomers.take(10).toList();
-
-
-    // Update StyleProvider
     Provider.of<StyleProvider>(context, listen: false).setBestCustomerResults(top5Customers);
+  }
+
+  void _calculateTopProducts() {
+    Map<String, double> productSales = {}; // Product name -> Quantity sold
+
+    for (final sale in _sales) {
+      for (final item in sale.items) {
+        String productName = item.product;
+        productSales[productName] = (productSales[productName] ?? 0) + item.quantity;
+      }
+    }
+
+    // Sort by quantities sold (descending)
+    var sortedProducts = productSales.entries.toList();
+    sortedProducts.sort((e1, e2) => e2.value.compareTo(e1.value));
+
+    // Take the desired number of top products
+    int numTopProducts = 5; // Adjust as needed
+    List<MapEntry<String, double>> topProducts = sortedProducts.take(numTopProducts).toList();
+
+    // Update a state variable in your widget
+    Provider.of<StyleProvider>(context, listen: false).setBestProductsResults(topProducts);
   }
 
   List<TimeSeriesSales> _prepareCumulativeGraphData() {

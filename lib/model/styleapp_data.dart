@@ -39,7 +39,9 @@ class StyleProvider extends ChangeNotifier{
   bool supplierButton = false;
   String supplierId = "";
   String supplierName = "";
-
+  Map<String, dynamic> businessReportJSON= {};
+  Map<String, dynamic> salesReportJSON= {};
+  Map<String, dynamic> purchasesReportJSON= {};
 
   String speciality = '';
   List specialistCategories = [];
@@ -55,6 +57,7 @@ class StyleProvider extends ChangeNotifier{
 
   // Beautician information
   List<MapEntry<String, double>> bestCustomerResults = [];
+  List<MapEntry<String, double>> bestProductResults = [];
   String beauticianLocation = '';
   String beauticianId = 'cat7b7171f0';
   String beauticianName = '';
@@ -161,10 +164,32 @@ class StyleProvider extends ChangeNotifier{
 
   String expense = "";
 
+  void setBusinessJSON ( Map<String, dynamic> value1,Map<String, dynamic> value2 ){
+    businessReportJSON.addAll(value1);
+    businessReportJSON.addAll(value2);
+    print(businessReportJSON);
+    notifyListeners();
+  }
+
+  void setSalesJSON (Map<String, dynamic> value) {
+    salesReportJSON = value;
+    notifyListeners();
+  }
+
+  void setPurchasesJSON (Map<String, dynamic> value) {
+    purchasesReportJSON = value;
+    notifyListeners();
+  }
   void setBestCustomerResults(List<MapEntry<String, double>> value){
     bestCustomerResults = value;
     notifyListeners();
   }
+  void setBestProductsResults(List<MapEntry<String, double>> value){
+    bestProductResults = value;
+    notifyListeners();
+  }
+
+
   void setSupplierButton(bool value){
     supplierButton = value;
     notifyListeners();

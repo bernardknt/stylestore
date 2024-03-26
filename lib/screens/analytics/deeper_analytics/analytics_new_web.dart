@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/widgets/report_widgets/best_customers_widget.dart';
+import 'package:stylestore/widgets/report_widgets/best_products_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../model/styleapp_data.dart';
 import '../../../widgets/graphs/purchases_graph.dart';
@@ -32,6 +33,8 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
 
   @override
   Widget build(BuildContext context) {
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
+    var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: kPlainBackground,
       appBar: AppBar(
@@ -39,7 +42,9 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
 
         elevation: 0,
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){},child: Tooltip(
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        styleData.setBusinessJSON(styleDataListen.salesReportJSON, styleDataListen.purchasesReportJSON);
+      },child: Tooltip(
           message: "Generate Report",
           child: Icon(Iconsax.document,color: kPureWhiteColor,)),backgroundColor: kAppPinkColor,),
       body: SingleChildScrollView(
@@ -136,7 +141,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                       child:  SingleChildScrollView(
                         child: Column(
                           children: [
-                            Text('Top Customers(By Sale Value)',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kPureWhiteColor, fontSize: 12 ),),
+                            Text('Top Customers(By Sale Value)',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kGreenThemeColor, fontSize: 12,  ),),
                             bestCustomersWidget(Provider.of<StyleProvider>(context, listen: true).bestCustomerResults, 5)
                           ],
                         ),
@@ -155,8 +160,15 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                         color: kPureWhiteColor
                     ),
                     child: Padding(
-                        padding: const EdgeInsets.only(left:8.0),
-                        child: Text("Top Products")
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text('Top Products(By Frequency)',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kGreenThemeColor, fontSize: 12,  ),),
+
+                            bestProductsWidget(Provider.of<StyleProvider>(context, listen: true).bestProductResults,)
+
+                          ],
+                        )
                     ),
                   ),
                 ],
@@ -171,9 +183,9 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                     Text('',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
                     kLargeHeightSpacing,
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 10),
                       child: Container(
-                          height: 1800,
+                          height: 1300,
                           color: kPlainBackground,
                           child: SalesGraphWidget(
                             key: ValueKey('graph-sales${_selectedDay}-${_selectedEndDay}'),

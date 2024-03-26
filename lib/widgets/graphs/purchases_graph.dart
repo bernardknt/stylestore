@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
@@ -11,6 +11,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 
 import '../../model/purchases.dart';
+import '../../model/styleapp_data.dart';
 import '../build_info_card.dart';
 
 class PurchaseGraphWidget extends StatefulWidget {
@@ -52,6 +53,8 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
       setState(() {
         _purchases = snapshot.docs.map((doc) => Purchase.fromSnapshot(doc)).toList();
         _isLoading = false;
+        Provider.of<StyleProvider>(context, listen: false).setPurchasesJSON(_createReportJson());
+
       });
     });
   }
@@ -96,6 +99,38 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
     return totalExpenses ;
   }
 
+  Map<String, dynamic> _createReportJson() {
+    List<Map<String, dynamic>> salesData = [];
+    List<Map<String, dynamic>> topCustomersData = [];
+
+    // **1. Populate salesData:**
+    for (final purchase in _purchases) {
+      // Assuming each 'sale' has a list of items
+      for (final item in purchase.items) { // Notice how we introduce 'item' here
+        salesData.add({
+          "date": DateFormat('yyyy-MM-dd').format(purchase.date),
+          "totalExpense": _calculatePurchaseTotal(purchase),
+          "items": [
+            {
+              "product": item.product,
+              "quantity": item.quantity,
+              "price": item.price,
+              "quality": item.quality
+            }
+          ]
+        });
+      }
+    }
+
+    // ... rest of your JSON
+    return {
+      // ... other variables
+      "expenseData": salesData,
+
+      // ... Add expensesData if you have it
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,6 +147,7 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
   Widget _buildGraph() {
     final data = _prepareGraphData();
     final _cumulativeData = _prepareCumulativeGraphData();
+    // print(_createReportJson().runtimeType);
     return
       Container(
         decoration: BoxDecoration(
@@ -121,7 +157,7 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
         child: Column(
           children: [
             kLargeHeightSpacing,
-            Text("Expenses",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack, ),),
+            Text("Expenses (For ${CommonFunctions().differenceInDays(widget.startDate, widget.endDate)} days)",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack, ),),
             kLargeHeightSpacing,
             kSmallHeightSpacing,
             SingleChildScrollView(
@@ -153,19 +189,9 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
               numberFormat: NumberFormat.compact(), // Formats like 1M, 10M, etc.
               majorGridLines: const MajorGridLines(width: 0), //
             ),
-            tooltipBehavior: TooltipBehavior(enable: true,  header: 'Total Purchases'),
+            tooltipBehavior: TooltipBehavior(enable: true,  header: 'Total Expenses'),
             series:
-            // <CartesianSeries<TimeSeriesSales, DateTime>>[
-            //   LineSeries<TimeSeriesSales, DateTime>(
-            //     enableTooltip: true,
-            //
-            //     // Enable tooltips
-            //     // markerSettings: const MarkerSettings(isVisible: true),
-            //     dataSource: data,
-            //     xValueMapper: (TimeSeriesSales sales, _) => sales.time,
-            //     yValueMapper: (TimeSeriesSales sales, _) => sales.sales,
-            //   )
-            // ],
+
             <CartesianSeries<TimeSeriesSales, DateTime>>[
               ColumnSeries<TimeSeriesSales, DateTime>(
                 enableTooltip: true,
