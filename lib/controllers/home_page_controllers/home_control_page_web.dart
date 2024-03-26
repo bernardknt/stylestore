@@ -1,11 +1,13 @@
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
+import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
 import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
@@ -168,7 +170,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     children: [
                       Image.asset('images/new_logo.png'),
                       kSmallWidthSpacing,
-                      Text("BASIC",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                      Text("PREMIUM",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
                     ],
                   ),
                 ),
@@ -234,6 +236,16 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                 },
                 // page: AttendancePage(),
                 icon: Icons.mark_email_read,
+              ),
+              SidebarXItem(
+                label: 'Transactions',
+                onTap: () {
+                  setState(() {
+                    _selectedWidget = TransactionsController(showBackButton: false,);
+                  });
+                },
+                // page: AttendancePage(),
+                icon: Iconsax.bank,
               ),
               SidebarXItem(
                 label: 'Analytics',

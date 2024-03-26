@@ -14,6 +14,9 @@ import '../widgets/locked_widget.dart';
 
 class TransactionsController extends StatefulWidget {
   static String id = 'transactions_controller';
+  final bool showBackButton;
+
+  const TransactionsController({Key? key, this.showBackButton = true}) : super(key: key);
   @override
   _TransactionsControllerState createState() => _TransactionsControllerState();
 }
@@ -45,6 +48,7 @@ class _TransactionsControllerState extends State<TransactionsController> {
           appBar: AppBar(
             // automaticallyImplyLeading: false,
             toolbarHeight: 40,
+            automaticallyImplyLeading: widget.showBackButton,
             backgroundColor: kBackgroundGreyColor,
             //title: Center(child: Text("Stock Page", style: TextStyle(color: kBiegeThemeColor, fontSize: 13, fontWeight: FontWeight.bold),),),
             bottom: TabBar(

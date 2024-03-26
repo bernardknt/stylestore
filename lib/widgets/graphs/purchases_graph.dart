@@ -120,8 +120,9 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
         ),
         child: Column(
           children: [
-            Text("Summary",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack, ),),
-
+            kLargeHeightSpacing,
+            Text("Expenses",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack, ),),
+            kLargeHeightSpacing,
             kSmallHeightSpacing,
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -254,7 +255,7 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
     for (var item in purchase.items) {
       total += item.price;
     }
-    print("${purchase.date} with ${purchase.items.length} items: $total");
+
     return total;
   }
 }

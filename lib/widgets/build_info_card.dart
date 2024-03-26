@@ -3,7 +3,7 @@ import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
 
 Widget buildInfoCard({required String title, required String value, Color cardColor = kBackgroundGreyColor, IconData cardIcon = Icons.accessibility,
-  double fontSize = 18,void Function()? tapped,
+  double fontSize = 18,void Function()? tapped, Color fontColor = kBlack
 }) {
   return Tooltip(
     message: title,
@@ -21,14 +21,14 @@ Widget buildInfoCard({required String title, required String value, Color cardCo
             children: [
               Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize, color: fontColor),
               ),
               kSmallHeightSpacing,
               cardIcon == Icons.accessibility?SizedBox():Icon(cardIcon, color: cardColor.withOpacity(0.6),),
               kSmallHeightSpacing,
               Text(
                   value,
-                  style: TextStyle(fontSize: fontSize,)
+                  style: TextStyle(fontSize: fontSize,color: fontColor)
               ),
             ],
           ),

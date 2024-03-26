@@ -124,6 +124,11 @@ class CommonFunctions {
     return processedNumbers;
   }
 
+  int differenceInDays(DateTime startDate, DateTime endDate) {
+    // Calculate the difference between endDate and startDate
+    Duration difference = endDate.difference(startDate);
+    return difference.inDays.abs(); // Use abs() to ensure positive result
+  }
 
 // This removes duplicates from Lists
   List removeDuplicates(List originalList) {
@@ -1048,6 +1053,7 @@ class CommonFunctions {
         'name':  prefs.getString(kBusinessNameConstant)!,
         'activity': "Expense",
         'receipt': image,
+
 
       });
     }

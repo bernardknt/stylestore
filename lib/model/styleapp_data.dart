@@ -54,6 +54,7 @@ class StyleProvider extends ChangeNotifier{
   // String specialityId = '';
 
   // Beautician information
+  List<MapEntry<String, double>> bestCustomerResults = [];
   String beauticianLocation = '';
   String beauticianId = 'cat7b7171f0';
   String beauticianName = '';
@@ -160,7 +161,10 @@ class StyleProvider extends ChangeNotifier{
 
   String expense = "";
 
-
+  void setBestCustomerResults(List<MapEntry<String, double>> value){
+    bestCustomerResults = value;
+    notifyListeners();
+  }
   void setSupplierButton(bool value){
     supplierButton = value;
     notifyListeners();

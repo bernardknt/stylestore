@@ -3,11 +3,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:provider/provider.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/widgets/report_widgets/best_customers_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../../model/styleapp_data.dart';
 import '../../../widgets/graphs/purchases_graph.dart';
 import 'package:intl/intl.dart';
+
+import '../../../widgets/graphs/sales_graph_widget.dart';
 class AnalyticsNewWeb extends StatefulWidget {
   const AnalyticsNewWeb({super.key});
 
@@ -20,7 +25,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
   final CollectionReference dataCollection = FirebaseFirestore.instance.collection('purchases');
   String storeId = "storeId";
   DateTime _selectedDay = DateTime.now();
-  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 30));
+  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 7));
 
 
 
@@ -63,9 +68,42 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                     child: Padding(
                       padding: const EdgeInsets.only(left:8.0),
                       child: TableCalendar(
-
+                        calendarBuilders: CalendarBuilders(
+                          defaultBuilder: (context, day, focusedDay) {
+                            // Apply styling based on selected dates
+                            if (_selectedDay == day) {
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.green, // Highlight start date with green
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(day.day.toString()),
+                                ),
+                              );
+                            } else if (_selectedEndDay == day) {
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.red, // Highlight end date with red
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(day.day.toString()),
+                                ),
+                              );
+                            } else {
+                              // Default cell style for other dates
+                              return Container(
+                                child: Center(
+                                  child: Text(day.day.toString()),
+                                ),
+                              );
+                            }
+                          },
+                        ),
                         calendarStyle: CalendarStyle(
-                            selectedTextStyle: kNormalTextStyle.copyWith()
+                            selectedTextStyle: kNormalTextStyle.copyWith(),
+                          markerSize: 10
                         ),
                         rangeSelectionMode: RangeSelectionMode.toggledOn, // Enable range selection
                         rangeStartDay: _selectedEndDay,  // Start of the range
@@ -95,7 +133,14 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child:  Text('Top Customers',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kPureWhiteColor, fontSize: 12 ),),
+                      child:  SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text('Top Customers(By Sale Value)',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kPureWhiteColor, fontSize: 12 ),),
+                            bestCustomersWidget(Provider.of<StyleProvider>(context, listen: true).bestCustomerResults, 5)
+                          ],
+                        ),
+                      ),
 
                     ),
                   ),
@@ -123,12 +168,31 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     kLargeHeightSpacing,
-                    Text('Expenses',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
+                    Text('',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
                     kLargeHeightSpacing,
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Container(
-                          height: 820,
+                          height: 1800,
+                          color: kPlainBackground,
+                          child: SalesGraphWidget(
+                            key: ValueKey('graph-sales${_selectedDay}-${_selectedEndDay}'),
+                            startDate:_selectedEndDay , endDate:_selectedDay , )),
+                    ),
+                  ],
+                )),
+            Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    kLargeHeightSpacing,
+                    Text('',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
+                    kLargeHeightSpacing,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Container(
+                          height: 850,
                           color: kPlainBackground,
                           child: PurchaseGraphWidget(
                             key: ValueKey('graph-${_selectedDay}-${_selectedEndDay}'),
@@ -136,35 +200,9 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
                     ),
                   ],
                 )),
-            Column(
-              children: [
-                kLargeHeightSpacing,
-                kLargeHeightSpacing,
-                Text('Sales',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
 
-                Container(
-                  width: 400,
-                ),
-              ],
-            )
-            // Expanded(
-            //     child: Column(
-            //       mainAxisAlignment: MainAxisAlignment.start,
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       children: [
-            //         Text('Expenses',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
-            //         kLargeHeightSpacing,
-            //         Padding(
-            //           padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-            //           child: Container(
-            //               height: 400,
-            //               color: kPlainBackground,
-            //               child: PurchaseGraphWidget(
-            //                 key: ValueKey('graph-${_selectedDay}-${_selectedEndDay}'),
-            //                 startDate:_selectedEndDay , endDate:_selectedDay , )),
-            //         ),
-            //       ],
-            //     )),
+
+
           ],
         ),
       ),
