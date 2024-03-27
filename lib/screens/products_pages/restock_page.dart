@@ -186,7 +186,11 @@ class _ReStockPageState extends State<ReStockPage> {
   }
 
 
-  Future<void> _showPriceAndQuantityDialog(int index, String name, id, description, AllStockData stockItem) async {
+  Future<void> _showPriceAndQuantityDialog(int index, String name,
+      id,
+      // description,
+      // AllStockData stockItem
+      ) async {
     double? inputPrice;
     double? inputQuantity;
     await
@@ -195,90 +199,90 @@ class _ReStockPageState extends State<ReStockPage> {
       builder: (BuildContext context) {
         return
           AlertDialog(
-          title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputPrice = double.tryParse(value);
+            title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    inputPrice = double.tryParse(value);
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Price (Total Amount)',
+                    hintText: 'Total for purchasing $name',
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    inputQuantity = double.tryParse(value);
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Quantity Bought',
+                    hintText: 'Enter the quantity bought',
+                  ),
+                ),
+                DropdownButtonFormField<Quality>(
+                  value: selectedQuality,  // Current selected value
+                  decoration: InputDecoration(
+                      labelText: 'Quality',
+                      labelStyle: TextStyle(fontSize: 14)
+                  ),
+                  items: Quality.values.map((quality) {
+                    return DropdownMenuItem(
+                      value: quality,
+                      child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedQuality = newValue;
+                    });
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-                decoration: InputDecoration(
-                  labelText: 'Price (Total Amount)',
-                  hintText: 'Total for purchasing $name',
-                ),
+                child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
               ),
-              SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputQuantity = double.tryParse(value);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Quantity Bought',
-                  hintText: 'Enter the quantity bought',
-                ),
-              ),
-              DropdownButtonFormField<Quality>(
-                value: selectedQuality,  // Current selected value
-                decoration: InputDecoration(
-                  labelText: 'Quality',
-                  labelStyle: TextStyle(fontSize: 14)
-                ),
-                items: Quality.values.map((quality) {
-                  return DropdownMenuItem(
-                    value: quality,
-                    child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
-                  );
-                }).toList(),
-                onChanged: (newValue) {
+              TextButton(
+                onPressed: () {
+                  if (inputPrice != null && inputQuantity != null) {
+                    setState(() {
+                      int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
+                      print("EXISTING INDEX = $existingIndex");
+                      if (existingIndex != -1) {
+                        selectedStocks[existingIndex].price = inputPrice!;
+                        selectedStocks[existingIndex].quality = selectedQuality!.name;
+
+                        selectedStocks[existingIndex].setRestock(inputQuantity!);
+                        Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
+
+                      } else {
+                        // If the stock is not in the list, add it to the list.
+
+                        print("NOPE THIS RUN INSTEAD");
+                      }
+                      checkboxStates[index] = true;
+                      quantityControllers[index]?.text = inputQuantity.toString();
+                      print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
+                    });
+                  }
                   setState(() {
-                    selectedQuality = newValue;
+
                   });
+                  Navigator.pop(context);
                 },
+                child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
-            ),
-            TextButton(
-              onPressed: () {
-                if (inputPrice != null && inputQuantity != null) {
-                  setState(() {
-                    int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                    print("EXISTING INDEX = $existingIndex");
-                    if (existingIndex != -1) {
-                      selectedStocks[existingIndex].price = inputPrice!;
-                      selectedStocks[existingIndex].quality = selectedQuality!.name;
-                      print(selectedQuality.toString());
-                      selectedStocks[existingIndex].setRestock(inputQuantity!);
-                      Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
-
-                    } else {
-                      // If the stock is not in the list, add it to the list.
-
-                      print("NOPE THIS RUN INSTEAD");
-                    }
-                    checkboxStates[index] = true;
-                    quantityControllers[index]?.text = inputQuantity.toString();
-                    print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
-                  });
-                }
-                setState(() {
-
-                });
-                Navigator.pop(context);
-              },
-              child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
-            ),
-          ],
-        );
+          );
       },
     );
   }
@@ -353,6 +357,8 @@ class _ReStockPageState extends State<ReStockPage> {
                       // If the stock already exists, update its price and quantity.
                       selectedStocks[existingIndex].price = inputPrice!;
                       selectedStocks[existingIndex].quality = selectedQuality!.name;
+
+
                       print(selectedQuality.toString());
                       selectedStocks[existingIndex].setRestock(inputQuantity!);
 
@@ -362,6 +368,7 @@ class _ReStockPageState extends State<ReStockPage> {
                       print("NOPE THIS RUN INSTEAD");
                     }
                     checkboxStates[index] = true;
+
                     quantityControllers[index]?.text = inputQuantity.toString();
                     print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
                   });
@@ -564,227 +571,243 @@ class _ReStockPageState extends State<ReStockPage> {
       body:
       SafeArea(
         child:
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0, top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  kIsWeb?Container():GestureDetector(
-                    onTap: (){
-                      _startBarcodeScan();
-                    },
-                    child:
-                    Container(
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                          color: kCustomColor,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
+        Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
 
-                      ),
-                      child: Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
-                    ),),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      kIsWeb?Container():GestureDetector(
+                        onTap: (){
+                          _startBarcodeScan();
+                        },
+                        child:
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                              color: kCustomColor,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
 
-                  selectedStocks.length != 0?
-                  Padding(
-                    padding: const EdgeInsets.only(right: 15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          style: ButtonStyle(backgroundColor: CommonFunctions().convertToMaterialStateProperty(kGreenThemeColor)),
-                          onPressed: () async {
-                            List<StockItem> StockItems = [];
-                            for (var i = 0; i < selectedStocks.length; i++ ){
-                              StockItems.add(StockItem(description: selectedStocks[i].name, quantity: selectedStocks[i].restock, unitPrice:selectedStocks[i].price));
-                            }
+                          ),
+                          child: const Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
+                        ),),
 
-                            final shoppingList = PurchaseOrder(
-                                supplier: Supplier(
-                                  name: businessName,
-                                  address: location,
-                                  phoneNumber: businessPhoneNumber,
-                                  paymentInfo: businessPhoneNumber,
+                      selectedStocks.isNotEmpty?
+                      Padding(
+                        padding: const EdgeInsets.only(right: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              style: ButtonStyle(backgroundColor: CommonFunctions().convertToMaterialStateProperty(kGreenThemeColor)),
+                              onPressed: () async {
+                                List<StockItem> StockItems = [];
+                                for (var i = 0; i < selectedStocks.length; i++ ){
+                                  StockItems.add(StockItem(description: selectedStocks[i].name, quantity: selectedStocks[i].restock, unitPrice:selectedStocks[i].price));
+                                }
 
-                                ),
-                                customer: Customer(
-                                  name: userName,
-                                  address: location,
-                                  phone: businessPhoneNumber,
-                                ),
-                                info: InvoiceInfo(
-                                  date: DateTime.now(),
-                                  dueDate: DateTime.now(),
-                                  description: '',
-                                  number: purchaseOrderNumber,
-                                ),
-                                items: StockItems,
-                                template: StockTemplate(
-                                    type: 'SHOPPING LIST',
-                                    salutation: 'Purchase List',
-                                    totalStatement: "Total"),
-                                paid: Receipt( amount: 30000)
+                                final shoppingList = PurchaseOrder(
+                                    supplier: Supplier(
+                                      name: businessName,
+                                      address: location,
+                                      phoneNumber: businessPhoneNumber,
+                                      paymentInfo: businessPhoneNumber,
 
-                            );
+                                    ),
+                                    customer: Customer(
+                                      name: userName,
+                                      address: location,
+                                      phone: businessPhoneNumber,
+                                    ),
+                                    info: InvoiceInfo(
+                                      date: DateTime.now(),
+                                      dueDate: DateTime.now(),
+                                      description: '',
+                                      number: purchaseOrderNumber,
+                                    ),
+                                    items: StockItems,
+                                    template: StockTemplate(
+                                        type: 'SHOPPING LIST',
+                                        salutation: 'Purchase List',
+                                        totalStatement: "Total"),
+                                    paid: Receipt( amount: 30000)
 
-                            showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(color: kAppPinkColor,));});
-                            final pdfFile = await PdfPurchasePdfHelper
-                                .generate(shoppingList, "Shopping_"+ purchaseOrderNumber);
-                            Navigator.pop(context);
-                            PdfPurchaseHelper.openFile(
-                                pdfFile);
+                                );
+
+                                showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(color: kAppPinkColor,));});
+                                final pdfFile = await PdfPurchasePdfHelper
+                                    .generate(shoppingList, "Shopping_"+ purchaseOrderNumber);
+                                Navigator.pop(context);
+                                PdfPurchaseHelper.openFile(
+                                    pdfFile);
 
 
 
 
-                          }, child: Text("Shopping List", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
-                      ],
-                    ),
-                  ):
-                  Container()
-                ],
-              ),
-            ),
-            kSmallHeightSpacing,
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Stack(
-                children: [
-                  TextField(
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'By Product Name / Id',
-                      hintFadeDuration: Duration(milliseconds: 100),
-                    ),
-                    onChanged: filterStock,
+                              }, child: Text("Shopping List", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
+                          ],
+                        ),
+                      ):
+                      Container()
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+                kSmallHeightSpacing,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'By Product Name / Id',
+                          hintFadeDuration: Duration(milliseconds: 100),
+                        ),
+                        onChanged: filterStock,
+                      ),
+                    ],
+                  ),
+                ),
 
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20),
-              child: Row(
-                children: [
-                  Text("Add |", style: kNormalTextStyle.copyWith(color: mainColor),),
-                  kSmallWidthSpacing,
-                  kSmallWidthSpacing,
-                  Text("Item", style: kNormalTextStyle.copyWith(color:mainColor),),
-                  Spacer(),
-                  Text("Current level |", style: kNormalTextStyle.copyWith(color: mainColor),),
-                  kSmallWidthSpacing,
-                  kSmallWidthSpacing,
-                  Text("Stock", style: kNormalTextStyle.copyWith(color: mainColor),),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20.0, right: 20),
+                  child: Row(
+                    children: [
+                      Text("Add |", style: kNormalTextStyle.copyWith(color: mainColor),),
+                      kSmallWidthSpacing,
+                      kSmallWidthSpacing,
+                      Text("Item", style: kNormalTextStyle.copyWith(color:mainColor),),
+                      Spacer(),
+                      Text("Current level |", style: kNormalTextStyle.copyWith(color: mainColor),),
+                      kSmallWidthSpacing,
+                      kSmallWidthSpacing,
+                      Text("Stock", style: kNormalTextStyle.copyWith(color: mainColor),),
 
-                ],
-              ),
-            ),
+                    ],
+                  ),
+                ),
 
-            Expanded(
-                child:
+                Expanded(
+                    child:
 
-                ListView.builder(
-                  itemCount: filteredStock.length,
-                  itemBuilder: (context, index) {
+                    ListView.builder(
+                      itemCount: filteredStock.length,
+                      itemBuilder: (context, index) {
 
-                    // Define a TextEditingController to handle the quantity input in the TextField.
-                    TextEditingController quantityController = TextEditingController();
+                        // Define a TextEditingController to handle the quantity input in the TextField.
+                        TextEditingController quantityController = TextEditingController();
 
-                    if (!checkboxStates.containsKey(index)) {
-                      // Initialize checkbox state when the item is first shown.
-                      checkboxStates[index] = false;
-                    }
+                        if (!checkboxStates.containsKey(index)) {
+                          // Initialize checkbox state when the item is first shown.
+                          checkboxStates[index] = false;
+                        }
 
-                    if (!quantityControllers.containsKey(index)) {
-                      // Initialize quantity text controller when the item is first shown.
-                      quantityControllers[index] = TextEditingController();
-                    }
+                        if (!quantityControllers.containsKey(index)) {
+                          // Initialize quantity text controller when the item is first shown.
+                          quantityControllers[index] = TextEditingController();
+                        }
 
-                    return ListTile(
-                      // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                      subtitle: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
+                        return ListTile(
+                          // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+                          subtitle: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
 
-                          GestureDetector(
-                            onTap: (){
+                              GestureDetector(
+                                onTap: (){
 
-                              if(!styleData.selectedStock.contains(filteredStock[index].name)){
-                                _showPriceAndQuantityDialog(index, filteredStock[index].name, filteredStock[index].documentId,filteredStock[index].description, filteredStock[index] );
-                                quantityControllers[index]?.text = '0';
-                                selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                  if(!styleData.selectedStock.contains(filteredStock[index].name)){
+                                    _showPriceAndQuantityDialog(index,
+                                      filteredStock[index].name,
+                                      filteredStock[index].documentId,
+                                    );
+                                    quantityControllers[index]?.text = '0';
+                                    selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                  }else {
 
-                              }
-                            },
-                            child: Row(
-                              children: [
-                                styleData.selectedStock.contains(filteredStock[index].name)?Icon(Icons.check_box_outlined):Icon(Icons.check_box_outline_blank_outlined),
-                                kMediumWidthSpacing,
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  }
+                                },
+                                child: Row(
                                   children: [
-                                    Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
-                                    Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
+                                    styleData.selectedStock.contains(filteredStock[index].name)?Icon(Icons.check_box_outlined):Icon(Icons.check_box_outline_blank_outlined),
+                                    kMediumWidthSpacing,
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
+                                        Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
+                                      ],
+                                    ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-
-
-
-                          Spacer(),
-                          filteredStock[index].minimum  < filteredStock[index].quantity ? Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
-                          kSmallWidthSpacing,
-                          kSmallWidthSpacing,
-                          kSmallWidthSpacing,
-                          GestureDetector(
-                            onTap: (){
-                              if (!checkboxStates[index]!) {
-                                // Show the popup only when the TextField is disabled (checkbox is unchecked).
-                                _showPopup(context);
-                              }
-                            },
-                            child: Container(
-                              width: 60,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
                               ),
-                              child: Center(
-                                child: TextField(
 
-                                  enabled: checkboxStates[index], // Set the TextField's editable state based on checkbox state.
-                                  controller: _getOrCreateController(index),
-                                  //quantityControllers[index],
-                                  textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                  style: kNormalTextStyle.copyWith(color: mainColor),
-                                  onChanged: (value) {
-                                    // Update the restock value of the corresponding Stock instance in the list.
-                                    double restockValue = double.tryParse(value) ?? 0;
-                                    selectedStocks
-                                        .firstWhere((stock) => stock.id == filteredStock[index].documentId, orElse: () => Stock(name:filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description: filteredStock[index].description))
-                                        .setRestock(restockValue);
-                                  },
+
+
+                              Spacer(),
+                              filteredStock[index].minimum  < filteredStock[index].quantity ? Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
+                              kSmallWidthSpacing,
+                              kSmallWidthSpacing,
+                              kSmallWidthSpacing,
+                              GestureDetector(
+                                onTap: (){
+                                  if(!styleData.selectedStock.contains(filteredStock[index].name)) {
+                                    if(!styleData.selectedStock.contains(filteredStock[index].name)){
+                                      _showPriceAndQuantityDialog(index,
+                                        filteredStock[index].name,
+                                        filteredStock[index].documentId,
+                                      );
+                                      quantityControllers[index]?.text = '0';
+                                      selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                    }else {
+
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  width: 60,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                        height: 70,
+                                        width:120,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: kBlack)
+                                        ),
+                                        child: Center(
+                                          child:
+                        //Text("1"))
+                                          styleData.selectedStock.contains(filteredStock[index].name)?
+                                         Text(selectedStocks[ selectedStocks.indexWhere((stock) => stock.name == filteredStock[index].name)].restock.toString()):
+                                         Container(),)
+                                    ),
+
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                )
-
-
+                        );
+                      },
+                    )
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

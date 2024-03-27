@@ -325,7 +325,7 @@ class EditInvoicePage extends StatelessWidget {
                     );
                   }
 
-                  CommonFunctions().updateInvoiceData(styleData.invoiceTransactionId, items, id, styleData.invoicedCustomer,styleData.invoicedCustomerNumber, styleData.customerId, styleData.invoicedDate, styleData.invoicedTotalPrice, context);
+                  CommonFunctions().updateInvoiceData(styleData.invoiceTransactionId, items, id, styleData.invoicedCustomer,styleData.invoicedExpenseNumber, styleData.customerId, styleData.invoicedDate, styleData.invoicedTotalPrice, context);
 
                 },
               ),

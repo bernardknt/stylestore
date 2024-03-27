@@ -107,11 +107,20 @@ class StyleProvider extends ChangeNotifier{
   double invoicedPriceToPay = 0;
   double invoicedBalance = 0;
   String invoicedCustomer = "";
+
   String invoiceTransactionId= "";
+
   String invoiceSms= "";
-  String invoicedCustomerNumber = "700123456";
+  String invoicedExpenseNumber = "700123456";
   DateTime invoicedDate = DateTime.now();
   List<DateTime> selectedTaskDates = [];
+  String createdExpense = "";
+  String expenseTransactionId= "";
+  String expenseSupplier = "";
+  bool expensePaid = false;
+  double expenseTotalPrice = 0.0;
+  DateTime expenseDate= DateTime.now();
+  List expenseItems = [];
 
 
 
@@ -159,6 +168,7 @@ class StyleProvider extends ChangeNotifier{
   DateTime paymentDate = DateTime.now();
 
   List <InvoiceItem> invoiceItems = [];
+
   Iterable<Contact>? contacts;
   Map youtubeVideos = {};
 
@@ -295,6 +305,7 @@ class StyleProvider extends ChangeNotifier{
 
   void resetSelectedStockBasket (){
     selectedStockItems.clear();
+    selectedStock.clear();
     notifyListeners();
   }
   void setStockAnalysisValues (itemId) {
@@ -354,7 +365,7 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
  void setInvoicedPhoneNumber(phoneNumber){
-   invoicedCustomerNumber = phoneNumber;
+   invoicedExpenseNumber = phoneNumber;
    notifyListeners();
  }
   void setPaymentDate(DateTime time){
@@ -379,13 +390,25 @@ class StyleProvider extends ChangeNotifier{
     invoicedPriceToPay = price/1.0;
     notifyListeners();
   }
+
+  void setExpenseValues (double totalPrice, bool paid, String supplierName,String id, DateTime date,List items ){
+    expenseTotalPrice = totalPrice;
+    expensePaid = paid;
+    expenseSupplier = supplierName;
+    expenseTransactionId= id;
+    invoicedExpenseNumber = id;
+    expenseItems = items;
+    expenseDate = date;
+
+    notifyListeners();
+  }
   void setInvoicedValues (totalPrice, paidPrice, customerName, id, sms, customerNumber, date, paymentDifference, invoicedCustomerId){
     invoicedTotalPrice = totalPrice;
     invoicedPaidPrice = paidPrice;
     invoicedCustomer = customerName;
     invoiceTransactionId= id;
     invoiceSms= sms;
-    invoicedCustomerNumber = customerNumber;
+    invoicedExpenseNumber = customerNumber;
     invoicedDate = date;
     invoicedBalance = paymentDifference;
     customerId = invoicedCustomerId;
@@ -511,7 +534,7 @@ class StyleProvider extends ChangeNotifier{
 
   setInvoicedCustomer(name, phone, id){
     invoicedCustomer = name;
-    invoicedCustomerNumber = phone;
+    invoicedExpenseNumber = phone;
     customerId = id;
 
     notifyListeners();

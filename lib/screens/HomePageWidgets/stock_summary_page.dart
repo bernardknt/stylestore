@@ -10,21 +10,9 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
-import 'package:stylestore/screens/invoice_page.dart';
-import 'package:stylestore/screens/Messages/message.dart';
-import 'package:stylestore/screens/transactions_pages/new_transactions_page.dart';
-import 'package:stylestore/screens/transactions_products.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
-import 'package:stylestore/screens/payment_pages/record_payment_widget.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../model/beautician_data.dart';
-import '../../model/pdf_files/invoice.dart';
-import '../../model/pdf_files/invoice_customer.dart';
-import '../../model/pdf_files/invoice_supplier.dart';
-import '../../model/pdf_files/pdf_api.dart';
-import '../../model/pdf_files/pdf_invoice_api.dart';
-import '../../model/pdf_files/pdf_page.dart';
-import '../../screens/payment_pages/amount_widget.dart';
 import '../../widgets/locked_widget.dart';
 import '../products_pages/restock_page.dart';
 import '../products_pages/update_stock.dart';
@@ -56,8 +44,6 @@ class _StockSummaryPageState extends State<StockSummaryPage> {
     setState(() {
 
     });
-
-
   }
 
 

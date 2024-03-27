@@ -5,6 +5,7 @@ class AllStockData {
   final String documentId;
   final double amount;
   final double quantity;
+  final double restockValue;
   final double minimum;
   final String description;
   final String image;
@@ -28,6 +29,7 @@ class AllStockData {
     required this.tracking,
     required this.stockTaking,
     required this.barcode,
+    this.restockValue = 0.0,
 
 
   });

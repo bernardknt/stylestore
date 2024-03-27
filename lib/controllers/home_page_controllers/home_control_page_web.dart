@@ -110,7 +110,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                           Navigator.pushNamed(context, EditShopPage.id);
 
                         },
-                          child: Icon(Icons.settings)),
+                          child: const Icon(Icons.settings)),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),

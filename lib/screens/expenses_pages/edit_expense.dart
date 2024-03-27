@@ -27,7 +27,7 @@ class EditExpensePage extends StatelessWidget {
 
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context);
-    id = styleData.invoiceTransactionId;
+    id = styleData.expenseTransactionId;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kPureWhiteColor,
@@ -39,7 +39,7 @@ class EditExpensePage extends StatelessWidget {
             showDialog(context: context, builder: (BuildContext context){
               return CupertinoAlertDialog(
                 title:Text('Delete Expense? '),
-                content: Text('Are you Sure you want to delete this expense for ${styleData.invoicedCustomer}\nThis is permanent!'),
+                content: Text('Are you Sure you want to delete this expense for ${styleData.expense}\nThis is permanent!'),
                 actions: [
                   CupertinoDialogAction(isDestructiveAction: true,
                       onPressed: (){
@@ -54,7 +54,7 @@ class EditExpensePage extends StatelessWidget {
                   CupertinoDialogAction(isDefaultAction: true,
                     onPressed: (){
                       // _btnController.reset();
-                      CommonFunctions().removeDocumentFromServer(styleData.invoiceTransactionId, "appointments").whenComplete(()
+                      CommonFunctions().removeDocumentFromServer(styleData.expenseTransactionId, "purhases").whenComplete(()
                       {
                         Navigator.pop(context);
                         Navigator.pop(context);
@@ -79,7 +79,7 @@ class EditExpensePage extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: (){
-                  _showInputDialog(context, styleData.invoiceTransactionId);
+                  _showInputDialog(context, styleData.expenseTransactionId);
                 },
                 child: Card(
                   elevation: 0,
@@ -93,16 +93,16 @@ class EditExpensePage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        styleData.invoicedBalance == 0.0 ?Text(
+                        styleData.expensePaid == 0.0 ?Text(
                             'Paid',
-                            style: kNormalTextStyle.copyWith( color: kGreenThemeColor)): styleData.invoicedBalance > 0.0? Text(
+                            style: kNormalTextStyle.copyWith( color: kGreenThemeColor)): styleData.expensePaid == false? Text(
                           'Unpaid',
                           style: kNormalTextStyle.copyWith( color: kRedColor),):Container(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Expense Number: ${styleData.invoiceTransactionId}',
+                              'Expense Number: ${styleData.expenseTransactionId}',
                               style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),
                             ),
                             Icon(Icons.edit)
@@ -122,7 +122,7 @@ class EditExpensePage extends StatelessWidget {
               kLargeHeightSpacing,
               textHeading('Supplier'),
               kSmallHeightSpacing,
-              buttonContainer(styleData.invoicedCustomer, Icons.arrow_forward_ios, context,
+              buttonContainer(styleData.expenseSupplier, Icons.arrow_forward_ios, context,
                       () async{
                     final prefs = await SharedPreferences.getInstance();
                     Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
@@ -132,13 +132,7 @@ class EditExpensePage extends StatelessWidget {
                         context: context,
                         builder: (context) {
                           return Container();
-                            // Scaffold(
-                            //   appBar: AppBar(
-                            //     elevation: 0,
-                            //     backgroundColor: kPureWhiteColor,
-                            //     automaticallyImplyLeading: false,
-                            //   ),
-                            //   body: EditCustomerSearchPage());
+
                         });
                   }
               ),
@@ -150,7 +144,7 @@ class EditExpensePage extends StatelessWidget {
               kSmallHeightSpacing,
               _buildDivider(),
               kLargeHeightSpacing,
-              buttonContainer('${DateFormat('d MMM yyy').format(Provider.of<StyleProvider>(context).invoicedDate)}', Icons.calendar_month, context,
+              buttonContainer('${DateFormat('d MMM yyy').format(Provider.of<StyleProvider>(context).expenseDate)}', Icons.calendar_month, context,
                       () async{
                     showModalBottomSheet(
                         isScrollControlled: true,
@@ -179,7 +173,7 @@ class EditExpensePage extends StatelessWidget {
                 shadowColor: kAppPinkColor,
                 elevation: 3,
                 child:     ListView.builder(
-                    itemCount: Provider.of<StyleProvider>(context, listen: false).invoiceItems.length,
+                    itemCount: Provider.of<StyleProvider>(context, listen: false).expenseItems.length,
                     shrinkWrap: true,
                     primary: false,
                     physics: NeverScrollableScrollPhysics(),
@@ -192,7 +186,7 @@ class EditExpensePage extends StatelessWidget {
                               showDialog(context: context, builder: (BuildContext context){
                                 return CupertinoAlertDialog(
                                   title:Text('Delete Item '),
-                                  content: Text('Are you Sure you want to delete ${styleData.invoiceItems[index].name}\n'),
+                                  content: Text('Are you Sure you want to delete ${styleData.expenseItems[index].name}\n'),
                                   actions: [
                                     CupertinoDialogAction(isDestructiveAction: true,
                                         onPressed: (){
@@ -206,7 +200,7 @@ class EditExpensePage extends StatelessWidget {
                                     ),
                                     CupertinoDialogAction(isDefaultAction: true,
                                       onPressed: (){
-                                        Provider.of<StyleProvider>(context, listen: false).removeSelectedInvoicedItem(InvoiceItem(name: styleData.invoiceItems[index].name, quantity: styleData.invoiceItems[index].quantity, unitPrice: styleData.invoiceItems[index].unitPrice));
+                                   //     Provider.of<StyleProvider>(context, listen: false).removeSelectedInvoicedItem(InvoiceItem(name: styleData.invoiceItems[index].name, quantity: styleData.invoiceItems[index].quantity, unitPrice: styleData.invoiceItems[index].unitPrice));
 
                                         Navigator.pop(context);
 
@@ -221,9 +215,9 @@ class EditExpensePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text( "${styleData.invoiceItems[index].name}", style: TextStyle(fontWeight:FontWeight.bold,fontFamily: 'Montserrat-Medium',fontSize: 13)),
-                                  Text( "${styleData.invoiceItems[index].description}", style: TextStyle(fontFamily: 'Montserrat-Medium',fontSize: 12)),
-                                  Text( "${styleData.invoiceItems[index].quantity} x ${styleData.invoiceItems[index].unitPrice}", style: TextStyle(fontFamily: 'Montserrat-Medium',fontSize: 12)),
+                                  Text( "${styleData.expenseItems[index].product}", style: TextStyle(fontWeight:FontWeight.bold,fontFamily: 'Montserrat-Medium',fontSize: 13)),
+                                  Text( "${styleData.expenseItems[index].totalPrice}", style: TextStyle(fontFamily: 'Montserrat-Medium',fontSize: 12)),
+                                  Text( "${styleData.expenseItems[index].quantity}", style: TextStyle(fontFamily: 'Montserrat-Medium',fontSize: 12)),
                                 ],
                               ),
                               trailing: Container(
@@ -303,7 +297,7 @@ class EditExpensePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   textHeading('Total'),
-                  textHeading("UGX ${CommonFunctions().formatter.format(styleData.invoicedTotalPrice)}")
+                  textHeading("UGX ${CommonFunctions().formatter.format(styleData.expenseTotalPrice)}")
                 ],
               ),
 
@@ -326,7 +320,7 @@ class EditExpensePage extends StatelessWidget {
                     );
                   }
 
-                  CommonFunctions().updateInvoiceData(styleData.invoiceTransactionId, items, id, styleData.invoicedCustomer,styleData.invoicedCustomerNumber, styleData.customerId, styleData.invoicedDate, styleData.invoicedTotalPrice, context);
+                  CommonFunctions().updateInvoiceData(styleData.invoiceTransactionId, items, id, styleData.invoicedCustomer,styleData.invoicedExpenseNumber, styleData.customerId, styleData.invoicedDate, styleData.invoicedTotalPrice, context);
 
                 },
               ),

@@ -86,7 +86,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   var activityList = [];
   var createdByList = [];
   var supplierList = [];
-  var paidList = [];
+  List<bool> paidList = [];
   var listOfProducts = [];
   var listOfPriceOfProducts = [];
 
@@ -156,7 +156,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                 GestureDetector(
                                   onTap: () async{
                                     final prefs = await SharedPreferences.getInstance();
-
+                                    Provider.of<StyleProvider>(context, listen: false).resetSelectedStockBasket ();
                                     Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
                                     Navigator.pop(context);
 
@@ -353,8 +353,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
                               ],
                               GestureDetector(
                                 onTap: (){
-                                  Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(priceOfProducts[index][index].toDouble(), priceOfProducts[index][index].toDouble(),createdByList[index], transIdList[index], [], "", dateList[index],  priceOfProducts[index].toDouble() - priceOfProducts[index].toDouble(), transIdList[index]);
 
+                                  Provider.of<StyleProvider>(context, listen: false).setExpenseValues(priceOfProducts[index].toDouble(),paidList[index], supplierList[index], transIdList[index], DateTime.now(), []);
 
                                   showModalBottomSheet(
                                       context: context,
@@ -409,8 +409,8 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
-                                            Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: 14, color: kGreenThemeColor)),
-                                            paidList[index] == false? TextButton(onPressed: (){}, child: Text("Pay")):SizedBox()
+                                            Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontWeight:FontWeight.bold,fontSize: 10, color: kGreenThemeColor)),
+                                            paidList[index] == false? TextButton(onPressed: (){}, child: Text("Pay", style: kNormalTextStyle.copyWith(fontSize: 12),)):SizedBox()
 
                                           ],
                                         ),

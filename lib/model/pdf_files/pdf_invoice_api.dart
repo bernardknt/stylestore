@@ -1,10 +1,11 @@
 import 'dart:io';
-// import 'dart:js';
+
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
 import '../../screens/Documents_Pages/dummy_document.dart';
@@ -15,8 +16,7 @@ import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'dart:html' as html;
-import 'dart:convert';
-// import 'package:js/js.dart';
+
 
 
 
@@ -94,7 +94,7 @@ static testWebPdf ()async{
     final pdf = Document();
     final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
     //final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
-    final Uint8List logoBytes = (await rootBundle.load("images/okola_logo.png")).buffer.asUint8List();
+    final Uint8List logoBytes = (await rootBundle.load("images/plain_white.png")).buffer.asUint8List();
 
 
     // ... (Rest of your PDF generation logic) ...
@@ -110,7 +110,10 @@ static testWebPdf ()async{
           buildTotal(invoice), // Your total building logic
           Positioned(bottom: 0,
               left:0,
-              child: invoice.paid.amount > 0 && invoice.template.type == "RECEIPT"?
+              child: invoice.paid.amount >= ( invoice.items.map((item) => (item.unitPrice * item.quantity) ).reduce((item1, item2) => item1 + item2))
+
+
+                  && invoice.template.type == "RECEIPT"?
               Image(MemoryImage(imagePng), height: 100, alignment: Alignment.centerRight)
                   : Container()
 
@@ -141,49 +144,6 @@ static testWebPdf ()async{
     html.Url.revokeObjectUrl(url);
   }
 
-  // static Future<void> webPDFdownload ()async{
-  //   // Here you'd need logic to generate the PDF data as bytes
-  //   // Let's assume you have it in a variable called 'pdfData'
-  //   final blob = html.Blob([pdfData]);
-  //   final url = html.Url.createObjectUrlFromBlob(blob);
-  //   final anchor = html.document.createElement('a') as html.AnchorElement
-  //     ..href = url
-  //     ..style.display = 'none'
-  //     ..download = 'generated_document.pdf';
-  //   html.document.body!.children.add(anchor);
-  //
-  //   // Download starts automatically
-  //   anchor.click();
-  //
-  //   // Cleanup
-  //   html.document.body!.children.remove(anchor);
-  //   html.Url.revokeObjectUrl(url);
-  // }
-
-  static Future<void >buildWebPdf (Invoice invoice, String logoUrl, String invoiceNumber, String type)async{
-    // final url = Uri.parse('https://us-central1-doctor-booking-aa868.cloudfunctions.net/generatePDF'); // Replace with your function URL
-    // try {
-    //   final response = await http.post(url, body: {
-    //     'invoiceData': jsonEncode(invoice.toJson()), // Serialize your invoice object
-    //     'imageUrl': logoUrl,
-    //     'invoiceNumber': invoiceNumber,
-    //     'type': type
-    //   });
-    //   if (response.statusCode == 200) {
-    //     print("HURAAAY a response was received");
-    //     // Handle the PDF file (response.bodyBytes) - example: download it
-    //     // Remember to uncomment dart.js
-    //    // context.callMethod('download', [response.bodyBytes, '$invoiceNumber.pdf']);
-    //     @JS('download')
-    //     void download(dynamic data, String filename){
-    //     }
-    //   } else {
-    //     // Handle PDF generation error
-    //   }
-    // }catch(error) {
-    //   print("THIS IS THE ERROR: $error");
-    // }
-  }
 
   static Widget buildHeader(Invoice invoice) => Column(
 
@@ -287,9 +247,9 @@ static testWebPdf ()async{
         item.name,
         // item.formatDate(item.date),
         '${item.quantity.toStringAsFixed(0)}',
-        '${item.unitPrice}',
+        '${CommonFunctions().formatter.format(item.unitPrice)}',
         // '${item.vat} %',
-        'Ugx ${total.toStringAsFixed(0)}',
+        'Ugx ${CommonFunctions().formatter.format(total)}',
       ];
     }).toList();
 
@@ -336,6 +296,7 @@ static testWebPdf ()async{
     // final total = netTotal + vat;
     final total = netTotal;
 
+
     return
       receiptAmount != 0.0 ?
       Container(
@@ -351,6 +312,18 @@ static testWebPdf ()async{
                 buildText(
                   title: 'Total',
                   value: Utils.formatPrice(billTotal),
+                  unite: true,
+                ),
+                pw.SizedBox(height: 10),
+                // New section for Paid
+                buildText(
+                  title: 'Amount Paid',
+                  titleStyle: TextStyle(
+                    fontSize: 12,
+                    color: PdfColor.fromHex("#0AB11B"),
+                    fontWeight: FontWeight.normal,
+                  ),
+                  value: Utils.formatPrice(receiptAmount),
                   unite: true,
                 ),
                 Divider(),
@@ -429,6 +402,8 @@ static testWebPdf ()async{
       buildSimpleText(title: 'Address', value: invoice.supplier.address),
       SizedBox(height: 1 * PdfPageFormat.mm),
       buildSimpleText(title: 'Payment', value: invoice.supplier.paymentInfo),
+      SizedBox(height: 1 * PdfPageFormat.mm),
+      buildSimpleText(title: 'Website:', value: 'https://businesspilotapp.com'),
     ],
   );
 

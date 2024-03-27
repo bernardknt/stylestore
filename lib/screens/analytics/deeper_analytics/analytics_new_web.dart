@@ -26,7 +26,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
   final CollectionReference dataCollection = FirebaseFirestore.instance.collection('purchases');
   String storeId = "storeId";
   DateTime _selectedDay = DateTime.now();
-  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 7));
+  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 1));
 
 
 

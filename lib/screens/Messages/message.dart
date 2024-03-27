@@ -68,7 +68,7 @@ class _MessagesPageState extends State<MessagesPage> {
     controller = TextEditingController()..text = jsonMessage;
     Provider.of<BeauticianData>(context, listen: false).setTextMessage(jsonMessage);
     message = jsonMessage;
-    phoneNumberController = TextEditingController()..text = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedCustomerNumber, countryCode);
+    phoneNumberController = TextEditingController()..text = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedExpenseNumber, countryCode);
     setState(() {
 
     });
@@ -366,7 +366,7 @@ class _MessagesPageState extends State<MessagesPage> {
                         ElevatedButton(
                             style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
                             onPressed: () async{
-                              phoneNumber = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedCustomerNumber, countryCode);
+                              phoneNumber = CommonFunctions().formatPhoneNumber(Provider.of<StyleProvider>(context, listen: false).invoicedExpenseNumber, countryCode);
 
                               if (message == ''|| phoneNumber.length != 9){
                                 showDialog(context: context, builder: (BuildContext context){

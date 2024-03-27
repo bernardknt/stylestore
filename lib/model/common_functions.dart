@@ -48,7 +48,7 @@ import 'beautician_data.dart';
 class CommonFunctions {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  var formatter = NumberFormat('#,###,000');
+  var formatter = NumberFormat('#,###');
   final auth = FirebaseAuth.instance;
   final AudioPlayer _audioPlayer = AudioPlayer();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -1046,6 +1046,7 @@ class CommonFunctions {
         'id': docId,
         'items': basketToPost,
         'date': DateTime.now(),
+        'paid': false,
         'requestBy': prefs.getString(kLoginPersonName)!,
         'supplier': supplier,
         'supplierId': supplierId,

@@ -74,7 +74,7 @@ class TransactionWidget extends StatelessWidget {
 
             },
             child: SizedBox(
-              width: 180,
+              width: 230,
               child: Card(
                 child: Padding(
                   padding:
@@ -83,10 +83,11 @@ class TransactionWidget extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      phoneNumber[index]!="0"?Icon(Iconsax.call, size: 20,):Container(),
+                      // phoneNumber[index]!="0"?Icon(Iconsax.call, size: 20,):Container(),
                       kSmallWidthSpacing,
                       Text(
                         "${clientList[index]}\n${clientPhoneList[index]}",
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign
                             .center,
                         style: kNormalTextStyle
@@ -206,7 +207,8 @@ class TransactionWidget extends StatelessWidget {
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          paidAmountList[index] >= priceList[index]
+                                          paidAmountList[index] > 0.0
+                                              //priceList[index]
                                               ? buildButton(context, 'Receipt', Iconsax.receipt, () async {
                                             Navigator.pop(context);
                                             Navigator.pop(context);
@@ -248,6 +250,7 @@ class TransactionWidget extends StatelessWidget {
                                             }
                                           })
                                               : Container(),
+                                          kSmallHeightSpacing,
                                           paidAmountList[index] >= priceList[index]? kLargeHeightSpacing:
                                           buildButton(context, 'Quotation', Iconsax.paperclip, () async {
                                             Navigator.pop(context);
@@ -284,7 +287,7 @@ class TransactionWidget extends StatelessWidget {
                                             }
 
                                           }),
-                                          kLargeHeightSpacing,
+                                          kSmallHeightSpacing,
                                           buildButton(context, 'Invoice', Iconsax.printer, () async {
                                             Navigator.pop(context);
                                             Navigator.pop(context);
