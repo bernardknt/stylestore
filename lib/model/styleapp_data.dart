@@ -177,7 +177,7 @@ class StyleProvider extends ChangeNotifier{
   void setBusinessJSON ( Map<String, dynamic> value1,Map<String, dynamic> value2 ){
     businessReportJSON.addAll(value1);
     businessReportJSON.addAll(value2);
-    print(businessReportJSON);
+    print("JSON Uploaded");
     notifyListeners();
   }
 

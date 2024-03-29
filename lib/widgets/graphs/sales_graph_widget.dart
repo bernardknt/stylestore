@@ -71,10 +71,10 @@ class _SalesGraphWidgetState extends State<SalesGraphWidget> {
     }
 
     return {
-      // ... other variables
+
       "salesData": salesData,
       "topCustomers": topCustomersData,
-      // ... Add expensesData if you have it
+
     };
   }
 

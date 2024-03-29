@@ -114,6 +114,8 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     // TODO: implement initState
     super.initState();
     defaultInitilization();
+    // expenseController = TextEditingController(); // Initialize here
+    // quantityController = TextEditingController();
   }
   @override
   Widget build(BuildContext context) {

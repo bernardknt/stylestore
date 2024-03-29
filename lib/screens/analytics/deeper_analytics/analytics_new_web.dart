@@ -1,8 +1,14 @@
 
 
+import 'dart:io';
+import 'package:csv/csv.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage_web/firebase_storage_web.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
@@ -31,6 +37,94 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
 
 
 
+  Future<void> createCSV(Map<String, dynamic> reportData) async {
+    List<List<dynamic>> rows = [];
+
+    // Sales Data Header
+    rows.add([
+      "Date",
+      "Total Sales",
+      "Product",
+      "Quantity",
+      "Price"
+    ]);
+
+    // Sales Data Rows
+    for (var sale in reportData["salesData"]) {
+      for (var item in sale["items"]) {
+        rows.add([
+          sale["date"],
+          sale["totalSales"],
+          item["product"],
+          item["quantity"],
+          item["price"]
+        ]);
+      }
+    }
+
+    // Separator Row (Optional)
+    rows.add([]);
+
+    // Expense Data Header
+    rows.add([
+      "Date",
+      "Total Expense",
+      "Product",
+      "Quantity",
+      "Price",
+      "Quality"
+    ]);
+
+    // Expense Data Rows
+    for (var expense in reportData["expenseData"]) {
+      for (var item in expense["items"]) {
+        rows.add([
+          expense["date"],
+          expense["totalExpense"],
+          item["product"],
+          item["quantity"],
+          item["price"],
+          item["quality"]
+        ]);
+      }
+    }
+
+    // Top Customers Data Rows
+    for (var customer in reportData["topCustomers"]) {
+      rows.add([customer["name"], customer["totalSpent"]]);
+    }
+    String csvData = const ListToCsvConverter().convert(rows);
+
+    // Temporary file creation
+    final directory = await getTemporaryDirectory();
+    final tempFile = File('${directory.path}/temp_report.csv');
+    await tempFile.writeAsString(csvData);
+
+    // Firebase Storage Upload
+    // In-Memory CSV (No file creation)
+    ListToCsvConverter().convert(rows);
+
+    // Firebase Storage Upload for Web
+    // final storage = FirebaseStorage.instanceFor(app: firebase.app()); // Assuming Firebase initialized
+    // final storageRef = storage.ref('reports/sales_report.csv');
+    //
+    // try {
+    //   // Upload as base64 encoded string
+    //   await storageRef.putString(csvData, format: PutStringFormat.base64);
+    //   print('CSV uploaded successfully!');
+    // } on FirebaseException catch (e) {
+    //   print('Upload failed: $e');
+    // }
+
+    // // File Saving (Optional)
+    // final directory = await getApplicationDocumentsDirectory();
+    // final file = File('${directory.path}/sales_and_expenses_report.csv');
+    // await file.writeAsString(csvData);
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context, listen: false);
@@ -44,6 +138,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){
         styleData.setBusinessJSON(styleDataListen.salesReportJSON, styleDataListen.purchasesReportJSON);
+        createCSV(styleData.businessReportJSON);
       },child: Tooltip(
           message: "Generate Report",
           child: Icon(Iconsax.document,color: kPureWhiteColor,)),backgroundColor: kAppPinkColor,),

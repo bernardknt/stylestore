@@ -65,13 +65,6 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(minutes: 30))),
-    //   builder: (BuildContext context, Widget? child) {
-    //   return MediaQuery(
-    //     // Wrap the time picker in a MediaQuery
-    //     data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-    //     child: child!,
-    //   );
-    // },
     );
 
     if (pickedTime != null) {

@@ -403,7 +403,7 @@ static testWebPdf ()async{
       SizedBox(height: 1 * PdfPageFormat.mm),
       buildSimpleText(title: 'Payment', value: invoice.supplier.paymentInfo),
       SizedBox(height: 1 * PdfPageFormat.mm),
-      buildSimpleText(title: 'Website:', value: 'https://businesspilotapp.com'),
+      // buildSimpleText(title: 'Website:', value: 'https://businesspilotapp.com'),
     ],
   );
 
