@@ -1,6 +1,8 @@
 
 
+import 'dart:convert';
 import 'dart:io';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csv/csv.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -123,7 +125,36 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
   }
 
 
+  Future<void> sendDataToCloudFunction(Map<String, dynamic> reportData) async {
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'generateCSV', // Replace 'generateCSV' with your function name
+      );
+      print("********************BEFORE ENCODING***********************************");
+      print(reportData);
+      print("*********************AFTER ENCODING*****************************");
+      final jsonString = jsonEncode(reportData);
+      print(jsonString);
+      // dynamic serverCallableVariable = await callableSmsCustomer.call(<String, dynamic>{
+      //   "message" : message,
+      //   "number" : number,
+      //
+      // })
+      dynamic response = await callable.call(<String, dynamic>{
+        'body': jsonString
 
+      });
+
+
+      // Successful response (Assuming your function returns a message)
+      print('Cloud Function response: ${response.data}');
+
+    } on FirebaseFunctionsException catch (e) {
+      print('Caught FirebaseFunctionsException: ${e.message}');
+    } catch (e) {
+      print('Caught generic error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +169,9 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){
         styleData.setBusinessJSON(styleDataListen.salesReportJSON, styleDataListen.purchasesReportJSON);
-        createCSV(styleData.businessReportJSON);
+        print(styleData.businessReportJSON);
+        sendDataToCloudFunction(styleData.businessReportJSON);
+        // createCSV(styleData.businessReportJSON);
       },child: Tooltip(
           message: "Generate Report",
           child: Icon(Iconsax.document,color: kPureWhiteColor,)),backgroundColor: kAppPinkColor,),
