@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/word_constants.dart';
+import '../../widgets/employee_checklist.dart';
 import '../../widgets/photo_widget.dart';
 import '../../widgets/rounded_icon_widget.dart';
 import '../HomePageWidgets/summary_widget.dart';
@@ -31,17 +34,7 @@ class HomePageWeb extends StatefulWidget {
 }
 
 class _HomePageWebState extends State<HomePageWeb> {
-  List information = [
-    "Onboard new Employees",
-    "Monitor development of HR System",
-    "Plan for 2024 MCF Culture"
-  ];
-  final reasonOptions = [
-    'Sick Leave',
-    'Vacation',
-    'Mandatory Leave',
-    'Emergency'
-  ];
+
   String? selectedReason;
   Map<String, dynamic> permissionsMap = {};
   String businessName = 'Business';
@@ -54,20 +47,21 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-
-
-
   DateTimeRange? selectedDateRange;
+
   void defaultInitialization() async {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
 
     final prefs = await SharedPreferences.getInstance();
     int? storedTimestamp = prefs.getInt(kSignInTime);
+    DateTime lastSignInTime = DateTime.now();
     if (storedTimestamp != null) {
       DateTime storedTime = DateTime.fromMillisecondsSinceEpoch(storedTimestamp);
       final formattedTime = DateFormat('EE HH:mm aa').format(storedTime);
       checkInTime = formattedTime;
+      lastSignInTime = storedTime;
     }
+
     String newName = prefs.getString(kBusinessNameConstant) ?? 'Hi';
     storeLocation = prefs.getString(kLocationConstant) ?? 'Kampala';
     String newImage = prefs.getString(kImageConstant) ?? 'new_logo.png';
@@ -79,6 +73,8 @@ class _HomePageWebState extends State<HomePageWeb> {
     if (newIsCheckedIn == false) {
       Navigator.pushNamed(context, SignInUserPage.id);
     }
+
+    CommonFunctions().checkPeriodAndSignOut(context, lastSignInTime);
 
     setState(() {
       businessName = newName;
@@ -120,7 +116,8 @@ class _HomePageWebState extends State<HomePageWeb> {
       backgroundColor: kPlainBackground,
       // floatingActionButton: FloatingActionButton(
       //   onPressed: (){
-      //     CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
+      //     updateEmployeePermissions();
+      //     //CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
       //   },
       //   child: Icon(Icons.mail, color: kPureWhiteColor,),
       //   backgroundColor: kBlack,
@@ -145,19 +142,15 @@ class _HomePageWebState extends State<HomePageWeb> {
                       children: [
                         Text(
                           "$cHi $userName", style: kHeading2TextStyleBold.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
-                        Row(
-                                      children: [
-                                        Container(
-                                            decoration: BoxDecoration(
-                                              color: kBlueDarkColor,
-                                              borderRadius: BorderRadius.all(Radius.circular(5))
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(2.0),
-                                              child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
-                                            )),
-                                      ],
-                                    ),
+                        Container(
+                            decoration: BoxDecoration(
+                              color: kBlueDarkColor,
+                              borderRadius: BorderRadius.all(Radius.circular(5))
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
+                            )),
                       ],
                     ),
                     Spacer(),
@@ -494,7 +487,7 @@ class _HomePageWebState extends State<HomePageWeb> {
               //                   ),
               //                 ],
               //               ),
-              //             ),
+              //             ),z
               //           ),
               //         ),
               //         // Spacer(),

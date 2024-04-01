@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/products.dart';
 
 import '../screens/employee_pages/employee_details.dart';
@@ -159,9 +160,16 @@ class BeauticianData extends ChangeNotifier {
 
   // Message Data
   String textMessage = "";
+  String bulkNumbersForMessaging = "";
   String lottieImage = 'images/Hi5.json';
   String bannerMessage = 'Transaction Updated';
 
+
+  void setBulkMessagingNumbers(String items) {
+    bulkNumbersForMessaging = items;
+
+    notifyListeners();
+  }
   void setProductItems(List<Product> items) {
     productItems = items;
     notifyListeners();

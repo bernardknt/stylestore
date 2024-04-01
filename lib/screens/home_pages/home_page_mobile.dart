@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
   var totalBill= [];
   var newOrderNumber = 0;
   late bool isCheckedIn;
+  String checkInTime ="..loading";
 
   String businessName = 'Business';
   String userName = "";
@@ -199,11 +200,19 @@ class _HomePageState extends State<HomePage> {
     String newStoreId = prefs.getString(kStoreIdConstant) ?? 'Hi';
     String newUserName = prefs.getString(kLoginPersonName) ?? "Hi";
     bool newIsCheckedIn = prefs.getBool(kIsCheckedIn) ?? false;
+    int? storedTimestamp = prefs.getInt(kSignInTime);
+    DateTime lastSignInTime = DateTime.now();
+    if (storedTimestamp != null) {
+      DateTime storedTime = DateTime.fromMillisecondsSinceEpoch(storedTimestamp);
+      final formattedTime = DateFormat('EE HH:mm aa').format(storedTime);
+      checkInTime = formattedTime;
+      lastSignInTime = storedTime;
+    }
     Provider.of<StyleProvider>(context, listen:false).setStoreValues(newStoreId, newImage);
     if (newIsCheckedIn == false){
       Navigator.pushNamed(context, SignInUserPage.id);
     }
-
+    CommonFunctions().checkPeriodAndSignOut(context, lastSignInTime);
     setState(() {
       businessName = newName;
       image = newImage;

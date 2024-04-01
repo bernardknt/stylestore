@@ -34,7 +34,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
   final CollectionReference dataCollection = FirebaseFirestore.instance.collection('purchases');
   String storeId = "storeId";
   DateTime _selectedDay = DateTime.now();
-  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 1));
+  DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 7));
 
 
 
@@ -164,7 +164,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
       backgroundColor: kPlainBackground,
       appBar: AppBar(
         title:  Text('ANALYTICS\nFrom (${DateFormat('dd MMM yyyy').format(_selectedEndDay)}) to (${DateFormat('dd MMM yyyy').format(_selectedDay)})',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
-
+        automaticallyImplyLeading: false,
         elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(onPressed: (){

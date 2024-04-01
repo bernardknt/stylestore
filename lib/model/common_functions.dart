@@ -42,6 +42,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/sign_in_options/sign_in_page.dart';
 import '../utilities/constants/user_constants.dart';
+import '../widgets/employee_checklist.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
@@ -64,6 +65,57 @@ class CommonFunctions {
       importance: Importance.high,
       playSound: true
   );
+
+  void showChecklistDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Pre-Checklist"),
+          content: EmployeePreChecklist(),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('Submit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+              onPressed: () {
+                // Handle submission logic here (e.g., save results)
+                showSuccessNotification('Checklist Submitted!', context);
+                print('Checklist Submitted!');
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kAppPinkColor, // Set background color to red
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<String> convertTextToPhoneNumbers(String text, context) {
+    // Split the text into lines
+    List<String> lines = text.split('\n');
+    print("Lines: $lines");
+    for(var i =0;i<lines.length;i++){
+      if(lines[i]!=""){
+        Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(lines[i]);
+      }
+    }
+
+
+    // Extract phone numbers using a regular expression (optional)
+    // List<String> phoneNumbers = lines.where((line) => RegExp(r"\d{3}-\d{3}-\d{4}").hasMatch(line)).toList();
+    // print(phoneNumbers);
+
+    // You can also perform additional processing on each line here
+    // For example, removing special characters or formatting the numbers
+
+    return lines;
+  }
 
   String formatPhoneNumber(String number, countryCode) {
 
@@ -110,6 +162,10 @@ class CommonFunctions {
       if (cleanNumber.startsWith("+256")) {
         cleanNumber = cleanNumber.substring(4); // Remove the leading "+256"
       }
+      if (cleanNumber.startsWith("256")) {
+        cleanNumber = cleanNumber.substring(3); // Remove the leading "+256"
+      }
+
 
       // Standardize remaining formats
       if (cleanNumber.startsWith("0")) {
@@ -180,6 +236,46 @@ class CommonFunctions {
     }
   }
 
+  void showConfirmationToSendMessageToDialog(BuildContext context, Function() onSendPressed) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Send Notification?', style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14, fontWeight: FontWeight.bold),),
+          content: Text(
+              'Would you want to send a notification to the users\nassigned to this task?', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack),),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Send', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+              onPressed: () {
+                onSendPressed(); // Call the notification function
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(backgroundColor: kAppPinkColor),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void checkPeriodAndSignOut(BuildContext context, DateTime givenDate) {
+    // Calculate 8 hours from now
+    final DateTime eightHoursFromNow = givenDate.add(const Duration(hours: 8));
+
+    // Compare the given date
+    if (DateTime.now().isAfter(eightHoursFromNow)) {
+      // Navigate to sign-in page (Use the appropriate navigation for your app)
+      showSuccessNotification('Automatic Sign out!', context);
+      signOutUser(context);
+    }else{
+
+    }
+  }
   Future<void> decreaseBillAmount(String uid,double amountValue, context) async {
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
       color: kAppPinkColor,));});

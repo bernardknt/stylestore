@@ -11,10 +11,8 @@ import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
-// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import '../MobileMoneyPages/mobile_money_page.dart';
-import '../calendar_pages/invoiced_date_calendar.dart';
 import '../employee_pages/employee_details.dart';
 
 class AddTasksWidget extends StatefulWidget {
@@ -132,7 +130,9 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
       Navigator.pop(context);
       Navigator.pop(context);
+      CommonFunctions().showConfirmationToSendMessageToDialog(context, (){
 
+      });
       // updateNotifyArray(token);
     }).catchError((error) => print("Failed to add user: $error"));
   }
@@ -186,8 +186,6 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                           selectedEmployeeTokens.add(name.token);
                           selectedEmployeeEmail.add(name.email);
                           selectedEmployeePhone.add(name.phone);
-
-
                         }
                       });
                       setStateForModal(() {}); // Force modal rebuild
@@ -359,8 +357,6 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                           setState(() {int indexToRemove = _selectedDates.indexOf(selectedDay);
                           _selectedDates.remove(selectedDay);
                           _selectedTime.removeAt(indexToRemove);
-
-
 
                           });
                         } else {

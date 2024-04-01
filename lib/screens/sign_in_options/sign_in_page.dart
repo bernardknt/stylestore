@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -277,6 +278,10 @@ class _SignInUserPageState extends State<SignInUserPage> {
                   ),
 
                 ),
+                kLargeHeightSpacing,
+                Opacity(
+                    opacity: 0.4,
+                    child: Image.asset('images/plane.png',height: 200,))
 
 
               ],
@@ -375,6 +380,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
         CommonFunctions().updateEmployeeSignInAndOutDoc(true);
         CommonFunctions().updateUserNotificationToken(prefs.getString(kEmployeeId));
+        CommonFunctions().showChecklistDialog(context);
 
 
       } )

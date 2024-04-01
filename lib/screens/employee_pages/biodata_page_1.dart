@@ -131,7 +131,7 @@ class _BioDataFormState extends State<BioDataForm> {
       'storeId': prefs.getString(kStoreIdConstant),
       'token': "token goes here",
       'permissions':
-      '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false }'
+      '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }'
     })
         .then((value) => print("Service Added"))
         .catchError((error) => print("Failed to add service: $error"));

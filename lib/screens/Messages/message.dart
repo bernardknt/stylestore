@@ -37,16 +37,17 @@ class _MessagesPageState extends State<MessagesPage> {
   var countryCode = "+256";
   var name = "";
   var random = Random();
- // var inspiration = "Dear Customer, Thank you for choosing Fruts Express! We appreciate your purchase and hope our product brings you joy. For any inquiries call us on 0700457826";
-  var message  = "";
+   var message  = "";
   var jsonMessage ="";
   var options =[];
 
-  late TextEditingController controller;
+  // late TextEditingController controller;
+  TextEditingController controller = TextEditingController()..text = "";
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 
-  late TextEditingController phoneNumberController;
+  //late
+  TextEditingController phoneNumberController = TextEditingController()..text = "";
 
   void defaultInitialization() async {
     var prov = Provider.of<StyleProvider>(context, listen: false);
