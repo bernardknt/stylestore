@@ -76,7 +76,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
       });
       if (qrCode == storeId){
         controller.dispose();
-        upLoadOrder();
+        uploadSignin();
       } else {
         controller.dispose();
         showDialog(
@@ -246,7 +246,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
                     action: () async{
                       final prefs = await SharedPreferences.getInstance();
                       prefs.setBool(kIsCheckedIn, true);
-                      upLoadOrder();
+                      uploadSignin();
 
                     },
                     ///Put label over here
@@ -256,7 +256,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
                       style: kNormalTextStyle.copyWith(fontSize: 14),
                     ),
                     icon: const Center(
-                      // child: Image.asset('images/logo.png',height: 40,)
+
                         child: Icon(
                           LineIcons.signature,
                           color: Colors.white,
@@ -320,7 +320,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
               // Check if the scanned QR code is correct
               if (qrCode == storeId) {
                 // Navigate back to the home page
-                upLoadOrder();
+                uploadSignin();
               } else {
                 // Show a dialog for wrong QR code
                 showDialog(
@@ -350,11 +350,10 @@ class _SignInUserPageState extends State<SignInUserPage> {
       },
     );
   }
-  Future<void> upLoadOrder ()async {
+  Future<void> uploadSignin ()async {
     final dateNow = new DateTime.now();
     CollectionReference userOrder = FirebaseFirestore.instance.collection('attendance');
     final prefs =  await SharedPreferences.getInstance();
-    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Welcome aboard $companyName, $name.')));
     // This sets the current date time in shared preferences
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     prefs.setInt(kSignInTime, timestamp);
@@ -373,6 +372,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
 
       })
           .then((value) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Welcome aboard $companyName, $name.')));
         prefs.setBool(kIsCheckedIn, true);
         prefs.setString(kSignInId, orderId);
         prefs.setString(kAttendanceCode, orderId);

@@ -124,14 +124,13 @@ class _BioDataFormState extends State<BioDataForm> {
       'code': code,
       'maritalStatus': 'Single',
       'picture': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/5320d4cd-cde9-74be-c923-506a8da6ed8a.png',
-
       'signedIn': {
         "${DateFormat('hh:mm a EE, dd, MMM').format(DateTime.now())}": false
       },
       'storeId': prefs.getString(kStoreIdConstant),
       'token': "token goes here",
-      'permissions':
-      '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }'
+      'permissions': '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }',
+      'checklist': []
     })
         .then((value) => print("Service Added"))
         .catchError((error) => print("Failed to add service: $error"));

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +15,6 @@ import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/word_constants.dart';
-import '../../widgets/employee_checklist.dart';
 import '../../widgets/photo_widget.dart';
 import '../../widgets/rounded_icon_widget.dart';
 import '../HomePageWidgets/summary_widget.dart';

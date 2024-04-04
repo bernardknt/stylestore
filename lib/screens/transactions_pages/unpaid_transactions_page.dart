@@ -361,11 +361,9 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                       onTap: (){
                                         Provider.of<StyleProvider>(context, listen: false).clearInvoiceItems();
                                         for( int i = 0; i < productList[index].length; i++ ) {
-                                          print( productList[index][i]['description']);
+
                                           Provider.of<StyleProvider>(context, listen: false).setInvoiceItems(InvoiceItem(  description: productList[index][i]['description'],name: productList[index][i]['product'], quantity: productList[index][i]['quantity'].toDouble(),  unitPrice: productList[index][i]['totalPrice']/1.0,));
                                         }
-                                        //   print( Provider.of<StyleProvider>(context, listen: false).invoiceItems);
-
 
                                         showDialog(context: context, builder: (BuildContext context){
                                           return

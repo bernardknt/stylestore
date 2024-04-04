@@ -4,10 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:csv/csv.dart';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_storage_web/firebase_storage_web.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,7 +17,6 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../model/styleapp_data.dart';
 import '../../../widgets/graphs/purchases_graph.dart';
 import 'package:intl/intl.dart';
-
 import '../../../widgets/graphs/sales_graph_widget.dart';
 class AnalyticsNewWeb extends StatefulWidget {
   const AnalyticsNewWeb({super.key});

@@ -235,7 +235,7 @@ class TransactionWidget extends StatelessWidget {
                                                 paid: Receipt(amount: paidAmountList[index] / 1.0));
 
                                             if(kIsWeb){
-                                              print("WEB PDF PRINT ACTIVATED") ;
+
 
 
                                               //final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "receipt_${transIdList[index]}", "RECEIPT");

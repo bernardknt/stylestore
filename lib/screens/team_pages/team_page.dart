@@ -77,6 +77,7 @@ class _TeamPageState extends State<TeamPage> {
   var codeList = [];
   var employeeIdList = [];
   var statusList = [];
+  var checkList = [];
   var paidStatusList = [];
   var paidStatusListColor = [];
   List<double> opacityList = [];
@@ -142,6 +143,7 @@ class _TeamPageState extends State<TeamPage> {
                 employeeIdList.add(doc['id']);
                 roleList.add(doc['role']);
                 statusList.add(doc['active']);
+                checkList.add(doc['checklist']);
                 permissionsList.add(doc['permissions']);
                 codeList.add(doc['code']);
                 phoneNumberList.add(doc['phoneNumber']);
@@ -179,7 +181,7 @@ class _TeamPageState extends State<TeamPage> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return Container(
-                                          color: Color(0xFF292929).withOpacity(0.6),
+                                          color: Colors.transparent,
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: kPureWhiteColor,
@@ -198,9 +200,9 @@ class _TeamPageState extends State<TeamPage> {
                                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
                                                       }
                                                   ),
-                                                  SizedBox(height: 16.0),
+                                                  kLargeHeightSpacing,
                                                   buildButton(context, 'Share ${nameList[index]} Credentials', Iconsax.share,  () async {
-                                                    Share.share('Login instructions for ${nameList[index]}\n1. Start by downloading the Kola Business app on ios or android.\n2. On the login page, click on the "Join Business as Staff Member".\n3.Enter the phone number and code below\n4. Login.\nNumber: ${phoneNumberList[index]}\nCode: ${codeList[index]}', subject: 'Login to Kola');
+                                                    Share.share('Login instructions for ${nameList[index]}\n1. Start by downloading the Businesspilot  app on ios or android.\n2. On the login page, click on the "Join Business as Staff Member".\n3.Enter the phone number and code below\n4. Login.\nNumber: ${phoneNumberList[index]}\nCode: ${codeList[index]}', subject: 'Login to Kola');
                                                   } ),
                                                 ],
                                               ),

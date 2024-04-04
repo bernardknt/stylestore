@@ -1,8 +1,13 @@
 
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
+
+import '../Utilities/constants/font_constants.dart';
 
 class EmployeePreChecklist extends StatefulWidget {
   @override
@@ -11,13 +16,76 @@ class EmployeePreChecklist extends StatefulWidget {
 
 class _EmployeePreChecklistState extends State<EmployeePreChecklist> {
   Map<String, bool> checklistItems = {
-    'Dressed in official uniform': false,
-    'Clean the office desks and Tables': false,
-    'Melt water and put in the containers': false,
-    'Set up KDS system': false,
-
-    // Add more checklist items here...
   };
+
+
+  Future<Map<String, bool>?> getChecklistAsMap(String documentId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentReference docRef = firestore.collection('employees').doc(documentId);
+
+    try {
+
+      DocumentSnapshot document = await docRef.get();
+      if (document.exists) {
+        List? checklist = document.get('checklist');
+
+        // Check if the checklist field is indeed a list
+        if (checklist is List) {
+          return checklist.asMap().map((index, item) => MapEntry(item.toString(), false));
+        } else {
+          print('Checklist field is not a list');
+          return null;
+        }
+      } else {
+        print('Document with ID $documentId does not exist');
+        return null;
+      }
+    } catch (e) {
+      print('Error retrieving checklist: $e');
+      return null;
+    }
+  }
+
+
+  defaultInitialization() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? employeeId = prefs.getString(kEmployeeId);
+
+    if (employeeId != null) {
+      showDialog(context: context, builder: ( context) {
+        return const Center(
+            child:
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: kAppPinkColor,),
+              ],
+            ));
+      }
+      );
+
+      Map<String, bool>? result = await getChecklistAsMap(employeeId);
+      setState(() {
+        // isLoading = false;
+        if (result != null) {
+          checklistItems = result;
+          Navigator.pop(context);
+          if(checklistItems.isEmpty){
+            Navigator.pop(context);
+          }
+        } else {
+          // Handle error (e.g., show a message to the user)
+        }
+      });
+    } else {
+      // Handle the case where employee ID is not found
+    }
+  }
+  @override
+  initState() {
+    defaultInitialization();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

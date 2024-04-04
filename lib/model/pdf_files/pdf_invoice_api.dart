@@ -5,7 +5,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
 import '../../screens/Documents_Pages/dummy_document.dart';

@@ -42,6 +42,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/sign_in_options/sign_in_page.dart';
 import '../utilities/constants/user_constants.dart';
+// import '../widgets/employee_checklist.dart';
 import '../widgets/employee_checklist.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
@@ -71,7 +72,7 @@ class CommonFunctions {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Pre-Checklist"),
+          title: Text("Checklist"),
           content: EmployeePreChecklist(),
           actions: [
             TextButton(
@@ -143,6 +144,17 @@ class CommonFunctions {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: kGreenThemeColor,
+        content: Text(message, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  showFailureNotification (message, context){
+    // snackbar to show success message at the top of the screen
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: kRedColor,
         content: Text(message, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
         duration: Duration(seconds: 3),
       ),
