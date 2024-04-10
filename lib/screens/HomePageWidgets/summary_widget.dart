@@ -81,6 +81,7 @@ class _SummaryPageState extends State<SummaryPage> {
   var clientList = [];
   var smsList = [];
   var customerIdList = [];
+  var currencyList = [];
   var clientLocationList = [];
   var clientPhoneList = [];
   var paymentDueDateList = [];
@@ -147,6 +148,7 @@ class _SummaryPageState extends State<SummaryPage> {
                     clientPhoneList = [];
                     smsList = [];
                     customerIdList = [];
+                    currencyList = [];
 
                     var orders = snapshot.data?.docs;
                     for (var doc in orders!) {
@@ -157,6 +159,7 @@ class _SummaryPageState extends State<SummaryPage> {
                       orderStatusList.add(doc['status']);
                       dateList.add(doc['appointmentDate'].toDate());
                       clientList.add(doc['client']);
+                      currencyList.add(doc['currency']);
                       clientLocationList.add(doc['clientLocation']);
                       smsList.add(doc['sms']);
                       clientPhoneList.add(doc['clientPhone']);
@@ -244,7 +247,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                             TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                               transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                               paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                              clientLocationList: clientLocationList, logo: logo, index: index,),
+                                              clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
                                           );
                                         });
                                   },
@@ -320,7 +323,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                                   CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "${CommonFunctions().formatter.format(priceList[index])} Ugx",
+                                                  "${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}",
                                                   style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,

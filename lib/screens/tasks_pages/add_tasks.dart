@@ -130,6 +130,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
       Navigator.pop(context);
       Navigator.pop(context);
+      Provider.of<StyleProvider>(context, listen: false).clearTransactionNote();
       CommonFunctions().showConfirmationToSendMessageToDialog(context, (){
 
       });

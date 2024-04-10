@@ -83,6 +83,25 @@ class _HomePageWebState extends State<HomePageWeb> {
     });
   }
 
+  Future<void> addCurrencyToMedics() async {
+    try {
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      CollectionReference medicsCollection = firestore.collection('medics');
+
+      await medicsCollection.get().then((QuerySnapshot snapshot) {
+        for (DocumentSnapshot doc in snapshot.docs) {
+          doc.reference.update({
+            'currency': 'Ugx',
+          });
+        }
+      });
+
+      print('Currency field added successfully to medics documents');
+    } catch (e) {
+      print('Failed to add currency field: $e');
+    }
+  }
+
   @override
   initState() {
     defaultInitialization();
@@ -114,9 +133,8 @@ class _HomePageWebState extends State<HomePageWeb> {
       backgroundColor: kPlainBackground,
       // floatingActionButton: FloatingActionButton(
       //   onPressed: (){
-      //     updateEmployeePermissions();
-      //     //CommonFunctions().triggerSendEmail(name: "Bernard Kangave", emailAddress: "bernardnt@yahoo.co.uk", subject: "This is it");
-      //   },
+      //     addCurrencyToMedics();
+      //     },
       //   child: Icon(Icons.mail, color: kPureWhiteColor,),
       //   backgroundColor: kBlack,
       // ),

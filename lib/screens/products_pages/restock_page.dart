@@ -13,6 +13,7 @@ import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/purchase_pdf_files/purchase.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
+import 'package:stylestore/screens/suppliers/supplier_form.dart';
 import 'package:stylestore/widgets/supplier_widget.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
@@ -502,37 +503,77 @@ class _ReStockPageState extends State<ReStockPage> {
                           children: [
 
                             Text("Select Supplier", style: Theme.of(context).textTheme.headline6),
-                            SizedBox(height: 10),
+                            kLargeHeightSpacing,
                             DropdownSearch<String>(
+                              items: supplierDisplayNames,
 
-                                items: supplierDisplayNames,
-                                dropdownDecoratorProps: DropDownDecoratorProps(
-                                  dropdownSearchDecoration: InputDecoration(
-                                    labelText: "Select Supplier",
-                                    hintText: "Supplier for goods",
+                              popupProps:
+                              const PopupProps.menu(
+                                showSearchBox: true,
+                                showSelectedItems: true, // Show selected items at the top
+                                searchFieldProps: TextFieldProps(
+                                  autofocus: true, // Focus the search field when popup opens
+                                  decoration: InputDecoration(
+                                    hintText: 'Search...',
+                                    prefixIcon: Icon(Icons.search),
                                   ),
+
                                 ),
 
-                                popupProps: PopupProps.menu(
-                                  showSelectedItems: true, // Show selected items at the top
+                              ),
+                              dropdownDecoratorProps: const DropDownDecoratorProps(
+                                dropdownSearchDecoration: InputDecoration(
+                                  labelText: "Select Supplier",
+                                  hintText: "Supplier for goods",
                                 ),
-
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    Provider.of<StyleProvider>(context, listen: false).setSupplierButton(true);
-                                    selectedSupplierDisplayName = newValue!;
-                                    int position = supplierDisplayNames.indexOf(newValue);
-                                    selectedSupplierRealName = supplierRealNames[position];
-                                    selectedSupplierId = supplierIds[position];
-                                    print("$selectedSupplierRealName: $selectedSupplierId");
-                                  });
-                                },
-                                filterFn: (item, query) {
-                                  return item.toLowerCase().contains(query!.toLowerCase());
-                                }
+                              ),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  selectedSupplierDisplayName = newValue!;
+                                  int position = supplierDisplayNames.indexOf(newValue);
+                                  selectedSupplierRealName = supplierRealNames[position];
+                                  selectedSupplierId = supplierIds[position];
+                                  print("$selectedSupplierRealName: $selectedSupplierId");
+                                });
+                              },
+                              filterFn: (item, query) {
+                                return item.toLowerCase().contains(query!.toLowerCase());
+                              },
                             ),
+                            // DropdownSearch<String>(
+                            //
+                            //     items: supplierDisplayNames,
+                            //     dropdownDecoratorProps: DropDownDecoratorProps(
+                            //       dropdownSearchDecoration: InputDecoration(
+                            //         labelText: "Select Supplier",
+                            //         hintText: "Supplier for goods",
+                            //       ),
+                            //     ),
+                            //
+                            //     popupProps: PopupProps.menu(
+                            //       showSelectedItems: true, // Show selected items at the top
+                            //     ),
+                            //
+                            //     onChanged: (newValue) {
+                            //       setState(() {
+                            //         Provider.of<StyleProvider>(context, listen: false).setSupplierButton(true);
+                            //         selectedSupplierDisplayName = newValue!;
+                            //         int position = supplierDisplayNames.indexOf(newValue);
+                            //         selectedSupplierRealName = supplierRealNames[position];
+                            //         selectedSupplierId = supplierIds[position];
+                            //         print("$selectedSupplierRealName: $selectedSupplierId");
+                            //       });
+                            //     },
+                            //     filterFn: (item, query) {
+                            //       return item.toLowerCase().contains(query!.toLowerCase());
+                            //     }
+                            // ),
                             kLargeHeightSpacing,
                             kLargeHeightSpacing,
+                            TextButton(onPressed: (){
+                              Navigator.pushNamed(context, SupplierForm.id);
+                            }, child: Text("Add Supplier")),
+
                             kLargeHeightSpacing,
                             kLargeHeightSpacing,
                             // Display the button conditionally
@@ -687,7 +728,7 @@ class _ReStockPageState extends State<ReStockPage> {
                       kSmallWidthSpacing,
                       kSmallWidthSpacing,
                       Text("Item", style: kNormalTextStyle.copyWith(color:mainColor),),
-                      Spacer(),
+                      const Spacer(),
                       Text("Current level |", style: kNormalTextStyle.copyWith(color: mainColor),),
                       kSmallWidthSpacing,
                       kSmallWidthSpacing,

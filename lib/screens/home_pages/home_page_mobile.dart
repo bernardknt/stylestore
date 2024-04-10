@@ -75,6 +75,35 @@ class _HomePageState extends State<HomePage> {
 
 
 
+  void updateMedicsSubscriptionDates() async {
+    final medicsCollection = FirebaseFirestore.instance.collection('medics');
+    final now = DateTime.now();
+    final endDate = now.add(const Duration(days: 7));
+
+    // Optional: Format dates as per your preference
+    final dateFormat = DateFormat('yyyy-MM-dd'); // Example format
+
+    try {
+      // Get all documents in the medics collection
+      final medicsSnapshot = await medicsCollection.get();
+
+      // Use a WriteBatch to perform multiple updates efficiently
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (final doc in medicsSnapshot.docs) {
+        batch.update(doc.reference, {
+          'subscriptionStartDate': now, // Or now.toString()
+          'subscriptionEndDate': endDate, // Or endDate.toString()
+        });
+      }
+
+      await batch.commit();
+      print('Medics subscriptions dates updated successfully!');
+    } catch (e) {
+      print('Error updating subscriptions dates: $e');
+    }
+  }
+
   Future<void> updateDialogueAlert(docId) {
 
     return FirebaseFirestore.instance.collection('medics').doc(docId)
@@ -244,59 +273,71 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-// Create a variable that measures the screen size
-
-
-
-
     return Scaffold(
 
       backgroundColor: kPureWhiteColor,
-
-
       appBar: AppBar(
 
         backgroundColor: Colors.white,
         // foregroundColor: Colors.blue,
-          title: Column(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          title:
+          Column(
+            // mainAxisAlignment: MainAxisAlignment.start,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(businessName),
-              Row(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: kBackgroundGreyColor,
-                    ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              // borderRadius: BorderRadius.circular(10),
-                              color: kAppPinkColor,
-                            ),
-                            child: Icon(Icons.circle, color: kPureWhiteColor,size: 15,),
-                          ),
-                        ),
-                        kSmallWidthSpacing,
-                        Text(storeLocation,overflow: TextOverflow.fade, style: kNormalTextStyleWhiteLabel.copyWith( fontSize: 12),),
-                        kSmallWidthSpacing
-                      ],
-                    ),
+              Text(
+                "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,),),
+              Container(
+                  decoration: BoxDecoration(
+                      color: kBlueDarkColor,
+                      borderRadius: BorderRadius.all(Radius.circular(5))
                   ),
-                  kMediumWidthSpacing,
-                ],
-              ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
+                  )),
             ],
           ),
+
+          // Column(
+          //   // mainAxisAlignment: MainAxisAlignment.center,
+          //   crossAxisAlignment: CrossAxisAlignment.center,
+          //   children: [
+          //     Text(businessName),
+          //     Row(
+          //       // crossAxisAlignment: CrossAxisAlignment.center,
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //
+          //       children: [
+          //         Container(
+          //           decoration: BoxDecoration(
+          //             borderRadius: BorderRadius.circular(10),
+          //             color: kBackgroundGreyColor,
+          //           ),
+          //           child: Row(
+          //             children: [
+          //               Padding(
+          //                 padding: const EdgeInsets.all(2.0),
+          //                 child: Container(
+          //                   decoration: const BoxDecoration(
+          //                     shape: BoxShape.circle,
+          //                     // borderRadius: BorderRadius.circular(10),
+          //                     color: kAppPinkColor,
+          //                   ),
+          //                   child: Icon(Icons.circle, color: kPureWhiteColor,size: 15,),
+          //                 ),
+          //               ),
+          //               kSmallWidthSpacing,
+          //               Text(storeLocation,overflow: TextOverflow.fade, style: kNormalTextStyleWhiteLabel.copyWith( fontSize: 12),),
+          //               kSmallWidthSpacing
+          //             ],
+          //           ),
+          //         ),
+          //         kMediumWidthSpacing,
+          //       ],
+          //     ),
+          //   ],
+          // ),
         centerTitle: true,
         elevation:1 ,
         actions: [
@@ -354,6 +395,11 @@ class _HomePageState extends State<HomePage> {
             },
             child: Icon(Icons.menu))
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: (){
+      //     updateMedicsSubscriptionDates();
+      //   },
+      // ),
       body: WillPopScope(
         onWillPop: ()async{
           return false;

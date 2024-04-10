@@ -160,6 +160,7 @@ class _SuccessPageState extends State<SuccessPage> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
 
 
@@ -171,11 +172,11 @@ class _SuccessPageState extends State<SuccessPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             uploadStatus == 0 ? Lottie.asset('images/sync.json', height: 100, width: 200, ):Lottie.asset('images/success.json', height: 200, width: 200, fit: BoxFit.cover ),
-            SizedBox(height: 10,),
+            kLargeHeightSpacing,
             Center(child: uploadStatus == 0 ?Text('Syncing everything',textAlign: TextAlign.center, style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 20),):Text('SUCCESS',textAlign: TextAlign.center, style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 20),)),
-            SizedBox(height: 10,),
+            kLargeHeightSpacing,
             uploadStatus == 0 ?Container(): Center(child: Text('Transaction Created',textAlign: TextAlign.center, style: GoogleFonts.lato( fontSize: 30),)),
-            SizedBox(height: 20,),
+            kLargeHeightSpacing,
             uploadStatus == 0 ?Column(
               mainAxisAlignment: MainAxisAlignment.center,
 

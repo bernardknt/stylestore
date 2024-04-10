@@ -103,9 +103,9 @@ class _StorePageMobileState extends State<StorePageMobile> {
             elevation: 0,
             automaticallyImplyLeading: false,
         ),
-
-        floatingActionButtonLocation: FloatingActionButtonLocation
-            .miniCenterFloat,
+        //
+        // floatingActionButtonLocation: FloatingActionButtonLocation
+        //     .miniCenterFloat,
         floatingActionButton:permissionsMap['store'] == false ?Container(): FloatingActionButton(
             backgroundColor: kAppPinkColor,
             onPressed: () {

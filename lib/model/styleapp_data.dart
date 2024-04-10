@@ -141,6 +141,7 @@ class StyleProvider extends ChangeNotifier{
   DateTime appointmentDate = DateTime.now();
   //DateTime invoicedDate = DateTime.now();
   DateTime appointmentTime = DateTime.now();
+  DateTime subscriptionDate = DateTime.now();
 
   // appointment made provider details
   DateTime appointmentMadeDate = DateTime.now();
@@ -173,6 +174,17 @@ class StyleProvider extends ChangeNotifier{
   Map youtubeVideos = {};
 
   String expense = "";
+
+  void setSubscription (date ){
+    subscriptionDate = date;
+    print("$date ADDED");
+    notifyListeners();
+
+  }
+  void clearTransactionNote(){
+    transactionNote = '';
+    notifyListeners();
+  }
 
   void setBusinessJSON ( Map<String, dynamic> value1,Map<String, dynamic> value2 ){
     businessReportJSON.addAll(value1);
@@ -312,7 +324,7 @@ class StyleProvider extends ChangeNotifier{
     stockId = itemId;
     notifyListeners();
   }
-  void setSubscriptionVariables (videos){
+  void setVideoVariables (videos){
     youtubeVideos = videos;
     notifyListeners();
   }

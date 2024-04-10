@@ -300,20 +300,20 @@ class _SuppliersPageState extends State<SuppliersPage> {
                         Text('Phone: ${filteredSupplier[index].phone}'),
                       ],
                     ),
-                    trailing: Container(
-                      width: 120,
-
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-
-
-
-                        Text("Create Bill", style: kNormalTextStyle.copyWith(color:kAppPinkColor, fontWeight: FontWeight.bold),),
-                        kSmallWidthSpacing,
-                        Icon(Icons.money,color: kAppPinkColor, )
-                      ],),
-                    ),
+                    // trailing: Container(
+                    //   width: 120,
+                    //
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //
+                    //
+                    //
+                    //     Text("Create Bill", style: kNormalTextStyle.copyWith(color:kAppPinkColor, fontWeight: FontWeight.bold),),
+                    //     kSmallWidthSpacing,
+                    //     Icon(Icons.money,color: kAppPinkColor, )
+                    //   ],),
+                    // ),
                     onTap: () {
                       // Handle supplier item tap
                     },

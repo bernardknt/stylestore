@@ -25,7 +25,7 @@ class Purchase {
       items: List<Item>.from(
         data['items'].map(
               (itemData) => Item(
-            description: itemData['description'],
+            description: itemData['description']??"",
             quality: itemData['quality'],
             quantity: itemData['quantity'].toDouble(),
             price: itemData['totalPrice'].toDouble(),

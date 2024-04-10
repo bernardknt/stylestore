@@ -117,7 +117,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
         elevation: 0,
         centerTitle: true,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
       floatingActionButton: permissionsMap['expenses'] == false ?Container(): FloatingActionButton(
 
           backgroundColor: kAppPinkColor,

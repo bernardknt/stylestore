@@ -41,6 +41,8 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   String? selectedSupplierId;
   String? selectedSupplierRealName;
   List<String> _filteredSupplierDisplayNames = [];
+  late TextEditingController expenseController;
+  late TextEditingController quantityController;
 
   File? image;
   var imageUploaded = false;
@@ -98,10 +100,13 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   }
 
   defaultInitilization()async {
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
     fetchSupplierNames();
+    expenseController = TextEditingController(text: styleData.expense);
+    quantityController = TextEditingController(text: expenseQuantity);
     _filteredSupplierDisplayNames = supplierDisplayNames;
     setState(() {
 
@@ -114,21 +119,21 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     // TODO: implement initState
     super.initState();
     defaultInitilization();
-    // expenseController = TextEditingController(); // Initialize here
-    // quantityController = TextEditingController();
+
   }
   @override
   Widget build(BuildContext context) {
-    var styleData = Provider.of<StyleProvider>(context, listen: false);
-    var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
+
+
 
     TextEditingController controller = TextEditingController(text: expenseCost);
-    TextEditingController expenseController = TextEditingController(text: styleData.expense);
-    TextEditingController quantityController = TextEditingController(text: expenseQuantity);
+
     // Move the cursor to the end of the text
     controller.selection = TextSelection.fromPosition(
       TextPosition(offset: controller.text.length),
     );
+
+
     return Scaffold(
       backgroundColor: kPureWhiteColor,
       appBar: AppBar(
@@ -225,35 +230,71 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 TextForm(label: 'Quantity',controller: quantityController),
                 kLargeHeightSpacing,
                 DropdownSearch<String>(
-                    // mode: Mode.MENU,
-                    items: supplierDisplayNames,
-                    dropdownDecoratorProps: DropDownDecoratorProps(
-                      dropdownSearchDecoration: InputDecoration(
-                        labelText: "Select Supplier",
-                        hintText: "Supplier for goods",
+                  items: supplierDisplayNames,
+
+                  popupProps:
+                  const PopupProps.menu(
+                    showSearchBox: true,
+                    showSelectedItems: true, // Show selected items at the top
+                    searchFieldProps: TextFieldProps(
+                      autofocus: true, // Focus the search field when popup opens
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        prefixIcon: Icon(Icons.search),
                       ),
+
                     ),
 
-                    popupProps: PopupProps.menu(
-                      showSelectedItems: true, // Show selected items at the top
+                  ),
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Select Supplier",
+                      hintText: "Supplier for goods",
                     ),
-
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectedSupplierDisplayName = newValue!;
-                        int position = supplierDisplayNames.indexOf(newValue);
-                        selectedSupplierRealName = supplierRealNames[position];
-                        selectedSupplierId = supplierIds[position];
-                        print("$selectedSupplierRealName: $selectedSupplierId");
-                      });
-                    },
-                    // hint: Text('Select Supplier'),
-                    // showSearchBox: true,
-                    // dropdownSearchDecoration: InputDecoration(hintText: "Search Supplier"),
-                    filterFn: (item, query) {
-                      return item.toLowerCase().contains(query!.toLowerCase());
-                    }
+                  ),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedSupplierDisplayName = newValue!;
+                      int position = supplierDisplayNames.indexOf(newValue);
+                      selectedSupplierRealName = supplierRealNames[position];
+                      selectedSupplierId = supplierIds[position];
+                      print("$selectedSupplierRealName: $selectedSupplierId");
+                    });
+                  },
+                  filterFn: (item, query) {
+                    return item.toLowerCase().contains(query!.toLowerCase());
+                  },
                 ),
+
+                // DropdownSearch<String>(
+                //     // mode: Mode.MENU,
+                //     items: supplierDisplayNames,
+                //     dropdownDecoratorProps: DropDownDecoratorProps(
+                //       dropdownSearchDecoration: InputDecoration(
+                //         labelText: "Select Supplier",
+                //         hintText: "Supplier for goods",
+                //       ),
+                //     ),
+                //
+                //
+                //     popupProps: PopupProps.menu(
+                //       showSelectedItems: true, // Show selected items at the top
+                //
+                //     ),
+                //
+                //     onChanged: (newValue) {
+                //       setState(() {
+                //         selectedSupplierDisplayName = newValue!;
+                //         int position = supplierDisplayNames.indexOf(newValue);
+                //         selectedSupplierRealName = supplierRealNames[position];
+                //         selectedSupplierId = supplierIds[position];
+                //         print("$selectedSupplierRealName: $selectedSupplierId");
+                //       });
+                //     },
+                //     filterFn: (item, query) {
+                //       return item.toLowerCase().contains(query!.toLowerCase());
+                //     }
+                // ),
               ],
             ),
           ),

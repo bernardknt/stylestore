@@ -30,6 +30,7 @@ String kStoreImages = 'storeImages';
 String kStoreOpeningTime = 'opening';
 String kStoreClosingTime = 'closing';
 String kPermissions = 'permissions';
+String kCurrency = 'currency';
 String kWalkthroughVideos = 'kWalkthroughVideos';
 String kLoginPersonName = 'loggedInPerson';
 String kSignInTime = 'kSignInTime';

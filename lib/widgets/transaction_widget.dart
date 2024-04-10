@@ -27,6 +27,7 @@ class TransactionWidget extends StatelessWidget {
     required this.clientList,
     required this.clientPhoneList,
     required this.priceList,
+    required this.currency,
     required this.paidAmountList,
     required this.transIdList,
     required this.smsList,
@@ -50,6 +51,7 @@ class TransactionWidget extends StatelessWidget {
   final List dateList;
   final List customerIdList;
   final List paymentDueDateList;
+  final List currency;
   final String storeName;
   final String location;
   final int index;
@@ -67,7 +69,6 @@ class TransactionWidget extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: (){
-              print("This is${phoneNumber[index]}number");
               if (phoneNumber[index]!="0"){
                 CommonFunctions().callPhoneNumber(phoneNumber[index]);
               }

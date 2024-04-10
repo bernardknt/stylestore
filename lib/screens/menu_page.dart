@@ -158,12 +158,7 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                             ),
                           ));
-
-
-
                         }
-
-
                     );
                   },
                   child: Text("Log Out", style:kNormalTextStyleBoldPink.copyWith(color: Colors.blue) ,)),

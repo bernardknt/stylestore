@@ -79,15 +79,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 50,
                           child: Image.asset("images/new_logo.png",))
                   ),
-                  // Positioned(
-                  //     bottom: 10,
-                  //     left: 10,
-                  //     right: 10,
-                  //     child: CircleAvatar(
-                  //       backgroundColor: kAppPinkColor,
-                  //         radius: 40,
-                  //
-                  //         child: Icon(Iconsax.shop, size: 40,))),
+
                   Positioned(
                       bottom: 10,
                       left: 10,

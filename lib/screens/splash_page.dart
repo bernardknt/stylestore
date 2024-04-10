@@ -27,8 +27,11 @@ class _SplashPageState extends State<SplashPage> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   void defaultsInitiation() async {
+    print("WANO WETUTUSE");
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool(kIsLoggedInConstant) ?? false;
+
+    CommonFunctions().userSubscription(context);
     String oldPermissions = prefs.getString(kPermissions) ?? "";
     bool ownerStatus = prefs.getBool(kIsOwner) ?? false;
     _firebaseMessaging
@@ -41,7 +44,7 @@ class _SplashPageState extends State<SplashPage> {
       querySnapshot.docs.forEach((users) async {
         setState(() {
           Provider.of<StyleProvider>(context, listen: false)
-              .setSubscriptionVariables(
+              .setVideoVariables(
             users['videos'],
           );
           prefs.setString(kWalkthroughVideos, users["walkthroughs"]);

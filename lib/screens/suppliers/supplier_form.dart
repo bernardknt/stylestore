@@ -16,8 +16,11 @@ import '../MobileMoneyPages/mobile_money_page.dart';
 
 class SupplierForm extends StatefulWidget {
   static String id = "supplier_form";
+  final bool doesNotNeedReloading;
 
-  const SupplierForm({super.key});
+  const SupplierForm({Key? key, this.doesNotNeedReloading = true}) : super(key: key);
+
+  // const SupplierForm({super.key});
   @override
   _SupplierFormState createState() => _SupplierFormState();
 }

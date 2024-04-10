@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:intl/intl.dart';
+import 'package:stylestore/model/common_functions.dart';
 
 import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,7 +39,7 @@ class _MobileMoneyPageState extends State<MobileMoneyPage> {
     double? newAmount = prefs.getDouble(kBillValue);
     String newPhoneNumber = prefs.getString(kPhoneNumberConstant) ?? '0';
     String? newOrderId = prefs.getString(kOrderId);
-    myController = TextEditingController()..text = prefs.getString(kPhoneNumberConstant) ?? '0';
+    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0');
 
     setState(() {
       print(newAmount.runtimeType);

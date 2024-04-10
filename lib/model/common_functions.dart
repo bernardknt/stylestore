@@ -55,6 +55,7 @@ class CommonFunctions {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   CollectionReference testingTesting = FirebaseFirestore.instance.collection('testing');
+  CollectionReference users = FirebaseFirestore.instance.collection('medics');
   // final HttpsCallable callableSmsTransaction = FirebaseFunctions.instance.httpsCallable('updateAiSMS');
   final HttpsCallable callableSmsCustomer = FirebaseFunctions.instance.httpsCallable('smsCustomer');
 
@@ -253,9 +254,9 @@ class CommonFunctions {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Send Notification?', style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14, fontWeight: FontWeight.bold),),
+          title: Center(child: Text('Send Notification?',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14, fontWeight: FontWeight.bold),)),
           content: Text(
-              'Would you want to send a notification to the users\nassigned to this task?', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack),),
+              'Would you want to send an SMS notification to the users\nassigned to this task?', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack),),
           actions: [
             TextButton(
               child: const Text('Cancel'),
@@ -1477,12 +1478,70 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     return jsonMap;
   }
 
-
-
   void playBeepSound() async {
     await _audioPlayer.play(AssetSource(('beep.mp3'))); // Play the audio file
   }
 
+  Future userSubscription(context) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    String storeId = prefs.getString(kStoreIdConstant)??"uuuuuuuu";
+
+    try {
+      final docRef = FirebaseFirestore.instance.collection('medics').doc(storeId);
+      final docSnapshot = await docRef.get();
+      print("WOOWOWOWOOWOWOWOWO $storeId");
+      if (docSnapshot.exists) {
+        final endDate = docSnapshot.get('subscriptionEndDate').toDate();
+        print(endDate);
+        Provider.of<StyleProvider>(context,listen: false).setSubscription(
+          endDate
+        );
+      } else {
+        print('Document with ID $storeId does not exist');
+      }
+    } catch (e) {
+      print('Error fetching subscriptionEndDate: $e');
+    }
+
+    // Provider.of<StyleProvider>(context,listen: false).setSubscriptionVariables(
+    //   userData['subscriptionEndDate'].toDate(),
+    // );
+
+  }
+
+  Future transactionStream(context, orderId)async{
+
+    var start = FirebaseFirestore.instance.collection('transactions').where('uniqueID', isEqualTo: orderId).where('payment_status', isEqualTo: true).snapshots().listen((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) async {
+        // setState(() {
+          Provider.of<StyleProvider>(context, listen: false).setPendingPaymentStatement();
+
+          CoolAlert.show(
+              lottieAsset: 'images/thankyou.json',
+              context: context,
+              type: CoolAlertType.success,
+              text: "Your Payment was successfully Received and Updated",
+              title: "Payment Received",
+              confirmBtnText: 'Ok 👍',
+              confirmBtnColor: kAppPinkColor,
+              backgroundColor: kBlueDarkColorOld
+          );
+        });
+      });
+    // });
+
+
+    return start;
+  }
+
+  String processPhoneNumber(String phoneNumber) {
+    if (phoneNumber.startsWith("0")) {
+      return phoneNumber.substring(1); // Remove the leading '0'
+    } else {
+      return phoneNumber; // Number doesn't start with 0, return as-is
+    }
+  }
 
 
 

@@ -99,6 +99,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
   var priceList = [];
   var paidAmountList = [];
   var paymentMethodList = [];
+  var currencyList = [];
   var descList = [];
   var transIdList = [];
   var dateList = [];
@@ -165,6 +166,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                     clientPhoneList = [];
                     smsList = [];
                     paymentMethodList = [];
+                    currencyList = [];
 
                     var dateSeparator = '';
                     var orders = snapshot.data?.docs;
@@ -181,6 +183,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                       clientList.add(doc['client']);
                       clientLocationList.add(doc['clientLocation']);
                       smsList.add(doc['sms']);
+                      currencyList.add(doc['currency']);
                       clientPhoneList.add(doc['clientPhone']);
                       paymentDueDateList.add(doc['payment_date'].toDate());
                       paidAmountList.add(doc['paidAmount']);
@@ -337,7 +340,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                                               TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                                 transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                                 paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                                clientLocationList: clientLocationList, logo: logo, index: index,),
+                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
                                             );
                                         });
 

@@ -36,11 +36,16 @@ class CustomMobileMoneyPage extends StatefulWidget {
 class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
   void defaultsInitiation () async{
     final prefs = await SharedPreferences.getInstance();
+    storeId = prefs.getString(kStoreIdConstant)??"uuuuuuuu";
+    email = prefs.getString(kEmailConstant)??"uuuuuuuu";
+
     String newName = prefs.getString(kBusinessNameConstant) ?? 'Minister';
     double? newAmount = prefs.getDouble(kBillValue);
     String newPhoneNumber = prefs.getString(kPhoneNumberConstant) ?? '0';
-    String? newOrderId = prefs.getString(kOrderId);
-    myController.text = prefs.getString(kPhoneNumberConstant) ?? '0';
+    String? newOrderId = const Uuid().v4();
+    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0');
+
+    // orderId = const Uuid().v4();
 
 
     setState(() {
@@ -61,53 +66,16 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
 
 
   // THESE ARE FIRESTORE COLLECTION REFERENCES
-  CollectionReference userTransactions = FirebaseFirestore.instance.collection('userTransactions');
+  // CollectionReference userTransactions = FirebaseFirestore.instance.collection('userTransactions');
   CollectionReference paymentTransactions = FirebaseFirestore.instance.collection('transactions');
 
 
   // FIREBASE FIRESTORE STREAM TO CHECK WHETHER THE TRANSACTION HAS BEEN SUCCESSFUL
-  Future transactionStream()async{
-
-    var start = FirebaseFirestore.instance.collection('transactions').where('uniqueID', isEqualTo: orderId).where('payment_status', isEqualTo: true).snapshots().listen((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc) async {
-        // TRIGGER SERVER TRANSACTIONS EMAIL AND BEYONIC
-        // dynamic emailResp = await callableTransactionEmail.call(<String, dynamic>{
-        //   'name': name,
-        //   'emailAddress':kUniqueUserPhoneId,
-        //   'templateID':'bernard.ntege@tracnode.com',
-        //   'currency': 'UGX',
-        //   'purpose': orderId,
-        //   'amount': amount,
-        //   'transactionID': orderId,
-        //   'subject': 'Your Styleapp Order Details',
-        // });
-        setState(() {
-          Provider.of<StyleProvider>(context, listen: false).setPendingPaymentStatement();
-
-          CoolAlert.show(
-              lottieAsset: 'images/thankyou.json',
-              context: context,
-              type: CoolAlertType.success,
-              text: "Your Payment was successfully Received and Updated",
-              title: "Payment Received",
-              confirmBtnText: 'Ok 👍',
-              confirmBtnColor: kAppPinkColor,
-              backgroundColor: kBlueDarkColorOld
-          );
-
-        });
-
-      });
-    });
-
-
-    return start;
-  }
 
   Future<void> addMobileMoneyTransaction() {
 
-    final User? user = auth.currentUser;
-    final emailUID = user!.email;
+    // final User? user = auth.currentUser;
+    // final emailUID = user!.email;
     return paymentTransactions.doc(transactionId).set({
       'name': name,
       'amount_paid': amount, // John DoeStr
@@ -117,13 +85,14 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
       'payment_status': false,
       'currency': 'Ugx', // John Doe
       'date': dateNow, // Stokes and Sons
-      'purpose': orderId,
+      'purpose': "SMS Renewal",
       'uniqueID': orderId,
       'testID': transactionId,
-      'email': emailUID,
+      'storeId': storeId,
+      'email': email,
     })
         .then((value){
-      print('Nice');
+
     })
         .catchError((error){
 
@@ -139,6 +108,8 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
 
   var formatter = NumberFormat('#,###,000');
   String transactionId = 'mm${uuid.v1().split("-")[0]}';
+  String storeId = '';
+  String email = '';
   double amount = 0;
   String amountToCharge = '';
   String orderId = '';
@@ -159,7 +130,7 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
   @override
   Widget build(BuildContext context) {
     var styleDataDisplay = Provider.of<StyleProvider>(context);
-    amount = styleDataDisplay.bookingPrice;
+    // amount = styleDataDisplay.bookingPrice;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -277,13 +248,14 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
 
                         String number = '256${myController.text}';
                         amountToCharge = amountController.text.toString();
+                        amount = double.parse(amountToCharge) ;
                         dynamic resp = await callableBeyonicPayment.call(<String, dynamic>{
                           'number': number,
                           'amount':amountToCharge,
                           'transId': transactionId
                           // orderId
                         });
-                        transactionStream();
+                        CommonFunctions().transactionStream(context, orderId);
                         addMobileMoneyTransaction();
                         final prefs = await SharedPreferences.getInstance();
                         //prefs.setString(kChurchTransactionIdConstant, transactionId);
