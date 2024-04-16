@@ -7,6 +7,8 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
+import 'package:stylestore/screens/sign_in_options/signup_pages/signup_mobile.dart';
+import 'package:stylestore/screens/sign_in_options/signup_pages/signup_web.dart';
 import '../../controllers/responsive/responsive_page.dart';
 import '../../utilities/constants/color_constants.dart';
 import '../../utilities/constants/user_constants.dart';
@@ -84,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                       bottom: 10,
                       left: 10,
                       right: 10,
-                      child: Text("Do Business Like \nA Pro",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kPureWhiteColor, fontSize: 20) ),
+                      child: Text("Your Business On\nAuto Pilot",textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kPureWhiteColor, fontSize: 20) ),
                   )
                 ],
               ),
@@ -100,24 +102,31 @@ class _LoginPageState extends State<LoginPage> {
 
                         GestureDetector(
                           onTap: (){
-                            Navigator.pushNamed(context, RegisterPageDuplicate.id);
-                          },
-                          child:
-                          Container(
-                            width: double.infinity,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: kPureWhiteColor,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: kPureWhiteColor,
-                                width: 1,
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SuperResponsiveLayout(
+                                  mobileBody: SignupMobile(),
+                                  desktopBody: SignupWeb(),
+                                ),
                               ),
-                            ),
-                            child: Center(child: Text("Create a New Business Account", style: kNormalTextStyle.copyWith(color: kAppPinkColor),)),
-                          ),
+                            );
+
+                             },
+                          child:
+                          Center(child: Column(
+                            children: [
+                              Image.asset("images/takeflight.png",height: 40,),
+                              Text("Create a New Business Account",textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: Colors.blue,  fontWeight: FontWeight.bold, fontSize: 16),),
+                            ],
+                          )),
                         ),
                         kLargeHeightSpacing,
+                        Divider(
+                          color: kBlueDarkColorOld.withOpacity(0.1),
+                        ),
+                        Text("Or",
+                            style: kNormalTextStyle.copyWith(fontSize: 15)),
                         kLargeHeightSpacing,
                         ownerLogin == true? Container():GestureDetector(
                           onTap: (){

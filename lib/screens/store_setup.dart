@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lottie/lottie.dart';
@@ -66,10 +67,6 @@ class _StoreSetupState extends State<StoreSetup> {
   Future<void> putStoreProfilePicture(userId, image) async{
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(kImageConstant, image);
-
-
-
-    // Call the user's CollectionReference to add a new user
     var firestore = FirebaseFirestore.instance;
     await firestore.collection('users').doc(userId).update({
       'subscribed': false,
@@ -135,111 +132,128 @@ class _StoreSetupState extends State<StoreSetup> {
       backgroundColor: kBlack,
       appBar: AppBar(title: Text('Setup Store', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
         backgroundColor: kBlack,
-        // leading: GestureDetector(
-        //     onTap: (){Navigator.pop(context);},
-        //     child: Icon(Icons.arrow_back, color: kPureWhiteColor,)),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Center(child:
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
 
-          Column(
-            children: [
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(child:
 
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-
-                child:
-
-                image != null ? Image.file(image!, height: 180,) : Container(
-                  width: double.infinity,
-                  height: 180,
-                  child: Lottie.asset('images/beauty.json'),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor),
-
-                ),
-              ),
-              SizedBox(height: 20,),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0,right: 20.0),
-                child: paymentButtons(
-                  continueFunction: () {
-                    pickImage(ImageSource.gallery);
+              Column(
+                children: [
 
 
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
 
-                  }, continueBuyingText: "Gallery", checkOutText: 'Camera', buyFunction: (){
-                  pickImage(ImageSource.camera);
-                }, lineIconFirstButton: Icons.photo,lineIconSecondButton:  LineIcons.camera,),
-              ),
-              SizedBox(height: 30,),
-              imageUploaded != true ? Center(child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text('Set Store Logo or Image', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-              ),) :
-              Container(),
-              imageUploaded != true ? Container():
-                  Container(
-                    height: 190,
-                    child: Column(
-                      children: [
-                        InputFieldWidget(labelText: ' Business Name', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                          businessName = value;
-                        },),
-                        InputFieldWidget(labelText: ' Business Location', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                          location = value;
-                        },),
+                    child:
 
-                        InputFieldWidget(labelText: ' What you deal in', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                          type = value;
-                        },),
+                    image != null ? Image.file(image!, height: 180,) :
+                    Container(
+                      width: double.infinity,
+                      height: 180,
+                      child:
 
-                      ],
+                      // Lottie.asset('images/beauty.json'),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Iconsax.camera),
+                          imageUploaded != true ? Center(child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text('Set Store Logo or Image', style: kNormalTextStyle.copyWith(color: kBlack),),
+                          ),) :
+                          Container(),
+                        ],
+                      ),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor),
+
                     ),
                   ),
-              RoundedLoadingButton(
-                width: 120,
-                color: kBabyPinkThemeColor,
-                child: Text('Setup Store', style: TextStyle(color: kAppPinkColor)),
-                controller: _btnController,
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  if ( imageUploaded != true || type == "" || location ==""|| businessName ==""){
-                    _btnController.error();
-                    showDialog(context: context, builder: (BuildContext context){
-                      return
-                        CupertinoAlertDialog(
-                          title: Text('Oops Something is Missing'),
-                          content: Text('Make sure you have filled in all the fields'),
-                          actions: [CupertinoDialogAction(isDestructiveAction: true,
-                              onPressed: (){
-                                _btnController.reset();
-                                Navigator.pop(context);
-                              },
-                              child: Text('Cancel'))],
-                        );
-                    });
-                  }else {
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0,right: 20.0),
+                    child: paymentButtons(
+                      continueFunction: () {
+                        pickImage(ImageSource.gallery);
 
-                    prefs.setString(kLocationConstant, location );
-                    prefs.setString(kBusinessNameConstant, businessName );
 
-                    print("WAFUFUZOZOZOZ location: $location, name: $businessName");
 
-                    uploadFile(image!.path, serviceId );
-                    // Navigator.pop(context);
+                      }, continueBuyingText: "Gallery", checkOutText: 'Camera', buyFunction: (){
+                      pickImage(ImageSource.camera);
+                    }, lineIconFirstButton: Icons.photo,lineIconSecondButton:  LineIcons.camera,),
+                  ),
+                  SizedBox(height: 30,),
+                  imageUploaded != true ? Center(child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text('Set Store Logo or Image', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+                  ),) :
+                  Container(),
+                  imageUploaded != true ? Container():
+                      Container(
+                        height: 190,
+                        child: Column(
+                          children: [
+                            InputFieldWidget(labelText: ' Business Name', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+                              businessName = value;
+                            },),
+                            InputFieldWidget(labelText: ' Business Location', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+                              location = value;
+                            },),
 
-                    //Implement registration functionality.
-                  }
-                },
-              ),
-              Opacity(
-                  opacity: errorMessageOpacity,
-                  child: Text(errorMessage, style: TextStyle(color: Colors.red),)),
-            ],
-          )),
+                            InputFieldWidget(labelText: ' What you deal in', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+                              type = value;
+                            },),
+
+                          ],
+                        ),
+                      ),
+                  RoundedLoadingButton(
+                    width: 120,
+                    color: kBabyPinkThemeColor,
+                    child: Text('Setup Store', style: TextStyle(color: kAppPinkColor)),
+                    controller: _btnController,
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      if ( imageUploaded != true || type == "" || location ==""|| businessName ==""){
+                        _btnController.error();
+                        showDialog(context: context, builder: (BuildContext context){
+                          return
+                            CupertinoAlertDialog(
+                              title: Text('Oops Something is Missing'),
+                              content: Text('Make sure you have filled in all the fields'),
+                              actions: [CupertinoDialogAction(isDestructiveAction: true,
+                                  onPressed: (){
+                                    _btnController.reset();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel'))],
+                            );
+                        });
+                      }else {
+
+                        prefs.setString(kLocationConstant, location );
+                        prefs.setString(kBusinessNameConstant, businessName );
+
+                        print("WAFUFUZOZOZOZ location: $location, name: $businessName");
+
+                        uploadFile("image!.path", serviceId );
+                        // Navigator.pop(context);
+
+                        //Implement registration functionality.
+                      }
+                    },
+                  ),
+                  Opacity(
+                      opacity: errorMessageOpacity,
+                      child: Text(errorMessage, style: TextStyle(color: Colors.red),)),
+                ],
+              )),
+            ),
+          ),
         ),
       ),
     );

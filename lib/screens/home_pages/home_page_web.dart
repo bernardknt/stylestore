@@ -2,11 +2,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:mailer/mailer.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/screens/chat_messages/chat.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
@@ -20,7 +23,6 @@ import '../../widgets/rounded_icon_widget.dart';
 import '../HomePageWidgets/summary_widget.dart';
 import '../customer_pages/customers_page.dart';
 import '../expenses_pages/expenses.dart';
-import '../payment_pages/pos_mobile.dart';
 import '../sign_in_options/sign_in_page.dart';
 import '../tasks_pages/tasks_widget.dart';
 
@@ -83,22 +85,42 @@ class _HomePageWebState extends State<HomePageWeb> {
     });
   }
 
-  Future<void> addCurrencyToMedics() async {
+  Future<void> updateAppointmentsWithPaymentHistory() async {
+    // Get reference to Firestore instance
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Get all documents in the 'appointments' collection
+    CollectionReference appointmentsCollection = firestore.collection('appointments');
+    QuerySnapshot querySnapshot = await appointmentsCollection
+        .where('paymentHistory', isNull: true) // Filter for missing field
+        .get();
+
+    // Loop through each document that needs updating
+    for (var doc in querySnapshot.docs) {
+      print("Found");
+      // Update the document with the new field
+      await doc.reference.update({
+        'paymentHistory': []  // Initialize as an empty list
+      });
+    }
+  }
+
+  Future<void> updateAppointmentCurrency() async {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      CollectionReference medicsCollection = firestore.collection('medics');
+      CollectionReference appointmentsCollection = firestore.collection('appointments');
 
-      await medicsCollection.get().then((QuerySnapshot snapshot) {
+      await appointmentsCollection.get().then((QuerySnapshot snapshot) {
         for (DocumentSnapshot doc in snapshot.docs) {
           doc.reference.update({
-            'currency': 'Ugx',
+            'currency': "UGX",
           });
         }
       });
 
-      print('Currency field added successfully to medics documents');
+      print('Currency field updated in appointment documents');
     } catch (e) {
-      print('Failed to add currency field: $e');
+      print('Failed to update currency field: $e');
     }
   }
 
@@ -131,13 +153,42 @@ class _HomePageWebState extends State<HomePageWeb> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: kPlainBackground,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: (){
-      //     addCurrencyToMedics();
-      //     },
-      //   child: Icon(Icons.mail, color: kPureWhiteColor,),
-      //   backgroundColor: kBlack,
-      // ),
+      floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
+        children: [
+          Container(
+            height: 50,
+            width: 80,
+          ) ,
+
+          FloatingActionButton(
+          onPressed: (){
+
+
+            updateAppointmentsWithPaymentHistory();
+            showDialog(context: context, builder: (BuildContext context){
+              return
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: ChatPage());
+            });
+            },
+          child:
+              Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
+          // Icon(Iconsax.airpod1, color: kPureWhiteColor,),
+          backgroundColor: kBlueDarkColor,
+        ),
+          // Positioned(
+          //   left: 0,
+          //   top: 0,
+          //   child: CircleAvatar(
+          //     backgroundColor: kAppPinkColor,
+          //     radius: 7,
+          //   ),
+          // ),
+        ]
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

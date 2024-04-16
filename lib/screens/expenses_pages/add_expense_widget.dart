@@ -43,6 +43,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   List<String> _filteredSupplierDisplayNames = [];
   late TextEditingController expenseController;
   late TextEditingController quantityController;
+  String currency = "";
 
   File? image;
   var imageUploaded = false;
@@ -93,7 +94,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
       });
       final urlDownload = await snapshot.ref.getDownloadURL();
-      CommonFunctions().uploadExpense(originalBasketToPost, context, expenseOrderNumber, urlDownload, selectedSupplierRealName, selectedSupplierId);
+      CommonFunctions().uploadExpense(originalBasketToPost, context, expenseOrderNumber, urlDownload, selectedSupplierRealName, selectedSupplierId, currency);
     }  catch(e){
       print(e);
     }
@@ -108,6 +109,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     expenseController = TextEditingController(text: styleData.expense);
     quantityController = TextEditingController(text: expenseQuantity);
     _filteredSupplierDisplayNames = supplierDisplayNames;
+    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });
@@ -157,7 +159,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
               }
             ];
             originalBasketToPost = basketToPost;
-            image == null ? CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber, "",selectedSupplierRealName, selectedSupplierId) : uploadPhoto(image!.path, expenseOrderNumber);
+            image == null ? CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber, "",selectedSupplierRealName, selectedSupplierId, currency) : uploadPhoto(image!.path, expenseOrderNumber,);
             // CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber);
           }else {
             showDialog(
@@ -181,7 +183,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
         },
              label: expenseName != ""?Text(
-          '$expenseName worth Ugx $expenseCost',
+          '$expenseName worth $currency $expenseCost',
           style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
         ):Text("Enter Expense", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
       ),
@@ -202,7 +204,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                     // mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('Ugx', style: kNormalTextStyle.copyWith(fontSize: 18),),
+                      Text(currency, style: kNormalTextStyle.copyWith(fontSize: 18),),
                       kSmallWidthSpacing,
 
                       Expanded(
@@ -265,36 +267,6 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                     return item.toLowerCase().contains(query!.toLowerCase());
                   },
                 ),
-
-                // DropdownSearch<String>(
-                //     // mode: Mode.MENU,
-                //     items: supplierDisplayNames,
-                //     dropdownDecoratorProps: DropDownDecoratorProps(
-                //       dropdownSearchDecoration: InputDecoration(
-                //         labelText: "Select Supplier",
-                //         hintText: "Supplier for goods",
-                //       ),
-                //     ),
-                //
-                //
-                //     popupProps: PopupProps.menu(
-                //       showSelectedItems: true, // Show selected items at the top
-                //
-                //     ),
-                //
-                //     onChanged: (newValue) {
-                //       setState(() {
-                //         selectedSupplierDisplayName = newValue!;
-                //         int position = supplierDisplayNames.indexOf(newValue);
-                //         selectedSupplierRealName = supplierRealNames[position];
-                //         selectedSupplierId = supplierIds[position];
-                //         print("$selectedSupplierRealName: $selectedSupplierId");
-                //       });
-                //     },
-                //     filterFn: (item, query) {
-                //       return item.toLowerCase().contains(query!.toLowerCase());
-                //     }
-                // ),
               ],
             ),
           ),

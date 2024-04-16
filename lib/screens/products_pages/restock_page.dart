@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
@@ -14,7 +13,6 @@ import 'package:stylestore/model/purchase_pdf_files/purchase.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/suppliers/supplier_form.dart';
-import 'package:stylestore/widgets/supplier_widget.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
@@ -24,7 +22,6 @@ import '../../model/purchase_pdf_files/purchase_customer.dart';
 import '../../model/purchase_pdf_files/purchase_supplier.dart';
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
-import '../expenses_pages/add_expense_widget.dart';
 
 class ReStockPage extends StatefulWidget {
   static String id = "take_stock";
@@ -43,6 +40,7 @@ class _ReStockPageState extends State<ReStockPage> {
   String purchaseOrderNumber = "";
   String location = "";
   String businessName = "";
+  String currency= "";
   String businessPhoneNumber = "";
   String userName = "";
   Color mainColor = kBlack;
@@ -121,6 +119,7 @@ class _ReStockPageState extends State<ReStockPage> {
     userName = prefs.getString(kLoginPersonName)!;
     businessName = prefs.getString(kBusinessNameConstant)!;
     businessPhoneNumber = prefs.getString(kPhoneNumberConstant)!;
+    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     newStock = await retrieveStockData();
     filteredStock.addAll(newStock);
     Provider.of<StyleProvider>(context, listen: false).setSupplierButton(false);
@@ -424,7 +423,7 @@ class _ReStockPageState extends State<ReStockPage> {
       }
       );
     }
-    CommonFunctions().uploadRestockedItems(selectedStocks, basketToPost,context, purchaseOrderNumber);
+    CommonFunctions().uploadRestockedItems(selectedStocks, basketToPost,context, purchaseOrderNumber, currency);
   }
 
 
@@ -529,6 +528,7 @@ class _ReStockPageState extends State<ReStockPage> {
                               ),
                               onChanged: (newValue) {
                                 setState(() {
+                                  Provider.of<StyleProvider>(context, listen: false).setSupplierButton(true);
                                   selectedSupplierDisplayName = newValue!;
                                   int position = supplierDisplayNames.indexOf(newValue);
                                   selectedSupplierRealName = supplierRealNames[position];

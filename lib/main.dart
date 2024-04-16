@@ -15,6 +15,7 @@ import 'package:stylestore/screens/MobileMoneyPages/make_payment_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/screens/analytics/loading_analysis_page.dart';
 import 'package:stylestore/screens/change_store_photo.dart';
+import 'package:stylestore/screens/chat_messages/chat.dart';
 import 'package:stylestore/screens/customer_care_page.dart';
 import 'package:stylestore/screens/Documents_Pages/documents.dart';
 import 'package:stylestore/screens/documents.dart';
@@ -46,9 +47,10 @@ import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
 import 'package:stylestore/screens/reviews_page.dart';
 import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
-import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
+import 'package:stylestore/screens/sign_in_options/login_new_layout_web.dart';
 import 'package:stylestore/screens/sign_in_options/sign_in_page.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
+import 'package:stylestore/screens/sign_in_options/signup_pages/signup_web.dart';
 import 'package:stylestore/screens/store_setup.dart';
 import 'package:stylestore/screens/suppliers/supplier_form.dart';
 import 'package:stylestore/screens/suppliers/supplier_page.dart';
@@ -212,11 +214,12 @@ class MyApp extends StatelessWidget {
           DocumentsPage.id: (context) => DocumentsPage(),
           EmployeesPage.id: (context) => EmployeesPage(),
           PosWeb.id: (context) => PosWeb(),
-
+          ChatPage.id: (context) => ChatPage(),
           SuppliersPage.id: (context) => SuppliersPage(),
           WalletsPage.id: (context) => WalletsPage(),
           BioDataForm.id: (context) => BioDataForm(),
           SupplierForm.id: (context) => SupplierForm(),
+          SignupWeb.id: (context) => SignupWeb(),
           EditProfilePage.id: (context) => EditProfilePage(),
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),

@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/store_setup.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
@@ -59,48 +60,8 @@ class _RegisterPageDuplicateState extends State<RegisterPageDuplicate> {
 
   }
 
-  setupStoreInFirestore(userId, email, ownerName, location, phone, description, name)async{
-    var user = FirebaseAuth.instance.currentUser;
-    var firestore = FirebaseFirestore.instance;
-    await firestore.collection('medics').doc(userId).set({
-      'active': true,
-      'blackout': [],
-      'clients': [],
-      'close': 20,
-      'cord': [0.3142467, 32.6151695],
-      'description': description,
-      'distance': 3,
-      'doesMobile': true,
-      'featured': false,
-      'id': userId,
-      'image': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/52f30eb6-c476-adfd-3a24-0831ce256da0.jpg',
-      'location': location,
-      'modes': ['In-Premise', 'Mobile'],
-      'newSpeciality': {},
-      'open': 7,
-      'phone': phone,
-      'promote': false,
-      'rating': 3.0,
-      'reviewNumber': 1,
-      'serviceTime': 10,
-      'services': [],
-      'speciality': ['catef9e48b0'],
-      'transport': 5000,
-      'email': email,
-      'name': name,
-      'ownerName': ownerName,
-      'token': 'userTokenGoesHere',
-      'countryCode': countryCode,
-      'country': country,
-      'sms': 5
 
-    });
-  }
 
-  String getCurrencyCode(String countryCode) {
-    String? currencyCode = Provider.of<StyleProvider>(context, listen: false).countryNumbers[countryCode];
-    return currencyCode ?? "USD"; // You can change "USD" to any default value or handle the null scenario as needed.
-  }
 
 
   Widget build(BuildContext context) {
@@ -116,11 +77,7 @@ class _RegisterPageDuplicateState extends State<RegisterPageDuplicate> {
         backgroundColor: kAppPinkColor,
         automaticallyImplyLeading: true,
       ),
-      // floatingActionButton: FloatingActionButton(onPressed: () {
-      //   print(getCurrencyCode(countryCode));
-      //   print(country);
-      //   print(countryCode);
-      // },),
+
       body: Padding(
         padding: const EdgeInsets.only(left: 5, right: 5, top: 0),
 
@@ -201,18 +158,6 @@ class _RegisterPageDuplicateState extends State<RegisterPageDuplicate> {
                   InputFieldWidget(labelText: ' Password', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
                     password = value;
                   },passwordType: true, maxLines: 1,),
-                  // InputFieldWidget(labelText: ' Business Name', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  //   businessName = value;
-                  // },),
-                  // InputFieldWidget(labelText: ' Business Location', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  //   location = value;
-                  // },),
-                  //
-                  // InputFieldWidget(labelText: ' What you deal in', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  //   businessType = value;
-                  // },),
-                  //
-
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 8.0),
                     child:
@@ -245,7 +190,7 @@ class _RegisterPageDuplicateState extends State<RegisterPageDuplicate> {
                             final newUser = await _auth.createUserWithEmailAndPassword(email: email,
                                 password: password);
                             if (newUser != null){
-                              setupStoreInFirestore(newUser.user?.uid, email, fullName, location, phoneNumber, businessType, businessName);
+                              CommonFunctions().setupStoreInFirestore(newUser.user?.uid, email, fullName, location, phoneNumber, businessType, businessName, countryCode, country,  CommonFunctions().getCurrencyCode(countryCode, context),context);
 
                               final prefs = await SharedPreferences.getInstance();
                               // prefs.setString(kBusinessNameConstant, businessName );
@@ -253,7 +198,7 @@ class _RegisterPageDuplicateState extends State<RegisterPageDuplicate> {
                               // prefs.setString(kLocationConstant, location );
                               prefs.setString(kStoreIdConstant, newUser.user!.uid);
                               prefs.setString(kCountryCode, countryCode); 
-                              prefs.setString(kCurrencyCode, getCurrencyCode(countryCode));
+                              prefs.setString(kCurrencyCode, CommonFunctions().getCurrencyCode(countryCode, context));
                               prefs.setString(kEmailConstant, email);
                               prefs.setString(kPhoneNumberConstant, phoneNumber);
                               prefs.setBool(kIsLoggedInConstant, true);

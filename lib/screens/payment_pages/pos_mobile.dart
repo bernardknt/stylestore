@@ -270,6 +270,7 @@ class _POSState extends State<POS> {
 
   @override
   Widget build(BuildContext context) {
+    var styleData = Provider.of<StyleProvider>(context);
     return Scaffold(
 
       backgroundColor: kBackgroundGreyColor,
@@ -733,7 +734,7 @@ class _POSState extends State<POS> {
                                         ),
                                       ],
                                     ),
-                                    Text("Ugx ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
+                                    Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
                                       style: kNormalTextStyle.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: kBlack, fontSize: 15),

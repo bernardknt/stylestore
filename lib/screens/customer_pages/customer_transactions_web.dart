@@ -52,7 +52,9 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
   var productList = [];
   var orderStatusList = [];
   var clientList = [];
+  var paidAmountList = [];
   var priceList = [];
+  var currencyList = [];
   var descList = [];
   var transIdList = [];
   var dateList = [];
@@ -121,6 +123,8 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
               paidStatusListColor = [];
               opacityList = [];
               clientList = [];
+              paidAmountList = [];
+              currencyList = [];
 
               var dateSeparator = '';
               var orders = snapshot.data?.docs;
@@ -129,8 +133,10 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                 if(doc.get('instructions')=='Product' ){
                   productList.add(doc['items']);
                   priceList.add(doc['totalFee']);
+                  paidAmountList.add(doc['paidAmount']);
                   descList.add(doc['instructions']);
                   transIdList.add(doc['appointmentId']);
+                  currencyList.add(doc['currency']);
                   orderStatusList.add(doc['status']);
                   dateList.add(doc['appointmentDate'].toDate());
                   clientList.add(doc['client']);
@@ -201,7 +207,12 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                       crossAxisAlignment: CrossAxisAlignment.center,
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        RoundImageRing(radius: 80,networkImageToUse: Provider.of<BeauticianData>(context,listen: false).customerImage, outsideRingColor: kBackgroundGreyColor),
+                                        // RoundImageRing(radius: 80,networkImageToUse: Provider.of<BeauticianData>(context,listen: false).customerImage, outsideRingColor: kBackgroundGreyColor),
+                                        //
+                                        CircleAvatar(
+                                          radius: 40,
+                                          child:  Icon(Icons.person, size: 40,),
+                                        ),
                                         kMediumWidthSpacing,
                                         kMediumWidthSpacing,
                                         Column(
@@ -240,12 +251,25 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                   children: [
                                     buildInfoCard(title: "Total Bought", value: CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(priceList)), cardColor: kBlueThemeColor, cardIcon: Icons.monetization_on_outlined, fontSize: 14),
                                     kSmallWidthSpacing,
-                                    buildInfoCard(title: "Last Purchase", value: productList[0][0]['product'].toString(), cardColor: kGreenThemeColor,  cardIcon: Icons.curtains_closed_sharp, fontSize: 14),
+                                    buildInfoCard(title: "Last Purchase", value: productList[0][0]['product'].toString(), cardColor: kBlack,  cardIcon: Icons.curtains_closed_sharp, fontSize: 14),
                                     kSmallWidthSpacing,
                                     buildInfoCard(title: "No of Orders", value: productList.length.toString(), cardColor: kYellowThemeColor,  cardIcon: Icons.check_box, fontSize: 14),
 
                                   ],
                                 ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+
+                                    buildInfoCard(title: "Total Received", value:CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(paidAmountList)), cardColor: kGreenThemeColor,  cardIcon: Iconsax.money5, fontSize: 14),
+                                    kSmallWidthSpacing,
+                                    buildInfoCard(title: "Pending Payment", value:CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(priceList)- CommonFunctions().calculateTotalPrice(paidAmountList)), cardColor: kRedColor,  cardIcon: Iconsax.stop, fontSize: 14),
+
+                                  ],
+                                ),
+
+
                               ],
                             ),
 
@@ -292,7 +316,7 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(20.0),
-                                child: Text("Purchase History", style: kNormalTextStyle.copyWith(color: kBlack) ),
+                                child: Text("Purchase History", style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold) ),
                               ),
                               Expanded(
                                 child: Padding(
@@ -326,32 +350,41 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                               ),
                                               SizedBox(height: 10),
                                             ],
-                                            Card(
-                                              margin: const EdgeInsets.fromLTRB(25.0, 8.0, 25.0, 8.0),
-                                              shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(10)),
-                                              child: Column(
-                                                children: [
-
-                                                  ListTile(
-                                                    title:
-                                                    ListView.builder(
-                                                        physics: NeverScrollableScrollPhysics(),
-                                                        shrinkWrap: true,
-                                                        itemCount: productList[index].length,
-                                                        itemBuilder: (context, i){
-                                                          return CustomerContentsWidget(
-                                                              orderIndex: i + 1,
-                                                              optionName: productList[index][i]['product'],
-                                                              optionValue: productList[index][i]['quantity'].toInt().toString()
-                                                          );
-
-                                                        }),
-                                                       trailing: Padding(
-                                                      padding: const EdgeInsets.only(right: 10, top: 20),
-                                                      child: Text("${CommonFunctions().formatter.format(priceList[index])} Ugx", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                color: kPlainBackground.withOpacity(0.5),
+                                                borderRadius: BorderRadius.circular(10)
+                                              ),
+                                              
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  children: [
+                                                
+                                                    ListTile(
+                                                      title:
+                                                      ListView.builder(
+                                                          physics: NeverScrollableScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount: productList[index].length,
+                                                          itemBuilder: (context, i){
+                                                            return CustomerContentsWidget(
+                                                                orderIndex: i + 1,
+                                                                optionName: productList[index][i]['product'],
+                                                                optionValue: productList[index][i]['quantity'].toInt().toString()
+                                                            );
+                                                
+                                                          }),
+                                                         leading: priceList[index] - paidAmountList[index] == 0?
+                                        Text("Paid",style: kNormalTextStyle.copyWith(color: kGreenThemeColor,  fontSize: 10),):Text("Not Paid" ,style: kNormalTextStyle.copyWith(color: kRedColor, fontSize: 10),),
+                                                         trailing: Padding(
+                                                        padding: const EdgeInsets.only(right: 10, top: 20),
+                                                        child: Text("${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ],

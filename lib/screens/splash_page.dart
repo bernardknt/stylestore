@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
-import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
+import 'package:stylestore/screens/sign_in_options/login_new_layout_web.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
 import '../controllers/responsive/responsive_page.dart';

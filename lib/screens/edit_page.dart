@@ -119,453 +119,459 @@ class _EditShopPageState extends State<EditShopPage> {
       ),
 
       body: permissionsMap['admin'] == false ? LockedWidget(page: "Admin"):SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Column(
-              children: [
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
 
-                // CarouselWidget(urlImages: urlImages),
-                Stack(
-                    children: [
-                  //BannerPictureRoundedEdges(image: styleData.beauticianImageUrl),
-                  // CarouselPhotosWidget(urlImages: styleData.beauticianClients),
-                  Center(
-                    child: Image.asset("images/new_logo.png",
-                      height: 200,
-                    ),
-                  ),
-                  Positioned(
-                      bottom: 10,
-                      left: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Column(
+                  children: [
 
-                      child:
-                      GestureDetector(
-                        onTap: (){
-                          // buildShowDialog(context);
-                          Navigator.pushNamed(context, ChangeStorePhoto.id);
-
-                        },
-                        child: Stack(children: [
-                          RoundImageRing(radius: 120, outsideRingColor: kPureWhiteColor, networkImageToUse: Provider.of<StyleProvider>(context).beauticianImageUrl,),
-                          Positioned(
-                              top: 5,
-                              right: 5,
-                              child: CircleAvatar(
-                                  backgroundColor: kBlueDarkColorOld,
-                                  child: Icon(LineIcons.pen, color: kPureWhiteColor,)))
-
-                        ]),
+                    // CarouselWidget(urlImages: urlImages),
+                    Stack(
+                        children: [
+                      //BannerPictureRoundedEdges(image: styleData.beauticianImageUrl),
+                      // CarouselPhotosWidget(urlImages: styleData.beauticianClients),
+                      Center(
+                        child: Image.asset("images/new_logo.png",
+                          height: 200,
+                        ),
                       ),
-                      //Text(styleData.beauticianName, style: kHeadingTextStyleGold,))
+                      Positioned(
+                          bottom: 10,
+                          left: 10,
 
-                  )
-                ]
-                  ),
+                          child:
+                          GestureDetector(
+                            onTap: (){
+                              // buildShowDialog(context);
+                              Navigator.pushNamed(context, ChangeStorePhoto.id);
+
+                            },
+                            child: Stack(children: [
+                              RoundImageRing(radius: 120, outsideRingColor: kPureWhiteColor, networkImageToUse: Provider.of<StyleProvider>(context).beauticianImageUrl,),
+                              Positioned(
+                                  top: 5,
+                                  right: 5,
+                                  child: CircleAvatar(
+                                      backgroundColor: kBlueDarkColorOld,
+                                      child: Icon(LineIcons.pen, color: kPureWhiteColor,)))
+
+                            ]),
+                          ),
+                          //Text(styleData.beauticianName, style: kHeadingTextStyleGold,))
+
+                      )
+                    ]
+                      ),
 
 
 
-                // ),
-                // kLargeHeightSpacing,
-                //
-                // ListTile(
-                //   leading: Icon(LineIcons.walking),
-                //   title: Text("Mobile Services", style: kNormalTextStyle.copyWith(),),
-                //   subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
-                //   trailing: buildSwitch(),
-                // ),
-                // kLargeHeightSpacing,
+                    // ),
+                    // kLargeHeightSpacing,
+                    //
+                    // ListTile(
+                    //   leading: Icon(LineIcons.walking),
+                    //   title: Text("Mobile Services", style: kNormalTextStyle.copyWith(),),
+                    //   subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                    //   trailing: buildSwitch(),
+                    // ),
+                    // kLargeHeightSpacing,
 
 
-                ListTile(
-                  leading: kIconStore,
-                  title: Text(styleDataDisplay.beauticianName, style: kNormalTextStyle.copyWith(fontSize: 15),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        // buildShowDialog(context);
-                        CoolAlert.show(
+                    ListTile(
+                      leading: kIconStore,
+                      title: Text(styleDataDisplay.beauticianName, style: kNormalTextStyle.copyWith(fontSize: 15),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            // buildShowDialog(context);
+                            CoolAlert.show(
 
-                            lottieAsset: 'images/details.json',
-                            context: context,
-                            type: CoolAlertType.success,
-                            widget: SingleChildScrollView(
+                                lottieAsset: 'images/details.json',
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: SingleChildScrollView(
 
-                                child:
-                                Container(
-                                  child: Column(
-                                    children: [
+                                    child:
+                                    Container(
+                                      child: Column(
+                                        children: [
 
-                                      TextField(
-                                        // controller: TextEditingController!..text = "",
-                                        controller: TextEditingController()..text = styleDataDisplay.beauticianName,
-                                        keyboardType: TextInputType.text,
+                                          TextField(
+                                            // controller: TextEditingController!..text = "",
+                                            controller: TextEditingController()..text = styleDataDisplay.beauticianName,
+                                            keyboardType: TextInputType.text,
 
-                                        onChanged: (customerNumber){
-                                          businessName = customerNumber;
+                                            onChanged: (customerNumber){
+                                              businessName = customerNumber;
 
-                                        },
-                                        decoration: InputDecoration(
+                                            },
+                                            decoration: InputDecoration(
 
-                                          // border: InputBorder.none,
-                                            labelText: 'Business Name',
-                                            labelStyle: kNormalTextStyleExtraSmall,
+                                              // border: InputBorder.none,
+                                                labelText: 'Business Name',
+                                                labelStyle: kNormalTextStyleExtraSmall,
 
-                                            hintText:  '',
-                                            hintStyle: kNormalTextStyle
-                                        ) ,
+                                                hintText:  '',
+                                                hintStyle: kNormalTextStyle
+                                            ) ,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                            ),
-                            // text: 'Enter customers details',
-                            title: 'Business Name',
-                            confirmBtnText: 'Ok',
-                            showCancelBtn: true,
-                            confirmBtnColor: Colors.green,
-                            backgroundColor: kBlueDarkColor,
-                            onConfirmBtnTap: () async
-                            {
-                              final prefs = await SharedPreferences.getInstance();
-                              prefs.setString(kBusinessNameConstant, businessName);
-                              print("Value set to businessName");
-                              CommonFunctions().updateOnlineStoreInfo(storeId, "name", businessName);
-                              setState(() {
+                                    )
+                                ),
+                                // text: 'Enter customers details',
+                                title: 'Business Name',
+                                confirmBtnText: 'Ok',
+                                showCancelBtn: true,
+                                confirmBtnColor: Colors.green,
+                                backgroundColor: kBlueDarkColor,
+                                onConfirmBtnTap: () async
+                                {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setString(kBusinessNameConstant, businessName);
+                                  print("Value set to businessName");
+                                  CommonFunctions().updateOnlineStoreInfo(storeId, "name", businessName);
+                                  setState(() {
 
-                              });
-                              Navigator.pop(context);
+                                  });
+                                  Navigator.pop(context);
 
-                            }
-                        );
+                                }
+                            );
 
-                      },
-                      child: Icon(LineIcons.pen, color: kAppPinkColor,)),
-                ),
+                          },
+                          child: Icon(LineIcons.pen, color: kAppPinkColor,)),
+                    ),
 
-                DividingLine(),
-                ListTile(
-                  leading: kIconCustomer,
-                  title: Text(userName, style: kNormalTextStyle.copyWith(),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        // buildShowDialog(context);
-                        CoolAlert.show(
+                    DividingLine(),
+                    ListTile(
+                      leading: kIconCustomer,
+                      title: Text(userName, style: kNormalTextStyle.copyWith(),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            // buildShowDialog(context);
+                            CoolAlert.show(
 
-                            lottieAsset: 'images/details.json',
-                            context: context,
-                            type: CoolAlertType.success,
-                            widget: SingleChildScrollView(
+                                lottieAsset: 'images/details.json',
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: SingleChildScrollView(
 
-                                child:
-                                Container(
-                                  child: Column(
-                                    children: [
+                                    child:
+                                    Container(
+                                      child: Column(
+                                        children: [
 
-                                      TextField(
-                                        // controller: TextEditingController!..text = "",
-                                        controller: TextEditingController()..text = userName,
-                                        keyboardType: TextInputType.text,
+                                          TextField(
+                                            // controller: TextEditingController!..text = "",
+                                            controller: TextEditingController()..text = userName,
+                                            keyboardType: TextInputType.text,
 
-                                        onChanged: (customerNumber){
-                                          userName = customerNumber;
+                                            onChanged: (customerNumber){
+                                              userName = customerNumber;
 
-                                        },
-                                        decoration: InputDecoration(
+                                            },
+                                            decoration: InputDecoration(
 
-                                          // border: InputBorder.none,
-                                            labelText: 'Your Name',
-                                            labelStyle: kNormalTextStyleExtraSmall,
+                                              // border: InputBorder.none,
+                                                labelText: 'Your Name',
+                                                labelStyle: kNormalTextStyleExtraSmall,
 
-                                            hintText:  '',
-                                            hintStyle: kNormalTextStyle
-                                        ) ,
+                                                hintText:  '',
+                                                hintStyle: kNormalTextStyle
+                                            ) ,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                            ),
-                            // text: 'Enter customers details',
-                            title: 'Your Name',
-                            confirmBtnText: 'Ok',
-                            showCancelBtn: true,
-                            confirmBtnColor: Colors.green,
-                            backgroundColor: kBlueDarkColor,
-                            onConfirmBtnTap: () async
-                            {
-                              final prefs = await SharedPreferences.getInstance();
-                              prefs.setString(kLoginPersonName, userName);
-                              print("Value set to businessName");
-                              CommonFunctions().updateOnlineStoreInfo(storeId, "ownerName", userName);
-                              Navigator.pop(context);
-                              setState(() {
+                                    )
+                                ),
+                                // text: 'Enter customers details',
+                                title: 'Your Name',
+                                confirmBtnText: 'Ok',
+                                showCancelBtn: true,
+                                confirmBtnColor: Colors.green,
+                                backgroundColor: kBlueDarkColor,
+                                onConfirmBtnTap: () async
+                                {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setString(kLoginPersonName, userName);
+                                  print("Value set to businessName");
+                                  CommonFunctions().updateOnlineStoreInfo(storeId, "ownerName", userName);
+                                  Navigator.pop(context);
+                                  setState(() {
 
-                              });
-                            }
-                        );
+                                  });
+                                }
+                            );
 
-                      },
-                      child: Icon(LineIcons.pen, color: kAppPinkColor,)),
+                          },
+                          child: Icon(LineIcons.pen, color: kAppPinkColor,)),
 
-                ),
+                    ),
 
-                ListTile(
-                  leading: kIconLocation,
-                  title: Text(styleDataDisplay.beauticianLocation, style: kNormalTextStyle.copyWith(),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        CoolAlert.show(
+                    ListTile(
+                      leading: kIconLocation,
+                      title: Text(styleDataDisplay.beauticianLocation, style: kNormalTextStyle.copyWith(),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            CoolAlert.show(
 
-                            lottieAsset: 'images/details.json',
-                            context: context,
-                            type: CoolAlertType.success,
-                            widget: SingleChildScrollView(
+                                lottieAsset: 'images/details.json',
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: SingleChildScrollView(
 
-                                child:
-                                Container(
-                                  child: Column(
-                                    children: [
+                                    child:
+                                    Container(
+                                      child: Column(
+                                        children: [
 
-                                      TextField(
-                                        // controller: TextEditingController!..text = "",
-                                        controller: TextEditingController()..text = styleDataDisplay.beauticianLocation,
-                                        keyboardType: TextInputType.text,
+                                          TextField(
+                                            // controller: TextEditingController!..text = "",
+                                            controller: TextEditingController()..text = styleDataDisplay.beauticianLocation,
+                                            keyboardType: TextInputType.text,
 
-                                        onChanged: (customerLocation){
-                                          businessLocation = customerLocation;
+                                            onChanged: (customerLocation){
+                                              businessLocation = customerLocation;
 
-                                        },
-                                        decoration: InputDecoration(
+                                            },
+                                            decoration: InputDecoration(
 
-                                          // border: InputBorder.none,
-                                            labelText: 'Business Location',
-                                            labelStyle: kNormalTextStyleExtraSmall,
+                                              // border: InputBorder.none,
+                                                labelText: 'Business Location',
+                                                labelStyle: kNormalTextStyleExtraSmall,
 
-                                            hintText:  '',
-                                            hintStyle: kNormalTextStyle
-                                        ) ,
+                                                hintText:  '',
+                                                hintStyle: kNormalTextStyle
+                                            ) ,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                            ),
-                            // text: 'Enter customers details',
-                            title: 'Business Location',
-                            confirmBtnText: 'Ok',
-                            showCancelBtn: true,
-                            confirmBtnColor: Colors.green,
-                            backgroundColor: kBlueDarkColor,
-                            onConfirmBtnTap: ()async{
-                              final prefs = await SharedPreferences.getInstance();
-                              prefs.setString(kLocationConstant, businessLocation);
-                              CommonFunctions().updateOnlineStoreInfo(storeId, "location", businessLocation);
+                                    )
+                                ),
+                                // text: 'Enter customers details',
+                                title: 'Business Location',
+                                confirmBtnText: 'Ok',
+                                showCancelBtn: true,
+                                confirmBtnColor: Colors.green,
+                                backgroundColor: kBlueDarkColor,
+                                onConfirmBtnTap: ()async{
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setString(kLocationConstant, businessLocation);
+                                  CommonFunctions().updateOnlineStoreInfo(storeId, "location", businessLocation);
 
-                              Navigator.pop(context);
-                              setState(() {
+                                  Navigator.pop(context);
+                                  setState(() {
 
-                              });
-                            }
-                        );
-                      },
-                      child: Icon(LineIcons.pen, color: kAppPinkColor,)),
-                ),
-                ListTile(
-                  leading: kIconClockOpen,
-                  title: Text("${DateFormat('h aa').format(DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).openingTime,0))}", style: kNormalTextStyle.copyWith(),),
-                  subtitle: Text('Opening Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        // buildShowDialog(context);
-                        // DatePicker.showTimePicker(context,
-                        //     currentTime: DateTime(2022,12,9,10,00),
-                        //     showSecondsColumn: false,
-                        //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
-                        //
-                        //     //showTitleActions: t,
-                        //
-                        //     onConfirm: (time){
-                        //
-                        //
-                        //       CommonFunctions().updateOnlineStoreInfo(storeId, "open", time.hour);
-                        //
-                        //
-                        //       // deliveryTime = date;
-                        //
-                        //
-                        //
-                        //
-                        //     });
+                                  });
+                                }
+                            );
+                          },
+                          child: Icon(LineIcons.pen, color: kAppPinkColor,)),
+                    ),
+                    ListTile(
+                      leading: kIconClockOpen,
+                      title: Text("${DateFormat('h aa').format(DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).openingTime,0))}", style: kNormalTextStyle.copyWith(),),
+                      subtitle: Text('Opening Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            // buildShowDialog(context);
+                            // DatePicker.showTimePicker(context,
+                            //     currentTime: DateTime(2022,12,9,10,00),
+                            //     showSecondsColumn: false,
+                            //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
+                            //
+                            //     //showTitleActions: t,
+                            //
+                            //     onConfirm: (time){
+                            //
+                            //
+                            //       CommonFunctions().updateOnlineStoreInfo(storeId, "open", time.hour);
+                            //
+                            //
+                            //       // deliveryTime = date;
+                            //
+                            //
+                            //
+                            //
+                            //     });
 
-                      },
-                      child: kIconPen),
-                ),
-                ListTile(
-                  leading: kIconClockClose,
-                  title: Text("${DateFormat('h aa').format(DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).closingTime,0))}", style: kNormalTextStyle.copyWith(),),
-                  subtitle: Text('Closing Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        // DatePicker.showTimePicker(context,
-                        //     currentTime: DateTime(2022,12,9,10,00),
-                        //     showSecondsColumn: false,
-                        //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
-                        //
-                        //     //showTitleActions: t,
-                        //
-                        //     onConfirm: (time){
-                        //       // DateTime opening = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).openingTime,0);
-                        //       // DateTime closing = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).closingTime,0);
-                        //       // DateTime selectedDateTime = DateTime(value.date!.year,value.date!.month,value.date!.day,time.hour, time.minute);
-                        //       // var referenceTime = DateTime(2022,1,1,0,0);
-                        //
-                        //       CommonFunctions().updateOnlineStoreInfo(storeId, "close", time.hour);
-                        //
-                        //
-                        //       // deliveryTime = date;
-                        //
-                        //
-                        //
-                        //
-                        //     });
-                      },
-                      child: kIconPen),
-                ),ListTile(
-                  leading: kIconPhone,
-                  title: Text(styleDataDisplay.beauticianPhoneNumber, style: kNormalTextStyle.copyWith(),),
-                  trailing: GestureDetector(
-                      onTap: (){
-                        CoolAlert.show(
+                          },
+                          child: kIconPen),
+                    ),
+                    ListTile(
+                      leading: kIconClockClose,
+                      title: Text("${DateFormat('h aa').format(DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).closingTime,0))}", style: kNormalTextStyle.copyWith(),),
+                      subtitle: Text('Closing Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            // DatePicker.showTimePicker(context,
+                            //     currentTime: DateTime(2022,12,9,10,00),
+                            //     showSecondsColumn: false,
+                            //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
+                            //
+                            //     //showTitleActions: t,
+                            //
+                            //     onConfirm: (time){
+                            //       // DateTime opening = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).openingTime,0);
+                            //       // DateTime closing = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).closingTime,0);
+                            //       // DateTime selectedDateTime = DateTime(value.date!.year,value.date!.month,value.date!.day,time.hour, time.minute);
+                            //       // var referenceTime = DateTime(2022,1,1,0,0);
+                            //
+                            //       CommonFunctions().updateOnlineStoreInfo(storeId, "close", time.hour);
+                            //
+                            //
+                            //       // deliveryTime = date;
+                            //
+                            //
+                            //
+                            //
+                            //     });
+                          },
+                          child: kIconPen),
+                    ),ListTile(
+                      leading: kIconPhone,
+                      title: Text(styleDataDisplay.beauticianPhoneNumber, style: kNormalTextStyle.copyWith(),),
+                      trailing: GestureDetector(
+                          onTap: (){
+                            CoolAlert.show(
 
-                            lottieAsset: 'images/details.json',
-                            context: context,
-                            type: CoolAlertType.success,
-                            widget: SingleChildScrollView(
+                                lottieAsset: 'images/details.json',
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: SingleChildScrollView(
 
-                                child:
-                                Container(
-                                  child: Column(
-                                    children: [
+                                    child:
+                                    Container(
+                                      child: Column(
+                                        children: [
 
-                                      TextField(
-                                        // controller: TextEditingController!..text = "",
-                                        keyboardType: TextInputType.number,
+                                          TextField(
+                                            // controller: TextEditingController!..text = "",
+                                            keyboardType: TextInputType.number,
 
-                                        onChanged: (customerNumber){
-                                          phoneNumber = customerNumber;
+                                            onChanged: (customerNumber){
+                                              phoneNumber = customerNumber;
 
-                                        },
-                                        decoration: InputDecoration(
+                                            },
+                                            decoration: InputDecoration(
 
-                                          // border: InputBorder.none,
-                                            labelText: 'Phone Number',
-                                            labelStyle: kNormalTextStyleExtraSmall,
+                                              // border: InputBorder.none,
+                                                labelText: 'Phone Number',
+                                                labelStyle: kNormalTextStyleExtraSmall,
 
-                                            hintText:  '0771231233',
-                                            hintStyle: kNormalTextStyle
-                                        ) ,
+                                                hintText:  '0771231233',
+                                                hintStyle: kNormalTextStyle
+                                            ) ,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                            ),
-                            // text: 'Enter customers details',
-                            title: 'Business Phone Number',
-                            confirmBtnText: 'Ok',
-                            showCancelBtn: true,
-                            confirmBtnColor: Colors.green,
-                            backgroundColor: kBlueDarkColor,
-                            onConfirmBtnTap: (){
+                                    )
+                                ),
+                                // text: 'Enter customers details',
+                                title: 'Business Phone Number',
+                                confirmBtnText: 'Ok',
+                                showCancelBtn: true,
+                                confirmBtnColor: Colors.green,
+                                backgroundColor: kBlueDarkColor,
+                                onConfirmBtnTap: (){
 
 
-                              CommonFunctions().updateOnlineStoreInfo(storeId, "phone", phoneNumber);
+                                  CommonFunctions().updateOnlineStoreInfo(storeId, "phone", phoneNumber);
 
-                              Navigator.pop(context);
-                              setState(() {
+                                  Navigator.pop(context);
+                                  setState(() {
 
-                              });
-                            }
-                        );
-                        
-                      },
-                      child: kIconPen),
-                ),
-                ListTile(
-                  leading: kIconStore,
-                  title: Text(activeStatus, style: kNormalTextStyle.copyWith(),),
-                  subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
-                  trailing: buildSwitch(),
-                ),
+                                  });
+                                }
+                            );
 
-                // ListTile(
-                //   leading: kIconBlackout,
-                //   title: Text("Blackout Dates", style: kNormalTextStyle.copyWith(),),
-                //   subtitle: Text('${styleDataDisplay.calendarBlackouts.length}', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                //   trailing: GestureDetector(
-                //       onTap: (){
-                //         buildShowDialog(context);
-                //       },
-                //       child: kIconPen),
-                // ),
-                //
-                // ListTile(
-                //   leading: Icon(LineIcons.car, color: kAppPinkColor,),
-                //   title: Text("Mobile Services Fee", style: kNormalTextStyle.copyWith(),),
-                //   subtitle: Text('${CommonFunctions().formatter.format(styleDataDisplay.beauticianTransport)} Ugx', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                //   trailing: GestureDetector(
-                //       onTap: (){
-                //         CoolAlert.show(
-                //
-                //             lottieAsset: 'images/details.json',
-                //             context: context,
-                //             type: CoolAlertType.success,
-                //             widget: SingleChildScrollView(
-                //
-                //                 child:
-                //                 Container(
-                //                   child: Column(
-                //                     children: [
-                //
-                //                       TextField(
-                //                         keyboardType: TextInputType.number,
-                //
-                //                         onChanged: (mobileServices){
-                //                           deliveryFee = mobileServices;
-                //
-                //                         },
-                //                         decoration: InputDecoration(
-                //
-                //                           // border: InputBorder.none,
-                //                             labelText: 'Amount',
-                //                             labelStyle: kNormalTextStyleExtraSmall,
-                //
-                //                             hintText:  '10000',
-                //                             hintStyle: kNormalTextStyle
-                //                         ) ,
-                //                       ),
-                //                     ],
-                //                   ),
-                //                 )
-                //             ),
-                //             // text: 'Enter customers details',
-                //             title: 'Amount to Provide Mobile Services',
-                //             confirmBtnText: 'Ok',
-                //             confirmBtnColor: Colors.green,
-                //             backgroundColor: kBlueDarkColor,
-                //             onConfirmBtnTap: (){
-                //
-                //
-                //               CommonFunctions().updateOnlineStoreInfo(storeId, "transport", int.parse(deliveryFee));
-                //
-                //               Navigator.pop(context);
-                //             }
-                //         );
-                //       },
-                //       child: kIconPen),
-                // ),
+                          },
+                          child: kIconPen),
+                    ),
+                    ListTile(
+                      leading: kIconStore,
+                      title: Text(activeStatus, style: kNormalTextStyle.copyWith(),),
+                      subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                      trailing: buildSwitch(),
+                    ),
+
+                    // ListTile(
+                    //   leading: kIconBlackout,
+                    //   title: Text("Blackout Dates", style: kNormalTextStyle.copyWith(),),
+                    //   subtitle: Text('${styleDataDisplay.calendarBlackouts.length}', style: kNormalTextStyle.copyWith(fontSize: 12),),
+                    //   trailing: GestureDetector(
+                    //       onTap: (){
+                    //         buildShowDialog(context);
+                    //       },
+                    //       child: kIconPen),
+                    // ),
+                    //
+                    // ListTile(
+                    //   leading: Icon(LineIcons.car, color: kAppPinkColor,),
+                    //   title: Text("Mobile Services Fee", style: kNormalTextStyle.copyWith(),),
+                    //   subtitle: Text('${CommonFunctions().formatter.format(styleDataDisplay.beauticianTransport)} Ugx', style: kNormalTextStyle.copyWith(fontSize: 12),),
+                    //   trailing: GestureDetector(
+                    //       onTap: (){
+                    //         CoolAlert.show(
+                    //
+                    //             lottieAsset: 'images/details.json',
+                    //             context: context,
+                    //             type: CoolAlertType.success,
+                    //             widget: SingleChildScrollView(
+                    //
+                    //                 child:
+                    //                 Container(
+                    //                   child: Column(
+                    //                     children: [
+                    //
+                    //                       TextField(
+                    //                         keyboardType: TextInputType.number,
+                    //
+                    //                         onChanged: (mobileServices){
+                    //                           deliveryFee = mobileServices;
+                    //
+                    //                         },
+                    //                         decoration: InputDecoration(
+                    //
+                    //                           // border: InputBorder.none,
+                    //                             labelText: 'Amount',
+                    //                             labelStyle: kNormalTextStyleExtraSmall,
+                    //
+                    //                             hintText:  '10000',
+                    //                             hintStyle: kNormalTextStyle
+                    //                         ) ,
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                 )
+                    //             ),
+                    //             // text: 'Enter customers details',
+                    //             title: 'Amount to Provide Mobile Services',
+                    //             confirmBtnText: 'Ok',
+                    //             confirmBtnColor: Colors.green,
+                    //             backgroundColor: kBlueDarkColor,
+                    //             onConfirmBtnTap: (){
+                    //
+                    //
+                    //               CommonFunctions().updateOnlineStoreInfo(storeId, "transport", int.parse(deliveryFee));
+                    //
+                    //               Navigator.pop(context);
+                    //             }
+                    //         );
+                    //       },
+                    //       child: kIconPen),
+                    // ),
 
 
-                kLargeHeightSpacing,
+                    kLargeHeightSpacing,
 
-              ]
+                  ]
 
+              ),
+            ),
           ),
         ),
       ),

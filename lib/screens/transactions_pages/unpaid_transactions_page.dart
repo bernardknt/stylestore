@@ -182,6 +182,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                     customerIdList = [];
                     currencyList = [];
 
+
                     var dateSeparator = '';
                     var orders = snapshot.data?.docs;
                     for( var doc in orders!){
@@ -262,7 +263,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                   });
                                 },
                                 child: Text(
-                                  'Unpaid: ${CommonFunctions().formatter.format(_calculateTotalPrice())} Ugx ($_selectedDateRange)',
+                                  'Unpaid: ${CommonFunctions().formatter.format(_calculateTotalPrice())}($_selectedDateRange)',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -275,8 +276,6 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
 
 
                                     Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
-                                   // var sms = '{"thankyou": "Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.","reminder": "Dear Customer, kindly make payment for your outstanding purchase with $storeName. For any assistance.","options": ["We value your business! Thank you for choosing $storeName. For any assistance, please call.","Thank you for your support! $storeName is here to serve you. For any assistance, please call.","Your order is on its way! Thank you for choosing $storeName. For any assistance, please call.","We appreciate your trust in $storeName! For any assistance, please call."]}';
-                                   //  clientPhoneList;
                                     Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(CommonFunctions().removeDuplicates(clientPhoneList));
                                   Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
                                     showModalBottomSheet(
@@ -378,7 +377,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                               TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                                 transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                                 paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
+                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList, ),
 
                                             );
                                         });
@@ -417,14 +416,14 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
-                                                    Text("${CommonFunctions().formatter.format(priceList[index])} Ugx", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
+                                                    Text("${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
                                                     // If price list is not equal to the paid amount
                                                     priceList[index]!= paidAmountList[index] ?
                                                     // If the amount paid is not equal to zeto
                                                     paidAmountList[index]!= 0 ?
                                                     paidAmountList[index]>= priceList[index] ?
-                                                    Text("Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx", style: TextStyle(color: Colors.blue, fontSize: 12),):
-                                                    Text("Partial ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx", style: TextStyle(color: Colors.red, fontSize: 12),):
+                                                    Text("Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} ${currencyList[index]}", style: TextStyle(color: Colors.blue, fontSize: 12),):
+                                                    Text("Partial ${CommonFunctions().formatter.format(paidAmountList[index])} ${currencyList[index]}", style: TextStyle(color: Colors.red, fontSize: 12),):
                                                     Text("No Payment Recieved", style: TextStyle(color: kCustomColorPink, fontSize: 12),): Text("Paid",  style: TextStyle(color: kGreenThemeColor, fontSize: 12))
 
                                                   ],

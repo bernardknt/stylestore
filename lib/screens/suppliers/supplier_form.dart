@@ -122,7 +122,8 @@ class _SupplierFormState extends State<SupplierForm> {
         title: const Text('New Supplier Form'),
         automaticallyImplyLeading: true,
       ),
-      body: Padding(
+      body:
+      Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Center(

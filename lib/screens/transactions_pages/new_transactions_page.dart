@@ -122,11 +122,6 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
 
   return Scaffold(
       backgroundColor: kPureWhiteColor,
-      // appBar: AppBar(
-      //   title: Text("Transactions History", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),),
-      //   backgroundColor: kPureWhiteColor,
-      //   elevation: 0,
-      // ),
 
       body:
       Column(
@@ -218,7 +213,8 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                       orders = orders.where((doc) => doc['appointmentDate'].toDate().isAfter(oneDayAgo)).toList();
                     }
                     // print(snapshot.data?.docs.);
-                    return Column(
+                    return
+                      Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -251,7 +247,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
 
                 },
                                 child: Text(
-                                  '${CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(priceList))} Ugx ($_selectedDateRange)',
+                                  '${CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(priceList))} ($_selectedDateRange)',
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ),
@@ -378,14 +374,14 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.end,
                                                   children: [
-                                                    Text("${CommonFunctions().formatter.format(priceList[index])} Ugx", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
+                                                    Text("${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),),
                                                     // If price list is not equal to the paid amount
                                                     priceList[index]!= paidAmountList[index] ?
                                                     // If the amount paid is not equal to zeto
                                                     paidAmountList[index]!= 0 ?
                                                     paidAmountList[index]>= priceList[index] ?
-                                                    Text("Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx", style: TextStyle(color: Colors.blue, fontSize: 12),):
-                                                    Text("Partial ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx", style: TextStyle(color: Colors.red, fontSize: 12),):
+                                                    Text("Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} ${currencyList[index]}", style: TextStyle(color: Colors.blue, fontSize: 12),):
+                                                    Text("Partial ${CommonFunctions().formatter.format(paidAmountList[index])} ${currencyList[index]}", style: TextStyle(color: Colors.red, fontSize: 12),):
                                                     Text("No Payment Recieved", style: TextStyle(color: kCustomColorPink, fontSize: 12),): Text("Paid",  style: TextStyle(color: kGreenThemeColor, fontSize: 12))
 
                                                   ],

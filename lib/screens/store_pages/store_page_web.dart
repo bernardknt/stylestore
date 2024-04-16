@@ -44,6 +44,7 @@ class _StorePageWebState extends State<StorePageWeb> {
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
   List<AllStockData> totalStock = [];
+  String currency = "";
 
   defaultInitialization()async{
     permissionsMap = await CommonFunctions().convertPermissionsJson();
@@ -51,6 +52,7 @@ class _StorePageWebState extends State<StorePageWeb> {
     newStock = await retrieveSupplierData();
     totalStock.addAll(newStock);
     filteredStock.addAll(newStock);
+    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });
@@ -525,7 +527,7 @@ class _StorePageWebState extends State<StorePageWeb> {
                                                         style: kHeadingTextStyle,),
                                                       Text(
                                                         '${formatter.format(
-                                                            filteredStock[index].amount)} Ugx',
+                                                            filteredStock[index].amount)} $currency',
                                                         style: kNormalTextStyle
                                                             .copyWith(
                                                             fontWeight: FontWeight.bold,

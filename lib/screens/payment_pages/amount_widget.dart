@@ -37,6 +37,7 @@ class _AmountToPayWidgetState extends State<AmountToPayWidget> {
 
   @override
   Widget build(BuildContext context) {
+    var styleData = Provider.of<StyleProvider>(context);
     return Consumer<StyleProvider>( // Use Consumer for targeted rebuilds
       builder: (context, styleProvider, child) {
         return Scaffold(
@@ -86,14 +87,14 @@ class _AmountToPayWidgetState extends State<AmountToPayWidget> {
               children: [
                 // ... (Other widgets)
                 Text('Enter amount received for this transaction',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 20, color: kBlack),),
-                Text('(Billed Ugx ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen:false).totalPrice)} to ${Provider.of<StyleProvider>(context, listen: false).customerName})',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 14, color: kGreenThemeColor),),
+                Text('(Billed ${styleData.storeCurrency} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen:false).totalPrice)} to ${Provider.of<StyleProvider>(context, listen: false).customerName})',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 14, color: kGreenThemeColor),),
                 kLargeHeightSpacing,
                 kLargeHeightSpacing,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                   Text('Ugx', style: kNormalTextStyle.copyWith(fontSize: 35)),
+                   Text('${styleData.storeCurrency}', style: kNormalTextStyle.copyWith(fontSize: 35)),
                     kSmallWidthSpacing,
                     Container(
                       width: 150,

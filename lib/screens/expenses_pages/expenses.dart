@@ -92,6 +92,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
 
   var priceOfProducts = [];
   var transIdList = [];
+  var currencyList = [];
   var dateList = [];
   var paidStatusList = [];
   var paidStatusListColor = [];
@@ -259,6 +260,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
               listOfPriceOfProducts = [];
               supplierList = [];
               paidList  = [];
+              currencyList  = [];
 
 
 
@@ -272,6 +274,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   transIdList.add(doc['id']);
                   supplierList.add(doc['supplier']);
                   paidList .add(doc['paid']);
+                  currencyList.add(doc['currency']);
                   dateList.add(doc['date'].toDate());
                   createdByList.add(doc['requestBy']);
                   List dynamicList = doc['items'];
@@ -409,7 +412,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           crossAxisAlignment: CrossAxisAlignment.end,
                                           children: [
-                                            Text( "Ugx ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontWeight:FontWeight.bold,fontSize: 10, color: kGreenThemeColor)),
+                                            Text( "${currencyList[index]} ${CommonFunctions().formatter.format(priceOfProducts[index])}",overflow: TextOverflow.clip, style: TextStyle(fontWeight:FontWeight.bold,fontSize: 10, color: kGreenThemeColor)),
                                             paidList[index] == false? TextButton(onPressed: (){}, child: Text("Pay", style: kNormalTextStyle.copyWith(fontSize: 12),)):SizedBox()
 
                                           ],

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 
@@ -88,24 +89,26 @@ class CustomPopupWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      child: Text('Watch Video'),
+                      child: Text('Watch Video', style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w900),),
                     ),
                     kMediumWidthSpacing,
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.pop(context);
-                        function();
-
-                        // Add your continue button functionality here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: backgroundColour,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigator.pop(context);
+                          function();
+                      
+                          // Add your continue button functionality here
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: backgroundColour,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
                         ),
+                        child: Text(actionButton,  style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w900),),
                       ),
-                      child: Text(actionButton),
                     ),
                   ],
                 ),

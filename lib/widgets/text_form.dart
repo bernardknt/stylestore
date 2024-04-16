@@ -6,8 +6,9 @@ class TextForm extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final TextInputType keyBoardType;
+  final bool password;
 
- TextForm({required this.label, required this.controller,this.keyBoardType = TextInputType.text, });
+ TextForm({required this.label, required this.controller,this.keyBoardType = TextInputType.text, this.password = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class TextForm extends StatelessWidget {
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         TextFormField(
+          obscureText: password,
           controller: controller,
           keyboardType: keyBoardType,
           decoration: InputDecoration(

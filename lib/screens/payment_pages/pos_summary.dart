@@ -82,7 +82,7 @@ class PosSummary extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("${index + 1}. ${styleData.basketNameItems[index]} x ${styleData.basketItems[index].quantity.toStringAsFixed(0)}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                            Text("Ugx ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
+                            Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
                           ],
                         ),
                         title:
@@ -91,7 +91,7 @@ class PosSummary extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
 
-                            Text("Ugx ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
+                            Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
                           ],
                         ),
                         trailing: Checkbox(

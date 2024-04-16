@@ -41,6 +41,7 @@ import '../screens/payment_pages/pos_summary.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/sign_in_options/sign_in_page.dart';
+import '../screens/store_setup.dart';
 import '../utilities/constants/user_constants.dart';
 // import '../widgets/employee_checklist.dart';
 import '../widgets/employee_checklist.dart';
@@ -320,9 +321,6 @@ class CommonFunctions {
       Navigator.pop(context);
       Navigator.pop(context);
       Navigator.pushNamed(context, SuccessPageHiFive.id);
-      // Navigator.pop(context);
-      // Navigator.pop(context);
-      // print("done");
     });
   }
 
@@ -814,8 +812,6 @@ class CommonFunctions {
         backgroundColor: kBlueDarkColor,
         onConfirmBtnTap: (){
           Navigator.pop(context);
-
-          // bottomSheetAddIngredients(context, vegProvider, fruitProvider, extraProvider, blendedData);
         }
     );
   }
@@ -909,6 +905,7 @@ class CommonFunctions {
             doc['image'],
             doc['transport'],
             doc['sms'],
+            doc['currency'],
 
 
         );
@@ -916,6 +913,60 @@ class CommonFunctions {
     });
 
     return start;
+  }
+
+  String getCurrencyCode(String countryCode, context) {
+    String? currencyCode = Provider.of<StyleProvider>(context, listen: false).countryNumbers[countryCode];
+    return currencyCode ?? "USD"; // You can change "USD" to any default value or handle the null scenario as needed.
+  }
+
+  setupStoreInFirestore(userId, email, ownerName, location, phone, description, name, countryCode, country, currency, context)async{
+
+    var firestore = FirebaseFirestore.instance;
+    CircularProgressIndicator(color: kAppPinkColor,);
+    await firestore.collection('medics').doc(userId).set({
+      'active': true,
+      'adminTokens':[],
+      'analysis':"",
+      'blackout': [],
+      'businessPhone':phone,
+      'clients': [],
+      'close': 20,
+      'cord': [0.3142467, 32.6151695],
+      'currency':currency,
+      'description': description,
+      'distance': 3,
+      'doesMobile': true,
+      'featured': false,
+      'id': userId,
+      'image': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/52f30eb6-c476-adfd-3a24-0831ce256da0.jpg',
+      'location': location,
+      'modes': ['In-Premise', 'Mobile'],
+      'newSpeciality': {},
+      'open': 7,
+      'phone': phone,
+      'promote': false,
+      'rating': 3.0,
+      'reviewNumber': 1,
+      'serviceTime': 10,
+      'services': [],
+      'speciality': [],
+      'transport': 5000,
+      'email': email,
+      'permissions': '{"transactions": true,"expenses": true,"customers": true,"sales": true,"store": true,"analytics": true,"messages": true,"tasks": true,"admin": true,"summary": true,"employees": true,"notifications": true,"signIn": false,"takeStock": true, "qrCode": false}',
+      'name': name,
+      'ownerName': ownerName,
+      'subscriptionEndDate':DateTime.now(),
+      'subscriptionStartDate': DateTime.now(),
+      'token': 'userTokenGoesHere',
+      'countryCode': countryCode,
+      'country': country,
+      'sms': 500
+
+    }).whenComplete((){
+      Navigator.pop(context);
+      Navigator.pushNamed(context, StoreSetup.id);
+    });
   }
 
 
@@ -955,7 +1006,7 @@ class CommonFunctions {
         });
   }
 // THIS IS CODE FOR STOCKING AND RESTOCKING AND REDUCING STOCK
-  Future<void> uploadRestockedItems(selectedStocks, basketToPost, context, docId) async {
+  Future<void> uploadRestockedItems(selectedStocks, basketToPost, context, docId, currency) async {
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
@@ -997,6 +1048,7 @@ class CommonFunctions {
         'id': docId,
         'items': basketToPost,
         'date': DateTime.now(),
+        'currency': currency,
         'requestBy': prefs.getString(kLoginPersonName)!,
         'storeId':  prefs.getString(kStoreIdConstant)!,
         'name':  prefs.getString(kBusinessNameConstant)!,
@@ -1142,7 +1194,7 @@ class CommonFunctions {
     // Navigator.pop(context);
   }
 
-  Future<void> uploadExpense( basketToPost, context, docId, image, supplier, supplierId) async {
+  Future<void> uploadExpense( basketToPost, context, docId, image, supplier, supplierId, currency) async {
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
@@ -1163,6 +1215,7 @@ class CommonFunctions {
         'name':  prefs.getString(kBusinessNameConstant)!,
         'activity': "Expense",
         'receipt': image,
+        'currency': currency
 
 
       });
@@ -1503,11 +1556,6 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     } catch (e) {
       print('Error fetching subscriptionEndDate: $e');
     }
-
-    // Provider.of<StyleProvider>(context,listen: false).setSubscriptionVariables(
-    //   userData['subscriptionEndDate'].toDate(),
-    // );
-
   }
 
   Future transactionStream(context, orderId)async{

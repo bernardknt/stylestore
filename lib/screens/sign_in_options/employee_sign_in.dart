@@ -101,8 +101,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
           prefs.setInt(kStoreOpeningTime, store['open']);
           prefs.setInt(kStoreClosingTime, store['close']);
           prefs.setString(kPermissions, users['permissions']);
-          prefs.setString(kPermissions, users['currency']);
-
+          prefs.setString(kCurrency, store['currency']);
           prefs.setString(kLoginPersonName, users['name']);
           prefs.setBool(kDoesMobileConstant, store['doesMobile']);
           prefs.setString(kEmployeeId,  users['id'] );

@@ -18,13 +18,11 @@ import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/excel_model.dart';
 import '../../model/styleapp_data.dart';
-import '../../widgets/build_info_card.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
 
@@ -43,12 +41,14 @@ class _StorePageMobileState extends State<StorePageMobile> {
   TextEditingController searchController = TextEditingController();
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
+  String currency = "";
 
   defaultInitialization()async{
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newStock = await retrieveSupplierData();
     filteredStock.addAll(newStock);
+    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });
@@ -476,7 +476,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                       style: kHeadingTextStyle,),
                                                     Text(
                                                       '${formatter.format(
-                                                          filteredStock[index].amount)} Ugx',
+                                                          filteredStock[index].amount)} $currency',
                                                       style: kNormalTextStyle
                                                           .copyWith(
                                                         fontWeight: FontWeight.bold,

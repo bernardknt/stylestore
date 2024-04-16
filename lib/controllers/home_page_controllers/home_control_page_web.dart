@@ -24,7 +24,7 @@ import '../../screens/analytics/deeper_analytics/analytics_new_web.dart';
 import '../../screens/documents.dart';
 import '../../screens/employee_pages/employees_page.dart';
 import '../../screens/store_pages/store_page.dart';
-import '../../screens/sign_in_options/logi_new_layout_web.dart';
+import '../../screens/sign_in_options/login_new_layout_web.dart';
 import '../../screens/sign_in_options/login_page.dart';
 import '../../utilities/constants/color_constants.dart';
 

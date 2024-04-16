@@ -96,12 +96,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
           // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Add Barcode to $item')));
           barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
 
-          // Get.snackbar('Add Barcode to $item', '👍',
-          //   snackPosition: SnackPosition.TOP,
-          //   backgroundColor: kCustomColor,
-          //   colorText: kBlack,
-          //   icon: Icon(Iconsax.smileys, color: kAppPinkColor,),
-          // );
         },
         child: Container(
           height: 60,
@@ -120,182 +114,188 @@ class _ProductEditPageState extends State<ProductEditPage> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child:
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0, bottom: 8.0),
-                child: Text('Change Product information', style: kNormalTextStyle.copyWith(color: kBlack),),
-              ),
-              Container(
-                height: 150,
-                width: 150,
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor,
-                  image: DecorationImage(image:
+          Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 1.5,
 
-                  CachedNetworkImageProvider(adminData.itemImage),
-
-                      fit: BoxFit.cover
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0, bottom: 8.0),
+                    child: Text('Change Product information', style: kNormalTextStyle.copyWith(color: kBlack),),
                   ),
-                ),
+                  Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor,
+                      image: DecorationImage(image:
 
-              ),
-              kSmallHeightSpacing,
-              SizedBox(
-                height:selectedTrackingValue == true ?500: 400,
-                child: Column(
+                      CachedNetworkImageProvider(adminData.itemImage),
 
-                  children: [
-
-
-                    InputFieldWidget(labelText:'Product Name' ,hintText: 'Hair Lotion', keyboardType: TextInputType.text, controller: adminData.item, onTypingFunction: (value){
-                      item = value;
-                    },),
-                    // SizedBox(height: 10.0,),
-                    InputFieldWidget(labelText: 'Description (Brief about this service)', hintText: 'Great for the skin', keyboardType: TextInputType.multiline,controller: adminData.itemDescription, onTypingFunction: (value){
-                      description = value;
-                    }),
-
-                    InputFieldWidget(labelText: 'Price', hintText: '10000', keyboardType: TextInputType.number,controller: adminData.price.toString(), onTypingFunction: (value){
-                      price = double.parse(value);
-                    }),
-                    // kLargeHeightSpacing
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Text("Do you Sell this item or it is used by not sold?", style: kNormalTextStyle.copyWith(color: kBlack),),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-
-
-                        Radio<bool>(
-                          fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
-                          value: true,
-                          groupValue: selectedSaleableValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedSaleableValue = value!;
-                              print(value);
-                            });
-                          },
-                        ),
-                        Text("Sale",style: kNormalTextStyle.copyWith(color: kBlack)),
-                        SizedBox(width: 16),
-                        Radio<bool>(
-                          fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
-                          value: false,
-                          groupValue: selectedSaleableValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedSaleableValue = value!;
-                              print(value);
-                            });
-                          },
-                        ),
-                        Text('Not for Sale',style: kNormalTextStyle.copyWith(color: kBlack)),
-
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20.0),
-                          child: Text("Track Stock Levels of this Product?", style: kNormalTextStyle.copyWith(color: kBlack),),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-
-
-                        Radio<bool>(
-                          fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
-                          value: true,
-                          groupValue: selectedTrackingValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedTrackingValue = value!;
-                              print(value);
-                            });
-                          },
-                        ),
-                        Text('Track',style: kNormalTextStyle.copyWith(color: kBlack)),
-                        SizedBox(width: 16),
-                        Radio<bool>(
-                          fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
-                          value: false,
-                          groupValue: selectedTrackingValue,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedTrackingValue = value!;
-                              print(value);
-                            });
-                          },
-                        ),
-                        Text("Don't Track",style: kNormalTextStyle.copyWith(color: kBlack)),
-
-                      ],
+                          fit: BoxFit.cover
+                      ),
                     ),
 
-                  selectedTrackingValue == true ?
-                    InputFieldWidget(readOnly: true, labelText: 'Quantity ', hintText: '20', keyboardType: TextInputType.numberWithOptions(decimal: true),controller: adminData.quantity.toString(), onTypingFunction: (value){
-                      itemQuantity = double.parse(value);
-                    }) : Container(),
-                    selectedTrackingValue == true ?
-                    InputFieldWidget(labelText: 'Minimum Quantity', hintText: '20', keyboardType: TextInputType.numberWithOptions(decimal: true),controller: adminData.itemMinimumQuantity.toString(), onTypingFunction: (value){
-                      itemMinimumQuantity = double.parse(value);
-                    }) : Container(),
+                  ),
+                  kSmallHeightSpacing,
+                  SizedBox(
+                    height:selectedTrackingValue == true ?500: 400,
+                    child: Column(
 
-                    Column(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: RoundedLoadingButton(
-                            color: kBlueDarkColorOld,
-                            child: Text('Update Item', style: TextStyle(color: Colors.white)),
-                            controller: _btnController,
-                            onPressed:
-                                () async {
-                              if ( description == '' || item == ''){
-                                _btnController.error();
-                                print("Desc: $description , Item: $item");
-                                showDialog(context: context, builder: (BuildContext context){
 
-                                  return CupertinoAlertDialog(
-                                    title: Text('Oops Something is Missing'),
-                                    content: Text('Make sure you have filled in all the fields'),
-                                    actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                        onPressed: (){
-                                          _btnController.reset();
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Cancel'))],
-                                  );
+
+                        InputFieldWidget(labelText:'Product Name' ,hintText: 'Hair Lotion', keyboardType: TextInputType.text, controller: adminData.item, onTypingFunction: (value){
+                          item = value;
+                        },),
+                        // SizedBox(height: 10.0,),
+                        InputFieldWidget(labelText: 'Description (Brief about this service)', hintText: 'Great for the skin', keyboardType: TextInputType.multiline,controller: adminData.itemDescription, onTypingFunction: (value){
+                          description = value;
+                        }),
+
+                        InputFieldWidget(labelText: 'Price', hintText: '10000', keyboardType: TextInputType.number,controller: adminData.price.toString(), onTypingFunction: (value){
+                          price = double.parse(value);
+                        }),
+                        // kLargeHeightSpacing
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Text("Do you Sell this item or it is used by not sold?", style: kNormalTextStyle.copyWith(color: kBlack),),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+
+
+                            Radio<bool>(
+                              fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
+                              value: true,
+                              groupValue: selectedSaleableValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSaleableValue = value!;
+                                  print(value);
                                 });
-                              }else {
-                                // print("WARARARA ${adminData.itemId}");
-                                updateItem(adminData.itemId);
-                                Navigator.pop(context);
+                              },
+                            ),
+                            Text("Sale",style: kNormalTextStyle.copyWith(color: kBlack)),
+                            SizedBox(width: 16),
+                            Radio<bool>(
+                              fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
+                              value: false,
+                              groupValue: selectedSaleableValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSaleableValue = value!;
+                                  print(value);
+                                });
+                              },
+                            ),
+                            Text('Not for Sale',style: kNormalTextStyle.copyWith(color: kBlack)),
 
-                                //Implement registration functionality.
-                              }
-                            },
-                          ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Text("Track Stock Levels of this Product?", style: kNormalTextStyle.copyWith(color: kBlack),),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+
+
+                            Radio<bool>(
+                              fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
+                              value: true,
+                              groupValue: selectedTrackingValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTrackingValue = value!;
+                                  print(value);
+                                });
+                              },
+                            ),
+                            Text('Track',style: kNormalTextStyle.copyWith(color: kBlack)),
+                            SizedBox(width: 16),
+                            Radio<bool>(
+                              fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
+                              value: false,
+                              groupValue: selectedTrackingValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedTrackingValue = value!;
+                                  print(value);
+                                });
+                              },
+                            ),
+                            Text("Don't Track",style: kNormalTextStyle.copyWith(color: kBlack)),
+
+                          ],
+                        ),
+
+                      selectedTrackingValue == true ?
+                        InputFieldWidget(readOnly: true, labelText: 'Quantity ', hintText: '20', keyboardType: TextInputType.numberWithOptions(decimal: true),controller: adminData.quantity.toString(), onTypingFunction: (value){
+                          itemQuantity = double.parse(value);
+                        }) : Container(),
+                        selectedTrackingValue == true ?
+                        InputFieldWidget(labelText: 'Minimum Quantity', hintText: '20', keyboardType: TextInputType.numberWithOptions(decimal: true),controller: adminData.itemMinimumQuantity.toString(), onTypingFunction: (value){
+                          itemMinimumQuantity = double.parse(value);
+                        }) : Container(),
+
+                        Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: RoundedLoadingButton(
+                                color: kBlueDarkColorOld,
+                                child: Text('Update Item', style: TextStyle(color: Colors.white)),
+                                controller: _btnController,
+                                onPressed:
+                                    () async {
+                                  if ( description == '' || item == ''){
+                                    _btnController.error();
+                                    print("Desc: $description , Item: $item");
+                                    showDialog(context: context, builder: (BuildContext context){
+
+                                      return CupertinoAlertDialog(
+                                        title: Text('Oops Something is Missing'),
+                                        content: Text('Make sure you have filled in all the fields'),
+                                        actions: [CupertinoDialogAction(isDestructiveAction: true,
+                                            onPressed: (){
+                                              _btnController.reset();
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Cancel'))],
+                                      );
+                                    });
+                                  }else {
+                                    // print("WARARARA ${adminData.itemId}");
+                                    updateItem(adminData.itemId);
+                                    Navigator.pop(context);
+
+                                    //Implement registration functionality.
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

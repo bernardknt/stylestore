@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -13,17 +14,15 @@ import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/products.dart';
 import 'package:stylestore/screens/payment_pages/pos_summary.dart';
-import 'package:stylestore/screens/products_pages/search_products.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/utilities/basket_items.dart';
-import 'package:stylestore/widgets/TicketDots.dart';
-import 'package:stylestore/widgets/search_bar.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
-import 'package:stylestore/widgets/transaction_buttons.dart';
+import 'package:stylestore/utilities/constants/user_constants.dart';
+
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
-import '../../../../../Utilities/constants/user_constants.dart';
+
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
 import '../../widgets/custom_popup.dart';
@@ -55,6 +54,8 @@ class _PosWebState extends State<PosWeb> {
   var amount = 0.0;
   var quantity = 1.0;
   var isStoreEmpty = false;
+  bool empty = false;
+  var currency = "USD";
   List<Product> products = [];
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
@@ -68,6 +69,8 @@ class _PosWebState extends State<PosWeb> {
   var checkBoxValue = false;
 
   void defaultInitialization() async {
+    final prefs = await SharedPreferences.getInstance();
+    currency = prefs.getString(kCurrency)??"USD";
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
@@ -80,6 +83,21 @@ class _PosWebState extends State<PosWeb> {
 
   bool isScanning = false;
 
+  void _showCurrencyPicker(BuildContext context) {
+    showCurrencyPicker(
+      context: context,
+      showFlag: true, // Show currency flag
+      showCurrencyName: true, // Show currency name
+      showCurrencyCode: true, // Show currency code
+      onSelect: (Currency currency) {
+        setState(() {
+          print(currency.code);
+         // _selectedCurrencyCode = currency.code;
+        });
+      },
+      favorite: ['USD', 'EUR', 'UGX'], // Can pre-select favorites
+    );
+  }
   Future<void> _startBarcodeScan() async {
     isScanning = true;
     while (isScanning) {
@@ -237,10 +255,18 @@ class _PosWebState extends State<PosWeb> {
           .where('saleable', isEqualTo: true)
           .orderBy('name', descending: false)
           .get();
+      // if (snapshot.connectionState == ConnectionState.waiting) {
+      //   return const Center(
+      //     child: CircularProgressIndicator(color: kAppPinkColor,),
+      //   );
+      // }
 
       final stockDataList = snapshot.docs
           .map((doc) => AllStockData.fromFirestore(doc))
           .toList();
+      if (stockDataList.isEmpty){
+        empty = true;
+      }
       return stockDataList;
     } catch (error) {
       print('Error retrieving stock data: $error');
@@ -276,12 +302,36 @@ class _PosWebState extends State<PosWeb> {
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
         centerTitle: true,
-        title:  Text(
-          '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
-          style: kNormalTextStyle.copyWith(
-              fontWeight: FontWeight.bold,
-              color: kBlack,
-              fontSize: 20),
+        title:  Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
+              style: kNormalTextStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: kBlack,
+                  fontSize: 20),
+            ),
+            kSmallWidthSpacing,
+            GestureDetector(
+              onTap: (){
+                _showCurrencyPicker(context);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+
+                  color: kPureWhiteColor,
+                  borderRadius: BorderRadius.circular(5)
+
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(Provider.of<StyleProvider>(context, listen: false).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                ),
+              ),
+            )
+          ],
         ),
         actions: [
           if (!kIsWeb)
@@ -300,14 +350,13 @@ class _PosWebState extends State<PosWeb> {
       ),
 
       body: permissionsMap['sales'] == false
-          ? LockedWidget(page: "Point Of Sale")
-          : Row(
-        children: [
-          Expanded(
+          ? const LockedWidget(page: "Point Of Sale")
+          :
+      Row(children: [
+            Expanded(
             child:
             Column(
               children: [
-
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -351,32 +400,34 @@ class _PosWebState extends State<PosWeb> {
                     ],
                   ),
                 ),
+                empty ==true ? Center(
+                  child: CustomPopupWidget(
+                    backgroundColour: kBlueDarkColor,
+                    actionButton: 'Create Product',
+                    subTitle: 'Add Products: Tap and sell',
+                    image: 'tap.jpg',
+                    title: 'Sell like a Pro',
+                    function: () {
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                                appBar: AppBar(
+                                  automaticallyImplyLeading:
+                                  false,
+                                  backgroundColor: kBlack,
+                                ),
+                                body: ProductUpload());
+                          });
+                    },
+                    youtubeLink: videoMap['sales'],),
+                ):
                 Expanded(
                   child: ListView.builder(
                       itemCount: filteredStock.length,
                       itemBuilder: (context, index) {
-                        return filteredStock.isEmpty ? CustomPopupWidget(
-                          backgroundColour: kBlueDarkColor,
-                          actionButton: 'Create Product',
-                          subTitle: 'Add Products: Tap and sell',
-                          image: 'tap.jpg',
-                          title: 'Sell like a Pro',
-                          function: () {
-                            showModalBottomSheet(
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (context) {
-                                  return Scaffold(
-                                      appBar: AppBar(
-                                        automaticallyImplyLeading:
-                                        false,
-                                        backgroundColor: kBlack,
-                                      ),
-                                      body: ProductUpload());
-                                });
-                          },
-                          youtubeLink: videoMap['sales'],) :
-                        GestureDetector(
+                        return GestureDetector(
                             onTap: () {
                               description = filteredStock[index].description;
                               amount = filteredStock[index].amount.toDouble();
@@ -601,7 +652,7 @@ class _PosWebState extends State<PosWeb> {
                                               ),
                                             ],
                                           ),
-                                          Text("Ugx ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
+                                          Text("$currency ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
                                             style: kNormalTextStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
                                                 color: kBlack, fontSize: 15),

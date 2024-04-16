@@ -3,10 +3,12 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/model/pdf_files/invoice.dart';
 import 'package:stylestore/model/stock_items.dart';
 import 'package:stylestore/screens/customer_pages/customer_data.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
+import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../Utilities/constants/color_constants.dart';
 import '../utilities/basket_items.dart';
 import '../utilities/customer_items.dart';
@@ -30,6 +32,7 @@ class StyleProvider extends ChangeNotifier{
   bool doesMobile = false;
   bool isActive = true;
   String paymentStatus = 'Submitted';
+  String storeCurrency = 'USD';
   String customerName = '';
   String customerId = '';
   String customerNumber  = '';
@@ -677,7 +680,10 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport, smsBalance){
+  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport, smsBalance, currency)async{
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(kCurrency, currency);
+    storeCurrency = prefs.getString(kCurrency)!;
     isActive = active;
     calendarBlackouts = blackoutDates;
     beauticianClients = beauticianImages;

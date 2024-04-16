@@ -8,7 +8,7 @@ import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/employee_pages/employees_page.dart';
-import 'package:stylestore/screens/sign_in_options/logi_new_layout_web.dart';
+import 'package:stylestore/screens/sign_in_options/login_new_layout_web.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';

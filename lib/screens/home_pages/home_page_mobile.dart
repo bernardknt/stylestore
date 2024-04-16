@@ -28,6 +28,7 @@ import 'package:stylestore/widgets/report_popup.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../utilities/constants/user_constants.dart';
+import '../chat_messages/chat.dart';
 
 class HomePage extends StatefulWidget {
   static String id = 'home_page';
@@ -400,6 +401,42 @@ class _HomePageState extends State<HomePage> {
       //     updateMedicsSubscriptionDates();
       //   },
       // ),
+      floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
+          children: [
+            // Container(
+            //   height: 50,
+            //   width: 80,
+            // ) ,
+
+            FloatingActionButton(
+              onPressed: (){
+
+
+                showDialog(context: context, builder: (BuildContext context){
+                  return
+                    GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: ChatPage());
+                });
+              },
+              child:
+              Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
+              // Icon(Iconsax.airpod1, color: kPureWhiteColor,),
+              backgroundColor: kBlueDarkColor,
+            ),
+            Positioned(
+              left: 0,
+              top: 0,
+              child: CircleAvatar(
+                backgroundColor: kAppPinkColor,
+                radius: 7,
+                child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
+              ),
+            ),
+          ]
+      ),
       body: WillPopScope(
         onWillPop: ()async{
           return false;

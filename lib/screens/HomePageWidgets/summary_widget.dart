@@ -131,7 +131,8 @@ class _SummaryPageState extends State<SummaryPage> {
                   }
                   if (!snapshot.hasData) {
                     return Container();
-                  } else {
+                  }
+                  else {
                     productList = [];
                     orderStatusList = [];
                     priceList = [];
@@ -166,7 +167,7 @@ class _SummaryPageState extends State<SummaryPage> {
                       paymentDueDateList.add(doc['payment_date'].toDate());
                       paidAmountList.add(doc['paidAmount']);
                       // Here is where the customer id error is
-                      customerIdList.add("doc['customerId']");
+                      customerIdList.add(doc['customerId']);
 
                       if (doc['paymentStatus'] == 'Complete') {
                         paidStatusList.add('Paid');
@@ -248,7 +249,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                               transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                               paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
                                               clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
-                                          );
+                                            );
                                         });
                                   },
                                   child: Card(

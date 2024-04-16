@@ -101,6 +101,7 @@ class _SuccessPageState extends State<SuccessPage> {
       'paymentStatus': 'offline',
       'payment_date': providerData.paymentDate,
       'bookingFee' :  0,
+      'paymentHistory':[],
       'image' :providerData.beauticianImageUrl,
       'rating':0,
       'rating_comment': '',
@@ -112,7 +113,7 @@ class _SuccessPageState extends State<SuccessPage> {
       'token': token,
       'phoneNumber': providerData.customerNumber,
       'items':basketToPost,
-      'currency': "Ugx",
+      'currency': providerData.storeCurrency,
       'notes': providerData.transactionNote,
       'sms':CommonFunctions().smsValue(providerData.beauticianName, CommonFunctions().formatPhoneNumber(prefs.getString(kPhoneNumberConstant)!, prefs.getString(kCountryCode)?? "+256"), providerData.customerName,  prefs.getString(kCountryCode)?? "+256"),
 
