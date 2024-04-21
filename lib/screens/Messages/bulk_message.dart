@@ -35,24 +35,7 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
   var options =[];
   bool showManually = false;
 
-  Future<List<AllCustomerData>> retrieveCustomerData() async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('customers')
-          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
-          .orderBy('name', descending: false)
-          .get();
 
-      final customerDataList = snapshot.docs
-          .map((doc) => AllCustomerData.fromFirestore(doc))
-          .toList();
-
-      return customerDataList;
-    } catch (error) {
-      print('Error retrieving employee data: $error');
-      return []; // Return an empty list if an error occurs
-    }
-  }
 
   TextEditingController searchController = TextEditingController();
   List<AllCustomerData> filteredCustomers = [];
@@ -84,11 +67,9 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
 
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
-    Map<String, dynamic> jsonMap = json.decode(Provider.of<StyleProvider>(context, listen: false).invoiceSms);
-    newCustomers = await retrieveCustomerData();
-    print(newCustomers);
+    newCustomers = await CommonFunctions().retrieveCustomerData(context);
     filteredCustomers.addAll(newCustomers);
-    options = jsonMap['options'];
+    // options = jsonMap['options'];
     setState(() {});
   }
 
@@ -134,7 +115,6 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
   @override
   Widget build(BuildContext context) {
     var beauticianDataListen = Provider.of<BeauticianData>(context);
-    var beauticianData = Provider.of<BeauticianData>(context, listen: false);
     var styleData = Provider.of<StyleProvider>(context, listen: false);
     var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
     return Scaffold(
@@ -264,73 +244,7 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
 
 
       ),
-      // appBar: AppBar(
-      //   backgroundColor: kPureWhiteColor,
-      //   foregroundColor: kBlack,
-      //   elevation: 0,
-      //   title: Icon(Icons.mark_email_read_rounded, color: kAppPinkColor,),
-      //   actions: [
-      //     TextButton(onPressed: (){
-      //       showDialog(context: context, builder: (BuildContext context){
-      //         return
-      //           GestureDetector(
-      //             onTap: (){
-      //               Navigator.pop(context);
-      //             },
-      //             child: Material(
-      //               color: Colors.transparent,
-      //               child: Padding(
-      //                 padding: const EdgeInsets.all(8.0),
-      //                 child: ListView.builder(
-      //                   itemCount: options.length,
-      //                   itemBuilder: (BuildContext context, int index) {
-      //                     return GestureDetector(
-      //                       onTap: (){
-      //                         Navigator.pop(context);
-      //                       },
-      //                       child: Container(
-      //                         width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
-      //
-      //                         // height: 250,
-      //                         margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
-      //                         decoration: BoxDecoration(
-      //                           color: kAppPinkColor.withOpacity(0.8),
-      //                           borderRadius: BorderRadius.circular(20.0),
-      //                         ),
-      //                         child: GestureDetector(
-      //                           onTap: (){
-      //                             controller = TextEditingController()..text = options[index];
-      //                             beauticianDataListen.setTextMessage(options[index]);
-      //                             Navigator.pop(context);
-      //                             setState(() {
-      //
-      //                             });
-      //                             // Provider.of<StyleProvider>(context, listen: false).set
-      //                           },
-      //                           child: ListTile(
-      //                             title: Text(
-      //                               options[index],
-      //                               style: TextStyle(color: Colors.white, fontSize: 14),
-      //                             ),
-      //                           ),
-      //                         ),
-      //                       ),
-      //                     );
-      //                   },
-      //                 ),
-      //               ),
-      //             ),
-      //           );
-      //
-      //       });
-      //
-      //
-      //     }, child: Text("Message Variations", style: kNormalTextStyle.copyWith(color: Colors.blue),))
-      //
-      //   ],
-      //
-      //
-      // ),
+
 
       body:  SingleChildScrollView(
         child: Column(
@@ -508,42 +422,48 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
                     ):SizedBox(),
                     kSmallHeightSpacing,
                     SizedBox(
-                      height: 30,
+                      height: 50,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: Provider.of<StyleProvider>(context).bulkNumbers.length,
                         itemBuilder: (context, i) {
                           return GestureDetector(
                             onTap: (){
-                              Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i]);
+                              Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],Provider.of<StyleProvider>(context, listen: false).bulkNames[i] );
                             },
                             child: Padding(
                               padding:
                               const EdgeInsets.only(
                                   right: 3.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: kSalesButtonColor,
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                      10),
-                                ),
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.all(
-                                      8.0),
-                                  child: Text(
-                                    Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],
-                                    style:
-                                    kNormalTextStyleDark
-                                        .copyWith(
-                                      color:
-                                      kBlack,
-                                      fontWeight:
-                                      FontWeight.bold,
+                              child: Column(
+                                children: [
+                                  Text(Provider.of<StyleProvider>(context, listen: false).bulkNames[i],style: kNormalTextStyle.copyWith(fontSize: 9),),
+
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: kSalesButtonColor,
+                                      borderRadius:
+                                      BorderRadius.circular(
+                                          10),
+                                    ),
+                                    child: Padding(
+                                      padding:
+                                      const EdgeInsets.all(
+                                          8.0),
+                                      child: Text(
+                                        Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],
+                                        style:
+                                        kNormalTextStyleDark
+                                            .copyWith(
+                                          color:
+                                          kBlack,
+                                          fontWeight:
+                                          FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           );
@@ -606,7 +526,7 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
                               subtitle: Text('Phone: ${filteredCustomers[index].phone}'),
                               onTap: () {
                                 // Handle employee item tap
-                                styleDataListen.addBulkSmsList(filteredCustomers[index].phone);
+                                styleDataListen.addBulkSmsList(filteredCustomers[index].phone, filteredCustomers[index].fullNames);
                               },
                             ),
                           );

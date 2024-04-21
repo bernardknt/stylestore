@@ -276,8 +276,8 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
 
 
                                     Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
-                                    Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(CommonFunctions().removeDuplicates(clientPhoneList));
-                                  Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
+                                    Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(CommonFunctions().removeDuplicates(clientPhoneList), CommonFunctions().removeDuplicates(clientList));
+                                    Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
                                     showModalBottomSheet(
                                         isScrollControlled: true,
                                         context: context,

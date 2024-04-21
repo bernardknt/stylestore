@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
 import '../../screens/Documents_Pages/dummy_document.dart';
@@ -15,8 +15,6 @@ import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'dart:html' as html;
-
-
 
 
 class PdfInvoicePdfHelper {
@@ -163,7 +161,7 @@ static testWebPdf ()async{
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           buildCustomerAddress(invoice.customer, invoice.template),
-          buildInvoiceInfo(invoice.info),
+          buildInvoiceInfo(invoice.info, invoice),
         ],
       ),
     ],
@@ -179,11 +177,11 @@ static testWebPdf ()async{
     ],
   );
 
-  static Widget buildInvoiceInfo(InvoiceInfo info) {
+  static Widget buildInvoiceInfo(InvoiceInfo info, Invoice invoice) {
     final paymentTerms = '${info.dueDate.difference(info.date).inDays} days';
     final titles = <String>[
-      'Invoice Number:',
-      'Invoice Date:',
+      '${CommonFunctions().capitalizeFirstLetter(invoice.template.type)} Number:',
+      '${CommonFunctions().capitalizeFirstLetter(invoice.template.type)} Date:',
       'Payment Terms:',
       'Due Date:'
     ];
@@ -234,7 +232,6 @@ static testWebPdf ()async{
       'Details',
       'Quantity',
       'Price',
-      // 'VAT',
       'Amount'
     ];
     final data = invoice.items.map((item) {
@@ -248,7 +245,7 @@ static testWebPdf ()async{
         '${item.quantity.toStringAsFixed(0)}',
         '${CommonFunctions().formatter.format(item.unitPrice)}',
         // '${item.vat} %',
-        'Ugx ${CommonFunctions().formatter.format(total)}',
+        '${invoice.template.currency} ${CommonFunctions().formatter.format(total)}',
       ];
     }).toList();
 
@@ -272,29 +269,15 @@ static testWebPdf ()async{
 
   static Widget buildTotal(Invoice invoice) {
     final receiptAmount = invoice.paid.amount;
-    // final netTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity))
-    //     .fold<double>(0.0, (previousValue, item) => (previousValue as double) + item)  - receiptAmount;
-
-    // final netTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity) - receiptAmount)
-    //     .fold(0.0, (previousValue, item) => (previousValue ?? 0.0) + item);
     final netTotal = invoice.items
         .map((item) => (item.unitPrice * item.quantity) )
         .reduce((item1, item2) => item1 + item2) - receiptAmount;
-    // final billTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity))
-    //     .fold<double>(0.0, (previousValue, item) => (previousValue as double) + item);
 
     final billTotal = invoice.items
         .map((item) => item.unitPrice * item.quantity)
         .reduce((item1, item2) => item1 + item2);
 
-    // final vatPercent = invoice.items.first.vat;
-    // final vat = netTotal * vatPercent;
-    // final total = netTotal + vat;
     final total = netTotal;
-
 
     return
       receiptAmount != 0.0 ?
@@ -310,7 +293,7 @@ static testWebPdf ()async{
               children: [
                 buildText(
                   title: 'Total',
-                  value: Utils.formatPrice(billTotal),
+                  value: "${invoice.template.currency} ${Utils.formatPrice(billTotal)}",
                   unite: true,
                 ),
                 pw.SizedBox(height: 10),
@@ -322,7 +305,7 @@ static testWebPdf ()async{
                     color: PdfColor.fromHex("#0AB11B"),
                     fontWeight: FontWeight.normal,
                   ),
-                  value: Utils.formatPrice(receiptAmount),
+                  value: "${invoice.template.currency} ${Utils.formatPrice(receiptAmount)}",
                   unite: true,
                 ),
                 Divider(),
@@ -332,7 +315,7 @@ static testWebPdf ()async{
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                  value: Utils.formatPrice(total),
+                  value:" ${invoice.template.currency} ${Utils.formatPrice(total)}",
                   unite: true,
                 ),
                 SizedBox(height: 2 * PdfPageFormat.mm),
@@ -357,20 +340,10 @@ static testWebPdf ()async{
                 children: [
                   buildText(
                     title: 'Total',
-                    value: Utils.formatPrice(netTotal),
+                    value: "${invoice.template.currency} ${Utils.formatPrice(netTotal)}",
                     unite: true,
                   ),
-                  // pw.SizedBox(height: 10),
-                  // buildText(
-                  //   title: 'Paid',
-                  //   value: Utils.formatPrice(netTotal),
-                  //   unite: true,
-                  // ),
-                  // buildText(
-                  //   title: 'Vat ${vatPercent * 100} %',
-                  //   value: Utils.formatPrice(vat),
-                  //   unite: true,
-                  // ),
+
                   Divider(),
                   buildText(
                     title: invoice.template.totalStatement,
@@ -378,7 +351,7 @@ static testWebPdf ()async{
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
-                    value: Utils.formatPrice(total),
+                    value: "${invoice.template.currency} ${Utils.formatPrice(total)}",
                     unite: true,
                   ),
                   SizedBox(height: 2 * PdfPageFormat.mm),
@@ -400,7 +373,7 @@ static testWebPdf ()async{
       SizedBox(height: 2 * PdfPageFormat.mm),
       buildSimpleText(title: 'Address', value: invoice.supplier.address),
       SizedBox(height: 1 * PdfPageFormat.mm),
-      buildSimpleText(title: 'Payment', value: invoice.supplier.paymentInfo),
+      buildSimpleText(title: 'Payment Details: ', value: invoice.supplier.paymentInfo),
       SizedBox(height: 1 * PdfPageFormat.mm),
       // buildSimpleText(title: 'Website:', value: 'https://businesspilotapp.com'),
     ],

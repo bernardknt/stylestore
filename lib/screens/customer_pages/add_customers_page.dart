@@ -115,7 +115,7 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
 
   Future<void> addCustomer(urlToPhoto) async{
     final prefs = await SharedPreferences.getInstance();
-
+    String account = prefs.getString(kLoginPersonName) ?? "";
     // Call the user's CollectionReference to add a new user
     return customerProvided.doc(customerId)
         .set({
@@ -127,8 +127,8 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
       'category': 'main',
       'hasOptions': true,
       'info': description,
-      'name': customerName,
-      'updateBy': "Bernard Kangave",
+      'name': CommonFunctions().removeLeadingTrailingSpaces(customerName),
+      'updateBy': account,
       'options':  optionsToUpload,
       'storeId': prefs.getString(kStoreIdConstant),
     })

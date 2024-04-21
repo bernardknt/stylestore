@@ -24,6 +24,7 @@ class StyleProvider extends ChangeNotifier{
   ;
 
   List<String>  bulkNumbers = [];
+  List<String>  bulkNames = [];
   List<String> selectedStock = [];
 
   String userName = '';
@@ -110,9 +111,7 @@ class StyleProvider extends ChangeNotifier{
   double invoicedPriceToPay = 0;
   double invoicedBalance = 0;
   String invoicedCustomer = "";
-
   String invoiceTransactionId= "";
-
   String invoiceSms= "";
   String invoicedExpenseNumber = "700123456";
   DateTime invoicedDate = DateTime.now();
@@ -124,6 +123,9 @@ class StyleProvider extends ChangeNotifier{
   double expenseTotalPrice = 0.0;
   DateTime expenseDate= DateTime.now();
   List expenseItems = [];
+  List <AllCustomerData> businessCustomers = [];
+
+
 
 
 
@@ -142,7 +144,6 @@ class StyleProvider extends ChangeNotifier{
   Color preferencesContinueColor = kButtonGreyColor;
   List preferencesSelected = [];
   DateTime appointmentDate = DateTime.now();
-  //DateTime invoicedDate = DateTime.now();
   DateTime appointmentTime = DateTime.now();
   DateTime subscriptionDate = DateTime.now();
 
@@ -165,22 +166,46 @@ class StyleProvider extends ChangeNotifier{
   List <Stock> selectedStockItems = [];
   String pendingPaymentStatement = 'Payment in Process';
   String stockId = '';
-
   Color liveIndicatorColor = kGreenThemeColor;
   String liveIndicatorString = 'Online';
-
   DateTime paymentDate = DateTime.now();
-
   List <InvoiceItem> invoiceItems = [];
-
   Iterable<Contact>? contacts;
   Map youtubeVideos = {};
-
   String expense = "";
+  Map employeeChecklist = {};
+  Map <String, bool>debtorsChecklist = {};
+
+
+  void setBusinessCustomers (business) {
+    businessCustomers = business;
+    notifyListeners();
+  }
+
+  void setEmployeeChecklistValues (checklistValue) {
+    employeeChecklist = checklistValue;
+    notifyListeners();
+
+  }
+
+  void changeEmployeeChecklistValues (checklistValue) {
+    employeeChecklist = checklistValue;
+    notifyListeners();
+  }
+
+  void setDebtorChecklistValues (checklistValue) {
+    debtorsChecklist = checklistValue;
+    notifyListeners();
+
+  }
+
+  void changeDebtorChecklistValues (checklistValue) {
+    debtorsChecklist = checklistValue;
+    notifyListeners();
+  }
 
   void setSubscription (date ){
     subscriptionDate = date;
-    print("$date ADDED");
     notifyListeners();
 
   }
@@ -225,11 +250,14 @@ class StyleProvider extends ChangeNotifier{
     supplierName = name;
     notifyListeners();
   }
-  void addBulkSmsList(value) {
-    if (bulkNumbers.contains(value)) {
-      bulkNumbers.remove(value);
+  void addBulkSmsList(phoneNumber, name) {
+    if (bulkNumbers.contains(phoneNumber)) {
+      bulkNumbers.remove(phoneNumber);
+      bulkNames.remove(name);
+
     } else {
-      bulkNumbers.add(value);
+      bulkNumbers.add(phoneNumber);
+      bulkNames.add(name);
     }
     notifyListeners();
   }
@@ -264,13 +292,27 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void addNormalContactToSmsList(List value) {
-    for (String contact in value) {
-      if (bulkNumbers.contains(value)) {
-        // print( "$value FOUND");
+  // void addNormalContactToSmsList(List phoneNumber, List names) {
+  //   print("phoneNumber: ${phoneNumber.length} names: ${names.length}");
+  //   print("$")
+  //   for (String contact in phoneNumber) {
+  //     if (bulkNumbers.contains(phoneNumber)) {
+  //       continue;
+  //     } else {
+  //       bulkNumbers.add(contact);
+  //       bulkNames.add(contact);
+  //     }
+  //   }
+  //   notifyListeners();
+  // }
+
+  void addNormalContactToSmsList(List phoneNumber, List names) {
+    for (int i = 0; i < phoneNumber.length; i++) { // Using index for name association
+      if (bulkNumbers.contains(phoneNumber[i])) {
         continue;
       } else {
-        bulkNumbers.add(contact);
+        bulkNumbers.add(phoneNumber[i]);
+        bulkNames.add(names[i]); // Add corresponding name
       }
     }
     notifyListeners();

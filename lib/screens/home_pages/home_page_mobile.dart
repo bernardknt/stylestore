@@ -365,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: (){
 
                           // Navigator.pop(context);
-                          CommonFunctions().signOutUser(context);
+                          CommonFunctions().signOutUser(context, false);
 
                         }, child: Text(cSignOut.tr),)
                     ],

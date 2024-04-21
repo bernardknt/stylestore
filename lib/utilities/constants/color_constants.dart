@@ -39,6 +39,8 @@ const kBlack = Color(0xFF0A0909);
 const kRedColor = Color(0xFFFF0000);
 const kBeigeColor = Color(0xFFfce7af);
 const kContainerGrey = Color(0xFF5d5d5d);
+Color faintPinkThemeColor = Color(0xff8d0f5a).withOpacity(0.1);
+
 
 // Button Colours
 // Sales button colour

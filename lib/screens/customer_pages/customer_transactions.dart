@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
 
 import '../../Utilities/constants/color_constants.dart';
 import '../../model/beautician_data.dart';
@@ -70,10 +71,11 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
   // var blendedData = Provider.of<BlenditData>(context);
 
   return Scaffold(
+    backgroundColor: kPlainBackground,
     appBar: AppBar(
-      title: Text("${Provider.of<BeauticianData>(context, listen: false).clientName}'s buying History", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-      backgroundColor: kAppPinkColor,
-      foregroundColor: kPureWhiteColor,
+      title: Text("${Provider.of<BeauticianData>(context, listen: false).clientName}'s buying History", style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+      backgroundColor: kPlainBackground,
+      foregroundColor: kBlack,
       centerTitle: true,
       actions: [
         Padding(
@@ -82,7 +84,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
             onTap: (){
               CommonFunctions().callPhoneNumber(Provider.of<BeauticianData>(context, listen: false).customerPhoneNumber);
             },
-            child: Icon(Icons.call, color: kPureWhiteColor,),
+            child: Icon(Icons.call, color: kAppPinkColor,),
           ),
         )
       ],
@@ -171,7 +173,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
                 children: [
                   Container(
                     width: 450,
-                    color: kBackgroundGreyColor,
+                    color: kPlainBackground,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -212,6 +214,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
                                         //     , outsideRingColor: kBackgroundGreyColor),
                                         CircleAvatar(
                                           radius: 40,
+                                          backgroundColor: kAppPinkColor.withOpacity(0.1),
                                           child:  Icon(Icons.person, size: 40,),
                                         ),
                                         kMediumWidthSpacing,
@@ -289,31 +292,6 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
 
                           ),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //
-                        //   child: Container(
-                        //     width: double.maxFinite,
-                        //     decoration: BoxDecoration(
-                        //         color: kPureWhiteColor,
-                        //         borderRadius: BorderRadius.circular(10)
-                        //     ),
-                        //     child:
-                        //     Padding(
-                        //       padding: const EdgeInsets.all(8.0),
-                        //       child: Column(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           Text("Note",style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold),),
-                        //           kSmallHeightSpacing,
-                        //           Text(Provider.of<BeauticianData>(context, listen: false).customerNote),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //
-                        //   ),
-                        // )
                       ],
                     ),
                   ),
@@ -368,7 +346,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
                                             padding: const EdgeInsets.only(top:8.0),
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                  color: kPlainBackground.withOpacity(0.5),
+                                                  color: kBabyPinkThemeColor.withOpacity(0.3),
                                                   borderRadius: BorderRadius.circular(10)
                                               ),
 
@@ -392,7 +370,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
 
                                                           }),
                                                       leading: priceList[index] - paidAmountList[index] == 0?
-                                                      Text("Paid",style: kNormalTextStyle.copyWith(color: kGreenThemeColor,  fontSize: 10),):Text("Not Paid" ,style: kNormalTextStyle.copyWith(color: kRedColor, fontSize: 10),),
+                                                      kIconPaidIcon:kIconNotPaidIcon,
                                                       trailing: Padding(
                                                         padding: const EdgeInsets.only(right: 10, top: 20),
                                                         child: Text("${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),

@@ -29,12 +29,6 @@ class AllCustomerData {
       photo: doc['image'] ?? '',
       info: doc['info'] ?? '',
       phone: doc['phoneNumber'] ?? '',
-      // options: doc['options'] ?? '',
-
-
-
-
-
     );
   }
 }

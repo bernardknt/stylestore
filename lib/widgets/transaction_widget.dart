@@ -233,7 +233,7 @@ class TransactionWidget extends StatelessWidget {
                                               number: '${transIdList[index]}',
                                             ),
                                             items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                            template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due"),
+                                            template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due", currency: currency[index]),
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
 
                                         if(kIsWeb){
@@ -277,7 +277,7 @@ class TransactionWidget extends StatelessWidget {
                                               number: '${transIdList[index]}',
                                             ),
                                             items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                            template: InvoiceTemplate(type: 'Price Qoutation', salutation: 'Quotation to', totalStatement: "Total Amount"),
+                                            template: InvoiceTemplate(type: 'QUOTATION', salutation: 'Quotation to', totalStatement: "Total Amount", currency: currency[index]),
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
                                         if(kIsWeb){
 
@@ -313,7 +313,7 @@ class TransactionWidget extends StatelessWidget {
                                               number: '${transIdList[index]}',
                                             ),
                                             items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                            template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due"),
+                                            template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due", currency: currency[index]),
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
                                         if(kIsWeb){
 

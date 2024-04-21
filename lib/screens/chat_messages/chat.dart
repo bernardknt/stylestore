@@ -21,6 +21,9 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
+import 'package:stylestore/screens/store_pages/store_page.dart';
+import 'package:stylestore/screens/store_pages/store_page_web.dart';
 import 'package:stylestore/screens/transactions_pages/unpaid_transactions_page.dart';
 
 import '../../Utilities/constants/color_constants.dart';
@@ -443,7 +446,7 @@ class _ChatPageState extends State<ChatPage> {
                             stream: FirebaseFirestore.instance
                                 .collection('chat')
                                 .where('userId', isEqualTo: storeId)
-                                // .orderBy('time',descending: true)
+                                .orderBy('time',descending: true)
                                 .snapshots(),
                             builder: (context, snapshot)
                             {
@@ -579,31 +582,47 @@ class _ChatPageState extends State<ChatPage> {
                                                                           linkStyle: TextStyle(color: Colors.blue),
                                                                           text: responseList[index]),
                                                                       messageStatusList[index] =="receivables"?
-                                                                      Column(
-                                                                        children: [
-                                                                          kLargeHeightSpacing,
-                                                                          TextButton(
-                                                                              style: TextButton.styleFrom(
-                                                                                backgroundColor: kAppPinkColor,
-                                                                                foregroundColor: Colors.white, // White text on blue background
-                                                                              ),
-                                                                              onPressed: (){
-                                                                                // Navigator.pop(context);
+                                                                      Padding(
+                                                                        padding: const EdgeInsets.only(top: 10.0),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            kLargeHeightSpacing,
+                                                                            TextButton(
+                                                                                style: TextButton.styleFrom(
+                                                                                  backgroundColor: kAppPinkColor,
+                                                                                  foregroundColor: Colors.white, // White text on blue background
+                                                                                ),
+                                                                                onPressed: (){
+                                                                                  // Navigator.pop(context);
 
-                                                                                showDialog(context: context, builder: (BuildContext context){
-                                                                                  return
-                                                                                    GestureDetector(
-                                                                                        onTap: (){
-                                                                                          Navigator.pop(context);
-                                                                                        },
-                                                                                        child: Scaffold(
-                                                                                            appBar: AppBar(
+                                                                                  showDialog(context: context, builder: (BuildContext context){
+                                                                                    return
+                                                                                      GestureDetector(
+                                                                                          onTap: (){
+                                                                                            Navigator.pop(context);
+                                                                                          },
+                                                                                          child: Scaffold(
+                                                                                              appBar: AppBar(
 
-                                                                                            ),
-                                                                                            body: UnpaidTransactionsPage()));
-                                                                                });
-                                                                              }, child: Text("View Payables")),
-                                                                        ],
+                                                                                              ),
+                                                                                              body: UnpaidTransactionsPage()));
+                                                                                  });
+                                                                                }, child: Text("View Clients")),
+                                                                            kSmallWidthSpacing,
+                                                                            TextButton(
+                                                                                style: TextButton.styleFrom(
+                                                                                  backgroundColor: kBlack,
+                                                                                  foregroundColor: Colors.white, // White text on blue background
+                                                                                ),
+                                                                                onPressed: (){
+                                                                                  // Navigator.pop(context);
+                                                                                  print(CommonFunctions().extractNames(responseList[index]));
+                                                                                  CommonFunctions().showDebtorsDialog(context,CommonFunctions().createChecklist(CommonFunctions().extractNames(responseList[index])));
+
+
+                                                                                }, child: Text("Send Reminders")),
+                                                                          ],
+                                                                        ),
                                                                       ):
                                                                       messageStatusList[index] =="stock"?
                                                                       Column(
@@ -627,7 +646,7 @@ class _ChatPageState extends State<ChatPage> {
                                                                                             appBar: AppBar(
 
                                                                                             ),
-                                                                                            body: UnpaidTransactionsPage()));
+                                                                                            body: SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb())));
                                                                                 });
                                                                               }, child: Text("See Stock")),
                                                                         ],

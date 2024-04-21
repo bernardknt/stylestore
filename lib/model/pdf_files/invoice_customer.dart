@@ -21,12 +21,14 @@ class InvoiceTemplate {
   final String type;
   final String salutation;
   final String totalStatement;
+  final String currency;
 
 
   const InvoiceTemplate({
     required this.type,
     required this.salutation,
     required this.totalStatement,
+    required this.currency
 
   });
 }

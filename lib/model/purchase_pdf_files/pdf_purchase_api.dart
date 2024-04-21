@@ -36,25 +36,7 @@ class PdfPurchasePdfHelper {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       SizedBox(height: 1 * PdfPageFormat.cm),
-      // Row(
-      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //   children: [
-      //     buildSupplierAddress(invoice.supplier),
-      //     Container(
-      //       height: 80,
-      //       width: 80,
-      //       child:
-      //       //pw.Image(pw.MemoryImage(File('images/mm.png').readAsBytesSync())),
-      //
-      //       BarcodeWidget(
-      //         barcode: Barcode.qrCode(
-      //
-      //         ),
-      //         data: invoice.info.number,
-      //       ),
-      //     ),
-      //   ],
-      // ),
+
       SizedBox(height: 1 * PdfPageFormat.cm),
       Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -210,17 +192,6 @@ class PdfPurchasePdfHelper {
                   value: Utils.formatPrice(billTotal),
                   unite: true,
                 ),
-                // pw.SizedBox(height: 10),
-                // buildText(
-                //   title: 'Paid',
-                //   value: Utils.formatPrice(receiptAmount),
-                //   unite: true,
-                // ),
-                // buildText(
-                //   title: 'Vat ${vatPercent * 100} %',
-                //   value: Utils.formatPrice(vat),
-                //   unite: true,
-                // ),
                 Divider(),
                 buildText(
                   title: invoice.template.totalStatement,

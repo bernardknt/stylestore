@@ -369,6 +369,8 @@ class _SignInUserPageState extends State<SignInUserPage> {
         'id': orderId,
         'storeId': prefs.getString(kStoreIdConstant),
         'token': token,
+        'forced':false,
+        'checklist': {}
 
       })
           .then((value) {
@@ -380,7 +382,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
         CommonFunctions().updateEmployeeSignInAndOutDoc(true);
         CommonFunctions().updateUserNotificationToken(prefs.getString(kEmployeeId));
-        CommonFunctions().showChecklistDialog(context);
+        CommonFunctions().showChecklistToBeDoneDialog(context);
 
 
       } )

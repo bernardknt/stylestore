@@ -33,3 +33,5 @@ const kIconArrowLeft =  CircleAvatar(backgroundColor: kFontGreyColor, radius: 8,
 const kIconArrowRight =  CircleAvatar(backgroundColor: kFontGreyColor, radius: 8, child: Icon(Icons.arrow_forward, size: 12, color: kPureWhiteColor,));
 const kIconCancel =  Icon(Icons.cancel, color: kBlack,size: kIconSize,);
 const kIconBackWhite =  Icon(Icons.cancel, color: kPureWhiteColor,size: 25,);
+const kIconNotPaidIcon = Icon(Icons.flag_circle, color: Colors.red, size: 15,);
+const kIconPaidIcon = Icon(Icons.check_circle_outline, color: kGreenThemeColor, size: 15,);

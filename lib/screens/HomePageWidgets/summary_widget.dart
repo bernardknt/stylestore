@@ -22,6 +22,7 @@ import 'package:stylestore/screens/edit_invoice_pages/edit_invoice.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/Messages/message.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
@@ -267,18 +268,8 @@ class _SummaryPageState extends State<SummaryPage> {
                                             children: [
                                               priceList[index] !=
                                                       paidAmountList[index]
-                                                  ? Icon(
-                                                      Icons.flag_circle,
-                                                      color: Colors.red,
-                                                      size: 15,
-                                                    )
-                                                  : Icon(
-                                                      Icons
-                                                          .check_circle_outline,
-                                                      color:
-                                                          kGreenThemeColor,
-                                                      size: 15,
-                                                    ),
+                                                  ? kIconNotPaidIcon
+                                                  : kIconPaidIcon,
                                               kSmallWidthSpacing,
                                               Column(
                                                 crossAxisAlignment:

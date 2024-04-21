@@ -3,11 +3,12 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 
-import '../Utilities/constants/font_constants.dart';
 
 class EmployeePreChecklist extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class EmployeePreChecklist extends StatefulWidget {
 class _EmployeePreChecklistState extends State<EmployeePreChecklist> {
   Map<String, bool> checklistItems = {
   };
+  Map<String, bool> selectedItems = {};
 
 
   Future<Map<String, bool>?> getChecklistAsMap(String documentId) async {
@@ -63,17 +65,18 @@ class _EmployeePreChecklistState extends State<EmployeePreChecklist> {
             ));
       }
       );
-
       Map<String, bool>? result = await getChecklistAsMap(employeeId);
       setState(() {
-        // isLoading = false;
+
         if (result != null) {
           checklistItems = result;
+          Provider.of<StyleProvider>(context, listen: false).setEmployeeChecklistValues(result);
           Navigator.pop(context);
           if(checklistItems.isEmpty){
             Navigator.pop(context);
           }
         } else {
+
           // Handle error (e.g., show a message to the user)
         }
       });
@@ -89,20 +92,34 @@ class _EmployeePreChecklistState extends State<EmployeePreChecklist> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min, // Keep dialog compact
-      children: checklistItems.entries.map((entry) {
-        return CheckboxListTile(
-          activeColor: kBlueDarkColor,
-          title: Text(entry.key),
-          value: entry.value,
-          onChanged: (newValue) {
-            setState(() {
-              checklistItems[entry.key] = newValue!;
-            });
-          },
-        );
-      }).toList(),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Keep dialog compact
+        children: checklistItems.entries.map((entry) {
+          return
+            CheckboxListTile(
+            activeColor: kBlueDarkColor,
+            title: Text(entry.key),
+            value: entry.value,
+            onChanged: (newValue) {
+              setState(() {
+                checklistItems[entry.key] = newValue!;
+                if (newValue!) {
+                  // Provider.of<StyleProvider>(context, listen: false).changeChecklistValues(checklistValue)
+                  selectedItems[entry.key] = newValue!;
+                  Provider.of<StyleProvider>(context, listen: false).changeEmployeeChecklistValues(checklistItems);
+      
+      
+                } else {
+                  selectedItems[entry.key] = newValue!;
+                  print(selectedItems);
+                }
+      
+              });
+            },
+          );
+        }).toList(),
+      ),
     );
   }
 }

@@ -36,6 +36,8 @@ import 'package:timezone/timezone.dart' as tz;
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
 import '../main.dart';
+import '../screens/Messages/bulk_message.dart';
+import '../screens/customer_pages/customer_data.dart';
 import '../screens/customer_pages/sync_customer.dart';
 import '../screens/payment_pages/pos_summary.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +46,7 @@ import '../screens/sign_in_options/sign_in_page.dart';
 import '../screens/store_setup.dart';
 import '../utilities/constants/user_constants.dart';
 // import '../widgets/employee_checklist.dart';
+import '../widgets/debtors_widget.dart';
 import '../widgets/employee_checklist.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
@@ -57,6 +60,8 @@ class CommonFunctions {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   CollectionReference testingTesting = FirebaseFirestore.instance.collection('testing');
   CollectionReference users = FirebaseFirestore.instance.collection('medics');
+  CollectionReference attendanceCollection = FirebaseFirestore.instance.collection('attendance');
+
   // final HttpsCallable callableSmsTransaction = FirebaseFunctions.instance.httpsCallable('updateAiSMS');
   final HttpsCallable callableSmsCustomer = FirebaseFunctions.instance.httpsCallable('smsCustomer');
 
@@ -69,12 +74,12 @@ class CommonFunctions {
       playSound: true
   );
 
-  void showChecklistDialog(BuildContext context) {
+  void showChecklistToBeDoneDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Checklist"),
+          title: Text("Checklist", style: kNormalTextStyle.copyWith(color: kBlack),),
           content: EmployeePreChecklist(),
           actions: [
             TextButton(
@@ -83,10 +88,13 @@ class CommonFunctions {
             ),
             ElevatedButton(
               child: Text('Submit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-              onPressed: () {
+              onPressed: () async{
+                final prefs = await SharedPreferences.getInstance();
+                final String? attendanceCode = prefs.getString(kAttendanceCode);
                 // Handle submission logic here (e.g., save results)
-                showSuccessNotification('Checklist Submitted!', context);
-                print('Checklist Submitted!');
+
+                uploadChecklistToAttendance(attendanceCode!, context);
+
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
@@ -99,24 +107,120 @@ class CommonFunctions {
     );
   }
 
+  Future<List<AllCustomerData>> retrieveCustomerData(context) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('customers')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+
+      final customerDataList = snapshot.docs
+          .map((doc) => AllCustomerData.fromFirestore(doc))
+          .toList();
+
+      return customerDataList;
+    } catch (error) {
+      print('Error retrieving employee data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
+
+  void showDebtorsDialog(BuildContext context, Map<String, bool> list) {
+    Provider.of<StyleProvider>(context, listen: false).changeDebtorChecklistValues(list);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Send Reminders To:",textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+          content: DebtorsChecklist (checklistItems: list,),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('Send Selected', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+              onPressed: () async{
+                final prefs = await SharedPreferences.getInstance();
+                String storeName = prefs.getString(kBusinessNameConstant)??"";
+                // This code gets the number from the seleceted names that are given
+                List numbers = findPhonesForSelectedNames(Provider.of<StyleProvider>(context, listen: false).debtorsChecklist,Provider.of<StyleProvider>(context, listen: false).businessCustomers);
+                // This code gets the names from the selected names that are given
+                List names = findFullNamesForSelectedNames(Provider.of<StyleProvider>(context, listen: false).debtorsChecklist,Provider.of<StyleProvider>(context, listen: false).businessCustomers);
+
+                Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
+                Navigator.pop(context);
+                Navigator.pop(context);
+
+                Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(numbers,names );
+                Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return const Scaffold(
+                          body: BulkSmsPage());
+                    });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kAppPinkColor, // Set background color to red
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<String> extractNames(String text) {
+    // Split the text into lines
+    List<String> lines = text.split('\n');
+
+    // Find the starting line of the name list (assuming it has the word 'clients')
+    int startIndex = lines.indexWhere((line) => line.toLowerCase().contains('clients'));
+
+    // Extract names starting from the next line
+    return lines.sublist(startIndex + 1).map((line) {
+      // Remove numbering and trim
+      return line.split('.').last.trim();
+    }).toList();
+  }
+
+  Map<String, bool> createChecklist(List<String> names) {
+
+    return Map.fromIterable(names,
+        key: (name) => name,
+        value: (name) => true);
+  }
+
+
+
+  Future<void> uploadChecklistToAttendance(String documentId, context) async {
+    try {
+
+
+      await attendanceCollection.doc(documentId).update({
+        'checklist': Provider.of<StyleProvider>(context, listen: false).employeeChecklist // Assuming '_checklist' is the map in your StyleProvider
+      }).whenComplete(() =>
+          showSuccessNotification('Checklist Submitted!', context)
+      );
+
+      print('Checklist uploaded successfully');
+    } catch (e) {
+      print('Error uploading checklist: $e');
+    }
+  }
+
   List<String> convertTextToPhoneNumbers(String text, context) {
     // Split the text into lines
     List<String> lines = text.split('\n');
     print("Lines: $lines");
     for(var i =0;i<lines.length;i++){
       if(lines[i]!=""){
-        Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(lines[i]);
+        Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(lines[i], "");
       }
     }
-
-
-    // Extract phone numbers using a regular expression (optional)
-    // List<String> phoneNumbers = lines.where((line) => RegExp(r"\d{3}-\d{3}-\d{4}").hasMatch(line)).toList();
-    // print(phoneNumbers);
-
-    // You can also perform additional processing on each line here
-    // For example, removing special characters or formatting the numbers
-
     return lines;
   }
 
@@ -139,6 +243,63 @@ class CommonFunctions {
       return words[0];
     }
     return "";
+  }
+
+
+  String removeLeadingTrailingSpaces(String text) {
+    return text.trim();
+  }
+
+  // Define the function to find phones for given names
+// Define the function to find phones for selected names
+  List<String> findPhonesForSelectedNames(Map<String, bool> nameMap, List<AllCustomerData> customerData) {
+    List<String> selectedNames = [];
+
+    // Iterate through nameMap to collect selected names
+    nameMap.forEach((name, isSelected) {
+      if (isSelected) {
+        selectedNames.add(name);
+      }
+    });
+
+    // Filter customerData to find corresponding phone numbers for selected names
+    List<String> phones = [];
+    for (String name in selectedNames) {
+      for (AllCustomerData customer in customerData) {
+        if (customer.fullNames == name) {
+          // print(customer.fullNames);
+          phones.add(customer.phone);
+          break; // Stop searching for this name once a match is found
+        }
+      }
+    }
+    // print(phones);
+    return phones;
+  }
+
+  List<String> findFullNamesForSelectedNames(Map<String, bool> nameMap, List<AllCustomerData> customerData) {
+    List<String> selectedNames = [];
+
+    // Iterate through nameMap to collect selected names
+    nameMap.forEach((name, isSelected) {
+      if (isSelected) {
+        selectedNames.add(name);
+      }
+    });
+
+    // Filter customerData to find corresponding phone numbers for selected names
+    List<String> fullNames = [];
+    for (String name in selectedNames) {
+      for (AllCustomerData customer in customerData) {
+        if (customer.fullNames == name) {
+          // print(customer.fullNames);
+          fullNames.add(customer.fullNames);
+          break; // Stop searching for this name once a match is found
+        }
+      }
+    }
+    // print(fullNames);
+    return fullNames;
   }
 
   showSuccessNotification (message, context){
@@ -206,7 +367,7 @@ class CommonFunctions {
   }
 
   // Sign out of work
-  Future<void> signOutUser (context)async {
+  Future<void> signOutUser (context,bool forced)async {
     final prefs = await SharedPreferences.getInstance();
     final dateNow = new DateTime.now();
     showDialog(context: context, builder: ( context) {
@@ -230,7 +391,11 @@ class CommonFunctions {
       await FirebaseFirestore.instance
           .collection('attendance')
           .doc(orderId)
-          .update({'signOut': dateNow}); // Await this update
+          .update({
+        'signOut': dateNow,
+        'forced'  : forced
+
+      }); // Await this update
 
       // Success - now safe to modify the UI
       Navigator.pop(context);
@@ -285,7 +450,7 @@ class CommonFunctions {
     if (DateTime.now().isAfter(eightHoursFromNow)) {
       // Navigate to sign-in page (Use the appropriate navigation for your app)
       showSuccessNotification('Automatic Sign out!', context);
-      signOutUser(context);
+      signOutUser(context, true);
     }else{
 
     }
@@ -746,6 +911,8 @@ class CommonFunctions {
   Future<void> addCustomer( nameOfCustomer, phoneNumberOfCustomer, context, customerId) async{
     CollectionReference customerProvided = FirebaseFirestore.instance.collection('customers');
     final prefs = await SharedPreferences.getInstance();
+    String account = prefs.getString(kLoginPersonName) ?? "";
+    String location = prefs.getString(kLocationConstant) ?? "";
     Map<String, String> optionsToUpload = {
       'Joined': '${DateFormat('EE, dd, MMM, hh:mm a').format(DateTime.now())}',
     };
@@ -759,12 +926,12 @@ class CommonFunctions {
       'image':  "https://mcusercontent.com/f78a91485e657cda2c219f659/images/db929836-bf22-1b6d-9c82-e63932ac1fd2.png",
       'active': true,
       'phoneNumber': phoneNumberOfCustomer,
-      'location': "Kampala",
+      'location': location,
       'category': 'main',
       'hasOptions': true,
       'info': "",
-      'name': nameOfCustomer,
-      'updateBy': "Bernard Kangave",
+      'name':  removeLeadingTrailingSpaces(nameOfCustomer),
+      'updateBy': account,
       'options':  optionsToUpload,
       'storeId': prefs.getString(kStoreIdConstant),
     })
@@ -918,6 +1085,13 @@ class CommonFunctions {
   String getCurrencyCode(String countryCode, context) {
     String? currencyCode = Provider.of<StyleProvider>(context, listen: false).countryNumbers[countryCode];
     return currencyCode ?? "USD"; // You can change "USD" to any default value or handle the null scenario as needed.
+  }
+
+  String capitalizeFirstLetter(String word) {
+    if (word.isEmpty) {
+      return word;
+    }
+    return word[0].toUpperCase() + word.substring(1).toLowerCase();
   }
 
   setupStoreInFirestore(userId, email, ownerName, location, phone, description, name, countryCode, country, currency, context)async{

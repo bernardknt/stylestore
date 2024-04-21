@@ -221,50 +221,73 @@ class _HomePageWebState extends State<HomePageWeb> {
                       ],
                     ),
                     Spacer(),
-                    permissionsMap['signIn'] == false ? Container():Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                      GestureDetector(
-                        onTap: (){
-                          showDialog(context: context, builder: (BuildContext context){
-                            return CupertinoAlertDialog(
-                              title:Text(cSignOut.tr),
-                              content: Text('${cSignOutInstructions.tr} \n${DateFormat('hh:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
-                              actions: [
-                                CupertinoDialogAction(isDestructiveAction: true,
-                                    onPressed: (){
-
-                                      Navigator.pop(context);
-
-                                    },
-
-                                    child: Text(cCancel.tr)
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: (){
+                            CommonFunctions().showChecklistToBeDoneDialog(context);
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: kCustomColor,
+                                borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    Icon(Iconsax.task),
+                                    Text("Checklist",style: kNormalTextStyle.copyWith(fontSize: 8, color: kBlack),)
+                                  ],
                                 ),
-                                CupertinoDialogAction(isDefaultAction: true,
-                                  onPressed: (){
-
-                                    // Navigator.pop(context);
-                                    CommonFunctions().signOutUser(context);
-
-                                  }, child: Text(cSignOut.tr),)
-                              ],
-                            );
-                          });
-
-
-
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            color: kBlack,
-                            borderRadius: BorderRadius.circular(boxCurve),
-                          ),
-                          child: Center(child: Text(cSignOutOfWork.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),)),
-                          // color: kAirPink,
+                              )),
                         ),
-                      ),
+                        permissionsMap['signIn'] == false ? Container():Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:
+                          GestureDetector(
+                            onTap: (){
+                              showDialog(context: context, builder: (BuildContext context){
+                                return CupertinoAlertDialog(
+                                  title:Text(cSignOut.tr),
+                                  content: Text('${cSignOutInstructions.tr} \n${DateFormat('hh:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
+                                  actions: [
+                                    CupertinoDialogAction(isDestructiveAction: true,
+                                        onPressed: (){
+
+                                          Navigator.pop(context);
+
+                                        },
+
+                                        child: Text(cCancel.tr)
+                                    ),
+                                    CupertinoDialogAction(isDefaultAction: true,
+                                      onPressed: (){
+
+                                        // Navigator.pop(context);
+                                        CommonFunctions().signOutUser(context, false);
+
+                                      }, child: Text(cSignOut.tr),)
+                                  ],
+                                );
+                              });
+
+
+
+                            },
+                            child: Container(
+                              height: 50,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: kBlack,
+                                borderRadius: BorderRadius.circular(boxCurve),
+                              ),
+                              child: Center(child: Text(cSignOutOfWork.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),)),
+                              // color: kAirPink,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
