@@ -98,6 +98,7 @@ class StyleProvider extends ChangeNotifier{
   double bookingPrice = 0.0;
   double bookingPercentage = 0.15;
   bool showLocationInstructions = false;
+  bool notificationIcon  = true;
   String instructionsInfo = '';
   String transactionNote = '';
 
@@ -177,6 +178,10 @@ class StyleProvider extends ChangeNotifier{
   Map <String, bool>debtorsChecklist = {};
 
 
+  void removeNotificationIcon(){
+    notificationIcon = false;
+    notifyListeners();
+  }
   void setBusinessCustomers (business) {
     businessCustomers = business;
     notifyListeners();
@@ -285,8 +290,10 @@ class StyleProvider extends ChangeNotifier{
     for (AllCustomerData contact in value) {
       if (bulkNumbers.contains(contact.phone)) {
         bulkNumbers.remove(contact.phone);
+        bulkNames.remove(contact.fullNames);
       } else {
         bulkNumbers.add(contact.phone);
+        bulkNames.add(contact.fullNames);
       }
     }
     notifyListeners();
@@ -311,6 +318,7 @@ class StyleProvider extends ChangeNotifier{
       if (bulkNumbers.contains(phoneNumber[i])) {
         continue;
       } else {
+        print("${names[i]} : ${phoneNumber[i]}");
         bulkNumbers.add(phoneNumber[i]);
         bulkNames.add(names[i]); // Add corresponding name
       }
@@ -722,9 +730,9 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport, smsBalance, currency)async{
+  void setAllStoreDefaults(active, blackoutDates, beauticianImages, close, open, mobile, location, modes, phoneNumber, name, image, transport, smsBalance)async{
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(kCurrency, currency);
+
     storeCurrency = prefs.getString(kCurrency)!;
     isActive = active;
     calendarBlackouts = blackoutDates;

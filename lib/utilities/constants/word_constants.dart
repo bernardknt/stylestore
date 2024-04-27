@@ -7,6 +7,11 @@ String cPaymentOverpaid = "Overpaid";
 String cSeeAllTransactions = "See all Transactions";
 String cWelcome = "Welcome";
 String cHi = "Hi";
+String cPOS = "Point of Sale";
+
+String cMessagingTab = "Messages";
+String cTransactions = "Transactions";
+String cSuppliers = "Suppliers";
 String cCustomers = "Customers";
 String cExpense = "Expense";
 String cBusinessSummary = "Overpaid";
@@ -14,6 +19,7 @@ String cTask = "Task";
 String cSentBy = "Sent By";
 String cDashboard = "Dashboard";
 String cStore = "Store";
+
 String cAnalytics = "Analytics";
 String cAddTasks = "Add Tasks";
 String cTaskDone = "Mark Task as Done";
@@ -29,7 +35,7 @@ String cLatestTransactions= "Latest Transactions";
 
 // Side bar
 String cEditStore = "Edit Store";
-String cTransactions = "Transactions";
+String cHome = "Home";
 String cMessages = "Messages";
 String cTeam = "Team";
 String cTutorial = "Team";

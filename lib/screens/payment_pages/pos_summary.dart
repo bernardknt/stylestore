@@ -180,6 +180,7 @@ class PosSummary extends StatelessWidget {
                                         body: CustomerSearchPage());
                                   });
 
+
                             }
                         );
                       } else {

@@ -57,10 +57,7 @@ class RecordPaymentWidget extends StatelessWidget {
 
 
         },
-        // icon:  CircleAvatar(
-        //     radius: 12,
-        //     child: Text("${Provider.of<StyleProvider>(context).basketItems.length}", style:kNormalTextStyle.copyWith(color: kBlack) ,)),
-        label: Text(
+              label: Text(
           '${Provider.of<StyleProvider>(context, listen: false).invoicedCustomer} Paying: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context).invoicedPriceToPay)}',
           style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
         ),
@@ -77,14 +74,14 @@ class RecordPaymentWidget extends StatelessWidget {
             kLargeHeightSpacing,
             kLargeHeightSpacing,
             Text('${Provider.of<StyleProvider>(context, listen: false).invoicedCustomer}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-            Text('Invoiced Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedTotalPrice)} Ugx',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-            Text('Paid Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedPaidPrice)} Ugx',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
+            Text('Invoiced Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedTotalPrice)} ${styleData.storeCurrency}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
+            Text('Paid Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedPaidPrice)} ${styleData.storeCurrency}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  'Ugx',
+                  styleData.storeCurrency,
                   style: kNormalTextStyle.copyWith(fontSize: 18),
                 ),
                 kSmallWidthSpacing,

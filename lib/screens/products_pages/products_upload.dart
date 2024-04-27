@@ -41,7 +41,7 @@ class _ProductUploadState extends State<ProductUpload> {
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   CollectionReference serviceProvided = FirebaseFirestore.instance.collection('services');
-  String serviceId = 'sp${uuid.v1().split("-")[0]}';
+  String serviceId = '${uuid.v1().split("-")[0]}';
   UploadTask? uploadTask;
   bool selectedTrackingValue = false;
   bool selectedSaleableValue = true;
@@ -80,8 +80,8 @@ class _ProductUploadState extends State<ProductUpload> {
         .set({
       'active': true,
       'approved': true,
-      'description': description, // Stokes and Sons
-      'name': name,
+      'description': CommonFunctions().removeLeadingTrailingSpaces(description), // Stokes and Sons
+      'name': CommonFunctions().removeLeadingTrailingSpaces(name) ,
       'amount': price,
       'quantity': quantity,
       'image': image,

@@ -154,6 +154,8 @@ class CommonFunctions {
                 Navigator.pop(context);
 
                 Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(numbers,names );
+
+
                 Provider.of<BeauticianData>(context, listen: false).setTextMessage("Dear Customer! Please note that you have an outstanding invoice with $storeName. We appreciate having your account brought to zero.");
                 showModalBottomSheet(
                     isScrollControlled: true,
@@ -831,6 +833,16 @@ class CommonFunctions {
     return datesInString.indexWhere((date) => date == today);
   }
 
+  String getDateSeparator(DateTime date) {
+    if (date.difference(DateTime.now()).inDays == 0) {
+      return 'Today';
+    } else if (date.difference(DateTime.now()).inDays == -1) {
+      return 'Yesterday';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+
   void sendBulkSms(List<String> processedNumbers, String message, String senderId, String priority) async {
     try {
       // Dummy Message Data - Adjust for your actual use case
@@ -1048,6 +1060,7 @@ class CommonFunctions {
   Future deliveryStream(context) async {
     var prefs = await SharedPreferences.getInstance();
     var id = prefs.getString(kStoreIdConstant)!;
+    print("STREAM RUN");
 
     var start = FirebaseFirestore.instance
         .collection('medics')
@@ -1058,6 +1071,10 @@ class CommonFunctions {
         prefs.setString(kPhoneNumberConstant, doc['phone']);
         prefs.setString(kImageConstant, doc['image']);
         prefs.setDouble(kSmsAmount, doc['sms']);
+        prefs.setString(kCurrency,  doc['currency']);
+        DateTime subscription = doc['subscriptionEndDate'].toDate();
+        print("subrip: $subscription");
+        prefs.setInt(kSubscriptionEndDate, doc['subscriptionEndDate'].toDate().millisecondsSinceEpoch);
         Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
             doc['active'],
             doc['blackout'],
@@ -1072,7 +1089,7 @@ class CommonFunctions {
             doc['image'],
             doc['transport'],
             doc['sms'],
-            doc['currency'],
+
 
 
         );

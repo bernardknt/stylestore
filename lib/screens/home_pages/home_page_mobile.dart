@@ -411,7 +411,7 @@ class _HomePageState extends State<HomePage> {
             FloatingActionButton(
               onPressed: (){
 
-
+                Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
                 showDialog(context: context, builder: (BuildContext context){
                   return
                     GestureDetector(
@@ -426,6 +426,7 @@ class _HomePageState extends State<HomePage> {
               // Icon(Iconsax.airpod1, color: kPureWhiteColor,),
               backgroundColor: kBlueDarkColor,
             ),
+            Provider.of<StyleProvider>(context, listen: true).notificationIcon == true?
             Positioned(
               left: 0,
               top: 0,
@@ -434,7 +435,7 @@ class _HomePageState extends State<HomePage> {
                 radius: 7,
                 child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
               ),
-            ),
+            ):const SizedBox(),
           ]
       ),
       body: WillPopScope(

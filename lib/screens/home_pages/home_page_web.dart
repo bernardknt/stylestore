@@ -53,6 +53,7 @@ class _HomePageWebState extends State<HomePageWeb> {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
 
     final prefs = await SharedPreferences.getInstance();
+    print("Subscription Date: ${prefs.getInt(kSubscriptionEndDate)}");
     int? storedTimestamp = prefs.getInt(kSignInTime);
     DateTime lastSignInTime = DateTime.now();
     if (storedTimestamp != null) {
@@ -105,6 +106,8 @@ class _HomePageWebState extends State<HomePageWeb> {
     }
   }
 
+
+
   Future<void> updateAppointmentCurrency() async {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -123,6 +126,7 @@ class _HomePageWebState extends State<HomePageWeb> {
       print('Failed to update currency field: $e');
     }
   }
+
 
   @override
   initState() {
@@ -154,40 +158,41 @@ class _HomePageWebState extends State<HomePageWeb> {
     return Scaffold(
       backgroundColor: kPlainBackground,
       floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
-        children: [
-          Container(
-            height: 50,
-            width: 80,
-          ) ,
+          children: [
+            // Container(
+            //   height: 50,
+            //   width: 80,
+            // ) ,
 
-          FloatingActionButton(
-          onPressed: (){
+            FloatingActionButton(
+              onPressed: (){
 
+                Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
+                showDialog(context: context, builder: (BuildContext context){
+                  return
+                    GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: ChatPage());
+                });
+              },
 
-            updateAppointmentsWithPaymentHistory();
-            showDialog(context: context, builder: (BuildContext context){
-              return
-                GestureDetector(
-                  onTap: (){
-                    Navigator.pop(context);
-                  },
-                  child: ChatPage());
-            });
-            },
-          child:
+              backgroundColor: kBlueDarkColor,
+              child:
               Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
-          // Icon(Iconsax.airpod1, color: kPureWhiteColor,),
-          backgroundColor: kBlueDarkColor,
-        ),
-          // Positioned(
-          //   left: 0,
-          //   top: 0,
-          //   child: CircleAvatar(
-          //     backgroundColor: kAppPinkColor,
-          //     radius: 7,
-          //   ),
-          // ),
-        ]
+            ),
+            Provider.of<StyleProvider>(context, listen: true).notificationIcon == true?
+            Positioned(
+              left: 0,
+              top: 0,
+              child: CircleAvatar(
+                backgroundColor: kAppPinkColor,
+                radius: 7,
+                child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
+              ),
+            ):const SizedBox(),
+          ]
       ),
       body: SingleChildScrollView(
         child: Padding(

@@ -27,9 +27,10 @@ class _SplashPageState extends State<SplashPage> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   void defaultsInitiation() async {
-    print("WANO WETUTUSE");
+
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool(kIsLoggedInConstant) ?? false;
+    CommonFunctions().deliveryStream(context);
 
     CommonFunctions().userSubscription(context);
     String oldPermissions = prefs.getString(kPermissions) ?? "";
@@ -117,7 +118,7 @@ class _SplashPageState extends State<SplashPage> {
     // TODO: implement initState
     super.initState();
     defaultsInitiation();
-    CommonFunctions().deliveryStream(context);
+
   }
 
   @override

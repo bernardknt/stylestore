@@ -41,7 +41,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
   var phoneNumber = "";
   var formatter = NumberFormat('#,###,000');
   // Add a variable to track the selected date range.
-  String _selectedDateRange = 'All';
+  String _selectedDateRange = '1 month';
   String logo = '';
 
   void defaultInitialization()async{
@@ -311,7 +311,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                                     if (showDateSeparator) ...[
                                       SizedBox(height: 10),
                                       Text(
-                                        _getDateSeparator(transactionDate),
+                                        CommonFunctions().getDateSeparator(transactionDate),
                                         style: kNormalTextStyle.copyWith(color: kFontGreyColor, fontSize: 13),
                                       ),
                                       SizedBox(height: 10),
@@ -429,15 +429,6 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
         ],
       ),
     );
-  }
-  String _getDateSeparator(DateTime date) {
-    if (date.difference(DateTime.now()).inDays == 0) {
-      return 'Today';
-    } else if (date.difference(DateTime.now()).inDays == -1) {
-      return 'Yesterday';
-    } else {
-      return '${date.day}/${date.month}/${date.year}';
-    }
   }
 }
 

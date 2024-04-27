@@ -181,7 +181,7 @@ class _EditShopPageState extends State<EditShopPage> {
 
 
                     ListTile(
-                      leading: kIconStore,
+                      leading: kIconClockOpen,
                       title: Text(styleDataDisplay.beauticianName, style: kNormalTextStyle.copyWith(fontSize: 15),),
                       trailing: GestureDetector(
                           onTap: (){
@@ -492,7 +492,7 @@ class _EditShopPageState extends State<EditShopPage> {
                           child: kIconPen),
                     ),
                     ListTile(
-                      leading: kIconStore,
+                      leading: kIconClockOpen,
                       title: Text(activeStatus, style: kNormalTextStyle.copyWith(),),
                       subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: buildSwitch(),

@@ -9,9 +9,12 @@ import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/employee_pages/employees_page.dart';
 import 'package:stylestore/screens/sign_in_options/login_new_layout_web.dart';
+import 'package:stylestore/screens/suppliers/supplier_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import '../Utilities/constants/user_constants.dart';
 import '../controllers/responsive/responsive_page.dart';
 import '../model/common_functions.dart';
@@ -29,19 +32,24 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   List <SideMenuItem> all = [
-    SideMenuItem(title: 'Edit Store', icon: Icons.business_outlined),
-    SideMenuItem(title: 'Transactions', icon: Icons.money),
-    SideMenuItem(title: 'Marketing', icon: Icons.chat_outlined),
-    SideMenuItem(title: 'Team', icon: Icons.people_alt_outlined),
+    SideMenuItem(title: 'Edit Store', icon: kIconStore),
+    // SideMenuItem(title: cStore, icon: Icons.chat_outlined),
+    SideMenuItem(title: cTeam, icon: kIconTeam),
+    SideMenuItem(title: cSuppliers, icon: kIconSuppliers),
+    SideMenuItem(title: cMessagingTab, icon: kIconMessage),
+    SideMenuItem(title: cTransactions, icon: kIconTransaction),
+
+
     // SideMenuItem(title: 'Business Wallet', icon: Icons.monetization_on_outlined),
 
   ];
 
   List pages = [
     EditShopPage.id,
-    TransactionsController.id,
-    MessageHistoryPage.id,
     EmployeesPage.id,
+    SuppliersPage.id,
+    MessageHistoryPage.id,
+  TransactionsController.id,
     // WalletsPage.id
     // NewTutorialPage.id,
 

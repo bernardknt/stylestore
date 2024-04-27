@@ -6,6 +6,8 @@ import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
 import '../../screens/store_pages/store_page.dart';
 
@@ -68,11 +70,11 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
         // Item 1
         [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_max),label:'Dashboard',
+              icon: Icon(kIconHome),label: cHome,
               backgroundColor: Colors.green),
 
           BottomNavigationBarItem(
-              icon: Icon(Icons.storefront),label:'$storeName Store',
+              icon: Icon(kIconStore),label:'$storeName $cStore',
 
               backgroundColor: Colors.black),
 

@@ -1,7 +1,6 @@
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -9,24 +8,26 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/screens/Messages/message_history.dart';
-import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/edit_page.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/store_pages/store_page_web.dart';
 import 'package:stylestore/screens/suppliers/supplier_page.dart';
-import '../../Utilities/constants/user_constants.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
+
+import 'package:stylestore/utilities/constants/word_constants.dart';
+
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
-import '../../screens/analytics/deeper_analytics/analysis_page_web.dart';
 import '../../screens/analytics/deeper_analytics/analytics_new_web.dart';
-import '../../screens/documents.dart';
 import '../../screens/employee_pages/employees_page.dart';
 import '../../screens/store_pages/store_page.dart';
 import '../../screens/sign_in_options/login_new_layout_web.dart';
 import '../../screens/sign_in_options/login_page.dart';
 import '../../utilities/constants/color_constants.dart';
+import '../../utilities/constants/user_constants.dart';
+
 
 class ControlPageWeb extends StatefulWidget {
   static String id = "control_page_web_new";
@@ -38,12 +39,28 @@ class ControlPageWeb extends StatefulWidget {
 
 class _ControlPageWebState extends State<ControlPageWeb> {
   Widget _selectedWidget = HomePageWeb();
-  final _controller = SidebarXController(selectedIndex: 0, extended: true); // Initialize controller
+  final _controller = SidebarXController(selectedIndex: 0, extended: true);// Initialize controller
+  int subscriptionDate = DateTime.now().millisecondsSinceEpoch;
 
-  Color selectedColor =
-      kGreenThemeColor.withOpacity(0.5); // Default selected widget
+  Color selectedColor = kGreenThemeColor.withOpacity(0.5); // Default selected widget
   final auth = FirebaseAuth.instance;
   final divider = Divider(color: kBlack.withOpacity(0.3), height: 1);
+
+  defaultInitialization()async{
+    final prefs = await SharedPreferences.getInstance();
+    subscriptionDate = prefs.getInt(kSubscriptionEndDate)??subscriptionDate;
+
+    setState(() {
+      print("End Date: $subscriptionDate |Today:${DateTime.now().millisecondsSinceEpoch}");
+    });
+
+  }
+  @override
+  initState() {
+
+    super.initState();
+    defaultInitialization();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,7 +187,9 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     children: [
                       Image.asset('images/new_logo.png'),
                       kSmallWidthSpacing,
-                      Text("PREMIUM",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                     subscriptionDate>= DateTime.now().millisecondsSinceEpoch ?
+                     Text("PREMIUM",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                     :Text("Basic",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
                     ],
                   ),
                 ),
@@ -178,23 +197,23 @@ class _ControlPageWebState extends State<ControlPageWeb> {
             },
             items: [
               SidebarXItem(
-                label: 'Home',
+                label: cHome,
                 onTap: () {
                   setState(() {
                     _selectedWidget = HomePageWeb();
                   });
                 },
-                icon: Icons.home,
+                icon: kIconHome,
               ),
               SidebarXItem(
-                label: 'Point of Sale',
+                label: cPOS,
                 onTap: () {
                   setState(() {
                     _selectedWidget = SuperResponsiveLayout(mobileBody: POS(), desktopBody: PosWeb(showBackButton: false,));
                   });
                 },
                 // page: EmployeesPage(),
-                icon:Icons.point_of_sale
+                icon:kIconPos
                 //Icons.storefront,
               ),
               SidebarXItem(
@@ -205,52 +224,52 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     });
                   },
                   // page: EmployeesPage(),
-                  icon: Icons.storefront,
+                  icon: kIconStore,
               ),
               SidebarXItem(
-                label: 'Team',
+                label: cTeam,
                 onTap: () {
                   setState(() {
                     _selectedWidget = EmployeesPage();
                   });
                 },
                 // page: EmployeesPage(),
-                icon: Icons.people,
+                icon: kIconTeam,
               ),
               SidebarXItem(
-                label: 'Suppliers',
+                label: cSuppliers,
                 onTap: () {
                   setState(() {
                     _selectedWidget = SuppliersPage();
                   });
                 },
                 // page: EmployeesPage(),
-                icon: Icons.supervised_user_circle,
+                icon: kIconSuppliers,
               ),
               SidebarXItem(
-                label: 'Marketing',
+                label: cMessagingTab,
                 onTap: () {
                   setState(() {
                     _selectedWidget = MessageHistoryPage(showBackButton: false,);
                   });
                 },
                 // page: AttendancePage(),
-                icon: Icons.mark_email_read,
+                icon: kIconMessage,
               ),
               SidebarXItem(
-                label: 'Transactions',
+                label: cTransactions,
                 onTap: () {
                   setState(() {
                     _selectedWidget = TransactionsController(showBackButton: false,);
                   });
                 },
                 // page: AttendancePage(),
-                icon: Iconsax.bank,
+                icon: kIconTransaction,
               ),
               SidebarXItem(
-                label: 'Analytics',
+                label: cAnalytics,
                 // page: ReportsPage(),
-                icon: Icons.auto_graph,
+                icon: kIconAnalytics,
                 onTap: () {
                   setState(() {
                     _selectedWidget = AnalyticsNewWeb() ;

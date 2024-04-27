@@ -9,7 +9,7 @@ import 'font_constants.dart';
 // const kIconBuilding = Icon(FontAwesomeIcons.building,color: kFontGreyColor,size: kIconSize,);
 const kIconCalendar = Icon(CupertinoIcons.calendar, color: kFontGreyColor,size: kIconSize);
 const  kIconBlackout = Icon(CupertinoIcons.calendar_badge_minus, color: kAppPinkColor,size: kIconSize);
-const  kIconStore = Icon(CupertinoIcons.building_2_fill, color: kFontGreyColor,size: kIconSize);
+// const  kIconStore = Icon(CupertinoIcons.building_2_fill, color: kFontGreyColor,size: kIconSize);
 // const kIconMoney = Icon(FontAwesomeIcons.moneyBillTransfer, color: kNewGreenThemeColor,size: kIconSize);
 // const kIconRoad = Icon (FontAwesomeIcons.road, color: kFontGreyColor,size: kIconSize,);
 const kIconClockOpen =  Icon(Iconsax.clock,color: kGreenThemeColor,size: kIconSize);
@@ -35,3 +35,13 @@ const kIconCancel =  Icon(Icons.cancel, color: kBlack,size: kIconSize,);
 const kIconBackWhite =  Icon(Icons.cancel, color: kPureWhiteColor,size: 25,);
 const kIconNotPaidIcon = Icon(Icons.flag_circle, color: Colors.red, size: 15,);
 const kIconPaidIcon = Icon(Icons.check_circle_outline, color: kGreenThemeColor, size: 15,);
+// main Icons
+const kIconMessage = Icons.mark_email_read;
+const kIconTransaction = Iconsax.bank;
+const kIconAnalytics = Icons.auto_graph;
+const kIconSuppliers = Icons.supervised_user_circle;
+const kIconTeam = Icons.people;
+const kIconStore= Icons.storefront;
+const kIconPos= Icons.point_of_sale;
+const kIconHome= Icons.home_max;
+

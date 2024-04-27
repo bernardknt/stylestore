@@ -46,6 +46,8 @@ class _PosWebState extends State<PosWeb> {
   String title = 'Your';
   String userId = 'md4348a660';
 
+
+
   // var amountList = [];
   var barcodeList = [];
   TextEditingController searchController = TextEditingController();
@@ -55,7 +57,7 @@ class _PosWebState extends State<PosWeb> {
   var quantity = 1.0;
   var isStoreEmpty = false;
   bool empty = false;
-  var currency = "USD";
+  var currency = "";
   List<Product> products = [];
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
@@ -76,6 +78,7 @@ class _PosWebState extends State<PosWeb> {
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
     newStock = await retrieveSupplierData();
     filteredStock.addAll(newStock);
+
     Provider.of<StyleProvider>(context, listen: false).resetCustomerDetails();
     setState(() {});
   }
@@ -327,7 +330,7 @@ class _PosWebState extends State<PosWeb> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(Provider.of<StyleProvider>(context, listen: false).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                  child: Text(currency, style: kNormalTextStyle.copyWith(fontSize: 12),),
                 ),
               ),
             )
