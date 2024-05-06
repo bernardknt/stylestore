@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -250,7 +251,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               kCustomColor.withOpacity(1),
                                               radius: 30,
                                               child: const Icon(
-                                                Icons.contacts_outlined,
+                                                Iconsax.mobile,
                                                 color: kBlack,
                                                 size: 30,
                                               )),
@@ -347,8 +348,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                             builder:
                                                 (BuildContext context) {
                                               return Container(
-                                                color: const Color(0xFF292929)
-                                                    .withOpacity(0.6),
+                                                color: Colors.transparent,
                                                 child: Container(
                                                   decoration: const BoxDecoration(
                                                       color:

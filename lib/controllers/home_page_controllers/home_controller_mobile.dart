@@ -9,7 +9,7 @@ import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/icon_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
-import '../../screens/store_pages/store_page.dart';
+import '../../screens/store_pages/store_page_mobile.dart';
 
 
 

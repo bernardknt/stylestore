@@ -47,28 +47,24 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
         true, // Show flash icon
         ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
       );
+      print("Here is barcodeRes: $barcodeScanRes");
       if (barcodeScanRes != '-1') {
+        print("We reached this point");
+
         int index = barcodeList.indexOf(barcodeScanRes);
+        print("The int value is : $index");
 
         if (index != -1) {
           CommonFunctions().playBeepSound();
           isScanning = false;
 
-          // Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(
-          //     BasketItem(amount:
-          //     amountList[index]/1.0,
-          //         quantity: 1.0,
-          //         name: nameList[index],
-          //         details: "",
-          //         tracking: trackingList[index]));
           print(index);
           print(nameList);
-          // print(itemIdList);
 
 
-          String productName = nameList[index];
-          // String descName = descriptionList[index];
-          // String id = itemIdList[index];
+
+
+
 
 
           // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('$productName 4 ')));
@@ -78,34 +74,6 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
           print(selectedStocks);
 
           showPriceAndQuantityDialogForBarScanner(index, nameList[index], itemIdList[index], descriptionList[index] );
-
-
-          // showDialog(
-          //   context: context,
-          //   builder: (BuildContext context) {
-          //     return CupertinoAlertDialog(
-          //       title: Text("Scan another Item?"),
-          //       content: Text("Would you like to scan another item?"),
-          //       actions: [
-          //         CupertinoDialogAction(
-          //           child: const Text(
-          //             "Cancel", style: TextStyle(color: kRedColor),),
-          //           onPressed: () {
-          //             Navigator.of(context).pop();// Close the dialog
-          //
-          //           },
-          //         ),
-          //         CupertinoDialogAction(
-          //           child: const Text("Scan Another"),
-          //           onPressed: () {
-          //             Navigator.of(context).pop(); // Close the dialog
-          //             _startBarcodeScan();
-          //           },
-          //         ),
-          //       ],
-          //     );
-          //   },
-          // );
         } else {
           isScanning = false;
           ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));

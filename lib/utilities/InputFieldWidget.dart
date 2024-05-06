@@ -49,22 +49,19 @@ class InputFieldWidget extends StatelessWidget {
             hintStyle: TextStyle(fontSize: 14, color: hintTextColor),
             labelText: labelText,
             labelStyle: TextStyle(fontSize: 14, color: Colors.grey[500]),
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: ringColor, width: 1.0),
-              borderRadius: BorderRadius.all(Radius.circular(15.0)),
-            ),
-            focusedBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color:  Colors.pink),
-            ),
-            // focusedBorder: OutlineInputBorder(
-            //   borderSide: BorderSide(color: Colors.green, width: 0),
-            //   borderRadius: BorderRadius.all(Radius.circular(32.0)),
+            // contentPadding:
+            // const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+            // border: const OutlineInputBorder(
+            //   borderRadius: BorderRadius.all(Radius.circular(15.0)),
             // ),
+            // enabledBorder: OutlineInputBorder(
+            //   borderSide: BorderSide(color: ringColor, width: 1.0),
+            //   borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            // ),
+            // focusedBorder: const UnderlineInputBorder(
+            //   borderSide: BorderSide(color:  Colors.pink),
+            // ),
+
           ),
         ),
       ),

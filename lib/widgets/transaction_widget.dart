@@ -44,6 +44,7 @@ class TransactionWidget extends StatelessWidget {
     required this.clientLocationList,
     required this.logo,
     required this.index,
+    required this.paymentHistory,
   });
 
   final List clientList;
@@ -56,6 +57,7 @@ class TransactionWidget extends StatelessWidget {
   final List customerIdList;
   final List paymentDueDateList;
   final List currency;
+  final List paymentHistory;
   final String storeName;
   final String location;
   final int index;

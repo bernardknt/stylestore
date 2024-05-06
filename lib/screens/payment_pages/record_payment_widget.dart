@@ -49,12 +49,9 @@ class RecordPaymentWidget extends StatelessWidget {
 
 
                 });
-            // decreaseBillAmount(styleData.invoiceTransactionId, styleData.invoicedPriceToPay, context);
+
 
           }
-
-
-
 
         },
               label: Text(

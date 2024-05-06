@@ -123,6 +123,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
   var paidStatusListColor = [];
   var customerIdList = [];
   var currencyList = [];
+  var paymentHistoryList = [];
   List<double> opacityList = [];
 
   bool isSameDay(DateTime date1, DateTime date2) {
@@ -181,6 +182,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                     paymentMethodList = [];
                     customerIdList = [];
                     currencyList = [];
+                    paymentHistoryList = [];
 
 
                     var dateSeparator = '';
@@ -202,6 +204,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                         paidAmountList.add(doc['paidAmount']);
                         paymentMethodList.add(doc['paymentMethod']);
                         customerIdList.add(doc['customerId']);
+                        paymentHistoryList.add(doc['paymentHistory']);
 
                         if (doc['paymentStatus'] == 'Complete'){
                           paidStatusList.add('Paid');
@@ -377,7 +380,7 @@ class _UnpaidTransactionsPageState extends State<UnpaidTransactionsPage> {
                                               TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                                 transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                                 paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList, ),
+                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList, paymentHistory: paymentHistoryList, ),
 
                                             );
                                         });

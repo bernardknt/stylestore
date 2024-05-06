@@ -346,6 +346,10 @@ class StyleProvider extends ChangeNotifier{
     taskToDo = task;
     notifyListeners();
   }
+  void editTaskToDo(String task, List employees, DateTime dates){
+    taskToDo = task;
+    notifyListeners();
+  }
 
   void setExpense (newExpense){
     expense = newExpense;
@@ -727,6 +731,11 @@ class StyleProvider extends ChangeNotifier{
     basketItemsPrices.clear();
     basketNameItems.clear();
     basketItems.clear();
+    notifyListeners();
+  }
+
+  setStoreCurrency(currency){
+    storeCurrency = currency;
     notifyListeners();
   }
 

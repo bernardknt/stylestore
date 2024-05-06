@@ -57,6 +57,8 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
   var paidAmountList = [];
   var priceList = [];
   var currencyList = [];
+  var paymentHistory = [];
+  var paymentMethod = [];
   var descList = [];
   var transIdList = [];
   var dateList = [];
@@ -127,6 +129,8 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
               clientList = [];
               paidAmountList = [];
               currencyList = [];
+              paymentHistory = [];
+              paymentMethod = [];
 
               var dateSeparator = '';
               var orders = snapshot.data?.docs;
@@ -142,6 +146,8 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
                   orderStatusList.add(doc['status']);
                   dateList.add(doc['appointmentDate'].toDate());
                   clientList.add(doc['client']);
+                  paymentHistory.add(doc['paymentHistory']);
+                  paymentMethod.add(doc['paymentMethod']);
 
                   if (doc['paymentStatus'] == 'Complete'){
                     paidStatusList.add('Paid');
@@ -274,17 +280,7 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
 
                                   ],
                                 ),
-                                // Row(
-                                //   crossAxisAlignment: CrossAxisAlignment.start,
-                                //   mainAxisAlignment: MainAxisAlignment.start,
-                                //   children: [
-                                //
-                                //     buildInfoCard(title: "Total Received", value:CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(paidAmountList)), cardColor: kGreenThemeColor,  cardIcon: Iconsax.money5, fontSize: 14),
-                                //     kSmallWidthSpacing,
-                                //     buildInfoCard(title: "Pending Payment", value:CommonFunctions().formatter.format(CommonFunctions().calculateTotalPrice(priceList)- CommonFunctions().calculateTotalPrice(paidAmountList)), cardColor: kRedColor,  cardIcon: Iconsax.stop, fontSize: 14),
-                                //
-                                //   ],
-                                // ),
+
 
 
                               ],
@@ -371,6 +367,21 @@ class _CustomerTransactionsProductsState extends State<CustomerTransactionsProdu
                                                           }),
                                                       leading: priceList[index] - paidAmountList[index] == 0?
                                                       kIconPaidIcon:kIconNotPaidIcon,
+                                                      subtitle: paymentHistory[index].length==0 && priceList[index] - paidAmountList[index] == 0?Text("${DateFormat.yMMMd().format(dateList[index])}\n${currencyList[index]} ${formatter.format(paidAmountList[index])} via ${paymentMethod[index]}",style: kNormalTextStyle.copyWith(fontSize: 11),):paymentHistory[index].length == 0?Container():
+
+                                                      //Text("${CommonFunctions().separateElements(paymentHistory[index], currencyList[index])}"),
+                                                      ListView.builder(
+                                                          physics: NeverScrollableScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          itemCount: CommonFunctions().separateElements(paymentHistory[index], currencyList[index]).length,
+                                                          itemBuilder: (context, i){
+                                                            // print(paymentHistory[index]);
+                                                            return Padding(
+                                                              padding: const EdgeInsets.only(bottom: 8.0),
+                                                              child: Text("${CommonFunctions().separateElements(paymentHistory[index], currencyList[index])[i]}", style: kNormalTextStyle.copyWith(fontSize: 11),),
+                                                            );
+
+                                                          }),
                                                       trailing: Padding(
                                                         padding: const EdgeInsets.only(right: 10, top: 20),
                                                         child: Text("${CommonFunctions().formatter.format(priceList[index])} ${currencyList[index]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),),

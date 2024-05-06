@@ -17,6 +17,7 @@ import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
+import 'package:stylestore/screens/store_pages/upload_products_ptions.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
@@ -44,11 +45,13 @@ class _StorePageMobileState extends State<StorePageMobile> {
   String currency = "";
 
   defaultInitialization()async{
+    final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newStock = await retrieveSupplierData();
     filteredStock.addAll(newStock);
-    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
+    currency = prefs.getString(kCurrency)??"USD";
+    // currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });
@@ -102,6 +105,28 @@ class _StorePageMobileState extends State<StorePageMobile> {
             title: Text('Store and Inventory', style: kNormalTextStyle.copyWith(fontSize: 18, color: kBlack, fontWeight: FontWeight.bold),),
             elevation: 0,
             automaticallyImplyLeading: false,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, StockHistoryPage.id);
+
+
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
+                      Text("History", style: kNormalTextStyle.copyWith(
+                          fontSize: 12,
+                          color: kBlack,
+                          fontWeight: FontWeight.bold),)
+                    ],
+                  )),
+            ),
+          ],
         ),
         //
         // floatingActionButtonLocation: FloatingActionButtonLocation
@@ -129,8 +154,19 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      // Navigator.pop(context);
-                                      _uploadExcelFile();
+
+                                      showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          context: context,
+                                          builder: (context) {
+                                            return Scaffold(
+                                                appBar: AppBar(
+                                                  elevation: 0,
+                                                  backgroundColor: kPureWhiteColor,
+                                                  automaticallyImplyLeading: false,
+                                                ),
+                                                body: UploadProductOptions());
+                                          });
                                     },
                                     child: CircleAvatar(
                                         radius: 30,
@@ -342,24 +378,24 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                   // color: kAirPink,
                                 ),
                               ),
-                              kMediumWidthSpacing,
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, StockHistoryPage.id);
-
-
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-                                      Text("History", style: kNormalTextStyle.copyWith(
-                                          fontSize: 12,
-                                          color: kBlack,
-                                          fontWeight: FontWeight.bold),)
-                                    ],
-                                  )),
+                              // kMediumWidthSpacing,
+                              // GestureDetector(
+                              //     onTap: () {
+                              //       Navigator.pushNamed(context, StockHistoryPage.id);
+                              //
+                              //
+                              //     },
+                              //     child: Column(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
+                              //         Text("History", style: kNormalTextStyle.copyWith(
+                              //             fontSize: 12,
+                              //             color: kBlack,
+                              //             fontWeight: FontWeight.bold),)
+                              //       ],
+                              //     )),
 
                             ],
                           ),
@@ -391,62 +427,63 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 filteredStock[index].image,
                                 filteredStock[index].tracking,
                                 filteredStock[index].saleable,);
+                              Navigator.pushNamed(context, ProductEditPage.id);
 
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      color: Colors.transparent,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: kPureWhiteColor,
-                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children:
-                                            [
-                                              buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
-                                                      () async {
-                                                    Navigator.pop(context);
-                                                    Navigator.pushNamed(context, ProductEditPage.id);
-
-
-                                                  }
-                                              ),
-                                              SizedBox(height: 16.0),
-                                              buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
-                                                Navigator.pop(context);
-
-                                                if (filteredStock[index].stockTaking.isEmpty){
-                                                  showDialog(context: context, builder: (BuildContext context){
-                                                    return CupertinoAlertDialog(
-                                                      title: const Text('No Stock Data'),
-                                                      content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
-                                                      actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                                          onPressed: (){
-                                                            // _btnController.reset();
-                                                            Navigator.pop(context);
-
-                                                          },
-                                                          child: const Text('Cancel'))],
-                                                    );
-                                                  });
-                                                } else {
-                                                  print(filteredStock[index].storeId);
-                                                  Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
-                                                  Navigator.pushNamed(context, StockManagementPage.id);
-                                                }
-
-                                              } ),
-
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ); });
+                              // showModalBottomSheet(
+                              //     context: context,
+                              //     builder: (BuildContext context) {
+                              //       return Container(
+                              //         color: Colors.transparent,
+                              //         child: Container(
+                              //           decoration: BoxDecoration(
+                              //               color: kPureWhiteColor,
+                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
+                              //           ),
+                              //           child: Padding(
+                              //             padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
+                              //             child: Column(
+                              //               mainAxisSize: MainAxisSize.min,
+                              //               children:
+                              //               [
+                              //                 buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
+                              //                         () async {
+                              //                       Navigator.pop(context);
+                              //                       Navigator.pushNamed(context, ProductEditPage.id);
+                              //
+                              //
+                              //                     }
+                              //                 ),
+                              //                 SizedBox(height: 16.0),
+                              //                 buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
+                              //                   Navigator.pop(context);
+                              //
+                              //                   if (filteredStock[index].stockTaking.isEmpty){
+                              //                     showDialog(context: context, builder: (BuildContext context){
+                              //                       return CupertinoAlertDialog(
+                              //                         title: const Text('No Stock Data'),
+                              //                         content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
+                              //                         actions: [CupertinoDialogAction(isDestructiveAction: true,
+                              //                             onPressed: (){
+                              //                               // _btnController.reset();
+                              //                               Navigator.pop(context);
+                              //
+                              //                             },
+                              //                             child: const Text('Cancel'))],
+                              //                       );
+                              //                     });
+                              //                   } else {
+                              //                     print(filteredStock[index].storeId);
+                              //                     Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
+                              //                     Navigator.pushNamed(context, StockManagementPage.id);
+                              //                   }
+                              //
+                              //                 } ),
+                              //
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ); });
 
                             },
                             child:
@@ -588,6 +625,8 @@ class _StorePageMobileState extends State<StorePageMobile> {
     }
     return dataList;
   }
+
+
 
   String _parseStringValue(dynamic value) {
     return value is SharedString ? value.toString() : value?.toString() ?? '';

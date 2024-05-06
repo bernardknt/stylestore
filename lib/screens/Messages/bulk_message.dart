@@ -423,7 +423,8 @@ class _BulkSmsPageState extends State<BulkSmsPage> {
                     kSmallHeightSpacing,
                     SizedBox(
                       height: 50,
-                      child: ListView.builder(
+                      child:
+                      ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: Provider.of<StyleProvider>(context).bulkNumbers.length,
                         itemBuilder: (context, i) {

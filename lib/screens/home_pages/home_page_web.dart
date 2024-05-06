@@ -49,6 +49,8 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   DateTimeRange? selectedDateRange;
 
+
+
   void defaultInitialization() async {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
 
@@ -62,6 +64,9 @@ class _HomePageWebState extends State<HomePageWeb> {
       checkInTime = formattedTime;
       lastSignInTime = storedTime;
     }
+
+
+
 
     String newName = prefs.getString(kBusinessNameConstant) ?? 'Hi';
     storeLocation = prefs.getString(kLocationConstant) ?? 'Kampala';
@@ -83,6 +88,7 @@ class _HomePageWebState extends State<HomePageWeb> {
       storeId = newStoreId;
       isCheckedIn = newIsCheckedIn;
       userName = newUserName;
+
     });
   }
 
@@ -159,11 +165,6 @@ class _HomePageWebState extends State<HomePageWeb> {
       backgroundColor: kPlainBackground,
       floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
           children: [
-            // Container(
-            //   height: 50,
-            //   width: 80,
-            // ) ,
-
             FloatingActionButton(
               onPressed: (){
 
@@ -338,15 +339,16 @@ class _HomePageWebState extends State<HomePageWeb> {
                                                 )
                                             : Container(),
                                         kMediumWidthSpacing,
-                                        permissionsMap['customers'] == true
+                                        permissionsMap['expenses'] == true
+
                                             ? PhotoWidget(
                                                 onTapFunction: () {
                                                   Navigator.pushNamed(
-                                                      context, CustomerPage.id);
+                                                      context,
+                                                      ExpensesPage.id);
                                                 },
-                                                footer: cCustomers,
-                                                iconToUse:
-                                                    Icons.people_alt_outlined,
+                                                footer: cExpense,
+                                                iconToUse: Icons.monetization_on,
                                                 widgetColor: kCustomersButtonColor,
                                                 iconColor: kBlueDarkColor,
                                                 fontSize: CommonFunctions()
@@ -357,20 +359,19 @@ class _HomePageWebState extends State<HomePageWeb> {
                                     ),
 
                                     size.width > 1151 ? Expanded(
-                                            child: permissionsMap['expenses'] ==
-                                                    true
+                                            child: permissionsMap['customers'] == true
                                                 ? Padding(
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 10.0,
                                                             right: 10),
                                                     child: PhotoWidget(onTapFunction: () {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            ExpensesPage.id);
+                                                      Navigator.pushNamed(
+                                                          context, CustomerPage.id);
+
                                                       },
-                                                      footer: cExpense,
-                                                      iconToUse: Icons.monetization_on,
+                                                      footer: cCustomers,
+                                                      iconToUse: Icons.people_alt_outlined,
                                                       widgetColor: kPureWhiteColor,
                                                       iconColor: kBlueDarkColor,
                                                       width: double.infinity,
@@ -395,15 +396,15 @@ class _HomePageWebState extends State<HomePageWeb> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          permissionsMap['expenses'] == true
+                                          permissionsMap['customers'] == true
                                               ? PhotoWidget(
                                                   onTapFunction: () {
-                                                    Navigator.pushNamed(context,
-                                                        ExpensesPage.id);
+                                                    Navigator.pushNamed(
+                                                        context, CustomerPage.id);
                                                   },
-                                                  footer: cExpense,
+                                                  footer: cCustomers,
                                                   iconToUse:
-                                                      Icons.monetization_on,
+                                                  Icons.people_alt_outlined,
                                                   widgetColor: kPureWhiteColor,
                                                   iconColor: kBlueDarkColor,
                                                   width: double.infinity,

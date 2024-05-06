@@ -60,7 +60,7 @@ class _POSState extends State<POS> {
   List<Product> products = [];
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
-
+  var currency = "";
 
   List<Stock> selectedStocks = [];
   Map<String, dynamic> permissionsMap = {};
@@ -70,9 +70,10 @@ class _POSState extends State<POS> {
   var checkBoxValue = false;
 
   void defaultInitialization() async {
+    final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
-
+    currency = prefs.getString(kCurrency)??"USD";
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
     newStock = await retrieveSupplierData();
     filteredStock.addAll(newStock);
@@ -289,6 +290,7 @@ class _POSState extends State<POS> {
 
             Provider.of<BeauticianData>(context, listen: false)
                 .setStoreId(prefs.getString(kStoreIdConstant));
+            Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
 
             showModalBottomSheet(
                 isScrollControlled: true,
@@ -365,7 +367,9 @@ class _POSState extends State<POS> {
                   title: 'No Customer Added',
                   text: 'Add a Customer',
                   cancelButtonText: "Continue",
-                  selectedStocks: selectedStocks);
+                  selectedStocks: selectedStocks,
+                  currency: currency
+              );
             } else {
               Provider.of<StyleProvider>(context, listen: false)
                   .clearSelectedStockItems();
@@ -374,18 +378,16 @@ class _POSState extends State<POS> {
               showModalBottomSheet(
                   context: context,
                   builder: (context) {
-                    return PosSummary();
+                    return PosSummary(currency: currency,);
                   });
             }
           }
-        },
-        icon: CircleAvatar(
+        }, icon: CircleAvatar(
             radius: 12,
             child: Text(
               "${Provider.of<StyleProvider>(context).basketItems.length}",
               style: kNormalTextStyle.copyWith(color: kBlack),
-            )),
-        label: Text(
+            )), label: Text(
           'Total: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context).totalPrice)}',
           style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
         ),
@@ -431,10 +433,9 @@ class _POSState extends State<POS> {
                       '${Provider.of<StyleProvider>(context).basketNameItems.join(", ")}',
                       textAlign: TextAlign.center,
                       style: kNormalTextStyle.copyWith(
-                        fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w500,
                           color: kBlack, fontSize: 14),
                     ),
-                    // Text('${Provider.of<StyleProvider>(context).basketNameItems}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kPureWhiteColor ,fontSize: 12),),
                   ],
                 ),
               ),
@@ -667,8 +668,6 @@ class _POSState extends State<POS> {
                                                 Navigator.pop(
                                                     context);
                                               }
-                                              print(
-                                                  "THIS IS AT POS STAGE $selectedStocks with quantity to reduce ${selectedStocks[0].restock}");
                                             },
                                             style: ElevatedButton
                                                 .styleFrom(
@@ -734,7 +733,7 @@ class _POSState extends State<POS> {
                                         ),
                                       ],
                                     ),
-                                    Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
+                                    Text("${currency} ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
                                       style: kNormalTextStyle.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: kBlack, fontSize: 15),

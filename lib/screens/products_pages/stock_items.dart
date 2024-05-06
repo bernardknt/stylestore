@@ -51,4 +51,12 @@ class AllStockData {
 
     );
   }
+  // New method to get item by barcode
+  AllStockData? getByBarcode(String barcode) {
+    if (this.barcode == barcode) {
+      return this;
+    } else {
+      return null;
+    }
+  }
 }

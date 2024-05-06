@@ -12,6 +12,7 @@ import 'package:slider_button/slider_button.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/tasks_pages/add_tasks.dart';
+import 'package:stylestore/screens/tasks_pages/edit_tasks_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/widgets/dividing_line_widget.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -53,6 +54,7 @@ class _TasksWidgetState extends State<TasksWidget> {
   var executionByList = [];
   var finishedAtList = [];
   var finishedByList = [];
+  var employeeNamesList = [];
   var datesColor = [];
   List<Color> onlineStatusColour = [];
   var totalBill = [];
@@ -166,6 +168,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                 executionByList = [];
                 finishedAtList = [];
                 finishedByList = [];
+                employeeNamesList = [];
 
                 var orders = snapshot.data?.docs;
                 for (var order in orders!) {
@@ -186,6 +189,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                         taskList.add(order.get('task'));
                        // statusList.add(order.get("toName"));
                         statusList.add(getFirstNames(order.get('toName')));
+                        employeeNamesList.add(order.get('toName').toList());
                         completedTasks.add(order.get("completed"));
                         taskStatus.add(order.get("track"));
                         executionAtList.add(order.get("executedAt").map((timestamp) => timestamp.toDate()).toList());
@@ -307,10 +311,30 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                       right: 10,
                                                       child: TextButton(
                                                         onPressed: () {
+                                                          Provider.of<StyleProvider>(context, listen: false).setTaskToDo(taskList[index]);
+                                                         // List<String> namesOfEmployees = employeeNamesList[index].toList();       // List<String> namesOfEmployees = employeeNamesList[index].toList();
+
+                                                         //List<DateTime> selectedDates = taskDates[index];
+                                                          print(taskDates[index]);
+                                                         //  List<DateTime> selectedDates  = taskDates[index].map((item) {
+                                                         //    if (item is DateTime) {
+                                                         //      return item;
+                                                         //    } else if (item is String) {
+                                                         //      return DateTime.parse(item); // Example: Convert string to DateTime
+                                                         //    }
+                                                         //    // Handle other cases or throw an error for unexpected types
+                                                         //    throw Exception('Invalid type in the list');
+                                                         //  }).toList();
+
+
+                                                         // print(namesOfEmployees);
+
                                                           showDialog(
                                                             context: context,
                                                             builder: (BuildContext context) {
-                                                              return AlertDialog(
+                                                              return
+
+                                                                AlertDialog(
                                                                 title: const Text("Confirm Deletion"),
                                                                 content: const Text("Are you sure you want to delete this task?"),
                                                                 actions: <Widget>[
@@ -335,7 +359,7 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                             },
                                                           );
                                                         },
-                                                        child: const Text("Delete This Task",
+                                                        child: const Text("Delete Task",
                                                           style: TextStyle(
                                                               color: kPureWhiteColor,
                                                               fontWeight: FontWeight.w500,
@@ -393,7 +417,16 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                               top: 27,
                                                               child:  GestureDetector(
                                                                 onTap: (){
+                                                                  List<String> namesOfEmployees = employeeNamesList[index].cast<String>();
+                                                                  showModalBottomSheet(
+                                                                      context: context,
+                                                                      isScrollControlled: true,
 
+                                                                      builder: (BuildContext context){
+
+                                                                        return EditTaskPage(newSelectedEmployees:namesOfEmployees, datesSelected:[DateTime.now().add(Duration(days: 1))],);
+                                                                      }
+                                                                  );
                                                                 },
                                                                 child: const CircleAvatar(
                                                                     backgroundColor: kBlueDarkColor,

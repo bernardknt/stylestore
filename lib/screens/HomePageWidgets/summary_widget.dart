@@ -93,6 +93,7 @@ class _SummaryPageState extends State<SummaryPage> {
   var dateList = [];
   var paidStatusList = [];
   var paidStatusListColor = [];
+  var paymentHistory = [];
   List<double> opacityList = [];
 
   bool isSameDay(DateTime date1, DateTime date2) {
@@ -151,6 +152,7 @@ class _SummaryPageState extends State<SummaryPage> {
                     smsList = [];
                     customerIdList = [];
                     currencyList = [];
+                    paymentHistory = [];
 
                     var orders = snapshot.data?.docs;
                     for (var doc in orders!) {
@@ -167,6 +169,7 @@ class _SummaryPageState extends State<SummaryPage> {
                       clientPhoneList.add(doc['clientPhone']);
                       paymentDueDateList.add(doc['payment_date'].toDate());
                       paidAmountList.add(doc['paidAmount']);
+                      paymentHistory.add(doc['paymentHistory']);
                       // Here is where the customer id error is
                       customerIdList.add(doc['customerId']);
 
@@ -249,7 +252,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                             TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                               transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                               paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                              clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
+                                              clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList, paymentHistory: paymentHistory,),
                                             );
                                         });
                                   },

@@ -1,10 +1,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +26,7 @@ import 'package:uuid/uuid.dart';
 import '../../Utilities/constants/color_constants.dart';
 
 import '../../utilities/constants/user_constants.dart';
+import '../../utilities/device_info_data.dart';
 import '../tasks_pages/tasks_widget.dart';
 
 
@@ -51,7 +55,8 @@ class _SignInUserPageState extends State<SignInUserPage> {
   QRViewController? controller;
   String qrCode = "";
   Map<String, dynamic> permissionsMap = {};
-
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  Map<String, dynamic> _deviceData = <String, dynamic>{};
   void defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
@@ -60,6 +65,40 @@ class _SignInUserPageState extends State<SignInUserPage> {
       companyName = prefs.getString(kBusinessNameConstant)!;
       storeId = prefs.getString(kStoreIdConstant)!;
 
+    });
+  }
+  Future<void> initPlatformState() async {
+    var deviceData = <String, dynamic>{};
+
+    try {
+      if (kIsWeb) {
+        deviceData = DeviceInfo().readWebBrowserInfo(await deviceInfoPlugin.webBrowserInfo);
+      } else {
+        deviceData = switch (defaultTargetPlatform) {
+          TargetPlatform.android =>
+              DeviceInfo().readAndroidBuildData(await deviceInfoPlugin.androidInfo),
+          TargetPlatform.iOS =>
+              DeviceInfo().readIosDeviceInfo(await deviceInfoPlugin.iosInfo),
+          TargetPlatform.linux =>
+              DeviceInfo().readLinuxDeviceInfo(await deviceInfoPlugin.linuxInfo),
+          TargetPlatform.windows =>
+              DeviceInfo().readWindowsDeviceInfo(await deviceInfoPlugin.windowsInfo),
+          TargetPlatform.macOS =>
+              DeviceInfo().readMacOsDeviceInfo(await deviceInfoPlugin.macOsInfo),
+          // TODO: Handle this case.
+          TargetPlatform.fuchsia => throw UnimplementedError(),
+        };
+      }
+    } on PlatformException {
+      deviceData = <String, dynamic>{
+        'Error:': 'Failed to get platform version.'
+      };
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _deviceData = deviceData;
     });
   }
 
@@ -109,6 +148,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
   @override
   void dispose() {
     controller?.dispose();
+
     super.dispose();
   }
 
@@ -116,6 +156,7 @@ class _SignInUserPageState extends State<SignInUserPage> {
     // TODO: implement initState
     super.initState();
     defaultInitialization();
+    initPlatformState();
     _firebaseMessaging.getToken().then((value) async{
       final prefs = await SharedPreferences.getInstance();
       token = value!;
@@ -358,7 +399,6 @@ class _SignInUserPageState extends State<SignInUserPage> {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     prefs.setInt(kSignInTime, timestamp);
     String orderId = '${DateTime.now()}${uuid.v1().split("-")[0]}';
-
     try {
       userOrder.doc(orderId)
           .set({
@@ -370,7 +410,8 @@ class _SignInUserPageState extends State<SignInUserPage> {
         'storeId': prefs.getString(kStoreIdConstant),
         'token': token,
         'forced':false,
-        'checklist': {}
+        'checklist': {},
+        'deviceType': _deviceData
 
       })
           .then((value) {

@@ -17,6 +17,7 @@ import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
+import 'package:stylestore/screens/store_pages/upload_products_ptions.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../../../Utilities/constants/color_constants.dart';
@@ -47,12 +48,13 @@ class _StorePageWebState extends State<StorePageWeb> {
   String currency = "";
 
   defaultInitialization()async{
+    final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newStock = await retrieveSupplierData();
     totalStock.addAll(newStock);
     filteredStock.addAll(newStock);
-    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
+    currency = prefs.getString(kCurrency)??"USD";//Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });
@@ -180,7 +182,21 @@ class _StorePageWebState extends State<StorePageWeb> {
                                 GestureDetector(
                                   onTap: () {
 
-                                    _uploadExcelFile();
+
+
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadProductOptions()));
+                                    showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) {
+                                          return Scaffold(
+                                              appBar: AppBar(
+                                                elevation: 0,
+                                                backgroundColor: kPureWhiteColor,
+                                                automaticallyImplyLeading: false,
+                                              ),
+                                              body: UploadProductOptions());
+                                        });
                                   },
                                   child: CircleAvatar(
                                       radius: 30,
@@ -640,32 +656,32 @@ class _StorePageWebState extends State<StorePageWeb> {
 
   List<ExcelDataRow> dataList = [];
 
-  void _uploadExcelFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: [
-          'xls',
-          'xlsx'
-        ]); // , allowedExtensions: ['xls','xlsx']
-    if (result != null) {
-      setState(() {
-        dataList.clear();
-      });
-
-      File excelFile = File(result.files.single.path!);
-      try {
-        List<ExcelDataRow> uploadedDataList = await readExcelData(excelFile);
-
-        setState(() {
-          dataList.addAll(uploadedDataList);
-        });
-
-        await uploadDataToFirebase(uploadedDataList);
-      } catch (e){
-        _showErrorDialog("Wrong Excel document Format used.");
-      }
-    }
-  }
+  // void _uploadExcelFile() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom,
+  //       allowedExtensions: [
+  //         'xls',
+  //         'xlsx'
+  //       ]); // , allowedExtensions: ['xls','xlsx']
+  //   if (result != null) {
+  //     setState(() {
+  //       dataList.clear();
+  //     });
+  //
+  //     File excelFile = File(result.files.single.path!);
+  //     try {
+  //       List<ExcelDataRow> uploadedDataList = await readExcelData(excelFile);
+  //
+  //       setState(() {
+  //         dataList.addAll(uploadedDataList);
+  //       });
+  //
+  //       await uploadDataToFirebase(uploadedDataList);
+  //     } catch (e){
+  //      CommonFunctions().showErrorDialog("Wrong Excel document Format used.", context);
+  //     }
+  //   }
+  // }
 
 
   Future<List<ExcelDataRow>> readExcelData(File excelFile) async {
@@ -763,28 +779,10 @@ class _StorePageWebState extends State<StorePageWeb> {
       ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Items added Successfully')));
 
     } catch (e) {
-      _showErrorDialog("$e");
+      CommonFunctions().showErrorDialog("$e", context);
     }
   }
-  void _showErrorDialog(String errorMessage) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: Text('Error'),
-          content: Text(errorMessage),
-          actions: [
-            CupertinoDialogAction(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
 
 

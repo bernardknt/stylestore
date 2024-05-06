@@ -1,6 +1,7 @@
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -22,7 +23,7 @@ import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../screens/analytics/deeper_analytics/analytics_new_web.dart';
 import '../../screens/employee_pages/employees_page.dart';
-import '../../screens/store_pages/store_page.dart';
+import '../../screens/store_pages/store_page_mobile.dart';
 import '../../screens/sign_in_options/login_new_layout_web.dart';
 import '../../screens/sign_in_options/login_page.dart';
 import '../../utilities/constants/color_constants.dart';
@@ -243,8 +244,17 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     _selectedWidget = SuppliersPage();
                   });
                 },
-                // page: EmployeesPage(),
-                icon: kIconSuppliers,
+                iconWidget: Stack(children: [
+                  const SizedBox(
+                      height: 40,
+                      width: 30,
+
+                      child: Icon(kIconSuppliers)),
+                  subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
+                ],)
               ),
               SidebarXItem(
                 label: cMessagingTab,
@@ -254,7 +264,12 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                   });
                 },
                 // page: AttendancePage(),
-                icon: kIconMessage,
+                iconWidget: Stack(children: [
+                  const SizedBox(
+                      width: 30,
+                      child: Icon( kIconMessage)),
+                ],),
+                // icon: kIconMessage,
               ),
               SidebarXItem(
                 label: cTransactions,
@@ -264,12 +279,35 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                   });
                 },
                 // page: AttendancePage(),
-                icon: kIconTransaction,
+                //icon: kIconTransaction,
+                  iconWidget: Stack(children: [
+                    const SizedBox(
+                        // height: 10,
+                        width: 30,
+
+                        child: Icon(kIconTransaction)),
+                    // subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
+                    //     top: 0,
+                    //     right: 0,
+                    //     child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
+                  ],)
               ),
               SidebarXItem(
                 label: cAnalytics,
                 // page: ReportsPage(),
-                icon: kIconAnalytics,
+                // icon: kIconAnalytics,
+                  iconWidget: Stack(children: [
+                    const SizedBox(
+                        height: 40,
+                        width: 30,
+
+                        child: Icon(kIconAnalytics)),
+                    subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
+                  ],),
+
                 onTap: () {
                   setState(() {
                     _selectedWidget = AnalyticsNewWeb() ;

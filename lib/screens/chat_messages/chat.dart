@@ -18,7 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/premium_mm_payment.dart';
 import 'package:stylestore/screens/paywall/paywall.dart';
-import 'package:stylestore/screens/store_pages/store_page.dart';
+import 'package:stylestore/screens/store_pages/store_page_mobile.dart';
 import 'package:stylestore/screens/store_pages/store_page_web.dart';
 import 'package:stylestore/screens/transactions_pages/unpaid_transactions_page.dart';
 

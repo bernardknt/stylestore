@@ -120,6 +120,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   get: ^4.6.5
   audioplayers: ^3.0.1
+  device_info_plus: ^10.1.0
 #  web: ^0.5.0
 
 

@@ -157,15 +157,15 @@ class _BioDataFormState extends State<BioDataForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee Information Form'),
+        title: const Text('Add Employee'),
         automaticallyImplyLeading: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          updateAllEmployeeDocuments();
-        },
-        child: const Icon(Icons.money),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //
+      //   },
+      //   child: const Icon(Icons.money),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

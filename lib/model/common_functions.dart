@@ -5,6 +5,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:excel/excel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,6 +54,10 @@ import '../widgets/employee_checklist.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
+import 'dart:html' as html;
+
+import 'excel_model.dart';
+
 class CommonFunctions {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -79,7 +86,7 @@ class CommonFunctions {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Checklist", style: kNormalTextStyle.copyWith(color: kBlack),),
+          title: Text("Checklist", style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
           content: EmployeePreChecklist(),
           actions: [
             TextButton(
@@ -473,9 +480,10 @@ class CommonFunctions {
         double currentAmount = snapshot.data()!['paidAmount'].toDouble() ?? 0;
 
         double updatedAmount = currentAmount + amountValue;
+        String updateRecord ="${amountValue.toString()}?${Provider.of<StyleProvider>(context, listen: false).paymentMethod}:${DateTime.now()}";
         transaction.update(transactionDoc, {
           'paidAmount': updatedAmount,
-          'paymentHistory':  FieldValue.arrayUnion([amountValue]),
+          'paymentHistory':  FieldValue.arrayUnion([updateRecord]),
           'paymentMethod': Provider.of<StyleProvider>(context, listen: false).paymentMethod
 
         }
@@ -511,6 +519,20 @@ class CommonFunctions {
     final uniqueID = '${initials}${year}${month}${day}-$randomNumber';
 
     return uniqueID;
+  }
+
+  List separateElements(List elements, currency) {
+    List formattedElements = [];
+    for (String element in elements) {
+      List parts = element.split("?");
+      double amount = double.parse(parts[0]);
+      String paymentMethod = parts[1].split(":")[0];
+      String dateString = parts[1].split(":")[1];
+      DateTime date = DateFormat("yyyy-MM-dd").parse(dateString);
+
+      formattedElements.add("${DateFormat.yMMMd().format(date)}\n$currency ${formatter.format(amount)} via $paymentMethod");
+    }
+    return formattedElements;
   }
 
   // Sync contacts from the phone
@@ -997,8 +1019,12 @@ class CommonFunctions {
   // This function uploads the user token to the server
   Future<dynamic> AlertPopUpCustomers(BuildContext context,
       {
-        required String imagePath, required String text, required String title, String cancelButtonText = "Cancel",
-        required List<Stock> selectedStocks
+        required String imagePath,
+        required String text,
+        required String title,
+        String cancelButtonText = "Cancel",
+        required List<Stock> selectedStocks,
+        required String currency,
 
       }) {
     return CoolAlert.show(
@@ -1021,7 +1047,7 @@ class CommonFunctions {
           showModalBottomSheet(
               context: context,
               builder: (context) {
-                return PosSummary();
+                return PosSummary(currency: currency,);
               });
         },
         onConfirmBtnTap: (){
@@ -1260,16 +1286,30 @@ class CommonFunctions {
   }
 
   Future<void> updateEmployeeSignInAndOutDoc (bool value)async {
+    final deviceInfoPlugin = DeviceInfoPlugin();
+    final androidInfo = await deviceInfoPlugin.androidInfo;
+    final iosInfo = await deviceInfoPlugin.iosInfo;
+    final webInfo = await deviceInfoPlugin.webBrowserInfo;
+
+    String deviceType = "";
+    if (androidInfo != null) {
+      deviceType = androidInfo.device;
+    } else if (iosInfo != null) {
+      deviceType = iosInfo.name;
+    }else if (webInfo != null){
+      deviceType = webInfo.browserName.name;
+    }
     final dateNow = new DateTime.now();
     CollectionReference userOrder = FirebaseFirestore.instance.collection('employees');
     final prefs =  await SharedPreferences.getInstance();
     String docId = prefs.getString(kEmployeeId) ?? "";
-    print(docId);
+    print(deviceType);
 
     return userOrder.doc(docId)
         .update({
       'signedIn': {'${DateFormat('hh:mm a EE, dd, MMM').format(dateNow)}': value},
-      'token': prefs.getString(kToken)
+      'token': prefs.getString(kToken),
+      'device': deviceType
 
     });
   }
@@ -1780,6 +1820,100 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     } else {
       return phoneNumber; // Number doesn't start with 0, return as-is
     }
+  }
+
+  Future<void> downloadTemplate() async {
+    // Create an Excel file with predefined headers
+    var excel = Excel.createExcel();
+    var sheet = excel['Sheet1'];
+
+    // Add headers to the Excel sheet
+    sheet.appendRow(['Name', 'Description', 'Amount', 'Saleable', 'Tracking', 'Quantity', 'Minimum']);
+
+    final List<int>? excelData = excel.encode();
+
+    // Create a blob from the bytes and create a download link
+    final blob = html.Blob([excelData]);
+    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create a link element and trigger the download
+    final anchor = html.AnchorElement(href: blobUrl)
+      ..target = 'download'
+      ..download = 'bulk_upload_data.xlsx';
+
+    // Trigger the click event to start the download
+    html.document.body?.append(anchor);
+    anchor.click();
+
+    // Clean up the temporary link
+    html.Url.revokeObjectUrl(blobUrl);
+    anchor.remove();
+  }
+  Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      CollectionReference dataCollection = FirebaseFirestore.instance
+          .collection(
+          'stores');
+
+      dataList.forEach((rowData) {
+        var newDocumentRef = dataCollection
+            .doc(); // Firestore generates a unique ID
+        newDocumentRef.set({
+          'active': true,
+          'id': newDocumentRef.id, // Add the unique ID as the 'id' field
+          'name': rowData.name,
+          'description': rowData.description,
+          'approved':true,
+          'ignore':false,
+          'barcode':newDocumentRef.id,
+          'date': DateTime.now(),
+          'amount': rowData.amount,
+          'saleable': rowData.saleable,
+          'tracking': rowData.tracking,
+          'quantity': rowData.quantity,
+          'minimum': rowData.minimum,
+          'image': "https://mcusercontent.com/f78a91485e657cda2c219f659/images/14f4afc4-ffaf-4bb1-3384-b23499cf0df7.png",
+          'storeId': prefs.getString(kStoreIdConstant),
+          'stockTaking': []
+        }).onError((error, stackTrace) =>  ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error! $error'))
+        ))
+            .whenComplete(() {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Items added Successfully'))
+          );
+          Navigator.pop(context);
+
+        }
+        );
+      });
+
+
+    } catch (e) {
+      CommonFunctions().showErrorDialog("$e", context);
+    }
+  }
+  void showErrorDialog(String errorMessage, context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text('Error'),
+          content: Text(errorMessage),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
 

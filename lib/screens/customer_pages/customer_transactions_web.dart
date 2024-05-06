@@ -60,6 +60,8 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
   var transIdList = [];
   var dateList = [];
   var paidStatusList = [];
+  var paymentHistory = [];
+  var paymentMethod = [];
   var paidStatusListColor = [];
   List<double> opacityList = [];
 
@@ -126,6 +128,8 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
               clientList = [];
               paidAmountList = [];
               currencyList = [];
+              paymentHistory = [];
+              paymentMethod = [];
 
               var dateSeparator = '';
               var orders = snapshot.data?.docs;
@@ -141,6 +145,8 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                   orderStatusList.add(doc['status']);
                   dateList.add(doc['appointmentDate'].toDate());
                   clientList.add(doc['client']);
+                  paymentHistory.add(doc['paymentHistory']);
+                  paymentMethod.add(doc['paymentMethod']);
 
                   if (doc['paymentStatus'] == 'Complete'){
                     paidStatusList.add('Paid');
@@ -341,6 +347,7 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                         showDateSeparator = true;
                                         _previousDate = transactionDate;
                                       }
+
                                       return Column(
 
                                         children: [
@@ -370,6 +377,7 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                                         shrinkWrap: true,
                                                         itemCount: productList[index].length,
                                                         itemBuilder: (context, i){
+                                                          // print(paymentHistory[index]);
                                                           return CustomerContentsWidget(
                                                               orderIndex: i + 1,
                                                               optionName: productList[index][i]['product'],
@@ -379,6 +387,22 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                                                         }),
                                                     leading: priceList[index] - paidAmountList[index] == 0?
                                                     kIconPaidIcon:kIconNotPaidIcon,
+                                                    subtitle: paymentHistory[index].length==0 && priceList[index] - paidAmountList[index] == 0?Text("Paid ${currencyList[index]} ${formatter.format(paidAmountList[index])} using ${paymentMethod[index]} on ${DateFormat.yMMMd().format(dateList[index])}",style: kNormalTextStyle.copyWith(fontSize: 11),):paymentHistory[index].length == 0?Container():
+
+                                                    //Text("${CommonFunctions().separateElements(paymentHistory[index], currencyList[index])}"),
+                                                    ListView.builder(
+                                                        physics: NeverScrollableScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        itemCount: CommonFunctions().separateElements(paymentHistory[index], currencyList[index]).length,
+                                                        itemBuilder: (context, i){
+                                                          // print(paymentHistory[index]);
+                                                          return Padding(
+                                                            padding: const EdgeInsets.only(bottom: 8.0),
+                                                            child: Text("${CommonFunctions().separateElements(paymentHistory[index], currencyList[index])[i]}", style: kNormalTextStyle.copyWith(fontSize: 11),),
+                                                          );
+
+                                                        }),
+
                                                     trailing: Padding(
                                                       padding: const EdgeInsets.only(right: 10, top: 20),
                                                       child: Column(

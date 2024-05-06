@@ -105,6 +105,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
   var dateList = [];
   var customerIdList = [];
   var paidStatusList = [];
+  var paymentHistoryList = [];
   var paidStatusListColor = [];
   List<double> opacityList = [];
 
@@ -162,6 +163,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                     smsList = [];
                     paymentMethodList = [];
                     currencyList = [];
+                    paymentHistoryList = [];
 
                     var dateSeparator = '';
                     var orders = snapshot.data?.docs;
@@ -184,6 +186,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                       paidAmountList.add(doc['paidAmount']);
                       paymentMethodList.add(doc['paymentMethod']);
                       customerIdList.add(doc['customerId']);
+                      paymentHistoryList.add(doc['paymentHistory']);
 
                       if (doc['paymentStatus'] == 'Complete'){
                         paidStatusList.add('Paid');
@@ -336,7 +339,7 @@ class _NewTransactionsPageState extends State<NewTransactionsPage> {
                                               TransactionWidget(clientList: clientList, clientPhoneList: clientPhoneList, priceList: priceList, paidAmountList: paidAmountList,
                                                 transIdList: transIdList, smsList: smsList, dateList: dateList, customerIdList: customerIdList,
                                                 paymentDueDateList: paymentDueDateList, storeName: storeName, location: location, phoneNumber: phoneNumber,
-                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList,),
+                                                clientLocationList: clientLocationList, logo: logo, index: index,currency: currencyList, paymentHistory: paymentHistoryList,),
                                             );
                                         });
 

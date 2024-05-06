@@ -137,8 +137,8 @@ class _PremiumPaymentMobileMoneyPageState extends State<PremiumPaymentMobileMone
   final FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    var styleDataDisplay = Provider.of<StyleProvider>(context);
-    // amount = styleDataDisplay.bookingPrice;
+    // var styleDataDisplay = Provider.of<StyleProvider>(context);
+    // // amount = styleDataDisplay.bookingPrice;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -239,14 +239,14 @@ class _PremiumPaymentMobileMoneyPageState extends State<PremiumPaymentMobileMone
             });
           },
           child: Padding(
-            padding: EdgeInsets.all(15.0),
+            padding: EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   offering.title,
-                  style: TextStyle(
-                    fontSize: 16.0,
+                  style: kNormalTextStyle.copyWith(
+                    // fontSize: 16.0,
                     fontWeight: offering.isSelected ? FontWeight.bold : null,
                   ),
                 ),

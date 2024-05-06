@@ -11,6 +11,7 @@ import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
+import '../payment_pages/pos_summary.dart';
 import 'add_customers_page.dart';
 
 class CustomerSearchPage extends StatefulWidget {
@@ -140,11 +141,20 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
                               Provider.of<StyleProvider>(context, listen:false).setCustomerName(name, phoneNumber, id, location);
                               Navigator.pop(context);
+                              if (MediaQuery.of(context).size.width < 600){
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return PosSummary(currency: Provider.of<StyleProvider>(context, listen: false).storeCurrency,);
+                                    });
+
+                              }
 
                             },
                             child: ListTile(
                               title: Text(name),
                               subtitle: Text(phoneNumber),
+                              // leading: Text("Great Man"),
                             ),
                           );
                         },
@@ -165,12 +175,16 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                         onTap: (){
                           print("$name $phoneNumber");
                           Provider.of<StyleProvider>(context, listen:false).setCustomerName(name, phoneNumber, id, location);
-                          Navigator.pop(context);
+                         Navigator.pop(context);
+
+                          //Navigator.pop(context);
+
 
                         },
                         child: ListTile(
                           title: Text(name),
                           subtitle: Text(phoneNumber),
+
                         ),
                       );
                     },
@@ -250,14 +264,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
                                       ],
                                     )),
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // Text("Cancel", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+
                                   ],
                                 ),
                               ),

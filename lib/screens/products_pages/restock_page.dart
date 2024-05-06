@@ -143,22 +143,24 @@ class _ReStockPageState extends State<ReStockPage> {
         true, // Show flash icon
         ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
       );
+      print("Here is barcodeRes: $barcodeScanRes");
       if (barcodeScanRes != '-1') {
-        int index = barcodeList.indexOf(barcodeScanRes);
-
-        if (index != -1) {
+        //int index = barcodeList.indexOf(barcodeScanRes);
+        // int index = newStock[indexOf(barcodeScanRes)].barcode;
+        // int index = 0;
+    var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+        print("We reached this point: ${barcodeItem}");
+        if (barcodeItem != null) {
+        //   print("The int value is : $index");
           CommonFunctions().playBeepSound();
+
           isScanning = false;
-          print(index);
-          print(nameList);
-          quantityControllers[index]?.text = '0';
-          // Add the selected stock to the list.
-          selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index], quality: 'Ok'));
-          print(selectedStocks);
+          selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 0, description:barcodeItem.description));
+          showPriceAndQuantityDialogForBarScanner(1, barcodeItem.name, barcodeItem.documentId);
 
-          showPriceAndQuantityDialogForBarScanner(index, nameList[index], itemIdList[index], descriptionList[index] );
+        } else
+        {
 
-        } else {
           isScanning = false;
           ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
           // Navigator.pop(context);
@@ -186,11 +188,7 @@ class _ReStockPageState extends State<ReStockPage> {
   }
 
 
-  Future<void> _showPriceAndQuantityDialog(int index, String name,
-      id,
-      // description,
-      // AllStockData stockItem
-      ) async {
+  Future<void> _showPriceAndQuantityDialog( String name, id) async {
     double? inputPrice;
     double? inputQuantity;
     await
@@ -256,22 +254,20 @@ class _ReStockPageState extends State<ReStockPage> {
                   if (inputPrice != null && inputQuantity != null) {
                     setState(() {
                       int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                      print("EXISTING INDEX = $existingIndex");
                       if (existingIndex != -1) {
                         selectedStocks[existingIndex].price = inputPrice!;
                         selectedStocks[existingIndex].quality = selectedQuality!.name;
-
                         selectedStocks[existingIndex].setRestock(inputQuantity!);
                         Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
 
                       } else {
-                        // If the stock is not in the list, add it to the list.
+
 
                         print("NOPE THIS RUN INSTEAD");
                       }
-                      checkboxStates[index] = true;
-                      quantityControllers[index]?.text = inputQuantity.toString();
-                      print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
+                      //checkboxStates[index] = true;
+                      // quantityControllers[index]?.text = inputQuantity.toString();
+                      // print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
                     });
                   }
                   setState(() {
@@ -286,128 +282,247 @@ class _ReStockPageState extends State<ReStockPage> {
       },
     );
   }
-  Future<void> showPriceAndQuantityDialogForBarScanner(int index, String name, id, description) async {
+  Future<void> showPriceAndQuantityDialogForBarScanner(int index, String name, id) async {
     double? inputPrice;
     double? inputQuantity;
-    await showDialog(
+    await
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputPrice = double.tryParse(value);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Price (Total Amount)',
-                  hintText: 'Total for purchasing $name',
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputQuantity = double.tryParse(value);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Quantity Bought',
-                  hintText: 'Enter the quantity bought',
-                ),
-              ),
-
-              DropdownButtonFormField<Quality>(
-                value: selectedQuality,  // Current selected value
-                decoration: InputDecoration(
-                    labelText: 'Quality',
-                    labelStyle: TextStyle(fontSize: 14)
-                ),
-                items: Quality.values.map((quality) {
-                  return DropdownMenuItem(
-                    value: quality,
-                    child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
-                  );
-                }).toList(),
-                onChanged: (newValue) {
-                  setState(() {
-                    selectedQuality = newValue;
-                  });
-                },
-              ),
-
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (inputPrice != null && inputQuantity != null) {
-                  setState(() {
-                    int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                    print("EXISTING INDEX = $existingIndex");
-                    if (existingIndex != -1) {
-                      // If the stock already exists, update its price and quantity.
-                      selectedStocks[existingIndex].price = inputPrice!;
-                      selectedStocks[existingIndex].quality = selectedQuality!.name;
-
-
-                      print(selectedQuality.toString());
-                      selectedStocks[existingIndex].setRestock(inputQuantity!);
-
-
-                    } else {
-
-                      print("NOPE THIS RUN INSTEAD");
-                    }
-                    checkboxStates[index] = true;
-
-                    quantityControllers[index]?.text = inputQuantity.toString();
-                    print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
-                  });
-                }
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: Text("Scan another Item?"),
-                      content: Text("Would you like to scan another item?"),
-                      actions: [
-                        CupertinoDialogAction(
-                          child: const Text(
-                            "Cancel", style: TextStyle(color: kRedColor),),
-                          onPressed: () {
-                            Navigator.of(context).pop();// Close the dialog
-
-                          },
-                        ),
-                        CupertinoDialogAction(
-                          child: const Text("Scan Another"),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                            _startBarcodeScan();
-                          },
-                        ),
-                      ],
-                    );
+        return
+          AlertDialog(
+            title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    inputPrice = double.tryParse(value);
                   },
-                );
-              },
-              child: Text('OK'),
+                  decoration: InputDecoration(
+                    labelText: 'Price (Total Amount)',
+                    hintText: 'Total for purchasing $name',
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  onChanged: (value) {
+                    inputQuantity = double.tryParse(value);
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Quantity Bought',
+                    hintText: 'Enter the quantity bought',
+                  ),
+                ),
+                DropdownButtonFormField<Quality>(
+                  value: selectedQuality,  // Current selected value
+                  decoration: InputDecoration(
+                      labelText: 'Quality',
+                      labelStyle: TextStyle(fontSize: 14)
+                  ),
+                  items: Quality.values.map((quality) {
+                    return DropdownMenuItem(
+                      value: quality,
+                      child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      selectedQuality = newValue;
+                    });
+                  },
+                ),
+              ],
             ),
-          ],
-        );
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (inputPrice != null && inputQuantity != null) {
+                    setState(() {
+                      int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
+                      if (existingIndex != -1) {
+                        selectedStocks[existingIndex].price = inputPrice!;
+                        selectedStocks[existingIndex].quality = selectedQuality!.name;
+                        selectedStocks[existingIndex].setRestock(inputQuantity!);
+                        Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
+
+                      } else {
+                        print("NOPE THIS RUN INSTEAD");
+                      }
+                      checkboxStates[index] = true;
+                      quantityControllers[index]?.text = inputQuantity.toString();
+                      print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
+                    });
+                  }
+                  setState(() {
+
+                  });
+
+                                Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return CupertinoAlertDialog(
+                                      title: Text("Scan another Item?"),
+                                      content: Text("Would you like to scan another item?"),
+                                      actions: [
+                                        CupertinoDialogAction(
+                                          child: const Text(
+                                            "Cancel", style: TextStyle(color: kRedColor),),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();// Close the dialog
+
+                                          },
+                                        ),
+                                        CupertinoDialogAction(
+                                          child: const Text("Scan Another"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                            _startBarcodeScan();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                },
+                child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
+              ),
+            ],
+          );
       },
     );
   }
+  // Future<void> showPriceAndQuantityDialogForBarScanner(int index, String name, id, description) async {
+  //   double? inputPrice;
+  //   double? inputQuantity;
+  //   await showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Purchase Details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             TextField(
+  //               keyboardType: TextInputType.numberWithOptions(decimal: true),
+  //               onChanged: (value) {
+  //                 inputPrice = double.tryParse(value);
+  //               },
+  //               decoration: InputDecoration(
+  //                 labelText: 'Price (Total Amount)',
+  //                 hintText: 'Total for purchasing $name',
+  //               ),
+  //             ),
+  //             SizedBox(height: 10),
+  //             TextField(
+  //               keyboardType: TextInputType.numberWithOptions(decimal: true),
+  //               onChanged: (value) {
+  //                 inputQuantity = double.tryParse(value);
+  //               },
+  //               decoration: InputDecoration(
+  //                 labelText: 'Quantity Bought',
+  //                 hintText: 'Enter the quantity bought',
+  //               ),
+  //             ),
+  //
+  //             DropdownButtonFormField<Quality>(
+  //               value: selectedQuality,  // Current selected value
+  //               decoration: InputDecoration(
+  //                   labelText: 'Quality',
+  //                   labelStyle: TextStyle(fontSize: 14)
+  //               ),
+  //               items: Quality.values.map((quality) {
+  //                 return DropdownMenuItem(
+  //                   value: quality,
+  //                   child: Text(quality.name[0].toString().toUpperCase() + quality.name.substring(1).toString()), // Customize display
+  //                 );
+  //               }).toList(),
+  //               onChanged: (newValue) {
+  //                 setState(() {
+  //                   selectedQuality = newValue;
+  //                 });
+  //               },
+  //             ),
+  //
+  //           ],
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text('Cancel'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () {
+  //               if (inputPrice != null && inputQuantity != null) {
+  //                 setState(() {
+  //                   int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
+  //                   print("EXISTING INDEX = $existingIndex");
+  //                   if (existingIndex != -1) {
+  //                     // If the stock already exists, update its price and quantity.
+  //                     selectedStocks[existingIndex].price = inputPrice!;
+  //                     selectedStocks[existingIndex].quality = selectedQuality!.name;
+  //
+  //
+  //                     print(selectedQuality.toString());
+  //                     selectedStocks[existingIndex].setRestock(inputQuantity!);
+  //
+  //
+  //                   } else {
+  //
+  //                     print("NOPE THIS RUN INSTEAD");
+  //                   }
+  //                   checkboxStates[index] = true;
+  //
+  //                   quantityControllers[index]?.text = inputQuantity.toString();
+  //                   print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
+  //                 });
+  //               }
+  //               Navigator.pop(context);
+  //               showDialog(
+  //                 context: context,
+  //                 builder: (BuildContext context) {
+  //                   return CupertinoAlertDialog(
+  //                     title: Text("Scan another Item?"),
+  //                     content: Text("Would you like to scan another item?"),
+  //                     actions: [
+  //                       CupertinoDialogAction(
+  //                         child: const Text(
+  //                           "Cancel", style: TextStyle(color: kRedColor),),
+  //                         onPressed: () {
+  //                           Navigator.of(context).pop();// Close the dialog
+  //
+  //                         },
+  //                       ),
+  //                       CupertinoDialogAction(
+  //                         child: const Text("Scan Another"),
+  //                         onPressed: () {
+  //                           Navigator.of(context).pop(); // Close the dialog
+  //                           _startBarcodeScan();
+  //                         },
+  //                       ),
+  //                     ],
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //             child: Text('OK'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
 
 
@@ -489,7 +604,7 @@ class _ReStockPageState extends State<ReStockPage> {
                 builder: (context) {
                   return Scaffold(
                       appBar: AppBar(
-                        automaticallyImplyLeading: false,
+                        automaticallyImplyLeading: true,
                         backgroundColor: kPureWhiteColor,
                         elevation: 0,
                       ),
@@ -540,34 +655,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                 return item.toLowerCase().contains(query!.toLowerCase());
                               },
                             ),
-                            // DropdownSearch<String>(
-                            //
-                            //     items: supplierDisplayNames,
-                            //     dropdownDecoratorProps: DropDownDecoratorProps(
-                            //       dropdownSearchDecoration: InputDecoration(
-                            //         labelText: "Select Supplier",
-                            //         hintText: "Supplier for goods",
-                            //       ),
-                            //     ),
-                            //
-                            //     popupProps: PopupProps.menu(
-                            //       showSelectedItems: true, // Show selected items at the top
-                            //     ),
-                            //
-                            //     onChanged: (newValue) {
-                            //       setState(() {
-                            //         Provider.of<StyleProvider>(context, listen: false).setSupplierButton(true);
-                            //         selectedSupplierDisplayName = newValue!;
-                            //         int position = supplierDisplayNames.indexOf(newValue);
-                            //         selectedSupplierRealName = supplierRealNames[position];
-                            //         selectedSupplierId = supplierIds[position];
-                            //         print("$selectedSupplierRealName: $selectedSupplierId");
-                            //       });
-                            //     },
-                            //     filterFn: (item, query) {
-                            //       return item.toLowerCase().contains(query!.toLowerCase());
-                            //     }
-                            // ),
+
                             kLargeHeightSpacing,
                             kLargeHeightSpacing,
                             TextButton(onPressed: (){
@@ -623,7 +711,7 @@ class _ReStockPageState extends State<ReStockPage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0, top: 10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       kIsWeb?Container():GestureDetector(
                         onTap: (){
@@ -769,7 +857,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                 onTap: (){
 
                                   if(!styleData.selectedStock.contains(filteredStock[index].name)){
-                                    _showPriceAndQuantityDialog(index,
+                                    _showPriceAndQuantityDialog(
                                       filteredStock[index].name,
                                       filteredStock[index].documentId,
                                     );
@@ -783,12 +871,15 @@ class _ReStockPageState extends State<ReStockPage> {
                                   children: [
                                     styleData.selectedStock.contains(filteredStock[index].name)?Icon(Icons.check_box_outlined):Icon(Icons.check_box_outline_blank_outlined),
                                     kMediumWidthSpacing,
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: mainColor)),
-                                        Text('${filteredStock[index].description}', style: kNormalTextStyle.copyWith()),
-                                      ],
+                                    Container(
+                                      width: 140,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('${filteredStock[index].name}',overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: mainColor)),
+                                          Text('${filteredStock[index].description}',overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith()),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -803,9 +894,9 @@ class _ReStockPageState extends State<ReStockPage> {
                               kSmallWidthSpacing,
                               GestureDetector(
                                 onTap: (){
-                                  if(!styleData.selectedStock.contains(filteredStock[index].name)) {
+
                                     if(!styleData.selectedStock.contains(filteredStock[index].name)){
-                                      _showPriceAndQuantityDialog(index,
+                                      _showPriceAndQuantityDialog(
                                         filteredStock[index].name,
                                         filteredStock[index].documentId,
                                       );
@@ -814,7 +905,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                     }else {
 
                                     }
-                                  }
+
                                 },
                                 child: Container(
                                   width: 60,

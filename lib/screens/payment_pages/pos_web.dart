@@ -200,7 +200,8 @@ class _PosWebState extends State<PosWeb> {
                     );
                   });
             }
-          } else {
+          }
+          else {
             Provider.of<StyleProvider>(context, listen: false)
                 .addToServiceBasket(BasketItem(
                 name: filteredStock[index].name,
@@ -238,7 +239,8 @@ class _PosWebState extends State<PosWeb> {
               },
             );
           }
-        } else {
+        }
+        else {
           isScanning = false;
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Item is not in your Inventory')));
@@ -724,8 +726,7 @@ class _PosWebState extends State<PosWeb> {
                           ))
                           : Text(
                         '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',
-                        style: kNormalTextStyle.copyWith(
-                            color: kBlack, fontSize: 12, fontWeight: FontWeight.w600),
+                        style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -735,7 +736,7 @@ class _PosWebState extends State<PosWeb> {
                         "images/waiternew.png",
                         fit: BoxFit.cover,
                       )),
-                  Expanded(child: PosSummary())
+                  Expanded(child: PosSummary(currency: currency,))
                 ],
               ),
             ),

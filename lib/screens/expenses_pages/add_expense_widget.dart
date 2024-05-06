@@ -101,6 +101,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   }
 
   defaultInitilization()async {
+
     var styleData = Provider.of<StyleProvider>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
@@ -109,7 +110,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     expenseController = TextEditingController(text: styleData.expense);
     quantityController = TextEditingController(text: expenseQuantity);
     _filteredSupplierDisplayNames = supplierDisplayNames;
-    currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
+    currency = prefs.getString(kCurrency)??"USD"; //Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
     });

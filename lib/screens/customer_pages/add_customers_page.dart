@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
@@ -28,6 +29,7 @@ import 'dart:math';
 
 import '../../Utilities/constants/font_constants.dart';
 import '../../utilities/InputFieldWidget.dart';
+import '../../widgets/text_form.dart';
 var uuid = Uuid();
 
 
@@ -55,35 +57,8 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
     customerId = 'customer${initials}${uuid.v1().split("-")[0]}';
-    containerToShow =
-        Container(
-      height: 270,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Opacity(
-              opacity: changeInvalidMessageOpacity,
-              child: Text(invalidMessageDisplay, style: const TextStyle(color:Colors.red , fontSize: 12),)),
-          InputFieldWidget(labelText:' Customer Name' ,hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-            customerName = value;
+    countryCode = prefs.getString(kCountryCode)??"+256";
 
-          },),
-          InputFieldWidget(labelText: ' Phone Number', hintText: '', keyboardType: TextInputType.number, onTypingFunction: (value){
-            phoneNumber = value;
-          }),
-          InputFieldWidget(labelText: ' Location', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
-            location = value;
-          }),
-
-          InputFieldWidget(labelText: ' Note', hintText: 'Likes fitting shirts', keyboardType: TextInputType.text, onTypingFunction: (value){
-            description = value;
-          }),
-          // SizedBox(height: 8.0,),
-
-        ],
-      ),
-    );
 
     setState(() {
 
@@ -123,16 +98,21 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
       'image': image != null ? urlToPhoto : "https://mcusercontent.com/f78a91485e657cda2c219f659/images/db929836-bf22-1b6d-9c82-e63932ac1fd2.png",
       'active': true,
       'phoneNumber': phoneNumber,
-      'location': location,
+      'location': addressController.text,
       'category': 'main',
       'hasOptions': true,
-      'info': description,
-      'name': CommonFunctions().removeLeadingTrailingSpaces(customerName),
+      'info': noteController.text,
+      'name': CommonFunctions().removeLeadingTrailingSpaces(customerNameController.text),
       'updateBy': account,
       'options':  optionsToUpload,
       'storeId': prefs.getString(kStoreIdConstant),
     })
-        .then((value) => print("Service Added"))
+        .then((value) {
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Successfully added ${customerNameController.text}'))
+        );
+        Navigator.pop(context);
+        Navigator.pop(context);
+        })
         .catchError((error) => print("Failed to add service: $error"));
   }
   Future<void> uploadPhoto(String filePath, String fileName)async {
@@ -156,7 +136,10 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
   String description= '';
   String phoneNumber= "";
   String location= "";
-
+  final TextEditingController customerNameController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   double changeInvalidMessageOpacity = 0.0;
   String invalidMessageDisplay = 'Invalid Number';
   String password = '';
@@ -171,7 +154,7 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
   //bool showSpinner = false;
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
-  String countryCode = ' ';
+  String countryCode = '';
   double opacityOfTextFields = 1.0;
 
   @override
@@ -184,26 +167,18 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Create Customer', style: kNormalTextStyle.copyWith(color: kBlueDarkColorOld)),
+      appBar: AppBar(title: Text('Add Customer', style: kNormalTextStyle.copyWith(color: kBlueDarkColorOld)),
         backgroundColor: kPureWhiteColor,
       ),
 
       backgroundColor: kBackgroundGreyColor,
-      // appBar: AppBar(title: Text('Create Ingredient'),
-      //   automaticallyImplyLeading: false,
-      //   centerTitle: true,
-      //   backgroundColor: Colors.black,),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: Text("Add Customer Information",textAlign: TextAlign.start, style: kHeading3TextStyleBold.copyWith(fontSize: 16, ),),
-            ),
 
-            containerToShow,
             Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 10),
+              padding: const EdgeInsets.all(8),
 
               child:
 
@@ -214,21 +189,21 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
                   pickImage(ImageSource.gallery);
                 },
                 child: Container(
-                  width: 150,
-                  height: 150,
+                  width: 100,
+                  height: 100,
                   // Lottie.asset('images/scan.json'),
                   decoration: BoxDecoration(
 
                       border: Border.all(color: kFontGreyColor),
 
-                      borderRadius: const BorderRadius.all(Radius.circular(0)),
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
                       color: kBlack),
                   child:
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Icon(Icons.photo_camera_front_outlined, color: kBlack,size: 30,),
-                      Text("Add Customer Photo", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500, fontSize: 14,),),
+                      Icon(Iconsax.profile_add, color: kPureWhiteColor,size: 30,),
+                      //Text("Add Customer Photo", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w500, fontSize: 14,),),
                     ],
                   ),
 
@@ -236,186 +211,244 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
                 ),
               ),
             ),
+            Container(
+              // height: 350,
+              // color: kBackgroundGreyColor,
+              width: 650,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Opacity(
+                        opacity: changeInvalidMessageOpacity,
+                        child: Text(invalidMessageDisplay, style: const TextStyle(color:Colors.red , fontSize: 12),)),
+                    // InputFieldWidget(labelText:' Customer Name' ,hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+                    //   customerName = value;
+                    //
+                    // },),
+                    TextForm(label:'Customer Name', controller:customerNameController),
 
+                    // InputFieldWidget(labelText: ' Phone Number', hintText: '', keyboardType: TextInputType.number, onTypingFunction: (value){
+                    //   phoneNumber = value;
+                    // }),
+                    // InputFieldWidget(labelText: ' Location', hintText: '', keyboardType: TextInputType.text, onTypingFunction: (value){
+                    //   location = value;
+                    // }),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 0, right: 0, top: 10, bottom: 8),
+                      child: Container(
+                        height: 53,
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: kBlack),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            CountryCodePicker(
+                              textStyle: kNormalTextStyle,
 
-            Padding(
-              padding: const EdgeInsets.only(left: 50.0, right: 50),
-              child: RoundedButtons(buttonHeight: 40, buttonColor: kAppPinkColor, title: 'Add Customer Options', onPressedFunction: (){
+                              onInit: (value) {
+                                countryCode = value!.dialCode!;
+                              },
+                              onChanged: (value) {
+                                countryCode = value.dialCode!;
+                              },
+                              // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                              initialSelection: countryCode,
+                              favorite: const ['+254', '+255', "US"],
+                              // optional. Shows only country name and flag
+                              showCountryOnly: false,
+                              // optional. Shows only country name and flag when popup is closed.
+                              showOnlyCountryWhenClosed: false,
+                              // optional. aligns the flag and the Text left
+                              alignLeft: false,
+                            ),
+                            Text(
+                              "|",
+                              style:
+                              TextStyle(fontSize: 25, color: kAppPinkColor),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                                child: TextFormField(
+                                  style: kNormalTextStyle.copyWith(color: kBlack),
+                                  validator: (value) {
+                                    List letters = List<String>.generate(
+                                        value!.length, (index) => value[index]);
+                                    print(letters);
 
-                if ( customerName == '' || phoneNumber == 0){
-
-
-                }else{
-                  showDialog(context: context, builder: (BuildContext context){
-                    return
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Stack(
-                            children: [
-
-                              CupertinoAlertDialog(
-                                title:  const Text('Enter Extra Customer Field options below', style: kNormalTextStyle,),
-                                content:Column(
-                              children: [
-                              // const Text('Enter Customer Information option below', style: kNormalTextStyle,),
-                              // kLargeHeightSpacing,
-                              Row(
-                                  children: [
-
-                                    InputFieldWidget(labelText:' Option' ,hintText: 'Height', keyboardType: TextInputType.text, onTypingFunction: (value){
-                                      optionName = value;
-                                    },),
-                                    InputFieldWidget(labelText:' Value' ,hintText: '170cm', keyboardType: TextInputType.text, onTypingFunction: (value){
-                                      optionValue = value;
-                                    },
-                                    ),
-                                  ]
-                              )
-
-                            ],
-                          ),
-
-
-
-                                actions: [
-                                  CupertinoDialogAction(isDestructiveAction: true,
-                                    onPressed: (){
-                                      // _btnController.reset();
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Cancel')
-                                ),
-                                  CupertinoDialogAction(isDefaultAction: true,
-                                      onPressed: (){
-
-
-                                              containerToShow = Container(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(10.0),
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text('$customerName Information Captured', style: kHeading2TextStyleBold.copyWith(color: kGreenThemeColor, fontSize: 14),),
-                                                      Icon(Iconsax.tick_circle, color: kGreenThemeColor,),
-
-
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-
-                                              Provider.of<StyleProvider>(context, listen: false).addToCustomerUploadItem(CustomerItem(optionValue: optionValue, name: optionName));
-                                              options =  Provider.of<StyleProvider>(context, listen: false).basketCustomerOptionsToUpload;
-
-                                              optionsToUpload.addAll({optionName: optionValue});
-
-                                              Navigator.pop(context);
-
-
-                                      },
-                                      child: const Text('Add')
-                                  )
-                                ],
-                              ),
-
-                            ],
-                          ),
+                                    if (value != null && value.length > 10) {
+                                      return 'Number is too long';
+                                    } else if (value == "") {
+                                      return 'Enter phone number';
+                                    } else if (letters[0] == '0') {
+                                      return 'Number cannot start with a 0';
+                                    } else if (value != null && value.length < 9) {
+                                      return 'Number short';
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  onChanged: (value) {
+                                    phoneNumber = countryCode + value;
+                                  },
+                                  keyboardType: TextInputType.phone,
+                                  decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "77000000",
+                                      hintStyle: kNormalTextStyle.copyWith(
+                                          color: Colors.grey[500])),
+                                ))
+                          ],
                         ),
-                      );
-                  });
-                  // CoolAlert.show(
-                  //   // lottieAsset: 'images/booking.json',
-                  //     context: context,
-                  //     type: CoolAlertType.custom,
-                  //     // title: "Enter option",
-                  //     widget: Column(
-                  //       children: [
-                  //         const Text('Enter Customer Information option below', style: kNormalTextStyle,),
-                  //         kLargeHeightSpacing,
-                  //         Row(
-                  //             children: [
-                  //
-                  //               InputFieldWidget(labelText:' Option Name' ,hintText: 'Height', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  //                 optionName = value;
-                  //               },),
-                  //               InputFieldWidget(labelText:' Option Value' ,hintText: '170cm', keyboardType: TextInputType.text, onTypingFunction: (value){
-                  //                 optionValue = value;
-                  //               },
-                  //               ),
-                  //             ]
-                  //         )
-                  //
-                  //       ],
-                  //     ),
-                  //     confirmBtnText: 'Yes',
-                  //     confirmBtnColor: kBlueDarkColorOld,
-                  //     cancelBtnText: 'Cancel',
-                  //     showCancelBtn: true,
-                  //     backgroundColor: kPureWhiteColor,
-                  //
-                  //     onConfirmBtnTap: (){
-                  //       containerToShow = Container(
-                  //         child: Padding(
-                  //           padding: const EdgeInsets.all(10.0),
-                  //           child: Row(
-                  //             mainAxisAlignment: MainAxisAlignment.center,
-                  //             children: [
-                  //               Text('$customerName Information Captured', style: kHeading2TextStyleBold.copyWith(color: kGreenThemeColor, fontSize: 14),),
-                  //               Icon(Iconsax.tick_circle, color: kGreenThemeColor,),
-                  //
-                  //
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //
-                  //       Provider.of<StyleProvider>(context, listen: false).addToCustomerUploadItem(CustomerItem(optionValue: optionValue, name: optionName));
-                  //       options =  Provider.of<StyleProvider>(context, listen: false).basketCustomerOptionsToUpload;
-                  //
-                  //       optionsToUpload.addAll({optionName: optionValue});
-                  //
-                  //       Navigator.pop(context);
-                  //
-                  //     }
-                  // );
-                }
-              }
+                      ),
+                    ),
+                    TextForm(label:'Location', controller:addressController),
+                    TextForm(label:'Add Note', controller:noteController),
 
+                    // InputFieldWidget(labelText: ' Note', hintText: 'Likes fitting shirts', keyboardType: TextInputType.text, onTypingFunction: (value){
+                    //   description = value;
+                    // }),
+                    // // SizedBox(height: 8.0,),
 
+                  ],
+                ),
               ),
             ),
+
+
+
+
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 50.0, right: 50),
+            //   child: RoundedButtons(buttonHeight: 40, buttonColor: kAppPinkColor, title: 'Add Customer Options', onPressedFunction: (){
+            //
+            //     if ( customerName == '' || phoneNumber == 0){
+            //
+            //
+            //     }else{
+            //       showDialog(context: context, builder: (BuildContext context){
+            //         return
+            //           GestureDetector(
+            //             onTap: (){
+            //               Navigator.pop(context);
+            //             },
+            //             child: Material(
+            //               color: Colors.transparent,
+            //               child: Stack(
+            //                 children: [
+            //
+            //                   CupertinoAlertDialog(
+            //                     title:  const Text('Enter Extra Customer Field options below', style: kNormalTextStyle,),
+            //                     content:Column(
+            //                   children: [
+            //                   // const Text('Enter Customer Information option below', style: kNormalTextStyle,),
+            //                   // kLargeHeightSpacing,
+            //                   Row(
+            //                       children: [
+            //
+            //                         InputFieldWidget(labelText:' Option' ,hintText: 'Height', keyboardType: TextInputType.text, onTypingFunction: (value){
+            //                           optionName = value;
+            //                         },),
+            //                         InputFieldWidget(labelText:' Value' ,hintText: '170cm', keyboardType: TextInputType.text, onTypingFunction: (value){
+            //                           optionValue = value;
+            //                         },
+            //                         ),
+            //                       ]
+            //                   )
+            //
+            //                 ],
+            //               ),
+            //
+            //
+            //
+            //                     actions: [
+            //                       CupertinoDialogAction(isDestructiveAction: true,
+            //                         onPressed: (){
+            //                           // _btnController.reset();
+            //                           Navigator.pop(context);
+            //                         },
+            //                         child: const Text('Cancel')
+            //                     ),
+            //                       CupertinoDialogAction(isDefaultAction: true,
+            //                           onPressed: (){
+            //
+            //
+            //                                   containerToShow = Container(
+            //                                     child: Padding(
+            //                                       padding: const EdgeInsets.all(10.0),
+            //                                       child: Row(
+            //                                         mainAxisAlignment: MainAxisAlignment.center,
+            //                                         children: [
+            //                                           Text('$customerName Information Captured', style: kHeading2TextStyleBold.copyWith(color: kGreenThemeColor, fontSize: 14),),
+            //                                           Icon(Iconsax.tick_circle, color: kGreenThemeColor,),
+            //
+            //
+            //                                         ],
+            //                                       ),
+            //                                     ),
+            //                                   );
+            //
+            //                                   Provider.of<StyleProvider>(context, listen: false).addToCustomerUploadItem(CustomerItem(optionValue: optionValue, name: optionName));
+            //                                   options =  Provider.of<StyleProvider>(context, listen: false).basketCustomerOptionsToUpload;
+            //
+            //                                   optionsToUpload.addAll({optionName: optionValue});
+            //
+            //                                   Navigator.pop(context);
+            //
+            //
+            //                           },
+            //                           child: const Text('Add')
+            //                       )
+            //                     ],
+            //                   ),
+            //
+            //                 ],
+            //               ),
+            //             ),
+            //           );
+            //       });
+            //
+            //     }
+            //   }
+            //
+            //
+            //   ),
+            // ),
             kSmallHeightSpacing,
             Opacity(
-              opacity: 1,
-              child:
-              ListView.builder(
+                opacity: 1,
+                child:
+                ListView.builder(
 
 
-                  shrinkWrap: true,
-                  itemCount: Provider.of<StyleProvider>(context).basketCustomerOptionsToUpload.length,
-                  itemBuilder: (context, i) {
-                    return CustomerContentsWidget(
-                        orderIndex: i + 1,
-                        optionName: options[i].name,
-                        optionValue: options[i].optionValue);
-                  })
+                    shrinkWrap: true,
+                    itemCount: Provider.of<StyleProvider>(context).basketCustomerOptionsToUpload.length,
+                    itemBuilder: (context, i) {
+                      return CustomerContentsWidget(
+                          orderIndex: i + 1,
+                          optionName: options[i].name,
+                          optionValue: options[i].optionValue);
+                    })
             ),
             kLargeHeightSpacing,
-            kLargeHeightSpacing,
-            kLargeHeightSpacing,
-            kLargeHeightSpacing,
-            kLargeHeightSpacing,
+
+
 
             RoundedLoadingButton(
               color: kBlueDarkColorOld,
               child: Text('Add a new Customer', style: TextStyle(color: Colors.white)),
               controller: _btnController,
               onPressed: () async {
-                if ( customerName == '' ){
+                if ( customerNameController.text == '' ){
                   _btnController.error();
                   showDialog(context: context, builder: (BuildContext context){
                     return
@@ -434,7 +467,7 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
 
                   image == null ? addCustomer("") : uploadPhoto(image!.path, serviceId);
 
-                  Navigator.pop(context);
+
                   //Implement registration functionality.
                 }
               },

@@ -467,18 +467,18 @@ class _HomePageState extends State<HomePage> {
                 )
                     : Container(),
                 kMediumWidthSpacing,
-                permissionsMap['customers'] == true ?
-                PhotoWidget(onTapFunction: (){  Navigator.pushNamed(context, CustomerPage.id );},footer: cCustomers, iconToUse: Icons.people_alt_outlined,
+                permissionsMap['expenses'] == true ?
+                PhotoWidget(onTapFunction: (){  Navigator.pushNamed(context, ExpensesPage.id );},footer: cExpense, iconToUse:Icons.monetization_on ,
                   widgetColor:kCustomersButtonColor ,
                   iconColor:kBlueDarkColor, fontSize: CommonFunctions().calculateFontSize(context),):Container(),
   
 
             ],),
             kSmallHeightSpacing,
-            permissionsMap['expenses'] == true ?
+            permissionsMap['customers'] == true ?
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 10),
-              child: PhotoWidget(onTapFunction: (){  Navigator.pushNamed(context, ExpensesPage.id );},footer: cExpense, iconToUse: Iconsax.minus, widgetColor:kPlainBackground.withOpacity(1) ,iconColor:kBlueDarkColor,height: 40,width: double.infinity, fontSize: CommonFunctions().calculateFontSize(context),),
+              child: PhotoWidget(onTapFunction: (){  Navigator.pushNamed(context, CustomerPage.id );},footer: cCustomers, iconToUse: Icons.people_alt_outlined, widgetColor:kPlainBackground.withOpacity(1) ,iconColor:kBlueDarkColor,height: 40,width: double.infinity, fontSize: CommonFunctions().calculateFontSize(context),),
             ):Container(),
   
 

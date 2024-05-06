@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../Utilities/constants/color_constants.dart';
@@ -13,12 +17,17 @@ import 'package:intl/intl.dart';
 import '../MobileMoneyPages/mobile_money_page.dart';
 import '../employee_pages/employee_details.dart';
 
-class AddTasksWidget extends StatefulWidget {
+class EditTaskPage extends StatefulWidget {
+  const EditTaskPage({super.key, required this.newSelectedEmployees, required this.datesSelected});
+
   @override
-  State<AddTasksWidget> createState() => _AddTasksWidgetState();
+  State<EditTaskPage> createState() => _EditTaskPageState();
+  final List<String> newSelectedEmployees;
+  final List<DateTime> datesSelected;
+
 }
 
-class _AddTasksWidgetState extends State<AddTasksWidget> {
+class _EditTaskPageState extends State<EditTaskPage> {
   var taskToDo = "";
   TextEditingController controller = TextEditingController(text: "");
   var supplierName = "";
@@ -86,7 +95,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   Future<void> uploadTask() async {
     final dateNow = new DateTime.now();
     CollectionReference userOrder =
-        FirebaseFirestore.instance.collection('tasks');
+    FirebaseFirestore.instance.collection('tasks');
     final prefs = await SharedPreferences.getInstance();
 
     showDialog(
@@ -94,8 +103,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
         builder: (context) {
           return const Center(
               child: CircularProgressIndicator(
-            color: kAppPinkColor,
-          ));
+                color: kAppPinkColor,
+              ));
         });
 
     String orderId = '${DateTime.now()}${uuid.v1().split("-")[0]}';
@@ -141,7 +150,11 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     taskToSend = Provider.of<StyleProvider>(context, listen: false).taskToDo;
     _textFieldController = TextEditingController();
+    selectedEmployeeNames = widget.newSelectedEmployees;
+    _selectedDates =  widget.datesSelected;
+    _selectedTime =  widget.datesSelected;
 
+    _textFieldController.text = selectedEmployeeNames.join(", ");
     taskToDo = taskToSend;
     controller.text = taskToDo;
     employeeListRetrieved = await retrieveEmployeeData();
@@ -166,48 +179,48 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
           builder: (context, setStateForModal) { // Get a setState for the modal
             return
               AlertDialog(
-              title: const Text("Assign Task To"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: employeeListRetrieved.map((name) {
-                  return CheckboxListTile(
-                    title: Text(name.fullNames),
-                    value: selectedEmployeeNames.contains(name.fullNames),
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        if (newValue!) {
-                          selectedEmployeeNames.add(name.fullNames);
-                          selectedEmployeeTokens.add(name.token);
-                          selectedEmployeeEmail.add(name.email);
-                          selectedEmployeePhone.add(name.phone);
-                        } else {
-                          selectedEmployeeNames.remove(name.fullNames);
-                          selectedEmployeeTokens.add(name.token);
-                          selectedEmployeeEmail.add(name.email);
-                          selectedEmployeePhone.add(name.phone);
-                        }
-                      });
-                      setStateForModal(() {}); // Force modal rebuild
-                    },
+                title: const Text("Assign Task To"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: employeeListRetrieved.map((name) {
+                    return CheckboxListTile(
+                      title: Text(name.fullNames),
+                      value: selectedEmployeeNames.contains(name.fullNames),
+                      onChanged: (bool? newValue) {
+                        setState(() {
+                          if (newValue!) {
+                            selectedEmployeeNames.add(name.fullNames);
+                            selectedEmployeeTokens.add(name.token);
+                            selectedEmployeeEmail.add(name.email);
+                            selectedEmployeePhone.add(name.phone);
+                          } else {
+                            selectedEmployeeNames.remove(name.fullNames);
+                            selectedEmployeeTokens.add(name.token);
+                            selectedEmployeeEmail.add(name.email);
+                            selectedEmployeePhone.add(name.phone);
+                          }
+                        });
+                        setStateForModal(() {}); // Force modal rebuild
+                      },
 
-                  );
-                }).toList(),
-              ),
-                        actions: [
-                          TextButton(
-                            child: Text("Cancel"),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          ElevatedButton(
-                            child: Text("Assign"),
-                            onPressed: () {
-                              _textFieldController.text = selectedEmployeeNames.join(", ");
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-              // ... rest of your AlertDialog code ...
-            );
+                    );
+                  }).toList(),
+                ),
+                actions: [
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  ElevatedButton(
+                    child: Text("Assign"),
+                    onPressed: () {
+                      _textFieldController.text = selectedEmployeeNames.join(", ");
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+                // ... rest of your AlertDialog code ...
+              );
           },
         );
       },
@@ -234,7 +247,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       backgroundColor: kPureWhiteColor,
       appBar: AppBar(
           title: Text(
-            'Create Task',
+            'Update Task',
             textAlign: TextAlign.center,
             style: kNormalTextStyle.copyWith(
                 fontSize: 18, color: kBlack, fontWeight: FontWeight.bold),
@@ -244,7 +257,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
           elevation: 0),
       floatingActionButton: FloatingActionButton.extended(
         splashColor: kBlueDarkColor,
-        backgroundColor: kAppPinkColor,
+        backgroundColor: kGreenThemeColor,
         onPressed: () {
           if (taskToDo != "" &&
               selectedEmployeeNames.isNotEmpty &&
@@ -271,11 +284,11 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
             );
           }
         },
-        label: Text("Create Task",
+        label: Text("Update Task",
             style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
       ),
       floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
+      FloatingActionButtonLocation.miniCenterFloat,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 20.0),
@@ -323,7 +336,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                     decoration: InputDecoration(
                       hintText: 'Call customer to pay invoice',
                       hintStyle:
-                          kNormalTextStyle.copyWith(color: kFontGreyColor),
+                      kNormalTextStyle.copyWith(color: kFontGreyColor),
                       border: InputBorder.none,
                     ),
                     style: kNormalTextStyle.copyWith(color: kBlack),
@@ -334,11 +347,63 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                   ),
                 ),
               ),
-              Text(
-                  _selectedDates.isEmpty
-                      ? 'No Dates selected'
-                      : 'Active for ${_selectedDates.length} Days\n${_selectedDates.map((date) => DateFormat('d MMM yyyy').format(date)).join(', ')}',
-                  style: kNormalTextStyle.copyWith(color: kGreenThemeColor)),
+              Column(
+                children: [
+                  Text(
+                      _selectedDates.isEmpty
+                          ? 'No Dates selected'
+                          : 'Active Days',
+                      style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontWeight: FontWeight.w900)),
+                  _selectedDates.length ==0?Container():SizedBox(
+                    height: 35,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _selectedDates.length,
+                      itemBuilder: (context, i) {
+                        return GestureDetector(
+                          onTap: (){
+                           // Provider.of<StyleProvider>(context, listen: false).addBulkSmsList(Provider.of<StyleProvider>(context, listen: false).bulkNumbers[i],Provider.of<StyleProvider>(context, listen: false).bulkNames[i] );
+                            if (_selectedDates.contains(_selectedDates[i])) {
+
+                              print("THE DATE EXISTS");
+                              setState(() {
+                                int indexToRemove = _selectedDates.indexOf(_selectedDates[i]);
+                                print("$_selectedTime at position $indexToRemove");
+                                _selectedTime.removeAt(indexToRemove);
+                              // _selectedDates.remove(_selectedDates[i]);
+                               // print("$_selectedTime 2nd at position $indexToRemove");
+
+                              // _selectedTime.removeAt(indexToRemove);
+
+                              });
+                            }
+                          },
+                          child: Stack(
+
+                            children: [
+                              Padding(
+                                padding:
+                                const EdgeInsets.only(
+                                    right: 3.0),
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      color: kCustomColor,
+                                    borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(DateFormat('d MMM yyyy').format(_selectedDates[i]),style: kNormalTextStyle.copyWith(fontSize: 12, color: kBlack, fontWeight: FontWeight.w900),),
+                                )),
+                              ),
+
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Column(
@@ -348,7 +413,9 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
                     // Add a text button to select the date and time for the task to be done
                     TableCalendar(
                       selectedDayPredicate: (day) {
-                        return _selectedDates.contains(day);
+                        return
+                          _selectedDates.contains(day);
+
                       },
                       onDaySelected: (selectedDay, focusedDay) {
                         if (_selectedDates.contains(selectedDay)) {

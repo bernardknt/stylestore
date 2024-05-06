@@ -86,27 +86,34 @@ class _ProductEditPageState extends State<ProductEditPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         // centerTitle: false,
-        // title: Text('Edit Product', style: kNormalTextStyle.copyWith(color: kBlueDarkColorOld)),
+        title: Text('Edit Product', style: kNormalTextStyle.copyWith(color: kBlueDarkColorOld, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton:
       GestureDetector(
         onTap: ()async {
+        //  CommonFunctions().updateDocumentFromServer(adminData.itemId, "stores", "active", false);
           // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Add Barcode to $item')));
-          barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
+         // barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
 
         },
         child: Container(
           height: 60,
           width: 60,
           decoration: BoxDecoration(
-            color: kCustomColor,
+            color: kBlack,
             borderRadius: BorderRadius.all(Radius.circular(10)),
-            boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
+            //boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
 
           ),
-          child: Icon(Iconsax.scan),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.delete_forever, color: kPureWhiteColor,),
+              Text("Delete",style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),)
+            ],
+          ),
         ),
       ),
 
@@ -119,15 +126,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
               width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 1.5,
 
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30.0, left: 8.0, right: 8.0, bottom: 8.0),
-                    child: Text('Change Product information', style: kNormalTextStyle.copyWith(color: kBlack),),
-                  ),
+
                   Container(
-                    height: 150,
-                    width: 150,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor,
+                    height: 100,
+                    width: 100,
+
+                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kBlueDarkColor,
+
                       image: DecorationImage(image:
 
                       CachedNetworkImageProvider(adminData.itemImage),
@@ -241,6 +249,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
                           ],
                         ),
+                        kLargeHeightSpacing,
+                        TextButton(onPressed: ()async{
+                          barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
+                        }, child: Row(
+                          children: [
+                            Text("Assign new Barcode"),
+                            kSmallWidthSpacing,
+                            Icon(Icons.barcode_reader)
+                          ],
+                        )),
 
                       selectedTrackingValue == true ?
                         InputFieldWidget(readOnly: true, labelText: 'Quantity ', hintText: '20', keyboardType: TextInputType.numberWithOptions(decimal: true),controller: adminData.quantity.toString(), onTypingFunction: (value){
@@ -256,7 +274,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: RoundedLoadingButton(
-                                color: kBlueDarkColorOld,
+                                color: kGreenThemeColor,
                                 child: Text('Update Item', style: TextStyle(color: Colors.white)),
                                 controller: _btnController,
                                 onPressed:

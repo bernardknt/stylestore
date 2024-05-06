@@ -24,6 +24,8 @@ import 'amount_widget.dart';
 
 
 class PosSummary extends StatelessWidget {
+  final String currency;
+
 
   DateTime date = DateTime.now();
   var uuid = Uuid();
@@ -32,9 +34,12 @@ class PosSummary extends StatelessWidget {
     const Duration(milliseconds: 500),
   ];
 
+  PosSummary({super.key, required this.currency});
+
   @override
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context);
+
     return Container(
       color: Colors.transparent,
       child: Container(
@@ -82,7 +87,7 @@ class PosSummary extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("${index + 1}. ${styleData.basketNameItems[index]} x ${styleData.basketItems[index].quantity.toStringAsFixed(0)}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                            Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
+                            Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
                           ],
                         ),
                         title:
@@ -91,7 +96,7 @@ class PosSummary extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
 
-                            Text("${styleData.storeCurrency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
+                            Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
                           ],
                         ),
                         trailing: Checkbox(
@@ -122,6 +127,7 @@ class PosSummary extends StatelessWidget {
                   Center(
                     child: TextButton.icon(onPressed: ()async{
                       final prefs = await SharedPreferences.getInstance();
+                      Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
                       prefs.setString(kOrderId, CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!));
                       Provider.of<StyleProvider>(context, listen: false).setAppointmentTimeDate(date, date);
                       Provider.of<StyleProvider>(context, listen: false).setInvoicedTimeDate(DateTime.now());
@@ -198,7 +204,8 @@ class PosSummary extends StatelessWidget {
                             isScrollControlled: true,
                             builder: (context) {
                               return Scaffold(
-                                  appBar: AppBar(
+
+                                appBar: AppBar(
                                     automaticallyImplyLeading: false,
                                     backgroundColor: kPureWhiteColor,
                                     elevation: 0,
