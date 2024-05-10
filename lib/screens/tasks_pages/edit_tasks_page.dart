@@ -140,7 +140,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
       Provider.of<StyleProvider>(context, listen: false).clearTransactionNote();
       CommonFunctions().showConfirmationToSendMessageToDialog(context, (){
 
-      });
+      }, selectedEmployeePhone);
       // updateNotifyArray(token);
     }).catchError((error) => print("Failed to add user: $error"));
   }
@@ -212,7 +212,12 @@ class _EditTaskPageState extends State<EditTaskPage> {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   ElevatedButton(
-                    child: Text("Assign"),
+                    style: ButtonStyle(
+                      backgroundColor: CommonFunctions().convertToMaterialStateProperty(kAppPinkColor),
+                        foregroundColor:  CommonFunctions().convertToMaterialStateProperty(kAppPinkColor)
+
+                    ),
+                    child: Text("Assign", style: kNormalTextStyle.copyWith(color: kBlack),),
                     onPressed: () {
                       _textFieldController.text = selectedEmployeeNames.join(", ");
                       Navigator.of(context).pop();
@@ -370,10 +375,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                                 int indexToRemove = _selectedDates.indexOf(_selectedDates[i]);
                                 print("$_selectedTime at position $indexToRemove");
                                 _selectedTime.removeAt(indexToRemove);
-                              // _selectedDates.remove(_selectedDates[i]);
-                               // print("$_selectedTime 2nd at position $indexToRemove");
 
-                              // _selectedTime.removeAt(indexToRemove);
 
                               });
                             }

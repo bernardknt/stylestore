@@ -60,10 +60,6 @@ class _MessagesPageState extends State<MessagesPage> {
       jsonMessage = jsonMap['thankyou'];
     }
     options = jsonMap['options'];
-    // options = ['This is a test Message', 'This is another test of what us needed', 'Can I know what to do'];
-    // print(options);
-
-
 
 
     controller = TextEditingController()..text = jsonMessage;

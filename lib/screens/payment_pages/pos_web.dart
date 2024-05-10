@@ -73,6 +73,7 @@ class _PosWebState extends State<PosWeb> {
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
     currency = prefs.getString(kCurrency)??"USD";
+    Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
@@ -92,14 +93,20 @@ class _PosWebState extends State<PosWeb> {
       showFlag: true, // Show currency flag
       showCurrencyName: true, // Show currency name
       showCurrencyCode: true, // Show currency code
-      onSelect: (Currency currency) {
-        setState(() {
-          print(currency.code);
+      onSelect: (Currency currency) async{
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString(kCurrency, currency.code);
+        Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency.code);
+
+        setState((){
+
          // _selectedCurrencyCode = currency.code;
         });
       },
-      favorite: ['USD', 'EUR', 'UGX'], // Can pre-select favorites
+      favorite: ['USD', 'EUR', 'UGX', 'KES'], // Can pre-select favorites
     );
+
+
   }
   Future<void> _startBarcodeScan() async {
     isScanning = true;
@@ -332,7 +339,7 @@ class _PosWebState extends State<PosWeb> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(currency, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                  child: Text( Provider.of<StyleProvider>(context, listen: true).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
                 ),
               ),
             )
@@ -458,9 +465,7 @@ class _PosWebState extends State<PosWeb> {
                                                 filteredStock[index].name,
                                                 onTypingFunction:
                                                     (value) {},
-                                                keyboardType:
-                                                TextInputType
-                                                    .text,
+                                                keyboardType: TextInputType.text,
                                                 labelText:
                                                 "Name 🔒"),
                                             InputFieldWidget(
@@ -477,8 +482,8 @@ class _PosWebState extends State<PosWeb> {
                                                 onTypingFunction:
                                                     (value) {quantity = double.parse(value);
                                                 },
-                                                keyboardType:
-                                                TextInputType.number,
+                                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                              //  keyboardType: TextInputType.number,
                                                 labelText: "Quantity"),
                                             InputFieldWidget(
                                                 readOnly:
@@ -492,9 +497,8 @@ class _PosWebState extends State<PosWeb> {
                                                     (value) {
                                                   amount = double.parse(value);
                                                 },
-                                                keyboardType:
-                                                TextInputType
-                                                    .number,
+                                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                                // keyboardType: TextInputType.number,
                                                 labelText:
                                                 "Price"),
                                             Row(

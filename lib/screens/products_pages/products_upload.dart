@@ -11,6 +11,7 @@ import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
+import 'package:stylestore/widgets/scanner_widget.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/common_functions.dart';
@@ -330,17 +331,19 @@ class _ProductUploadState extends State<ProductUpload> {
 
 
                       },
-                      child: Container(
-                        height: 45,
-                        width: 45,
-                        decoration: BoxDecoration(
-                            color: kCustomColor,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
-
-                        ),
-                        child: Icon(Iconsax.scan),
-                      ),
+                      child:
+                        ScannerWidget(backgroundColor: kBlack,scannerColor: kPureWhiteColor,)
+                      // Container(
+                      //   height: 45,
+                      //   width: 45,
+                      //   decoration: BoxDecoration(
+                      //       color: kCustomColor,
+                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
+                      //       boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
+                      //
+                      //   ),
+                      //   child: Icon(Iconsax.scan),
+                      // ),
                     ),
 
                   ],

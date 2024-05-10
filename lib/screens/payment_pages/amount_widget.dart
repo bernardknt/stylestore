@@ -104,7 +104,7 @@ class _AmountToPayWidgetState extends State<AmountToPayWidget> {
                         decoration: const InputDecoration(border: InputBorder.none),
                         textAlign: TextAlign.center,
                         style: kNormalTextStyle.copyWith(fontSize: 30),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         onChanged: (value) {
                           if (value.isNotEmpty) {
                             final newValue = value.replaceAll(",", ".");

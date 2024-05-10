@@ -49,7 +49,6 @@ class _TasksControllerState extends State<TasksController> {
                   // color: Colors.redAccent
               ),
 
-              //indicatorColor: kPinkDarkThemeColor,
               labelColor: kBlueDarkColorOld,
               unselectedLabelColor: kBlueDarkColorOld,
               tabs: [

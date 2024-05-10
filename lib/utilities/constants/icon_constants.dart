@@ -42,6 +42,8 @@ const kIconAnalytics = Icons.auto_graph;
 const kIconSuppliers = Icons.supervised_user_circle;
 const kIconTeam = Icons.people;
 const kIconStore= Icons.storefront;
+const kIconStock= Iconsax.box;
 const kIconPos= Icons.point_of_sale;
 const kIconHome= Icons.home_max;
+const kIconCrown=  Icon(Iconsax.crown1, size: 10,color: kBlack,);
 

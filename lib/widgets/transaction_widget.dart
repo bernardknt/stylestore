@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/widgets/modalButton.dart';
 
 import '../Utilities/constants/color_constants.dart';
@@ -117,7 +119,10 @@ class TransactionWidget extends StatelessWidget {
               Column(
                 children: [
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async{
+                      final prefs = await SharedPreferences.getInstance();
+                      String currency = prefs.getString(kCurrency)??"USD";
+                      Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
                       Provider.of<StyleProvider>(
                           context,
                           listen:

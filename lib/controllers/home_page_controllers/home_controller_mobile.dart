@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
@@ -8,8 +9,11 @@ import 'package:stylestore/screens/home_pages/home_page_mobile.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/icon_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
+import '../../Utilities/constants/font_constants.dart';
 import '../../screens/analytics/analysis_page.dart';
+import '../../screens/products_pages/stock_history.dart';
 import '../../screens/store_pages/store_page_mobile.dart';
+import '../../screens/store_pages/take_stock_page.dart';
 
 
 
@@ -32,6 +36,7 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
     // SuperResponsiveLayout(mobileBody: HomePageController(), desktopBody: ControlPageWeb(),),
     HomePage(),
     StorePageMobile(),
+   TakeStockWidget(mainPage: true,)
     // AnalysisPage()
   ];
 
@@ -75,6 +80,10 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
 
           BottomNavigationBarItem(
               icon: Icon(kIconStore),label:'$storeName $cStore',
+
+              backgroundColor: Colors.black),
+          BottomNavigationBarItem(
+              icon: Icon(kIconStock),label:'Take Stock',
 
               backgroundColor: Colors.black),
 

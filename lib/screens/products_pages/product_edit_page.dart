@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,8 @@ import 'package:stylestore/utilities/InputFieldWidget.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/font_constants.dart';
 import 'dart:math';
+
+import 'package:stylestore/widgets/scanner_widget.dart';
 
 class ProductEditPage extends StatefulWidget {
   static String id = 'product_edit';
@@ -102,7 +105,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           height: 60,
           width: 60,
           decoration: BoxDecoration(
-            color: kBlack,
+            color: kBlueDarkColor,
             borderRadius: BorderRadius.all(Radius.circular(10)),
             //boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
 
@@ -129,12 +132,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Container(
                     height: 100,
                     width: 100,
 
-                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kBlueDarkColor,
+                    decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: kBackgroundGreyColor,
 
                       image: DecorationImage(image:
 
@@ -147,7 +149,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                   ),
                   kSmallHeightSpacing,
                   SizedBox(
-                    height:selectedTrackingValue == true ?500: 400,
+                    height:selectedTrackingValue == true ?600: 500,
                     child: Column(
 
                       children: [
@@ -251,12 +253,18 @@ class _ProductEditPageState extends State<ProductEditPage> {
                         ),
                         kLargeHeightSpacing,
                         TextButton(onPressed: ()async{
-                          barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
-                        }, child: Row(
+                          if(kIsWeb){
+                            CommonFunctions().showFailureNotification("Please use mobile application or Tablet to re-assign code", context);
+                             }else {
+                            barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
+
+                          }
+                           }, child: Row(
                           children: [
                             Text("Assign new Barcode"),
                             kSmallWidthSpacing,
-                            Icon(Icons.barcode_reader)
+                            ScannerWidget(),
+                            // Icon(Icons.barcode_reader)
                           ],
                         )),
 

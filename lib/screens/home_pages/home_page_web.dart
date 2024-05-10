@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mailer/mailer.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -65,9 +66,6 @@ class _HomePageWebState extends State<HomePageWeb> {
       lastSignInTime = storedTime;
     }
 
-
-
-
     String newName = prefs.getString(kBusinessNameConstant) ?? 'Hi';
     storeLocation = prefs.getString(kLocationConstant) ?? 'Kampala';
     String newImage = prefs.getString(kImageConstant) ?? 'new_logo.png';
@@ -81,6 +79,22 @@ class _HomePageWebState extends State<HomePageWeb> {
     }
 
     CommonFunctions().checkPeriodAndSignOut(context, lastSignInTime);
+
+    // if(Provider.of<StyleProvider>(context, listen: true).notificationIcon == true){
+    //   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
+    //   showDialog(context: context, builder: (BuildContext context){
+    //     return
+    //       GestureDetector(
+    //           onTap: (){
+    //             Navigator.pop(context);
+    //           },
+    //           child: ChatPage());
+    //   });
+    // }
+
+
+
+
 
     setState(() {
       businessName = newName;
@@ -163,35 +177,48 @@ class _HomePageWebState extends State<HomePageWeb> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: kPlainBackground,
-      floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
+      floatingActionButton: permissionsMap['admin'] == false ?Container() :
+      Stack(
           children: [
-            FloatingActionButton(
-              onPressed: (){
+            Container(
+              height: 100,
+              width: 100,
 
-                Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
-                showDialog(context: context, builder: (BuildContext context){
-                  return
-                    GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: ChatPage());
-                });
-              },
+            ),
+            Positioned(
+              left: 20,
+              right: 20,
+              top: 20,
+              child: FloatingActionButton(
+                onPressed: (){
 
-              backgroundColor: kBlueDarkColor,
-              child:
-              Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
+                  Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
+                  showDialog(context: context, builder: (BuildContext context){
+                    return
+                      GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: ChatPage());
+                  });
+                },
+
+                backgroundColor: kBlueDarkColor,
+                child:
+                Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
+              ),
             ),
             Provider.of<StyleProvider>(context, listen: true).notificationIcon == true?
             Positioned(
               left: 0,
-              top: 0,
-              child: CircleAvatar(
-                backgroundColor: kAppPinkColor,
-                radius: 7,
-                child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
-              ),
+              top: 10,
+              child: 
+                Lottie.asset("images/notificationIcon.json", height: 40)
+              // CircleAvatar(
+              //   backgroundColor: kAppPinkColor,
+              //   radius: 7,
+              //   child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
+              // ),
             ):const SizedBox(),
           ]
       ),
@@ -256,7 +283,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                               showDialog(context: context, builder: (BuildContext context){
                                 return CupertinoAlertDialog(
                                   title:Text(cSignOut.tr),
-                                  content: Text('${cSignOutInstructions.tr} \n${DateFormat('hh:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
+                                  content: Text('${cSignOutInstructions.tr} \n${DateFormat('kk:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
                                   actions: [
                                     CupertinoDialogAction(isDestructiveAction: true,
                                         onPressed: (){

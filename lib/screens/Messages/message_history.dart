@@ -247,7 +247,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                                         backgroundColor: kAppPinkColor,
                                         automaticallyImplyLeading: false,
                                       ),
-                                      body: SmsDetailsPage(smsMessage: SmsMessage(message:messageList[index], recipients: clientList[index], timestamp: dateList[index], delivered: true, cost: costList[index])),);
+                                      body: SmsDetailsPage(smsMessage: SmsMessage(message:messageList[index], recipients: clientList[index], timestamp: dateList[index], delivered: true, cost: costList[index].toDouble())),);
                                 });
                           },
                           child: Card(

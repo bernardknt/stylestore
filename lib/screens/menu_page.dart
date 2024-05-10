@@ -22,6 +22,7 @@ import '../model/menu_items.dart';
 import '../widgets/rounded_icon_widget.dart';
 import 'Messages/message_history.dart';
 import 'sign_in_options/login_page.dart';
+import 'package:intl/intl.dart';
 
 
 class MenuPage extends StatefulWidget {
@@ -56,11 +57,23 @@ class _MenuPageState extends State<MenuPage> {
   ];
   var liveStatus = '';
   var liveColor = Colors.green;
+  String userName = "";
+  String checkInTime = "";
 
   final auth = FirebaseAuth.instance;
   Map<String, dynamic> permissionsMap = {};
 
   void defaultsInitiation()async{
+    final prefs = await SharedPreferences.getInstance();
+    userName = prefs.getString(kLoginPersonName) ?? "Hi";
+    int? storedTimestamp = prefs.getInt(kSignInTime);
+    DateTime lastSignInTime = DateTime.now();
+    if (storedTimestamp != null) {
+      DateTime storedTime = DateTime.fromMillisecondsSinceEpoch(storedTimestamp);
+      final formattedTime = DateFormat('EE HH:mm aa').format(storedTime);
+      checkInTime = formattedTime;
+      lastSignInTime = storedTime;
+    }
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     print(Provider.of<StyleProvider>(context, listen: false).isActive);
     if (Provider.of<StyleProvider>(context, listen: false).isActive == false){
@@ -93,6 +106,17 @@ class _MenuPageState extends State<MenuPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Spacer(),
+              Text(
+                "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,color: kPureWhiteColor),),
+              Container(
+                  decoration: BoxDecoration(
+                      color: kAppPinkColor,
+                      borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
+                  )),
               kLargeHeightSpacing,
               Row(
                 children: [
@@ -102,6 +126,7 @@ class _MenuPageState extends State<MenuPage> {
                 ],
               ),
               kLargeHeightSpacing,
+
 
               ListView.builder(
                   itemCount: all.length,

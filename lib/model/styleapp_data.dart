@@ -34,6 +34,11 @@ class StyleProvider extends ChangeNotifier{
   bool isActive = true;
   String paymentStatus = 'Submitted';
   String storeCurrency = 'USD';
+  String subscriptionPackageToBuy = '';
+  double subscriptionPackageAmount = 0.0;
+  int subscriptionPackageDuration = 0;
+  String subscriptionPackageCurrency = "UGX";
+
   String customerName = '';
   String customerId = '';
   String customerNumber  = '';
@@ -125,6 +130,7 @@ class StyleProvider extends ChangeNotifier{
   DateTime expenseDate= DateTime.now();
   List expenseItems = [];
   List <AllCustomerData> businessCustomers = [];
+  List <AllStockData> storeIngredients = [];
 
 
 
@@ -176,7 +182,23 @@ class StyleProvider extends ChangeNotifier{
   String expense = "";
   Map employeeChecklist = {};
   Map <String, bool>debtorsChecklist = {};
+  Map <String, bool>ingredientsChecklist = {};
 
+
+  void setSubscriptionPackageToBuy(String package,double amount,int duration,String currency){
+    subscriptionPackageToBuy = package;
+    subscriptionPackageAmount = amount;
+    subscriptionPackageDuration = duration;
+    subscriptionPackageCurrency = currency;
+    notifyListeners();
+  }
+  void resetSubscriptionToBuy(){
+    subscriptionPackageToBuy = "";
+    subscriptionPackageAmount = 0.0;
+    subscriptionPackageDuration = 0;
+    subscriptionPackageCurrency = "UGX";
+    notifyListeners();
+  }
 
   void removeNotificationIcon(){
     notificationIcon = false;
@@ -184,6 +206,10 @@ class StyleProvider extends ChangeNotifier{
   }
   void setBusinessCustomers (business) {
     businessCustomers = business;
+    notifyListeners();
+  }
+  void setBusinessIngredients (business) {
+    storeIngredients = business;
     notifyListeners();
   }
 
@@ -206,6 +232,11 @@ class StyleProvider extends ChangeNotifier{
 
   void changeDebtorChecklistValues (checklistValue) {
     debtorsChecklist = checklistValue;
+    notifyListeners();
+  }
+
+  void changeIngredientsChecklistValues (checklistValue) {
+    ingredientsChecklist = checklistValue;
     notifyListeners();
   }
 
@@ -755,7 +786,7 @@ class StyleProvider extends ChangeNotifier{
     beauticianName = name;
     beauticianImageUrl = image;
     beauticianTransport = transport;
-    storeSmsBalance = smsBalance;
+    storeSmsBalance = smsBalance.toDouble();
 
     print("New value Updated on store");
     notifyListeners();

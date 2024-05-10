@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -25,6 +26,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/photo_widget.dart';
 import 'package:stylestore/widgets/report_popup.dart';
+import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../utilities/constants/user_constants.dart';
@@ -266,7 +268,7 @@ class _HomePageState extends State<HomePage> {
         provisional: true
     );
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('ZAKARABUS ${message.data['type']}');
+
     });
 
 }
@@ -280,68 +282,33 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
 
         backgroundColor: Colors.white,
-        // foregroundColor: Colors.blue,
-          title:
-          Column(
-            // mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,),),
-              Container(
-                  decoration: BoxDecoration(
-                      color: kBlueDarkColor,
-                      borderRadius: BorderRadius.all(Radius.circular(5))
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
-                  )),
-            ],
-          ),
 
-          // Column(
-          //   // mainAxisAlignment: MainAxisAlignment.center,
-          //   crossAxisAlignment: CrossAxisAlignment.center,
-          //   children: [
-          //     Text(businessName),
-          //     Row(
-          //       // crossAxisAlignment: CrossAxisAlignment.center,
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //
-          //       children: [
-          //         Container(
-          //           decoration: BoxDecoration(
-          //             borderRadius: BorderRadius.circular(10),
-          //             color: kBackgroundGreyColor,
-          //           ),
-          //           child: Row(
-          //             children: [
-          //               Padding(
-          //                 padding: const EdgeInsets.all(2.0),
-          //                 child: Container(
-          //                   decoration: const BoxDecoration(
-          //                     shape: BoxShape.circle,
-          //                     // borderRadius: BorderRadius.circular(10),
-          //                     color: kAppPinkColor,
-          //                   ),
-          //                   child: Icon(Icons.circle, color: kPureWhiteColor,size: 15,),
-          //                 ),
-          //               ),
-          //               kSmallWidthSpacing,
-          //               Text(storeLocation,overflow: TextOverflow.fade, style: kNormalTextStyleWhiteLabel.copyWith( fontSize: 12),),
-          //               kSmallWidthSpacing
-          //             ],
-          //           ),
-          //         ),
-          //         kMediumWidthSpacing,
-          //       ],
-          //     ),
-          //   ],
-          // ),
-        centerTitle: true,
         elevation:1 ,
         actions: [
+
+          GestureDetector(
+                onTap: (){
+                  CommonFunctions().showChecklistToBeDoneDialog(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 6.0, top: 7),
+                  child: Container(
+                      decoration: BoxDecoration(
+                          color: kCustomColor,
+                          borderRadius: BorderRadius.circular(boxCurve)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          children: [
+                            Icon(Iconsax.task, size: 22,),
+                            Text("Checklist",style: kNormalTextStyle.copyWith(fontSize: 8, color: kBlack, fontWeight: FontWeight.w700),)
+                          ],
+                        ),
+                      )),
+                ),
+              ),
+
           permissionsMap['signIn'] == false ? Container():Padding(
             padding: const EdgeInsets.all(8.0),
             child:
@@ -350,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                 showDialog(context: context, builder: (BuildContext context){
                   return CupertinoAlertDialog(
                     title:Text(cSignOut.tr),
-                    content: Text('${cSignOutInstructions.tr} \n${DateFormat('hh:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
+                    content: Text('${cSignOutInstructions.tr} \n${DateFormat('kk:mm a EE, dd, MMM, yyy').format(DateTime.now())}'),
                     actions: [
                       CupertinoDialogAction(isDestructiveAction: true,
                           onPressed: (){
@@ -396,45 +363,46 @@ class _HomePageState extends State<HomePage> {
             },
             child: Icon(Icons.menu))
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: (){
-      //     updateMedicsSubscriptionDates();
-      //   },
-      // ),
-      floatingActionButton: permissionsMap['admin'] == false ?Container() :Stack(
+
+      floatingActionButton: permissionsMap['admin'] == false ?Container() :
+      Stack(
           children: [
-            // Container(
-            //   height: 50,
-            //   width: 80,
-            // ) ,
+            Container(
+              height: 100,
+              width: 100,
+              // color: kRedColor,
 
-            FloatingActionButton(
-              onPressed: (){
+            ),
+            Positioned(
+              left: 40,
+              right: 0,
+              top: 20,
+              child: FloatingActionButton(
+                onPressed: (){
 
-                Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
-                showDialog(context: context, builder: (BuildContext context){
-                  return
-                    GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                        },
-                        child: ChatPage());
-                });
-              },
-              child:
-              Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
-              // Icon(Iconsax.airpod1, color: kPureWhiteColor,),
-              backgroundColor: kBlueDarkColor,
+                  Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
+                  showDialog(context: context, builder: (BuildContext context){
+                    return
+                      GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: ChatPage());
+                  });
+                },
+
+                backgroundColor: kBlueDarkColor,
+                child:
+                Image.asset("images/pilot2.png",height: 40, fit: BoxFit.fitHeight,),
+              ),
             ),
             Provider.of<StyleProvider>(context, listen: true).notificationIcon == true?
             Positioned(
-              left: 0,
-              top: 0,
-              child: CircleAvatar(
-                backgroundColor: kAppPinkColor,
-                radius: 7,
-                child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
-              ),
+                left: 20,
+                top: 10,
+                child:
+                Lottie.asset("images/notificationIcon.json", height: 40)
+
             ):const SizedBox(),
           ]
       ),

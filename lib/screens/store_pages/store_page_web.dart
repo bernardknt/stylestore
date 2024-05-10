@@ -51,7 +51,7 @@ class _StorePageWebState extends State<StorePageWeb> {
     final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
-    newStock = await retrieveSupplierData();
+    newStock = await CommonFunctions().retrieveStockData(context);
     totalStock.addAll(newStock);
     filteredStock.addAll(newStock);
     currency = prefs.getString(kCurrency)??"USD";//Provider.of<StyleProvider>(context, listen: false).storeCurrency;
@@ -60,24 +60,7 @@ class _StorePageWebState extends State<StorePageWeb> {
     });
   }
 
-  Future<List<AllStockData>> retrieveSupplierData() async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('stores')
-          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
-          .orderBy('name', descending: false)
-          .get();
 
-      final stockDataList = snapshot.docs
-          .map((doc) => AllStockData.fromFirestore(doc))
-          .toList();
-
-      return stockDataList;
-    } catch (error) {
-      print('Error retrieving stock data: $error');
-      return []; // Return an empty list if an error occurs
-    }
-  }
 
   void filterStock(String query) {
     setState(() {

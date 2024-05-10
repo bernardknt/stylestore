@@ -31,6 +31,7 @@ import 'package:intl/intl.dart';
 import 'package:stylestore/model/stock_items.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
+import 'package:stylestore/widgets/ignore_ingredients_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -40,21 +41,24 @@ import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
 import '../main.dart';
 import '../screens/Messages/bulk_message.dart';
+import '../screens/Messages/message.dart';
 import '../screens/customer_pages/customer_data.dart';
 import '../screens/customer_pages/sync_customer.dart';
 import '../screens/payment_pages/pos_summary.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/products_pages/stock_items.dart';
 import '../screens/sign_in_options/sign_in_page.dart';
 import '../screens/store_setup.dart';
 import '../utilities/constants/user_constants.dart';
 // import '../widgets/employee_checklist.dart';
 import '../widgets/debtors_widget.dart';
 import '../widgets/employee_checklist.dart';
+import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -133,6 +137,25 @@ class CommonFunctions {
     }
   }
 
+  Future<List<AllStockData>> retrieveStockData(context) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
+
   void showDebtorsDialog(BuildContext context, Map<String, bool> list) {
     Provider.of<StyleProvider>(context, listen: false).changeDebtorChecklistValues(list);
     showDialog(
@@ -182,12 +205,65 @@ class CommonFunctions {
     );
   }
 
+  void showIngredientsDialog(BuildContext context, Map<String, bool> list) {
+    Provider.of<StyleProvider>(context, listen: false).changeDebtorChecklistValues(list);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select Items to Ignore:",textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+          content: IngredientsChecklist (ingredientsListItems: list),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            ElevatedButton(
+              child: Text('Change Selected', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+              onPressed: () async{
+                final prefs = await SharedPreferences.getInstance();
+                String storeName = prefs.getString(kBusinessNameConstant)??"";
+                // This code gets the number from the seleceted names that are given
+                List id = findDocumentIdForSelectedIngredients(Provider.of<StyleProvider>(context, listen: false).ingredientsChecklist,Provider.of<StyleProvider>(context, listen: false).storeIngredients);
+                List names = findNamesForSelectedIngredients(Provider.of<StyleProvider>(context, listen: false).ingredientsChecklist,Provider.of<StyleProvider>(context, listen: false).storeIngredients);
+                // Navigator.pop(context);
+                if(names.length == 0){
+
+                }else {
+                  showIgnoreNotificationPopup(context, names, id);
+                }
+
+
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kAppPinkColor, // Set background color to red
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
   List<String> extractNames(String text) {
     // Split the text into lines
     List<String> lines = text.split('\n');
 
     // Find the starting line of the name list (assuming it has the word 'clients')
     int startIndex = lines.indexWhere((line) => line.toLowerCase().contains('clients'));
+
+    // Extract names starting from the next line
+    return lines.sublist(startIndex + 1).map((line) {
+      // Remove numbering and trim
+      return line.split('.').last.trim();
+    }).toList();
+  }
+
+  List<String> extractIngredients(String text) {
+    // Split the text into lines
+    List<String> lines = text.split('\n');
+
+    // Find the starting line of the name list (assuming it has the word 'clients')
+    int startIndex = lines.indexWhere((line) => line.toLowerCase().contains('stock'));
 
     // Extract names starting from the next line
     return lines.sublist(startIndex + 1).map((line) {
@@ -203,6 +279,12 @@ class CommonFunctions {
         value: (name) => true);
   }
 
+  Map<String, bool> createIngredientChecklist(List<String> names) {
+
+    return Map.fromIterable(names,
+        key: (name) => name,
+        value: (name) => false);
+  }
 
 
   Future<void> uploadChecklistToAttendance(String documentId, context) async {
@@ -254,6 +336,95 @@ class CommonFunctions {
     return "";
   }
 
+  Future<bool> showIgnoreNotificationPopup(BuildContext context, List items, List id) async {
+    final shouldIgnore = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Ignore Notifications',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          // Avoid potential scrolling
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Text('Would you like to turn off notifications for:'),
+            for (var item in items)
+
+              Text(item, style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),),
+
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              backgroundColor: convertToMaterialStateProperty(kAppPinkColor)
+            ),
+            onPressed: (){
+
+              updateIgnoreToServer(id, items, context);
+              },
+            child: Text('Turn Off Notifications', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+          ),
+        ],
+      ),
+    );
+    return shouldIgnore ?? false;
+  }
+
+  Future<void> updateIgnoreToServer(List ids,List names, context) async {
+    final firestore = FirebaseFirestore.instance;
+    final collection = firestore.collection('stores'); // Replace with your collection name
+    final batch = FirebaseFirestore.instance.batch(); // Use named constructor
+    for (var id in ids) {
+      batch.update(collection.doc(id), {'ignore': true});
+    }
+    await batch.commit().whenComplete(() {
+      showSuccessNotification("Items successfully set to ignored", context);
+    });
+    Navigator.pop(context);
+    Navigator.pop(context);
+    Navigator.pop(context);
+    var message = "Attention Crew, there has been an update...\n";
+
+    if (names.isEmpty) {
+      message += message;
+    } else {
+      message += "The following items have been removed from notifications: ";
+      for (var i = 0; i < ids.length; i++) {
+        message += "${names[i]}${i == names.length - 1 ? '.' : ', '} ";
+      }
+    }
+    createChatDocument(message, "normal");
+
+  }
+
+  Future<void> createChatDocument(String message,  String status) async {
+    final prefs = await SharedPreferences.getInstance(); 
+    final firestore = FirebaseFirestore.instance;
+    final collection = firestore.collection('chat');
+    final documentId = collection.doc().id; // Generate a unique ID
+    final currentTime = Timestamp.now();
+
+
+    try {
+      await collection.doc(documentId).set({
+        'id': documentId,
+        'message': "", // Empty message since this represents a response
+        'replied': true,
+        'response': message,
+        'time': currentTime,
+        'visible': true,
+        'status': status,
+        'userId': prefs.getString(kStoreIdConstant),
+      });
+      print("Chat document created successfully");
+    } catch (error) {
+      print("Error creating chat document: $error");
+    }
+  }
 
   String removeLeadingTrailingSpaces(String text) {
     return text.trim();
@@ -309,6 +480,57 @@ class CommonFunctions {
     }
     // print(fullNames);
     return fullNames;
+  }
+
+  List<String> findDocumentIdForSelectedIngredients(Map<String, bool> nameMap, List<AllStockData> storeData) {
+    List<String> selectedNames = [];
+
+    // Iterate through nameMap to collect selected names
+    nameMap.forEach((name, isSelected) {
+      if (isSelected) {
+        selectedNames.add(name);
+      }
+    });
+
+    // Filter customerData to find corresponding phone numbers for selected names
+    List<String> id = [];
+    for (String name in selectedNames) {
+      for (AllStockData ingredients in storeData) {
+        if (ingredients.name == name) {
+          // print(ingredients.fullNames);
+          id.add(ingredients.documentId);
+          break; // Stop searching for this name once a match is found
+        }
+      }
+    }
+    // print(id);
+    return id;
+  }
+
+  List<String> findNamesForSelectedIngredients(Map<String, bool> nameMap, List<AllStockData> storeData) {
+    List<String> selectedNames = [];
+
+    // Iterate through nameMap to collect selected names
+    nameMap.forEach((name, isSelected) {
+      if (isSelected) {
+        selectedNames.add(name);
+      }
+    });
+
+    // Filter customerData to find corresponding phone numbers for selected names
+    List<String> names = [];
+
+    for (String name in selectedNames) {
+      for (AllStockData ingredients in storeData) {
+        if (ingredients.name == name) {
+          // print(ingredients.fullNames);
+          names.add(ingredients.name);
+          break; // Stop searching for this name once a match is found
+        }
+      }
+    }
+    // print(names);
+    return names;
   }
 
   showSuccessNotification (message, context){
@@ -424,26 +646,45 @@ class CommonFunctions {
     }
   }
 
-  void showConfirmationToSendMessageToDialog(BuildContext context, Function() onSendPressed) {
+  void showConfirmationToSendMessageToDialog(BuildContext context, Function() onSendPressed, List numbersToSend) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Center(child: Text('Send Notification?',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14, fontWeight: FontWeight.bold),)),
+          title: Center(child: Text('Send SMS Notification?',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 14, fontWeight: FontWeight.bold),)),
           content: Text(
               'Would you want to send an SMS notification to the users\nassigned to this task?', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack),),
           actions: [
             TextButton(
               child: const Text('Cancel'),
               onPressed: () => Navigator.of(context).pop(),
+
             ),
             TextButton(
-              child: Text('Send', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
               onPressed: () {
-                onSendPressed(); // Call the notification function
-                Navigator.of(context).pop();
+                // onSendPressed(); // Call the notification function
+                Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
+                Provider.of<StyleProvider>(context, listen:false).addNormalContactToSmsList(CommonFunctions().removeDuplicates(numbersToSend), CommonFunctions().removeDuplicates(numbersToSend));
+                Provider.of<BeauticianData>(context, listen: false).setTextMessage("Hey, a new task has been created for you, Check it out.");
+
+                showModalBottomSheet(context: context,
+                    isScrollControlled: true,
+                    builder:
+                        (context) {return Scaffold(
+                        appBar:
+                        AppBar(
+                          automaticallyImplyLeading: false,
+                          elevation: 0,
+                          backgroundColor:
+                          kPureWhiteColor,
+                        ),
+                        body:
+                        BulkSmsPage());
+                    });
+                // Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(backgroundColor: kAppPinkColor),
+              child: Text('Send', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
             ),
           ],
         );
@@ -1096,7 +1337,7 @@ class CommonFunctions {
       querySnapshot.docs.forEach((doc) async {
         prefs.setString(kPhoneNumberConstant, doc['phone']);
         prefs.setString(kImageConstant, doc['image']);
-        prefs.setDouble(kSmsAmount, doc['sms']);
+        prefs.setDouble(kSmsAmount, doc['sms'].toDouble());
         prefs.setString(kCurrency,  doc['currency']);
         DateTime subscription = doc['subscriptionEndDate'].toDate();
         print("subrip: $subscription");
@@ -1833,21 +2074,23 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     final List<int>? excelData = excel.encode();
 
     // Create a blob from the bytes and create a download link
-    final blob = html.Blob([excelData]);
-    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
 
-    // Create a link element and trigger the download
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..target = 'download'
-      ..download = 'bulk_upload_data.xlsx';
-
-    // Trigger the click event to start the download
-    html.document.body?.append(anchor);
-    anchor.click();
-
-    // Clean up the temporary link
-    html.Url.revokeObjectUrl(blobUrl);
-    anchor.remove();
+    //PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
+    // final blob = html.Blob([excelData]);
+    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+    //
+    // // Create a link element and trigger the download
+    // final anchor = html.AnchorElement(href: blobUrl)
+    //   ..target = 'download'
+    //   ..download = 'bulk_upload_data.xlsx';
+    //
+    // // Trigger the click event to start the download
+    // html.document.body?.append(anchor);
+    // anchor.click();
+    //
+    // // Clean up the temporary link
+    // html.Url.revokeObjectUrl(blobUrl);
+    // anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 
@@ -1916,6 +2159,75 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     );
   }
 
+  Future<List<AllStockData>> retrieveSuppliesData(context) async {
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .orderBy('name', descending: false)
+          .get();
+
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
+
+  Future<bool> subscriptionActive() async{
+    bool allow = false;
+    final prefs = await SharedPreferences.getInstance();
+    int subscriptionDate = prefs.getInt(kSubscriptionEndDate)?? DateTime.now().millisecondsSinceEpoch;
+    if(subscriptionDate>= DateTime.now().millisecondsSinceEpoch){
+      allow = true;
+    }else{
+      allow = false;
+    }
+
+    return allow;
+  }
+
+  Future<dynamic> buildSubscriptionPaymentModal(BuildContext context) async{
+    final prefs = await SharedPreferences.getInstance();
+    String businessName = prefs.getString(kBusinessNameConstant)??"";
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: kPureWhiteColor,
+              automaticallyImplyLeading: false,
+              // title: Text("Subscribe to Premium", style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+            ),
+            body: Scaffold(
+                backgroundColor: kBlack,
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: kGoldColor,
+                  automaticallyImplyLeading: true,
+                  centerTitle: true,
+                  title: Text("SUBSCRIBE TO PREMIUM", style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
+                ),
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // kLargeHeightSpacing,
+                    Opacity(
+                        opacity: 0.4,
+                        child: Image.asset('images/liftoff.jpg',height: 120,)),
+
+                    Center(child: SubcriptionEndedWidget(businessName: businessName,)),
+                  ],
+                )),
+          );
+        });
+  }
 
 
 }

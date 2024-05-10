@@ -12,21 +12,22 @@ import '../../model/offerings.dart';
 import '../../model/styleapp_data.dart';
 import '../../utilities/constants/user_constants.dart';
 import '../../widgets/cancel_button_widget.dart';
-import 'mm_payment_button_widget.dart';
+import '../MobileMoneyPages/mm_payment_button_widget.dart';
 
 
 
-class PremiumMonthlySubscriptionsPage extends StatefulWidget {
-  static String id = 'premium_monthly_page';
 
-  const PremiumMonthlySubscriptionsPage({Key? key}) : super(key: key);
+class PremiumAnnualSubscriptionsPage extends StatefulWidget {
+  static String id = 'premium_annual_page';
+
+  const PremiumAnnualSubscriptionsPage({Key? key}) : super(key: key);
 
 
   @override
-  _PremiumMonthlySubscriptionsPageState createState() => _PremiumMonthlySubscriptionsPageState();
+  _PremiumAnnualSubscriptionsPageState createState() => _PremiumAnnualSubscriptionsPageState();
 }
 
-class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscriptionsPage> {
+class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscriptionsPage> {
   void defaultsInitiation () async{
     final prefs = await SharedPreferences.getInstance();
     Provider.of<StyleProvider>(context, listen: false).resetSubscriptionToBuy();
@@ -40,9 +41,9 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
   int selectedOffering = 0; // Keeps track of selected option (0, 1, or 2)
 
   List<Offering> offerings = [
-    Offering(title: 'Business Class', price: 49000, isSelected: false, benefits: ["Autopilot Business Notifications", "Barcode Scanning of Products", "Unlimited Products", "Up to 5 Employees", "Full Business Analytics"], duration: 31, ),
-    Offering(title: 'First Class', price: 99000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 31, popular: true),
-    Offering(title: 'VIP Class', price: 149000, isSelected: false, benefits: ["Everything in Premium", "Location Tracking of Employees", "Up to 20 Employees"], duration: 31),
+    Offering(title: 'Business Class', price: 499000, isSelected: false, benefits: ["Autopilot Business Notifications", "Barcode Scanning of Products", "Unlimited Products", "Up to 5 Employees", "Full Business Analytics"], duration: 365, ),
+    Offering(title: 'First Class', price: 999000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 365, popular: true),
+    Offering(title: 'VIP Class', price: 1499000, isSelected: false, benefits: ["Everything in Premium", "Location Tracking of Employees", "Up to 20 Employees"], duration: 365),
   ];
 
 
@@ -77,6 +78,19 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
                 children: [
                   kLargeHeightSpacing,
                   Text("Select a Package", style: kNormalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
+                  kSmallHeightSpacing,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: kGoldColor,
+                      borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("SAVE 15%", style: kNormalTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold, color: kBlack),),
+                    ),
+                  ),
+                  kSmallHeightSpacing,
+
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -106,8 +120,9 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
                             });
 
                       }, firstButtonText: 'Select ${Provider.of<StyleProvider>(context, listen: true).subscriptionPackageToBuy}'),
-                  kLargeHeightSpacing,
-                  const CancelButtonWidget()
+                  kSmallHeightSpacing,
+                  CancelButtonWidget()
+
                 ],
               ),
             ),
@@ -221,7 +236,8 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
                       ],
                     ),
                   ],
-                )
+                ),
+
                 // Ro
 
               ],
@@ -232,3 +248,5 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
     );
   }
 }
+
+

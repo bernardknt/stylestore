@@ -72,7 +72,6 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                 children: [
 
 
-
                   Radio<String>(
                     fillColor:CommonFunctions().convertToMaterialStateProperty(kAppPinkColor) ,
                     value: "Cash",
@@ -80,7 +79,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     onChanged: (value) {
                       setState(() {
                         selectedSaleableValue = value!;
-                        print(value);
+
                       });
                     },
                   ),
@@ -93,7 +92,7 @@ class _PaymentOptionsState extends State<PaymentOptions> {
                     onChanged: (value) {
                       setState(() {
                         selectedSaleableValue = value!;
-                        print(value);
+
                       });
                     },
                   ),

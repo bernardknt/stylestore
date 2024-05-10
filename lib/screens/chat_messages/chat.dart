@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/premium_mm_payment.dart';
 import 'package:stylestore/screens/paywall/paywall.dart';
+import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/store_pages/store_page_mobile.dart';
 import 'package:stylestore/screens/store_pages/store_page_web.dart';
 import 'package:stylestore/screens/transactions_pages/unpaid_transactions_page.dart';
@@ -26,6 +27,9 @@ import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/common_functions.dart';
 import '../../utilities/constants/user_constants.dart';
+import '../../widgets/subscription_ended_widget.dart';
+import '../MobileMoneyPages/mobile_money_page.dart';
+import '../expenses_pages/expenses.dart';
 
 
 // import 'delivery_page.dart';
@@ -59,6 +63,7 @@ class _ChatPageState extends State<ChatPage> {
   Random random = Random();
   bool updateMe = true;
   bool isAfrican = true;
+  bool subscriptionActive = false;
   var dateSeparator = '';
   DateTime? _previousDate;
   final TextEditingController _textFieldController = TextEditingController();
@@ -176,13 +181,15 @@ class _ChatPageState extends State<ChatPage> {
   void defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant)!;
-    subscriptionDate = prefs.getInt(kSubscriptionEndDate)??subscriptionDate;
+    subscriptionActive = await CommonFunctions().subscriptionActive();
     businessName = prefs.getString(kBusinessNameConstant)??"";
     setState(() {
 
     });
 
   }
+
+
 
   @override
   void dispose() {
@@ -273,16 +280,11 @@ class _ChatPageState extends State<ChatPage> {
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide(color: Colors.green, width: 2),
                         ),
-                        // shadowColor: Colors.green,
-                        // shadowRadius: 5,
-                        // shadowOffset: Offset(0, 2),
+
                       ),
 
                       // Clear the text field when the user submits the text
                       onSubmitted: (value) async {
-
-
-
 
                         message = value;
                         final prefs = await SharedPreferences.getInstance();
@@ -308,15 +310,11 @@ class _ChatPageState extends State<ChatPage> {
 
                       },
                       onChanged: (value) {
-
                         message = value;
-                        // Store the text input in a variable
-                        // _inputText = value;
                       },
                     ),
                     Positioned(
                       right: 2,
-                      // bottom: 2,
                       top: 5,
                       child:
                       IconButton(
@@ -370,25 +368,17 @@ class _ChatPageState extends State<ChatPage> {
                 Container(
                     height: 35,
                     child: InkWell(
-
                       child: ClipOval(
-
-
                           child:
                           isAfrican == true ? Image.asset('images/pilot2.png', fit: BoxFit.contain,):
                           Image.asset('images/nutritionist.jpg', fit: BoxFit.contain,)
                       ),
                     )),
-                // kSmallWidthSpacing,
-
-
                 Text('Captain', style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.w900),),
               ],
             ),
             centerTitle: true,
             actions: [
-
-
             ],
           ),
 
@@ -402,14 +392,11 @@ class _ChatPageState extends State<ChatPage> {
             child: Center(
               child: Container(
                 width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
-
                 child: Stack(
-
                     children: [
-
                       Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: subscriptionDate>= DateTime.now().millisecondsSinceEpoch ?
+                          child: subscriptionActive == false ?
                           StreamBuilder<QuerySnapshot> (
                               stream: FirebaseFirestore.instance
                                   .collection('chat')
@@ -453,10 +440,7 @@ class _ChatPageState extends State<ChatPage> {
 
 
                                   }
-                                  // return Text('Let us understand this ${deliveryTime[3]} ', style: TextStyle(color: Colors.white, fontSize: 25),);
-                                  return
-
-                                    messageList.length == 0?Container(child: Center(child: Text("No Messages from Captain",style: kNormalTextStyle.copyWith(color: kPureWhiteColor), ),),):Padding(
+                                   return messageList.length == 0?Container(child: Center(child: Text("No Messages from Captain",style: kNormalTextStyle.copyWith(color: kPureWhiteColor), ),),):Padding(
                                       padding: const EdgeInsets.only(bottom: 110.0),
                                       child:  ListView.builder(
                                           itemCount: messageList.length,
@@ -622,19 +606,16 @@ class _ChatPageState extends State<ChatPage> {
                                                                                       foregroundColor: kBlack, // White text on blue background
                                                                                     ),
                                                                                     onPressed: (){
-                                                                                      // Navigator.pop(context);
+
 
                                                                                       showDialog(context: context, builder: (BuildContext context){
                                                                                         return
-                                                                                          GestureDetector(
-                                                                                              onTap: (){
-                                                                                                Navigator.pop(context);
-                                                                                              },
-                                                                                              child: Scaffold(
-                                                                                                  appBar: AppBar(
+                                                                                           Scaffold(
+                                                                                               appBar: AppBar(
 
-                                                                                                  ),
-                                                                                                  body: SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb())));
+
+                                                                                               ),
+                                                                                               body: SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb()));
                                                                                       });
                                                                                     }, child: Text("See Stock", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
                                                                                 kSmallWidthSpacing,
@@ -646,10 +627,67 @@ class _ChatPageState extends State<ChatPage> {
                                                                                     onPressed: (){
                                                                                       // Navigator.pop(context);
                                                                                       print(CommonFunctions().extractNames(responseList[index]));
-                                                                                      CommonFunctions().showDebtorsDialog(context,CommonFunctions().createChecklist(CommonFunctions().extractNames(responseList[index])));
+                                                                                     // CommonFunctions().showDebtorsDialog(context,CommonFunctions().createChecklist(CommonFunctions().extractIngredients(responseList[index])));
+                                                                                      CommonFunctions().showIngredientsDialog(context,CommonFunctions().createIngredientChecklist(CommonFunctions().extractIngredients(responseList[index])));
 
 
                                                                                     }, child: Text("Ignore Some Items")),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ):
+                                                                        messageStatusList[index] =="Restocked"?
+                                                                        Column(
+                                                                          children: [
+                                                                            kLargeHeightSpacing,
+                                                                            Row(
+                                                                              children: [
+                                                                                TextButton(
+                                                                                    style: TextButton.styleFrom(
+                                                                                      backgroundColor: kAppPinkColor,
+                                                                                      foregroundColor: kBlack, // White text on blue background
+                                                                                    ),
+                                                                                    onPressed: (){
+                                                                                      // Navigator.pop(context);
+
+                                                                                      showDialog(context: context, builder: (BuildContext context){
+                                                                                        return
+                                                                                          GestureDetector(
+                                                                                              onTap: (){
+                                                                                                Navigator.pop(context);
+                                                                                              },
+                                                                                              child:  ExpensesPage());
+                                                                                      });
+                                                                                    }, child: Text("View Purchase", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ):
+                                                                        messageStatusList[index] =="Updated"?
+                                                                        Column(
+                                                                          children: [
+                                                                            kLargeHeightSpacing,
+                                                                            Row(
+                                                                              children: [
+                                                                                TextButton(
+                                                                                    style: TextButton.styleFrom(
+                                                                                      backgroundColor: kAppPinkColor,
+                                                                                      foregroundColor: kBlack, // White text on blue background
+                                                                                    ),
+                                                                                    onPressed: (){
+                                                                                      // Navigator.pop(context);
+
+                                                                                      showDialog(context: context, builder: (BuildContext context){
+                                                                                        return
+                                                                                          GestureDetector(
+                                                                                              onTap: (){
+                                                                                                Navigator.pop(context);
+                                                                                              },
+                                                                                              child:  StockHistoryPage());
+                                                                                      });
+                                                                                    }, child: Text("See Update", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+
                                                                               ],
                                                                             ),
                                                                           ],
@@ -696,67 +734,8 @@ class _ChatPageState extends State<ChatPage> {
 
                               }
 
-                          ): Card(
-                              color: kPureWhiteColor,
-                              shadowColor: kPureWhiteColor,
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20), bottomRight: Radius.circular(20))),
-                              child: Padding(
-                                  padding: const EdgeInsets.all(18.0),
-                                  child: Container(
-                                      width: 260,
-                                      height: 250,
-                                      child: Column(
-                                          crossAxisAlignment:CrossAxisAlignment.start ,
-
-                                          children: [
-                                            Text.rich(
-                                              TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: "Attention $businessName, this is your Captain speaking!\n\n",
-                                                    style: TextStyle(fontWeight: FontWeight.bold),
-
-                                                  ),
-                                                  const TextSpan(
-                                                    text: "Looks like your Business Pilot flight plan might have expired. Notifications, reminders and critical features seem to be off.\nRenew now to avoid turbulence! Let us prepare for lift-off",
-                                                  ),
-
-                                                ],
-                                              ),
-                                            ),
-                                            kLargeHeightSpacing,
-                                            //Text("Attention all passengers, this is your Captain speaking.",style: kNormalTextStyle.copyWith(fontSize: 15, color: kBlueDarkColor)),
-                                            TextButton(
-                                                style: TextButton.styleFrom(
-                                                  backgroundColor: kGreenThemeColor,
-                                                  foregroundColor: Colors.white, // White text on blue background
-                                                ),
-                                                onPressed: (){
-                                                  // Navigator.pop(context);
-
-                                                  showModalBottomSheet(
-                                                      isScrollControlled: true,
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return Scaffold(
-                                                            appBar: AppBar(
-                                                              elevation: 0,
-                                                              backgroundColor: kPureWhiteColor,
-                                                              automaticallyImplyLeading: false,
-                                                            ),
-                                                            body:
-                                                            // Paywall()
-                                                            // CustomMobileMoneyPage()
-                                                          PremiumPaymentMobileMoneyPage()
-                                                        );
-                                                      });
-                                                }, child: Text("Renew Subscription")),
-                                          ]
-                                      )
-                                  )
-                              )
-                          )
+                          ):
+                          SubcriptionEndedWidget(businessName: businessName,)
 
                       ),
 
@@ -789,9 +768,4 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
-
-
 }
-
-
-

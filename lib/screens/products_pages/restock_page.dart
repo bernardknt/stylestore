@@ -22,6 +22,8 @@ import '../../model/purchase_pdf_files/purchase_customer.dart';
 import '../../model/purchase_pdf_files/purchase_supplier.dart';
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/scanner_widget.dart';
+import '../../widgets/subscription_ended_widget.dart';
 
 class ReStockPage extends StatefulWidget {
   static String id = "take_stock";
@@ -714,25 +716,20 @@ class _ReStockPageState extends State<ReStockPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       kIsWeb?Container():GestureDetector(
-                        onTap: (){
-                          _startBarcodeScan();
+                        onTap: ()async{
+                          if(await CommonFunctions().subscriptionActive() == false ){
+
+                            CommonFunctions().buildSubscriptionPaymentModal(context);
+                          }else {
+                            _startBarcodeScan();
+                          }
                         },
                         child:
-                        Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              color: kCustomColor,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
-
-                          ),
-                          child: const Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
-                        ),),
+                        ScannerWidget(),),
 
                       selectedStocks.isNotEmpty?
                       Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
+                        padding: const EdgeInsets.all(15.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -945,4 +942,6 @@ class _ReStockPageState extends State<ReStockPage> {
     );
   }
 }
+
+
 enum Quality { good, bad, ok }

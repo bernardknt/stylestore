@@ -131,7 +131,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       Provider.of<StyleProvider>(context, listen: false).clearTransactionNote();
       CommonFunctions().showConfirmationToSendMessageToDialog(context, (){
 
-      });
+      }, selectedEmployeePhone);
       // updateNotifyArray(token);
     }).catchError((error) => print("Failed to add user: $error"));
   }

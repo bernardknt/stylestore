@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/Messages/sms_class.dart';
 
 class SmsDetailsPage extends StatelessWidget {
@@ -44,7 +45,13 @@ class SmsDetailsPage extends StatelessWidget {
                 Text(smsMessage.delivered ? 'Yes' : 'No'),
                 kLargeHeightSpacing,
                 Text('Cost:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('${smsMessage.cost.toStringAsFixed(0)} Ugx',  style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 15),), // Format cost
+                Text('${smsMessage.cost.toStringAsFixed(0)} Ugx',  style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 15),),
+                kLargeHeightSpacing, 
+                TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: CommonFunctions().convertToMaterialStateProperty(kAppPinkColor)
+                    ),
+                    onPressed: (){}, child: Text("Resend Message", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))// Format cost
               ],
             ),
           ),

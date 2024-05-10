@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -14,6 +15,8 @@ import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/scanner_widget.dart';
+import '../../widgets/subscription_ended_widget.dart';
 
 class UpdateStockPage extends StatefulWidget {
   static String id = "update_stock";
@@ -450,55 +453,21 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
               children: [
 
                 kLargeHeightSpacing,
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 20.0, right: 20),
-                //   child: Card(
-                //     color: kBeigeColor,
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(8.0),
-                //       child: Text('Quantities entered in the Stock column will "REPLACE" the current stock value when you Update',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack),),
-                //     ),
-                //
-                //   ),
-                // ),
-                // Padding(
-                //   padding: const EdgeInsets.only(left: 10.0),
-                //   child: Row(
-                //     children: [
-                //       TextButton(
-                //         style: ButtonStyle(backgroundColor: CommonFunctions().convertToMaterialStateProperty(kAppPinkColor)),
-                //         onPressed: () async {
-                //
-                //           Navigator.pushNamed(context, ProductUpload.id);
-                //
-                //
-                //         }, child: Text("+ Product", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
-                //     ],
-                //   ),
-                // ),
-                GestureDetector(
-                  onTap: (){
-                    // print(barcodeList);
-                    _startBarcodeScan();
-                    // showModalBottomSheet(
-                    //     context: context,
-                    //     builder: (context) {
-                    //       return BarcodeScanPage();
-                    //     });
+
+                kIsWeb?Container():GestureDetector(
+                  onTap: ()async{
+                    if(await CommonFunctions().subscriptionActive() == false ){
+
+                      CommonFunctions().buildSubscriptionPaymentModal(context);
+                    }else {
+                      _startBarcodeScan();
+                    }
+
+
                   },
                   child:
-                  // Icon(Iconsax.scan, size: 50,color: kBlueDarkColor,)),
-                  Container(
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                        color: kCustomColor,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
-
-                    ),
-                    child: Icon(Iconsax.scan, size: 40,color: kBlueDarkColor,),
-                  ),),
+                  ScannerWidget(backgroundColor: kCustomColor,scannerColor: kBlack,)
+                ),
                 kSmallHeightSpacing,
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
@@ -741,4 +710,6 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       ),
     );
   }
+
+
 }

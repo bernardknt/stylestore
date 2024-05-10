@@ -17,6 +17,7 @@ import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
+import 'package:stylestore/widgets/scanner_widget.dart';
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
 import '../../../../../Utilities/constants/user_constants.dart';
@@ -325,13 +326,15 @@ class _POSState extends State<POS> {
             Padding(
               padding: const EdgeInsets.only(right: 30.0, top: 10),
               child: GestureDetector(
-                  onTap: () {
-                    _startBarcodeScan();
+                  onTap: ()async{
+                    if(await CommonFunctions().subscriptionActive() == false ){
+
+                      CommonFunctions().buildSubscriptionPaymentModal(context);
+                    }else {
+                      _startBarcodeScan();
+                    }
                   },
-                  child: Icon(
-                    Iconsax.scan,
-                    size: 40,
-                  )),
+                  child: ScannerWidget())
             )
         ],
       ),
@@ -555,8 +558,8 @@ class _POSState extends State<POS> {
                                           onTypingFunction:
                                               (value) {quantity = double.parse(value);
                                           },
-                                          keyboardType:
-                                          TextInputType.number,
+                                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+
                                           labelText: "Quantity"),
                                       InputFieldWidget(
                                           readOnly:
@@ -570,9 +573,7 @@ class _POSState extends State<POS> {
                                               (value) {
                                             amount = double.parse(value);
                                           },
-                                          keyboardType:
-                                          TextInputType
-                                              .number,
+                                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                                           labelText:
                                           "Price"),
                                       Row(

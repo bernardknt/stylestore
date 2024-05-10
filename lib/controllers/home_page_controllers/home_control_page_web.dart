@@ -189,7 +189,7 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                       Image.asset('images/new_logo.png'),
                       kSmallWidthSpacing,
                      subscriptionDate>= DateTime.now().millisecondsSinceEpoch ?
-                     Text("PREMIUM",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                     Text("Business Class",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
                      :Text("Basic",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
                     ],
                   ),

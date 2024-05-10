@@ -70,9 +70,9 @@ class RecordPaymentWidget extends StatelessWidget {
             Text('Enter amount received for this transaction',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 25, color: kBlack),),
             kLargeHeightSpacing,
             kLargeHeightSpacing,
-            Text('${Provider.of<StyleProvider>(context, listen: false).invoicedCustomer}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-            Text('Invoiced Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedTotalPrice)} ${styleData.storeCurrency}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
-            Text('Paid Amount: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedPaidPrice)} ${styleData.storeCurrency}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
+            Text('${Provider.of<StyleProvider>(context, listen: false).invoicedCustomer}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16, fontWeight: FontWeight.w900),),
+            Text('Invoiced Amount: ${styleData.storeCurrency} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedTotalPrice)}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
+            Text('Paid Amount:${styleData.storeCurrency} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: false).invoicedPaidPrice)}',textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(fontSize: 16),),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +94,7 @@ class RecordPaymentWidget extends StatelessWidget {
                     // TextEditingController()..text ='${Provider.of<StyleProvider>(context).totalPrice}',
                     textAlign: TextAlign.start,
                     style: kNormalTextStyle.copyWith(fontSize: 30),
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                     onChanged: (value){
                       print(value);
                       if (value!= ""){

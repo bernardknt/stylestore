@@ -118,6 +118,7 @@ dependencies:
   pinput: ^3.0.1
   qr_code_scanner: ^1.0.1
   flutter_barcode_scanner: ^2.0.0
+  barcode: ^2.2.8
   get: ^4.6.5
   audioplayers: ^3.0.1
   device_info_plus: ^10.1.0
@@ -152,9 +153,10 @@ flutter:
   assets:
     - images/
     - assets/
-    - assets/pdf/
+
 #    - .env
   fonts:
+
     - family: Futura
       fonts:
         - asset: assets/fonts/Futura-Light.ttf

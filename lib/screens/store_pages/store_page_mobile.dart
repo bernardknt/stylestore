@@ -17,6 +17,7 @@ import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
+import 'package:stylestore/screens/store_pages/take_stock_page.dart';
 import 'package:stylestore/screens/store_pages/upload_products_ptions.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../../../../Utilities/constants/color_constants.dart';
@@ -43,12 +44,14 @@ class _StorePageMobileState extends State<StorePageMobile> {
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
   String currency = "";
+  String storeName = "";
 
   defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
+    storeName = CommonFunctions().getFirstWord(prefs.getString(kBusinessNameConstant)??"");
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
-    newStock = await retrieveSupplierData();
+    newStock = await CommonFunctions().retrieveSuppliesData(context);
     filteredStock.addAll(newStock);
     currency = prefs.getString(kCurrency)??"USD";
     // currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
@@ -57,24 +60,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
     });
   }
 
-  Future<List<AllStockData>> retrieveSupplierData() async {
 
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('stores')
-          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
-          .orderBy('name', descending: false)
-          .get();
-
-      final stockDataList = snapshot.docs
-          .map((doc) => AllStockData.fromFirestore(doc))
-          .toList();
-      return stockDataList;
-    } catch (error) {
-      print('Error retrieving stock data: $error');
-      return []; // Return an empty list if an error occurs
-    }
-  }
 
   void filterStock(String query) {
     setState(() {
@@ -102,31 +88,11 @@ class _StorePageMobileState extends State<StorePageMobile> {
         backgroundColor: kPlainBackground,
         appBar: AppBar(
             backgroundColor: kPlainBackground,
-            title: Text('Store and Inventory', style: kNormalTextStyle.copyWith(fontSize: 18, color: kBlack, fontWeight: FontWeight.bold),),
-            elevation: 0,
+            title: Text('$storeName Products & Inventory', style: kNormalTextStyle.copyWith(fontSize: 18, color: kBlack, fontWeight: FontWeight.bold),),
+          centerTitle: true,
+          elevation: 0,
             automaticallyImplyLeading: false,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, StockHistoryPage.id);
 
-
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-                      Text("History", style: kNormalTextStyle.copyWith(
-                          fontSize: 12,
-                          color: kBlack,
-                          fontWeight: FontWeight.bold),)
-                    ],
-                  )),
-            ),
-          ],
         ),
         //
         // floatingActionButtonLocation: FloatingActionButtonLocation
@@ -262,143 +228,47 @@ class _StorePageMobileState extends State<StorePageMobile> {
                               onChanged: filterStock,
                             ),
                           ),
-                          permissionsMap['takeStock'] == false ? Container():
-                          Row(
-
-                            children: [
-                              GestureDetector(
-                                onTap: () async {
-                                  final prefs = await SharedPreferences.getInstance();
-                                  Provider.of<BeauticianData>(context, listen: false)
-                                      .setStoreId(prefs.getString(kStoreIdConstant));
-
-                                  // Navigator.pushNamed(context, ReStockPage.id);
-                                  showDialog(context: context,
-                                      // barrierLabel: 'Appointment',
-                                      builder: (context) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Material(
-                                            color: Colors.transparent,
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Center(child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-
-                                                    Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.pop(context);
-
-                                                            Navigator.pushNamed(
-                                                                context, UpdateStockPage.id);
-                                                          },
-                                                          child: CircleAvatar(
-                                                              radius: 30,
-                                                              backgroundColor: kCustomColor
-                                                                  .withOpacity(1),
-                                                              child: const Icon(
-                                                                Iconsax.box, color: kBlack,
-                                                                size: 20,)),
-                                                        ),
-                                                        Text("Update / Check\nStock",
-                                                          textAlign: TextAlign.center,
-                                                          style: kNormalTextStyle.copyWith(
-                                                              color: kPureWhiteColor,
-                                                              fontSize: 12),)
-                                                      ],
-                                                    ),
-                                                    kMediumWidthSpacing,
-                                                    kMediumWidthSpacing,
-                                                    kMediumWidthSpacing,
-                                                    Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            Navigator.pop(context);
-                                                            Navigator.pushNamed(
-                                                                context, ReStockPage.id);
-                                                          },
-                                                          child: CircleAvatar(
-                                                              backgroundColor: kCustomColorPink
-                                                                  .withOpacity(1),
-
-                                                              radius: 30,
-                                                              child: const Icon(Iconsax.tag,
-                                                                color: kPureWhiteColor,
-                                                                size: 20,)),
-                                                        ),
-                                                        Text("Restock / Purchase\nItems",
-                                                          textAlign: TextAlign.center,
-                                                          style: kNormalTextStyle.copyWith(
-                                                              color: kPureWhiteColor,
-                                                              fontSize: 12),)
-                                                      ],
-                                                    ),
-
-                                                  ],
-                                                )),
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                kLargeHeightSpacing,
-                                                Text("Cancel",
-                                                  style: kNormalTextStyle.copyWith(
-                                                      color: kPureWhiteColor),)
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                  );
-                                },
-
-                                child: Container(
-                                  height: 45,
-                                  width: 100,
-                                  decoration: BoxDecoration(
-                                    color: kBlack,
-                                    borderRadius: BorderRadius.circular(10),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,  // Start of the gradient
-                                      end: Alignment.bottomRight, // End of the gradient
-                                      colors: [kAppPinkColor, kBlueDarkColor],
-                                    ),),
-                                  child: Center(child: Text("Take Stock",
-                                    style: kNormalTextStyle.copyWith(
-                                        color: kPureWhiteColor),)),
-                                  // color: kAirPink,
-                                ),
-                              ),
-                              // kMediumWidthSpacing,
-                              // GestureDetector(
-                              //     onTap: () {
-                              //       Navigator.pushNamed(context, StockHistoryPage.id);
-                              //
-                              //
-                              //     },
-                              //     child: Column(
-                              //       mainAxisAlignment: MainAxisAlignment.center,
-                              //       crossAxisAlignment: CrossAxisAlignment.center,
-                              //       children: [
-                              //         Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-                              //         Text("History", style: kNormalTextStyle.copyWith(
-                              //             fontSize: 12,
-                              //             color: kBlack,
-                              //             fontWeight: FontWeight.bold),)
-                              //       ],
-                              //     )),
-
-                            ],
-                          ),
+                          // permissionsMap['takeStock'] == false ? Container():
+                          // Row(
+                          //
+                          //   children: [
+                          //     GestureDetector(
+                          //       onTap: () {
+                          //
+                          //         showDialog(context: context,
+                          //
+                          //             builder: (context) {
+                          //               return GestureDetector(
+                          //                 onTap: () {
+                          //                   Navigator.pop(context);
+                          //                 },
+                          //                 child: TakeStockWidget(),
+                          //               );
+                          //             }
+                          //         );
+                          //       },
+                          //
+                          //       child: Container(
+                          //         height: 45,
+                          //         width: 100,
+                          //         decoration: BoxDecoration(
+                          //           color: kBlack,
+                          //           borderRadius: BorderRadius.circular(10),
+                          //           gradient: LinearGradient(
+                          //             begin: Alignment.topLeft,  // Start of the gradient
+                          //             end: Alignment.bottomRight, // End of the gradient
+                          //             colors: [kAppPinkColor, kBlueDarkColor],
+                          //           ),),
+                          //         child: Center(child: Text("Take Stock",
+                          //           style: kNormalTextStyle.copyWith(
+                          //               color: kPureWhiteColor),)),
+                          //         // color: kAirPink,
+                          //       ),
+                          //     ),
+                          //
+                          //
+                          //   ],
+                          // ),
 
                         ],
                       ),
@@ -429,61 +299,6 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 filteredStock[index].saleable,);
                               Navigator.pushNamed(context, ProductEditPage.id);
 
-                              // showModalBottomSheet(
-                              //     context: context,
-                              //     builder: (BuildContext context) {
-                              //       return Container(
-                              //         color: Colors.transparent,
-                              //         child: Container(
-                              //           decoration: BoxDecoration(
-                              //               color: kPureWhiteColor,
-                              //               borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
-                              //           ),
-                              //           child: Padding(
-                              //             padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                              //             child: Column(
-                              //               mainAxisSize: MainAxisSize.min,
-                              //               children:
-                              //               [
-                              //                 buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
-                              //                         () async {
-                              //                       Navigator.pop(context);
-                              //                       Navigator.pushNamed(context, ProductEditPage.id);
-                              //
-                              //
-                              //                     }
-                              //                 ),
-                              //                 SizedBox(height: 16.0),
-                              //                 buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
-                              //                   Navigator.pop(context);
-                              //
-                              //                   if (filteredStock[index].stockTaking.isEmpty){
-                              //                     showDialog(context: context, builder: (BuildContext context){
-                              //                       return CupertinoAlertDialog(
-                              //                         title: const Text('No Stock Data'),
-                              //                         content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
-                              //                         actions: [CupertinoDialogAction(isDestructiveAction: true,
-                              //                             onPressed: (){
-                              //                               // _btnController.reset();
-                              //                               Navigator.pop(context);
-                              //
-                              //                             },
-                              //                             child: const Text('Cancel'))],
-                              //                       );
-                              //                     });
-                              //                   } else {
-                              //                     print(filteredStock[index].storeId);
-                              //                     Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
-                              //                     Navigator.pushNamed(context, StockManagementPage.id);
-                              //                   }
-                              //
-                              //                 } ),
-                              //
-                              //               ],
-                              //             ),
-                              //           ),
-                              //         ),
-                              //       ); });
 
                             },
                             child:
@@ -725,3 +540,5 @@ class _StorePageMobileState extends State<StorePageMobile> {
 
 
 }
+
+
