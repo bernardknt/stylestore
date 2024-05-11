@@ -25,6 +25,7 @@ import '../../../../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/excel_model.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/build_info_card.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
 
@@ -43,8 +44,10 @@ class _StorePageMobileState extends State<StorePageMobile> {
   TextEditingController searchController = TextEditingController();
   List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
+  List<AllStockData> totalStock = [];
   String currency = "";
   String storeName = "";
+
 
   defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
@@ -52,6 +55,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     newStock = await CommonFunctions().retrieveSuppliesData(context);
+    totalStock.addAll(newStock);
     filteredStock.addAll(newStock);
     currency = prefs.getString(kCurrency)??"USD";
     // currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
@@ -61,7 +65,49 @@ class _StorePageMobileState extends State<StorePageMobile> {
   }
 
 
+  void filterStockByLowStock() {
+    setState(() {
+      filteredStock = newStock
+          .where((element) => element.quantity < 5 && element.tracking)
+          .toList();
+    });
+  }
+  void filterStockByForSale() {
+    setState(() {
+      filteredStock = newStock
+          .where((element) => element.saleable)
+          .toList();
+    });
+  }
 
+  void filterStockByNotForSale() {
+    setState(() {
+      filteredStock = newStock
+          .where((element) => !element.saleable)
+          .toList();
+    });
+  }
+  void filterStockByWellStocked() {
+    setState(() {
+      filteredStock = newStock
+          .where((element) => element.quantity > 5 && element.tracking)
+          .toList();
+    });
+  }
+
+  void filterStockByTracking() {
+    setState(() {
+      filteredStock = newStock
+          .where((element) => element.tracking)
+          .toList();
+    });
+  }
+
+  void filterAllStock() {
+    setState(() {
+      filteredStock = newStock.toList();
+    });
+  }
   void filterStock(String query) {
     setState(() {
       filteredStock = newStock
@@ -209,6 +255,41 @@ class _StorePageMobileState extends State<StorePageMobile> {
 
             Column(
               children: [
+                Container(
+                  height: 130,
+                  child:
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+
+
+                        children: [
+                          kLargeHeightSpacing,
+                          buildInfoCard(title: "Total Items", value: "${totalStock.length}", cardColor: kBlueThemeColor, cardIcon: Iconsax.box, fontSize: 12,
+                              tapped: (){filterAllStock();}),
+                          kSmallWidthSpacing,
+                          buildInfoCard(title: "Tracked Items", value: "${totalStock.where((element) => element.tracking).length}", cardColor: kYellowThemeColor, cardIcon: Iconsax.watch, fontSize: 12,
+                              tapped: (){filterStockByTracking();}),
+                          buildInfoCard(title: "Low Stock ", value:"${totalStock.where((element) => element.quantity < 5 && element.tracking).length}", cardColor: kRedColor,  cardIcon: Icons.battery_2_bar_outlined, fontSize: 14,
+                              tapped: (){filterStockByLowStock();}),
+                          kSmallWidthSpacing,
+                          buildInfoCard(title: "Well Stocked  ", value:"${totalStock.where((element) => element.quantity > 5 && element.tracking).length}", cardColor: kGreenThemeColor,
+                              cardIcon: Icons.battery_charging_full, fontSize: 14,  tapped: (){filterStockByWellStocked();}),
+                          buildInfoCard(title: "   For Sale  ", value:"${totalStock.where((element) => element.saleable).length}", cardColor: kAppPinkColor,  cardIcon: Icons.point_of_sale_rounded, fontSize: 12,
+                              tapped: (){filterStockByForSale();}
+                          ),
+                          kSmallWidthSpacing,
+                          buildInfoCard(title: "  Not for Sale  ", value:"${totalStock.where((element) => !element.saleable).length}", cardColor: kBlack, cardIcon: Iconsax.box, fontSize: 12,
+                              tapped: (){filterStockByNotForSale();}
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child:
@@ -228,47 +309,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                               onChanged: filterStock,
                             ),
                           ),
-                          // permissionsMap['takeStock'] == false ? Container():
-                          // Row(
-                          //
-                          //   children: [
-                          //     GestureDetector(
-                          //       onTap: () {
-                          //
-                          //         showDialog(context: context,
-                          //
-                          //             builder: (context) {
-                          //               return GestureDetector(
-                          //                 onTap: () {
-                          //                   Navigator.pop(context);
-                          //                 },
-                          //                 child: TakeStockWidget(),
-                          //               );
-                          //             }
-                          //         );
-                          //       },
-                          //
-                          //       child: Container(
-                          //         height: 45,
-                          //         width: 100,
-                          //         decoration: BoxDecoration(
-                          //           color: kBlack,
-                          //           borderRadius: BorderRadius.circular(10),
-                          //           gradient: LinearGradient(
-                          //             begin: Alignment.topLeft,  // Start of the gradient
-                          //             end: Alignment.bottomRight, // End of the gradient
-                          //             colors: [kAppPinkColor, kBlueDarkColor],
-                          //           ),),
-                          //         child: Center(child: Text("Take Stock",
-                          //           style: kNormalTextStyle.copyWith(
-                          //               color: kPureWhiteColor),)),
-                          //         // color: kAirPink,
-                          //       ),
-                          //     ),
-                          //
-                          //
-                          //   ],
-                          // ),
+
 
                         ],
                       ),

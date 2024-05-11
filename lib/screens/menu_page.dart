@@ -21,6 +21,7 @@ import '../model/common_functions.dart';
 import '../model/menu_items.dart';
 import '../widgets/rounded_icon_widget.dart';
 import 'Messages/message_history.dart';
+import 'analytics/deeper_analytics/analytics_mobile.dart';
 import 'sign_in_options/login_page.dart';
 import 'package:intl/intl.dart';
 
@@ -39,6 +40,7 @@ class _MenuPageState extends State<MenuPage> {
     SideMenuItem(title: cSuppliers, icon: kIconSuppliers),
     SideMenuItem(title: cMessagingTab, icon: kIconMessage),
     SideMenuItem(title: cTransactions, icon: kIconTransaction),
+    SideMenuItem(title: cAnalytics, icon: kIconAnalytics),
 
 
     // SideMenuItem(title: 'Business Wallet', icon: Icons.monetization_on_outlined),
@@ -50,7 +52,8 @@ class _MenuPageState extends State<MenuPage> {
     EmployeesPage.id,
     SuppliersPage.id,
     MessageHistoryPage.id,
-  TransactionsController.id,
+    TransactionsController.id,
+    AnalyticsMobile.id
     // WalletsPage.id
     // NewTutorialPage.id,
 

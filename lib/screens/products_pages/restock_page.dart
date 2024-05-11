@@ -344,7 +344,7 @@ class _ReStockPageState extends State<ReStockPage> {
                 child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async{
                   if (inputPrice != null && inputQuantity != null) {
                     setState(() {
                       int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
@@ -362,37 +362,54 @@ class _ReStockPageState extends State<ReStockPage> {
                       print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
                     });
                   }
-                  setState(() {
+                  // setState(() {
+                  //
+                  // });
 
-                  });
+                  showDialog(context: context, builder: ( context) {return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [CircularProgressIndicator(color: kAppPinkColor,),
+                          kSmallHeightSpacing,
+                          DefaultTextStyle(
+                            style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                            child: Text("Item Recorded", textAlign: TextAlign.center,),
+                          )
+                          // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                        ],));});
+                  await Future.delayed(const Duration(seconds: 1));
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  _startBarcodeScan();
 
-                                Navigator.pop(context);
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return CupertinoAlertDialog(
-                                      title: Text("Scan another Item?"),
-                                      content: Text("Would you like to scan another item?"),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: const Text(
-                                            "Cancel", style: TextStyle(color: kRedColor),),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();// Close the dialog
 
-                                          },
-                                        ),
-                                        CupertinoDialogAction(
-                                          child: const Text("Scan Another"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(); // Close the dialog
-                                            _startBarcodeScan();
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                // Navigator.pop(context);
+                                // showDialog(
+                                //   context: context,
+                                //   builder: (BuildContext context) {
+                                //     return CupertinoAlertDialog(
+                                //       title: Text("Scan another Item?"),
+                                //       content: Text("Would you like to scan another item?"),
+                                //       actions: [
+                                //         CupertinoDialogAction(
+                                //           child: const Text(
+                                //             "Cancel", style: TextStyle(color: kRedColor),),
+                                //           onPressed: () {
+                                //             Navigator.of(context).pop();// Close the dialog
+                                //
+                                //           },
+                                //         ),
+                                //         CupertinoDialogAction(
+                                //           child: const Text("Scan Another"),
+                                //           onPressed: () {
+                                //             Navigator.of(context).pop(); // Close the dialog
+                                //             _startBarcodeScan();
+                                //           },
+                                //         ),
+                                //       ],
+                                //     );
+                                //   },
+                                // );
                 },
                 child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
               ),

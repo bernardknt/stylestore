@@ -58,7 +58,7 @@ import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -2076,21 +2076,21 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     // Create a blob from the bytes and create a download link
 
     //PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
-    final blob = html.Blob([excelData]);
-    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create a link element and trigger the download
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..target = 'download'
-      ..download = 'bulk_upload_data.xlsx';
-
-    // Trigger the click event to start the download
-    html.document.body?.append(anchor);
-    anchor.click();
-
-    // Clean up the temporary link
-    html.Url.revokeObjectUrl(blobUrl);
-    anchor.remove();
+    // final blob = html.Blob([excelData]);
+    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+    //
+    // // Create a link element and trigger the download
+    // final anchor = html.AnchorElement(href: blobUrl)
+    //   ..target = 'download'
+    //   ..download = 'bulk_upload_data.xlsx';
+    //
+    // // Trigger the click event to start the download
+    // html.document.body?.append(anchor);
+    // anchor.click();
+    //
+    // // Clean up the temporary link
+    // html.Url.revokeObjectUrl(blobUrl);
+    // anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 

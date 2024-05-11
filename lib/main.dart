@@ -13,6 +13,7 @@ import 'package:stylestore/controllers/task_controller.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
 import 'package:stylestore/screens/MobileMoneyPages/make_payment_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
+import 'package:stylestore/screens/analytics/deeper_analytics/analytics_mobile.dart';
 import 'package:stylestore/screens/analytics/loading_analysis_page.dart';
 import 'package:stylestore/screens/change_store_photo.dart';
 import 'package:stylestore/screens/chat_messages/chat.dart';
@@ -208,6 +209,7 @@ class MyApp extends StatelessWidget {
           ExpensesPage.id: (context) => ExpensesPage(),
           LoadingAnalysisPage.id: (context) => LoadingAnalysisPage(),
           EmployeeSignIn.id: (context) => EmployeeSignIn(),
+          AnalyticsMobile.id: (context) => AnalyticsMobile(),
           TeamPage.id: (context) => TeamPage(),
           HomePageWeb.id: (context) => HomePageWeb(),
           LoginPageNewWeb.id: (context) => LoginPageNewWeb(),
