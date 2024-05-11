@@ -80,17 +80,6 @@ class _HomePageWebState extends State<HomePageWeb> {
 
     CommonFunctions().checkPeriodAndSignOut(context, lastSignInTime);
 
-    // if(Provider.of<StyleProvider>(context, listen: true).notificationIcon == true){
-    //   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
-    //   showDialog(context: context, builder: (BuildContext context){
-    //     return
-    //       GestureDetector(
-    //           onTap: (){
-    //             Navigator.pop(context);
-    //           },
-    //           child: ChatPage());
-    //   });
-    // }
 
 
 
@@ -128,49 +117,12 @@ class _HomePageWebState extends State<HomePageWeb> {
 
 
 
-  Future<void> updateAppointmentCurrency() async {
-    try {
-      FirebaseFirestore firestore = FirebaseFirestore.instance;
-      CollectionReference appointmentsCollection = firestore.collection('appointments');
-
-      await appointmentsCollection.get().then((QuerySnapshot snapshot) {
-        for (DocumentSnapshot doc in snapshot.docs) {
-          doc.reference.update({
-            'currency': "UGX",
-          });
-        }
-      });
-
-      print('Currency field updated in appointment documents');
-    } catch (e) {
-      print('Failed to update currency field: $e');
-    }
-  }
-
-
   @override
   initState() {
     defaultInitialization();
     super.initState();
   }
 
-  Future sendEmail ()async {
-    final message = Message();
-    // final smtpServer = gmailSaslXoauth2(userEmail, accessToken);
-    final mailAddress = "kangavebnt@gmail.com";
-    message.from = Address(mailAddress, "Bernard");
-    message.recipients = ['bernardnt@yahoo.co.uk'];
-
-    message.subject = 'Hello Bernard';
-    message.text = "This is the beginning of the message";
-
-    try{
-      // await send(message, smtpServer);
-      ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Email sent successfully')));
-    } on MailerException catch (e){
-      print(e);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {

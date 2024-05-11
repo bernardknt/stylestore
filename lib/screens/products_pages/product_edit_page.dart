@@ -34,8 +34,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
   bool selectedSaleableValue = false;
   String barcode = "";
   void defaultInitialization(){
+
     selectedTrackingValue = Provider.of<BeauticianData>(context, listen: false).itemTracking;
     selectedSaleableValue = Provider.of<BeauticianData>(context, listen: false).itemSaleable;
+    barcode = Provider.of<BeauticianData>(context, listen: false).itemBarcode;
     setState(() {
     });
   }
@@ -252,11 +254,16 @@ class _ProductEditPageState extends State<ProductEditPage> {
                           ],
                         ),
                         kLargeHeightSpacing,
+                        Text("Barcode: $barcode"),
+                        kLargeHeightSpacing,
                         TextButton(onPressed: ()async{
                           if(kIsWeb){
                             CommonFunctions().showFailureNotification("Please use mobile application or Tablet to re-assign code", context);
                              }else {
                             barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
+                            setState(() {
+                            });
+
 
                           }
                            }, child: Row(

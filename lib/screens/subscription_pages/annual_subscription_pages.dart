@@ -42,7 +42,7 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
 
   List<Offering> offerings = [
     Offering(title: 'Business Class', price: 499000, isSelected: false, benefits: ["Autopilot Business Notifications", "Barcode Scanning of Products", "Unlimited Products", "Up to 5 Employees", "Full Business Analytics"], duration: 365, ),
-    Offering(title: 'First Class', price: 999000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 365, popular: true),
+    Offering(title: 'First Class', price: 1000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 365, popular: true),
     Offering(title: 'VIP Class', price: 1499000, isSelected: false, benefits: ["Everything in Premium", "Location Tracking of Employees", "Up to 20 Employees"], duration: 365),
   ];
 
@@ -121,7 +121,7 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
 
                       }, firstButtonText: 'Select ${Provider.of<StyleProvider>(context, listen: true).subscriptionPackageToBuy}'),
                   kSmallHeightSpacing,
-                  CancelButtonWidget()
+                  const CancelButtonWidget()
 
                 ],
               ),

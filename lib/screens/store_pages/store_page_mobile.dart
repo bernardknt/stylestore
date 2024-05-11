@@ -296,7 +296,11 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 filteredStock[index].amount.toDouble(),
                                 filteredStock[index].image,
                                 filteredStock[index].tracking,
-                                filteredStock[index].saleable,);
+                                filteredStock[index].saleable,
+                                filteredStock[index].barcode,
+
+
+                              );
                               Navigator.pushNamed(context, ProductEditPage.id);
 
 

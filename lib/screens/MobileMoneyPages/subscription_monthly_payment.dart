@@ -120,7 +120,7 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
   }
   Widget buildOfferingCard(Offering offering) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         color: offering.isSelected ? kCustomColor : Colors.grey[200],

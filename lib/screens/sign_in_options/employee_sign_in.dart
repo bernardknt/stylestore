@@ -40,6 +40,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
 
   void updateNotificationsIfAdmin(documentId)async{
     permissionsMap = await CommonFunctions().convertPermissionsJson();
+    print("C'est le token: $token");
     if (permissionsMap['admin'] == true) {
       FirebaseFirestore.instance.collection('medics').doc(documentId)
           .update({

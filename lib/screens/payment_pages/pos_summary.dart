@@ -11,11 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/utilities/basket_items.dart';
 import 'package:uuid/uuid.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/stock_items.dart';
+import '../../widgets/pos_summary_widget.dart';
 import '../customer_pages/search_customer.dart';
 import 'amount_widget.dart';
 
@@ -38,7 +40,7 @@ class PosSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var styleData = Provider.of<StyleProvider>(context);
+    var styleData = Provider.of<StyleProvider>(context, listen: true);
 
     return Container(
       color: Colors.transparent,
@@ -78,45 +80,51 @@ class PosSummary extends StatelessWidget {
                       label: Text('Total Bill: ${CommonFunctions().formatter.format(styleData.totalPrice)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor) )),
                   )),
               Positioned(
-                child: ListView.builder(
-                    itemCount: styleData.basketItems.length,
-                    itemBuilder: (context, index){
-                      return ListTile(
-                        leading: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${index + 1}. ${styleData.basketNameItems[index]} x ${styleData.basketItems[index].quantity.toStringAsFixed(0)}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                            Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
-                          ],
-                        ),
-                        title:
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
+                child: ListView.builder(itemCount: styleData.basketItems.length,
+                  itemBuilder: (context, index) {
+                  return buildItemRow(context, styleData.basketItems[index],currency, kPureWhiteColor,index);},),
 
-                            Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
-                          ],
-                        ),
-                        trailing: Checkbox(
-                          activeColor: Colors.white,
-                          checkColor: Color(0xFF0d1206),
-                          shape: CircleBorder(),
-                          onChanged: (bool? value) {
-                            if (styleData.basketItems[index].tracking == true){
 
-                              Stock? foundStock = styleData.selectedStockItems.firstWhere((stock) => stock.name == styleData.basketItems[index].name);
-                              styleData.removeSelectedStockItems(foundStock);
-                              print("REMOVED TRACKED STOCK");
-                            }
-                            styleData.deleteItemFromBasket(styleData.basketItems[index], styleData.basketItems[index].quantity, index);
-                            // If the item selected for removal is true then we must get the SelectedQuantity item where the name is equal to the name in the basket it item
 
-                                //.deleteJuiceIngredient(styleData.selectedJuiceIngredients[index]);
-                          }, value: true,),
-                      );
-                    }),
+                // ListView.builder(
+                //     itemCount: styleData.basketItems.length,
+                //     itemBuilder: (context, index){
+                //       return ListTile(
+                //         leading: Column(
+                //           mainAxisAlignment: MainAxisAlignment.start,
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Text("${index + 1}. ${styleData.basketNameItems[index]} x ${styleData.basketItems[index].quantity.toStringAsFixed(0)}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+                //             Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index])}", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10)),
+                //           ],
+                //         ),
+                //         title:
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.end,
+                //           crossAxisAlignment: CrossAxisAlignment.end,
+                //           children: [
+                //
+                //             Text("${currency} ${CommonFunctions().formatter.format(styleData.basketItemsPrices[index] * styleData.basketItems[index].quantity)}",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12)),
+                //           ],
+                //         ),
+                //         trailing: Checkbox(
+                //           activeColor: Colors.white,
+                //           checkColor: Color(0xFF0d1206),
+                //           shape: CircleBorder(),
+                //           onChanged: (bool? value) {
+                //             if (styleData.basketItems[index].tracking == true){
+                //
+                //               Stock? foundStock = styleData.selectedStockItems.firstWhere((stock) => stock.name == styleData.basketItems[index].name);
+                //               styleData.removeSelectedStockItems(foundStock);
+                //               print("REMOVED TRACKED STOCK");
+                //             }
+                //             styleData.deleteItemFromBasket(styleData.basketItems[index], styleData.basketItems[index].quantity, index);
+                //             // If the item selected for removal is true then we must get the SelectedQuantity item where the name is equal to the name in the basket it item
+                //
+                //                 //.deleteJuiceIngredient(styleData.selectedJuiceIngredients[index]);
+                //           }, value: true,),
+                //       );
+                //     }),
               ),
               styleData.basketNameItems.isEmpty? Container(): Positioned(
                   bottom: 30,
@@ -232,5 +240,7 @@ class PosSummary extends StatelessWidget {
       ),
     );
   }
+
 }
+
 

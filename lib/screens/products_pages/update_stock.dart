@@ -61,26 +61,15 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
           CommonFunctions().playBeepSound();
           isScanning = false;
 
-          print(index);
-          print(nameList);
-
-
-
-
-
-
-
-          // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('$productName 4 ')));
           quantityControllers[index]?.text = '0';
           // Add the selected stock to the list.
           selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index]));
-          print(selectedStocks);
 
           showPriceAndQuantityDialogForBarScanner(index, nameList[index], itemIdList[index], descriptionList[index] );
         } else {
           isScanning = false;
           ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
-          // Navigator.pop(context);
+
         }
       }
     }
@@ -117,37 +106,6 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
     );
   }
 
-  void _performSearch(String searchQuery) {
-    if (searchQuery.isEmpty) {
-      setState(() {
-        _searchResults.clear();
-      });
-      return;
-    }
-
-    setState(() {
-      _searchResults = [];
-    });
-
-    FirebaseFirestore.instance
-        .collection('stores')
-        .where('name', isGreaterThanOrEqualTo: searchQuery)
-        .where('name', isLessThan: searchQuery + 'z')
-        .where('tracking', isEqualTo: true)
-        .get()
-        .then((querySnapshot) {
-      setState(() {
-        print(Provider.of<BeauticianData>(context, listen: false).storeId);
-        _searchResults = querySnapshot.docs.map((doc) =>
-        // doc.data()).toList();
-        doc.data()).where((data) => data['storeId'] == Provider.of<BeauticianData>(context, listen: false).storeId).toList();
-        print(_searchResults);
-      });
-
-    }).catchError((error) {
-      print('Error searching for customers: $error');
-    });
-  }
 
   Future<void> _showPriceAndQuantityDialog(int index, String name, id, description) async {
     double? inputPrice;
@@ -429,9 +387,7 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         splashColor: Colors.green,
-        // foregroundColor: Colors.black,
         backgroundColor: kAppPinkColor,
-        //blendedData.saladButtonColour,
         onPressed: () {
           // Handle the "Update Stock" button press.
           _handleUpdateStockButton();
@@ -462,11 +418,9 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
                     }else {
                       _startBarcodeScan();
                     }
-
-
                   },
                   child:
-                  ScannerWidget(backgroundColor: kCustomColor,scannerColor: kBlack,)
+                  const ScannerWidget(backgroundColor: kCustomColor,scannerColor: kBlack,)
                 ),
                 kSmallHeightSpacing,
                 Padding(

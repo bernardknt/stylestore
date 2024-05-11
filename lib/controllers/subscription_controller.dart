@@ -8,7 +8,7 @@ import 'package:stylestore/screens/subscription_pages/annual_subscription_pages.
 
 
 
-import '../screens/MobileMoneyPages/premium_mm_payment.dart';
+import '../screens/MobileMoneyPages/subscription_monthly_payment.dart';
 import '../screens/tasks_pages/tasks_widget.dart';
 import '../screens/HomePageWidgets/stock_summary_page.dart';
 import '../screens/HomePageWidgets/summary_widget.dart';

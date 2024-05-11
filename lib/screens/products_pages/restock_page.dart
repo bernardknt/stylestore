@@ -147,13 +147,11 @@ class _ReStockPageState extends State<ReStockPage> {
       );
       print("Here is barcodeRes: $barcodeScanRes");
       if (barcodeScanRes != '-1') {
-        //int index = barcodeList.indexOf(barcodeScanRes);
-        // int index = newStock[indexOf(barcodeScanRes)].barcode;
-        // int index = 0;
-    var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+
+        var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
         print("We reached this point: ${barcodeItem}");
         if (barcodeItem != null) {
-        //   print("The int value is : $index");
+
           CommonFunctions().playBeepSound();
 
           isScanning = false;
@@ -725,7 +723,7 @@ class _ReStockPageState extends State<ReStockPage> {
                           }
                         },
                         child:
-                        ScannerWidget(),),
+                        const ScannerWidget(),),
 
                       selectedStocks.isNotEmpty?
                       Padding(

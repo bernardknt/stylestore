@@ -1,8 +1,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +17,7 @@ import 'package:stylestore/model/products.dart';
 import 'package:stylestore/screens/payment_pages/pos_summary.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
+import 'package:stylestore/screens/store_pages/store_page_mobile.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
 import 'package:stylestore/widgets/scanner_widget.dart';
@@ -25,6 +28,7 @@ import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
 import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
+import '../../widgets/pos_summary_widget.dart';
 import '../products_pages/stock_items.dart';
 
 class POS extends StatefulWidget {
@@ -50,7 +54,6 @@ class _POSState extends State<POS> {
   var quantityList = [];
   var imgList = [];
   var nameList = [];
-  var trackingList = [];
   var minimumList = [];
   var idList = [];
   var formatter = NumberFormat('#,###,000');
@@ -82,6 +85,8 @@ class _POSState extends State<POS> {
     setState(() {});
   }
 
+
+
   // Future<void> _startBarcodeScan(BuildContext context) async {
   bool isScanning = false;
   Future<void> _startBarcodeScan() async {
@@ -96,124 +101,145 @@ class _POSState extends State<POS> {
       );
 
       if (barcodeScanRes != '-1') {
-        int index = barcodeList.indexOf(barcodeScanRes);
-        if (index != -1) {
-          CommonFunctions().playBeepSound();
           isScanning = false;
+         // var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+          try {
+            var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+            if (barcodeItem != null)
+            {
+              if(barcodeItem.tracking == true){
+                print(barcodeItem.quantity);
+                if (1<=barcodeItem.quantity){
+                  Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
+                      name: barcodeItem.name, quantity: 1.0,
+                      amount: barcodeItem.amount / 1.0,
+                      details: barcodeItem.description,
+                      tracking: barcodeItem.tracking));
+                  selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+                  CommonFunctions().playBeepSound();
+                  showDialog(context: context, builder: ( context) {return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [CircularProgressIndicator(color: kAppPinkColor,),
+                          kSmallHeightSpacing,
+                          DefaultTextStyle(
+                            style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                            child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
+                          )
+                          // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                        ],));});
+                  await Future.delayed(const Duration(seconds: 1));
+                  Navigator.pop(context);
+                  _startBarcodeScan();
 
-          if (trackingList[index] == true) {
-            if (1 <= quantityList[index]) {
+                }
+                else {
 
-              Provider.of<StyleProvider>(context, listen: false)
-                  .addToServiceBasket(BasketItem(
-                  name: nameList[index],
-                  quantity: 1.0,
-                  amount: amountList[index] / 1.0,
-                  details: descList[index],
-                  tracking: trackingList[index]));
-              selectedStocks.add(Stock(
-                  name: nameList[index],
-                  id: idList[index],
-                  restock: 1,
-                  price: amountList[index] / 1.0));
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return CupertinoAlertDialog(
-                    title: Text("Scan another Item?"),
-                    content: Text("Would you like to scan another item?"),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(color: kRedColor),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text("Scan Another"),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                          _startBarcodeScan();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-              // Navigator.pop(context);
-            } else {
-              print("THIS Didnt run RUN");
-              // Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: const Text('Quantity Too High'),
-                      content: Text(
-                        "The quantity available for ${nameList[index]} is ${quantityList[index]}! You have tried to sell 1 unit!",
-                        style: kNormalTextStyle.copyWith(color: kBlack),
-                      ),
-                      actions: [
-                        CupertinoDialogAction(
-                            isDestructiveAction: true,
-                            onPressed: () {
-                              // _btnController.reset();
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Cancel')),
-                        CupertinoDialogAction(
-                            isDefaultAction: true,
-                            onPressed: () async {
-                              final prefs =
-                              await SharedPreferences.getInstance();
-                              Provider.of<BeauticianData>(context,
-                                  listen: false)
-                                  .setStoreId(
-                                  prefs.getString(kStoreIdConstant));
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: const Text('OUT OF STOCK'),
+                          content: Text(
+                            "The quantity available for ${barcodeItem.name} is ${barcodeItem.quantity}! You have tried to sell 1 unit!",
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                          ),
+                          actions: [
+                            CupertinoDialogAction(
+                                isDestructiveAction: true,
+                                onPressed: () {
+                                  // _btnController.reset();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel')),
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () async {
+                                  final prefs =
+                                  await SharedPreferences.getInstance();
+                                  Provider.of<BeauticianData>(context,
+                                      listen: false)
+                                      .setStoreId(
+                                      prefs.getString(kStoreIdConstant));
 
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, UpdateStockPage.id);
-                            },
-                            child: const Text('Update Stock')),
-                      ],
-                    );
-                  });
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, UpdateStockPage.id);
+                                },
+                                child: const Text('Update Stock')),
+                          ],
+                        );
+                      });
+                }
+              } else {
+                Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
+                    name: barcodeItem.name, quantity: 1.0,
+                    amount: barcodeItem.amount / 1.0,
+                    details: barcodeItem.description,
+                    tracking: barcodeItem.tracking));
+                selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+                CommonFunctions().playBeepSound();
+                showDialog(context: context, builder: ( context) {return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [CircularProgressIndicator(color: kAppPinkColor,),
+                        kSmallHeightSpacing,
+                        DefaultTextStyle(
+                          style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                          child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
+                        )
+                        // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                      ],));});
+                await Future.delayed(const Duration(seconds: 1));
+                Navigator.pop(context);
+                _startBarcodeScan();
+              }
+
+              print("${barcodeItem.name} ${barcodeItem.tracking} Item Exists");
+            } else{
+
             }
-          } else {
-            Provider.of<StyleProvider>(context, listen: false)
-                .addToServiceBasket(BasketItem(
-                name: nameList[index],
-                quantity: 1.0,
-                amount: amountList[index] / 1.0,
-                details: descList[index],
-                tracking: trackingList[index]));
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('TRACKING TRUE ${nameList[index]} added')));
+            // Use barcodeItem here
+          } on StateError catch (e) {
+            // Handle the case where no element is found (e.g., show a message)
+            print("Item does not Exist");
+            isScanning = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Item is not in your Inventory')));
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: Text("Scan another Item?"),
-                  content: Text("Would you like to scan another item?"),
+                  title: Text("ITEM BARCODE DOES\nNOT EXIST?"),
+                  content: Text("Would you like to add this item to the inventory?"),
                   actions: [
                     CupertinoDialogAction(
                       child: const Text(
-                        "Cancel",
-                        style: TextStyle(color: kRedColor),
-                      ),
+                        "Cancel", style: TextStyle(color: kRedColor),),
                       onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();// Close the dialog
+
                       },
                     ),
                     CupertinoDialogAction(
-                      child: const Text("Scan Another"),
+                      child: const Text("Add to Inventory"),
                       onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                        _startBarcodeScan();
+                        Navigator.of(context).pop();
+                        showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return Scaffold(
+                                  appBar: AppBar(
+                                    elevation: 0,
+                                    backgroundColor: kPureWhiteColor,
+                                    automaticallyImplyLeading: false,
+                                  ),
+                                  body: StorePageMobile());
+                            });
+
+
+
                       },
                     ),
                   ],
@@ -221,12 +247,11 @@ class _POSState extends State<POS> {
               },
             );
           }
-        } else {
-          isScanning = false;
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Item is not in your Inventory')));
-          // Navigator.pop(context);
-        }
+
+      }
+      else{
+
+
       }
     }
   }
@@ -250,6 +275,24 @@ class _POSState extends State<POS> {
       print('Error retrieving stock data: $error');
       return []; // Return an empty list if an error occurs
     }
+  }
+  void _showCurrencyPicker(BuildContext context) {
+    showCurrencyPicker(
+      context: context,
+      showFlag: true, // Show currency flag
+      showCurrencyName: true, // Show currency name
+      showCurrencyCode: true, // Show currency code
+      onSelect: (Currency currency) async{
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString(kCurrency, currency.code);
+        Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency.code);
+
+        setState((){
+
+        });
+      },
+      favorite: ['USD', 'EUR', 'UGX', 'KES'], // Can pre-select favorites
+    );
   }
 
   void filterStock(String query) {
@@ -281,45 +324,76 @@ class _POSState extends State<POS> {
         backgroundColor: kPlainBackground,
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
-        title:
-        permissionsMap['sales'] == false
-            ? Container()
-            :
-        GestureDetector(
-          onTap: () async {
-            final prefs = await SharedPreferences.getInstance();
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
+              style: kNormalTextStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: kBlack,
+                  fontSize: 20),
+            ),
+            kSmallWidthSpacing,
+            GestureDetector(
+              onTap: (){
+                _showCurrencyPicker(context);
+              },
+              child: Container(
+                decoration: BoxDecoration(
 
-            Provider.of<BeauticianData>(context, listen: false)
-                .setStoreId(prefs.getString(kStoreIdConstant));
-            Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
+                    color: kPureWhiteColor,
+                    borderRadius: BorderRadius.circular(5)
 
-            showModalBottomSheet(
-                isScrollControlled: true,
-                context: context,
-                builder: (context) {
-                  return Scaffold(
-                      appBar: AppBar(
-                        elevation: 0,
-                        backgroundColor: kPureWhiteColor,
-                        automaticallyImplyLeading: false,
-                      ),
-                      body: CustomerSearchPage());
-                });
-          },
-          child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5),
                 ),
-                color: kAppPinkColor,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text( Provider.of<StyleProvider>(context, listen: true).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                ),
               ),
-              child: Text(
-                '+ Add Customer',
-                style: kNormalTextStyle.copyWith(
-                    color: kPureWhiteColor, fontSize: 13),
-              )),
+            )
+          ],
         ),
+        // title:
+        // permissionsMap['sales'] == false
+        //     ? Container()
+        //     :
+        // GestureDetector(
+        //   onTap: () async {
+        //     final prefs = await SharedPreferences.getInstance();
+        //
+        //     Provider.of<BeauticianData>(context, listen: false)
+        //         .setStoreId(prefs.getString(kStoreIdConstant));
+        //     Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
+        //
+        //     showModalBottomSheet(
+        //         isScrollControlled: true,
+        //         context: context,
+        //         builder: (context) {
+        //           return Scaffold(
+        //               appBar: AppBar(
+        //                 elevation: 0,
+        //                 backgroundColor: kPureWhiteColor,
+        //                 automaticallyImplyLeading: false,
+        //               ),
+        //               body: CustomerSearchPage());
+        //         });
+        //   },
+        //   child: Container(
+        //       padding: EdgeInsets.all(10),
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.all(
+        //           Radius.circular(5),
+        //         ),
+        //         color: kAppPinkColor,
+        //       ),
+        //       child: Text(
+        //         '+ Add Customer',
+        //         style: kNormalTextStyle.copyWith(
+        //             color: kPureWhiteColor, fontSize: 13),
+        //       )),
+        // ),
         centerTitle: true,
         actions: [
           if (!kIsWeb)
@@ -334,7 +408,7 @@ class _POSState extends State<POS> {
                       _startBarcodeScan();
                     }
                   },
-                  child: ScannerWidget())
+                  child: const ScannerWidget(backgroundColor: kGreenThemeColor,))
             )
         ],
       ),
@@ -351,10 +425,7 @@ class _POSState extends State<POS> {
           Provider.of<BeauticianData>(context, listen: false)
               .setStoreId(prefs.getString(kStoreIdConstant));
 
-          if (Provider.of<StyleProvider>(context, listen: false)
-              .basketItems
-              .length ==
-              0) {
+          if (Provider.of<StyleProvider>(context, listen: false).basketItems.length == 0) {
             CommonFunctions().AlertPopUpDialogueMain(context,
                 imagePath: 'images/delivery.json',
                 title: 'No Items Added',
@@ -411,36 +482,76 @@ class _POSState extends State<POS> {
             ),
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Column(
+                padding:EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                child: 
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Provider.of<StyleProvider>(context).customerName == ""
-                        ? Text(
-                      'No Customer Selected',
-                      style: kNormalTextStyle.copyWith(
-                          color: kBlack, fontSize: 14),
+                  children: [permissionsMap['sales'] == false
+                      ? Container()
+                      : GestureDetector(
+                      onTap: () async {
+                        final prefs = await SharedPreferences.getInstance();
+
+                        Provider.of<BeauticianData>(context, listen: false)
+                            .setStoreId(prefs.getString(kStoreIdConstant));
+                        Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
+
+                        showModalBottomSheet(
+                            isScrollControlled: true,
+                            context: context,
+                            builder: (context) {
+                              return Scaffold(
+                                  appBar: AppBar(
+                                    elevation: 0,
+                                    backgroundColor: kPureWhiteColor,
+                                    automaticallyImplyLeading: false,
+                                  ),
+                                  body: CustomerSearchPage());
+                            });
+                      },
+                      child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: kBackgroundGreyColor
+                        ),
+                        child: Provider.of<StyleProvider>(context).customerName == ""
+                          ? Center(
+                            child: Text(
+                                                  'No Customer Selected',textAlign: TextAlign.center,
+                                                  style: kNormalTextStyle.copyWith(
+                              color: kBlack, fontSize: 14),
+                                                ),
+                          )
+                          : Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: Text(
+                                                    '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',textAlign: TextAlign.center,
+                                                    style: kNormalTextStyle.copyWith(
+                                color: kBlack, fontSize: 16),
+                                                  ),
+                            ),
+                          ),
+                        ),
+                    ),
+
+                    kMediumWidthSpacing,
+                    kMediumWidthSpacing,
+                    Expanded(
+                      child: SizedBox(
+                        height: 100,
+
+                        child: ListView.builder(itemCount: styleData.basketItems.length,
+                          itemBuilder: (context, index) {
+                            return buildItemRow(context, styleData.basketItems[index],currency, kBlack,index);},),
+                      ),
                     )
-                        : Text(
-                      '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',
-                      style: kNormalTextStyle.copyWith(
-                          color: kBlack, fontSize: 16),
-                    ),
-                    kSmallHeightSpacing,
-                    Text(
-                      'Selected Items',
-                      style: kNormalTextStyle.copyWith(
-                          color: kAppPinkColor, fontSize: 12),
-                    ),
-                    Text(
-                      '${Provider.of<StyleProvider>(context).basketNameItems.join(", ")}',
-                      textAlign: TextAlign.center,
-                      style: kNormalTextStyle.copyWith(
-                          fontWeight: FontWeight.w500,
-                          color: kBlack, fontSize: 14),
-                    ),
+                    
                   ],
                 ),
+
               ),
             ),
           ),

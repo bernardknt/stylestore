@@ -184,6 +184,29 @@ class StyleProvider extends ChangeNotifier{
   Map <String, bool>debtorsChecklist = {};
   Map <String, bool>ingredientsChecklist = {};
 
+  void updateBasketItemQuantity(int index, double newQuantity) {
+    if (index >= 0 && index < basketItems.length) {
+      basketItems[index].quantity = newQuantity;
+      totalPrice = 0;
+      notifyListeners();
+      recalculateTotalPrice(basketItems);// Notify listeners when quantity is updated
+    }
+  }
+  void recalculateTotalPrice (List<BasketItem> items){
+
+    for (var item in items) {
+      totalPrice += item.amount * item.quantity;
+    }
+    notifyListeners();
+  }
+   void removeBasketItem(index){
+     if (index >= 0 && index < basketItems.length) {
+       basketItems.removeAt(index);
+       totalPrice = 0;
+       notifyListeners(); // Notify listeners when item is removed
+       recalculateTotalPrice(basketItems);
+     }
+   }
 
   void setSubscriptionPackageToBuy(String package,double amount,int duration,String currency){
     subscriptionPackageToBuy = package;

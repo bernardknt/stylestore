@@ -16,7 +16,7 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
-import 'package:stylestore/screens/MobileMoneyPages/premium_mm_payment.dart';
+import 'package:stylestore/screens/MobileMoneyPages/subscription_monthly_payment.dart';
 import 'package:stylestore/screens/paywall/paywall.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/store_pages/store_page_mobile.dart';
@@ -390,13 +390,13 @@ class _ChatPageState extends State<ChatPage> {
               Navigator.pop(context);
             },
             child: Center(
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.87,
                 child: Stack(
                     children: [
                       Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: subscriptionActive == false ?
+                          child: subscriptionActive == true ?
                           StreamBuilder<QuerySnapshot> (
                               stream: FirebaseFirestore.instance
                                   .collection('chat')

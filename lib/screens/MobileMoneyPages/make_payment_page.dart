@@ -1,5 +1,7 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -46,11 +48,14 @@ class _MakePaymentPageState extends State<MakePaymentPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Lottie.asset('images/mailtime.json', height: 150, width: 150, fit: BoxFit.cover ),
+             kIsWeb?
+              Icon(Iconsax.money, size: 30,color: kAppPinkColor,)
+                  :Lottie.asset('images/mailtime.json', height: 150, width: 150, fit: BoxFit.cover ),
               kSmallHeightSpacing,
               Center(child: Text(Provider.of<StyleProvider>(context).pendingPaymentStatement,textAlign: TextAlign.center, style: kNormalTextStyle)),
               kSmallHeightSpacing,
-              Lottie.asset('images/loading.json', height: 50, width: 150,),
+              kIsWeb?
+              Icon(Iconsax.activity1):Lottie.asset('images/loading.json', height: 50, width: 150,),
               kLargeHeightSpacing,
               kLargeHeightSpacing,
               kLargeHeightSpacing,

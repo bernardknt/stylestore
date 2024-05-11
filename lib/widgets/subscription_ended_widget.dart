@@ -7,7 +7,7 @@ import 'package:stylestore/controllers/subscription_controller.dart';
 
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
-import '../screens/MobileMoneyPages/premium_mm_payment.dart';
+import '../screens/MobileMoneyPages/subscription_monthly_payment.dart';
 
 class SubcriptionEndedWidget extends StatelessWidget {
   final String businessName;

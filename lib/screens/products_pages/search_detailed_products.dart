@@ -135,10 +135,11 @@ class _ProductsDetailedSearchPageState extends State<ProductsDetailedSearchPage>
                       var saleable = customer['saleable'];
                       var tracking = customer['tracking'];
                       var minimum = customer['minimum'];
+                      var barcode = customer['barcode'];
 
                       return GestureDetector(
                         onTap: (){
-                          Provider.of<BeauticianData>(context, listen: false).changeItemDetails( name, quantity,  description, minimum, id,  amount, image, tracking, saleable);
+                          Provider.of<BeauticianData>(context, listen: false).changeItemDetails( name, quantity,  description, minimum, id,  amount, image, tracking, saleable, barcode);
                           Navigator.pop(context);
                           Navigator.pushNamed(context, ProductEditPage.id);
 
@@ -179,13 +180,14 @@ class _ProductsDetailedSearchPageState extends State<ProductsDetailedSearchPage>
                   var saleable = customer['saleable'];
                   var tracking = customer['tracking'];
                   var minimum = customer['minimum'];
+                  var barcode = customer['barcode'];
 
 
                   return GestureDetector(
                     onTap: (){
 
                       // Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(name:  name, quantity: 1, amount: amount, details: name));
-                      Provider.of<BeauticianData>(context, listen: false).changeItemDetails( name, quantity,  description, minimum, id,  amount, image, tracking, saleable);
+                      Provider.of<BeauticianData>(context, listen: false).changeItemDetails( name, quantity,  description, minimum, id,  amount, image, tracking, saleable, barcode);
                       Navigator.pop(context);
                       Navigator.pushNamed(context, ProductEditPage.id);
 

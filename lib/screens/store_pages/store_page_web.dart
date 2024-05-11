@@ -440,63 +440,67 @@ class _StorePageWebState extends State<StorePageWeb> {
                                   filteredStock[index].amount.toDouble(),
                                   filteredStock[index].image,
                                   filteredStock[index].tracking,
-                                  filteredStock[index].saleable,);
+                                  filteredStock[index].saleable,
+                                  filteredStock[index].barcode,
 
-                                showModalBottomSheet(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        color: Colors.transparent,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: kPureWhiteColor,
-                                              borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children:
-                                              [
-                                                buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
-                                                        () async {
-                                                      Navigator.pop(context);
-                                                      Navigator.pushNamed(context, ProductEditPage.id);
+                                );
+                                Navigator.pushNamed(context, ProductEditPage.id);
 
-
-                                                    }
-                                                ),
-                                                SizedBox(height: 16.0),
-                                                buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
-                                                  Navigator.pop(context);
-
-                                                  if (filteredStock[index].stockTaking.isEmpty){
-                                                    showDialog(context: context, builder: (BuildContext context){
-                                                      return CupertinoAlertDialog(
-                                                        title: const Text('No Stock Data'),
-                                                        content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
-                                                        actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                                            onPressed: (){
-                                                              // _btnController.reset();
-                                                              Navigator.pop(context);
-
-                                                            },
-                                                            child: const Text('Cancel'))],
-                                                      );
-                                                    });
-                                                  } else {
-                                                    print(filteredStock[index].storeId);
-                                                    Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
-                                                    Navigator.pushNamed(context, StockManagementPage.id);
-                                                  }
-
-                                                } ),
-
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ); });
+                                // showModalBottomSheet(
+                                //     context: context,
+                                //     builder: (BuildContext context) {
+                                //       return Container(
+                                //         color: Colors.transparent,
+                                //         child: Container(
+                                //           decoration: BoxDecoration(
+                                //               color: kPureWhiteColor,
+                                //               borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30) )
+                                //           ),
+                                //           child: Padding(
+                                //             padding: const EdgeInsets.only(top: 20.0, bottom: 50, left: 20),
+                                //             child: Column(
+                                //               mainAxisSize: MainAxisSize.min,
+                                //               children:
+                                //               [
+                                //                 buildButton(context, 'Edit ${filteredStock[index].name}', Iconsax.pen_add,
+                                //                         () async {
+                                //                       Navigator.pop(context);
+                                //                       Navigator.pushNamed(context, ProductEditPage.id);
+                                //
+                                //
+                                //                     }
+                                //                 ),
+                                //                 SizedBox(height: 16.0),
+                                //                 buildButton(context, '${filteredStock[index].name} Stock History', Iconsax.graph,  () async {
+                                //                   Navigator.pop(context);
+                                //
+                                //                   if (filteredStock[index].stockTaking.isEmpty){
+                                //                     showDialog(context: context, builder: (BuildContext context){
+                                //                       return CupertinoAlertDialog(
+                                //                         title: const Text('No Stock Data'),
+                                //                         content: Text('There is no stock data available for ${filteredStock[index].name}', style: kNormalTextStyle.copyWith(color: kBlack),),
+                                //                         actions: [CupertinoDialogAction(isDestructiveAction: true,
+                                //                             onPressed: (){
+                                //                               // _btnController.reset();
+                                //                               Navigator.pop(context);
+                                //
+                                //                             },
+                                //                             child: const Text('Cancel'))],
+                                //                       );
+                                //                     });
+                                //                   } else {
+                                //                     print(filteredStock[index].storeId);
+                                //                     Provider.of<StyleProvider>(context, listen: false).setStockAnalysisValues(filteredStock[index].storeId);
+                                //                     Navigator.pushNamed(context, StockManagementPage.id);
+                                //                   }
+                                //
+                                //                 } ),
+                                //
+                                //               ],
+                                //             ),
+                                //           ),
+                                //         ),
+                                //       ); });
 
                               },
                               child:

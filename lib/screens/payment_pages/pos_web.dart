@@ -100,13 +100,10 @@ class _PosWebState extends State<PosWeb> {
 
         setState((){
 
-         // _selectedCurrencyCode = currency.code;
         });
       },
       favorite: ['USD', 'EUR', 'UGX', 'KES'], // Can pre-select favorites
     );
-
-
   }
   Future<void> _startBarcodeScan() async {
     isScanning = true;
@@ -314,7 +311,7 @@ class _PosWebState extends State<PosWeb> {
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
         centerTitle: true,
-        title:  Row(
+        title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
