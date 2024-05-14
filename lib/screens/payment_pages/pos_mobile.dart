@@ -89,7 +89,7 @@ class _POSState extends State<POS> {
 
   // Future<void> _startBarcodeScan(BuildContext context) async {
   bool isScanning = false;
-  Future<void> _startBarcodeScan() async {
+  Future<void> startBarcodeScan() async {
     isScanning = true;
     while (isScanning) {
       isScanning = false;
@@ -97,7 +97,7 @@ class _POSState extends State<POS> {
         "#FF0000", // Custom red color for the scanner
         "Cancel", // Button text for cancelling the scan
         true, // Show flash icon
-        ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
+        ScanMode.BARCODE,
       );
 
       if (barcodeScanRes != '-1') {
@@ -130,7 +130,7 @@ class _POSState extends State<POS> {
                         ],));});
                   await Future.delayed(const Duration(seconds: 1));
                   Navigator.pop(context);
-                  _startBarcodeScan();
+                  startBarcodeScan();
 
                 }
                 else {
@@ -192,7 +192,7 @@ class _POSState extends State<POS> {
                       ],));});
                 await Future.delayed(const Duration(seconds: 1));
                 Navigator.pop(context);
-                _startBarcodeScan();
+                startBarcodeScan();
               }
 
               print("${barcodeItem.name} ${barcodeItem.tracking} Item Exists");
@@ -210,8 +210,8 @@ class _POSState extends State<POS> {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: Text("ITEM BARCODE DOES\nNOT EXIST?"),
-                  content: Text("Would you like to add this item to the inventory?"),
+                  title: Text("ITEM BARCODE NOT FOUND?"),
+                  content: Text("This could mean either the item is not in the inventory or is not set 'For Sale'\nWould you like to add this item to the inventory?"),
                   actions: [
                     CupertinoDialogAction(
                       child: const Text(
@@ -257,7 +257,6 @@ class _POSState extends State<POS> {
   }
 
   Future<List<AllStockData>> retrieveSupplierData() async {
-
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('stores')
@@ -349,7 +348,7 @@ class _POSState extends State<POS> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text( Provider.of<StyleProvider>(context, listen: true).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                  child: Text( currency, style: kNormalTextStyle.copyWith(fontSize: 12),),
                 ),
               ),
             )
@@ -405,7 +404,7 @@ class _POSState extends State<POS> {
 
                       CommonFunctions().buildSubscriptionPaymentModal(context);
                     }else {
-                      _startBarcodeScan();
+                      startBarcodeScan();
                     }
                   },
                   child: const ScannerWidget(backgroundColor: kGreenThemeColor,))

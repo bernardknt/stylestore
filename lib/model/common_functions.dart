@@ -954,9 +954,7 @@ class CommonFunctions {
   }
 
   Future <String> startBarcodeScan(context, String productId, name) async {
-    // isScanning = true;
-    // while(isScanning) {
-    //   isScanning = false;
+
 
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
         "#FF0000", // Custom red color for the scanner
@@ -967,7 +965,7 @@ class CommonFunctions {
 
       if (barcodeScanRes != '-1') {
         playBeepSound();
-        ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Successfully attached to $name')));
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Successfully attached code $barcodeScanRes')));
         return barcodeScanRes;
       } else {
         return productId;

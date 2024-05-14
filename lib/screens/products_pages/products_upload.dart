@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,8 +38,8 @@ class _ProductUploadState extends State<ProductUpload> {
   String description = '';
   var imageUploaded = false;
   var price = 0;
-  var quantity = 0;
-  var minimum = 5;
+  double quantity = 0.0;
+  double minimum = 5.0;
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   CollectionReference serviceProvided = FirebaseFirestore.instance.collection('services');
@@ -46,6 +47,8 @@ class _ProductUploadState extends State<ProductUpload> {
   UploadTask? uploadTask;
   bool selectedTrackingValue = false;
   bool selectedSaleableValue = true;
+  TextEditingController minimumController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
 
   //
   Future<void> uploadFile(String filePath, String fileName)async {
@@ -56,9 +59,7 @@ class _ProductUploadState extends State<ProductUpload> {
 
       });
       final urlDownload = await snapshot.ref.getDownloadURL();
-      print("KIWEEEEEEDDDEEEEEEEEEEEEEE: $urlDownload");
       addStoreItem(serviceId, urlDownload);
-      // Navigator.pushNamed(context, ControlPage.id);
     }  catch(e){
       print(e);
     }
@@ -151,6 +152,8 @@ class _ProductUploadState extends State<ProductUpload> {
             width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 1.5,
 
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
                 Padding(
@@ -161,7 +164,14 @@ class _ProductUploadState extends State<ProductUpload> {
                   image != null ? Image.file(image!, height: 180,) : Container(
                     width: double.infinity,
                     height: 180,
-                    child: Lottie.asset('images/beauty.json'),
+                    child: !kIsWeb?Lottie.asset("images/beauty.json", width: 40):Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Iconsax.box, size: 50,),
+                        kLargeHeightSpacing, 
+                        Text("Add Product")
+                      ],
+                    ),
                     decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10)), color: kPureWhiteColor),
 
                   ),
@@ -177,7 +187,7 @@ class _ProductUploadState extends State<ProductUpload> {
                     children: [
 
 
-                      InputFieldWidget(fontColor: kPureWhiteColor, labelText:' Product / Item Name' ,labelTextColor: kBeigeColor, hintText: '',hintTextColor: kFaintGrey, controller: name,keyboardType: TextInputType.text, onTypingFunction: (value){
+                      InputFieldWidget(fontColor: kPureWhiteColor, labelText:' Product / Item Name' ,labelTextColor: kPureWhiteColor, hintText: '',hintTextColor: kFaintGrey, controller: name,keyboardType: TextInputType.text, onTypingFunction: (value){
                         name = value;
 
                       },),
@@ -185,7 +195,7 @@ class _ProductUploadState extends State<ProductUpload> {
                         description = value;
 
                       },),
-                      InputFieldWidget(fontColor: kPureWhiteColor, labelText: ' Amount(Price)',labelTextColor: kBeigeColor,  hintText: '10000', keyboardType: TextInputType.number, controller: price.toString(), onTypingFunction: (value){
+                      InputFieldWidget(fontColor: kPureWhiteColor, labelText: ' Amount(Price)',labelTextColor: kBeigeColor,  hintText: '10,000', keyboardType: TextInputType.number, controller: price.toString(), onTypingFunction: (value){
                         price = int.parse(value);
                       }),
                       Row(
@@ -274,16 +284,32 @@ class _ProductUploadState extends State<ProductUpload> {
                         ],
                       ),
 
-                      selectedTrackingValue == true ? InputFieldWidget(labelText: ' Quantity (Current Stock)',labelTextColor: kBeigeColor,  hintText: '10', keyboardType: TextInputType.number, onTypingFunction: (value){
-                        quantity = int.parse(value);
+                      selectedTrackingValue == true ? InputFieldWidget(fontColor: kPureWhiteColor,controller: quantity.toString(),labelText: ' Quantity (Current Stock)',labelTextColor: kBeigeColor,  hintText: '10', keyboardType: TextInputType.number, onTypingFunction: (value){
+                        quantity = double.parse(value);
                       }):Container(),
-                      selectedTrackingValue == true ? InputFieldWidget(labelText: ' Minimum Quantity (Minimum Stock)',labelTextColor: kBeigeColor,  hintText: '2', keyboardType: TextInputType.number, onTypingFunction: (value){
-                        minimum = int.parse(value);
+                      selectedTrackingValue == true ? InputFieldWidget(
+                          labelText: ' Minimum Quantity (Minimum Stock)',
+                          labelTextColor: kBeigeColor,  hintText: '2',
+                          keyboardType: TextInputType.number,
+                          controller:minimum.toString(),
+                          fontColor: kPureWhiteColor,
+                          onTypingFunction: (value){
+                            minimum = double.parse(value);
                       }):Container(),
 
                     ],
                   ),
 
+                ),
+                barcode ==""?Container():Padding(
+                  padding: const EdgeInsets.only(left:18.0, top: 8, bottom: 8),
+                  child: Row(
+                    children: [
+                      Text("Barcode Number: $barcode", style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontWeight: FontWeight.w600),),
+                      kMediumWidthSpacing,
+                      Icon(Iconsax.barcode, color: kAppPinkColor,)
+                    ],
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -291,10 +317,13 @@ class _ProductUploadState extends State<ProductUpload> {
                     RoundedLoadingButton(
                       width: 120,
                       color: kBabyPinkThemeColor,
-                      child: Text('Create Product', style: TextStyle(color: kAppPinkColor)),
+                      child: Text('Create Product', style: TextStyle(color: barcode!=""?kGreenThemeColor:kAppPinkColor)),
                       controller: _btnController,
                       onPressed: () async {
                         if ( name == '' || price == 0){
+                          print(name);
+                          print(price);
+
                           _btnController.error();
                           showDialog(context: context, builder: (BuildContext context){
                             return
@@ -328,11 +357,15 @@ class _ProductUploadState extends State<ProductUpload> {
                       onTap: ()async {
 
                         barcode = await CommonFunctions().startBarcodeScan(context,"", name);
+                        setState(() {
+                          
+                        });
+
 
 
                       },
                       child:
-                        ScannerWidget(backgroundColor: kBlack,scannerColor: kPureWhiteColor,)
+                        ScannerWidget(backgroundColor: kBlack,scannerColor: barcode == ""?kPureWhiteColor:kGreenThemeColor,)
                       // Container(
                       //   height: 45,
                       //   width: 45,
