@@ -10,6 +10,7 @@ class AllStockData {
   final String description;
   final String image;
   final String name;
+  final String unit;
   final String storeId;
   final String barcode;
   final bool saleable;
@@ -20,6 +21,7 @@ class AllStockData {
     required this.documentId,
     required this.storeId,
     required this.amount,
+    required this.unit,
     required this.quantity,
     required this.minimum,
     required this.description,
@@ -48,6 +50,7 @@ class AllStockData {
       tracking: doc['tracking'] ?? '',
       stockTaking: doc['stockTaking'],
       barcode: doc['barcode'],
+      unit: doc['unit'],
 
     );
   }

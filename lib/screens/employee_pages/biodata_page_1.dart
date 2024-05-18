@@ -71,35 +71,13 @@ class _BioDataFormState extends State<BioDataForm> {
   String customerId = "";
   String phoneNumber = "";
   String password = '';
-
   Map<String, String> optionsToUpload = {};
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   String countryCode = ' ';
   double opacityOfTextFields = 1.0;
-
   CollectionReference customerProvided =
   FirebaseFirestore.instance.collection('employees');
-
-  Future<void> updateAllEmployeeDocuments() async {
-    final firestore = FirebaseFirestore.instance;
-    final employeesRef = firestore.collection('employees');
-
-    // Get a snapshot of all documents in the collection
-    final snapshot = await employeesRef.get();
-
-    // Iterate through each document and update the fields
-    for (final doc in snapshot.docs) {
-      final docId = doc.id;
-      final updatedData = {
-        'maritalStatus': 'Single',
-        'picture': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/5320d4cd-cde9-74be-c923-506a8da6ed8a.png',
-
-      };
-
-      await employeesRef.doc(docId).update(updatedData);
-    }
-  }
 
   Future<void> addNewEmployee() async {
     final prefs = await SharedPreferences.getInstance();

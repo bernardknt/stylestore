@@ -130,6 +130,14 @@ List<String> departments = [
   'Social Media',
   'Training',
 ];
+List<String> unitList = [
+  'pcs',
+  'g','kg','lb',
+  'ml','L', 'gal',
+  'm','cm',
+  'm²','cm²','ft²',
+  'Package','Count'
+];
 
 List<String> nationalities = [
   'Afghan',

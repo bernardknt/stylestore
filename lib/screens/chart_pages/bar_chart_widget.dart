@@ -65,7 +65,7 @@ class BarChartWidget extends StatelessWidget {
           touchTooltipData: BarTouchTooltipData(
 
 
-            tooltipBgColor: Colors.blueGrey,
+            // tool: Colors.blueGrey,
             // fitInsideHorizontally: true,
             // fitInsideVertically: true,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {

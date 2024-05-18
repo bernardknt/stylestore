@@ -129,7 +129,7 @@ class _ServicesPageState extends State<ServicesPage> {
               itemBuilder: (context, index){
                 return GestureDetector(
                   onTap: (){
-                    kitchenDataSet.changeItemDetails( itemName[index], basePriceList[index],  info[index], minimumQuantity[index], id[index],  price[index],"", false, false, '');
+                    kitchenDataSet.changeItemDetails( itemName[index], basePriceList[index],  info[index], minimumQuantity[index], id[index],  price[index],"", false, false, '', 'pcs');
                     Navigator.pushNamed(context, ServicesEditPage.id);
                      // showItemFunc(context, itemName[index], quantity[index], info[index]);
                   },

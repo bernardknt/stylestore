@@ -11,6 +11,7 @@ import 'package:stylestore/controllers/homepage_controller.dart';
 import 'package:stylestore/controllers/messages_controller.dart';
 import 'package:stylestore/controllers/task_controller.dart';
 import 'package:stylestore/controllers/transactions_controller.dart';
+import 'package:stylestore/model/printing/old_print_code.dart';
 import 'package:stylestore/screens/MobileMoneyPages/make_payment_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/screens/analytics/deeper_analytics/analytics_mobile.dart';
@@ -222,6 +223,7 @@ class MyApp extends StatelessWidget {
           BioDataForm.id: (context) => BioDataForm(),
           SupplierForm.id: (context) => SupplierForm(),
           SignupWeb.id: (context) => SignupWeb(),
+          BluetoothPage.id: (context) => BluetoothPage(),
           EditProfilePage.id: (context) => EditProfilePage(),
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),

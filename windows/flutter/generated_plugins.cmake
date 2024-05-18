@@ -10,7 +10,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   geolocator_windows
-  modal_progress_hud_nsn
   permission_handler_windows
   share_plus
   smart_auth

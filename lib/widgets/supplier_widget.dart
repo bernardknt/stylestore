@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:stylestore/Utilities/constants/color_constants.dart';
+import 'package:stylestore/Utilities/constants/font_constants.dart';
 
 class SupplierDropdownBottomSheet extends StatefulWidget {
   final List<String> supplierDisplayNames;
@@ -29,7 +31,7 @@ class _SupplierDropdownBottomSheetState
         mainAxisSize: MainAxisSize.min, // Important for BottomSheet
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Select Supplier", style: Theme.of(context).textTheme.headline6),
+          Text("Select Supplier", style: kNormalTextStyle.copyWith(color: kBlack)),
           SizedBox(height: 10),
           DropdownSearch<String>(
 

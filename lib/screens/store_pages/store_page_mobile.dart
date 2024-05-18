@@ -339,6 +339,8 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 filteredStock[index].tracking,
                                 filteredStock[index].saleable,
                                 filteredStock[index].barcode,
+                                filteredStock[index].unit,
+
 
 
                               );
@@ -391,13 +393,13 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                     5
                                                     ? Text(
                                                     "Qty: ${filteredStock[index].quantity
-                                                        .toString()}",
+                                                        .toString()} ${filteredStock[index].unit}",
                                                     style: kNormalTextStyleSmallGrey
                                                         .copyWith(
                                                         color: kGreenThemeColor))
                                                     : Text(
                                                     "Qty: ${filteredStock[index].quantity
-                                                        .toString()}",
+                                                        .toString()} ${filteredStock[index].unit}",
                                                     style: kNormalTextStyleSmallGrey
                                                         .copyWith(
                                                         color: Colors.red))

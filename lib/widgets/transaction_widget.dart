@@ -8,6 +8,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/model/print_service.dart';
+import 'package:stylestore/model/printing/old_print_code.dart';
 import 'package:stylestore/widgets/modalButton.dart';
 
 import '../Utilities/constants/color_constants.dart';
@@ -537,7 +539,15 @@ class TransactionWidget extends StatelessWidget {
               },
               child: Text(
                   "Edit this Transaction",
-                  style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold)))
+                  style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold))),
+          kLargeHeightSpacing,
+          TextButton(onPressed: (){
+
+            PrintService().printNew(context);
+
+            // Navigator.pushNamed(context, BluetoothPage.id);
+
+          }, child: Text("Print", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
         ],
       ),
     );

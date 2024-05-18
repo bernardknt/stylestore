@@ -12,6 +12,7 @@ import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/scanner_widget.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -49,6 +50,7 @@ class _ProductUploadState extends State<ProductUpload> {
   bool selectedSaleableValue = true;
   TextEditingController minimumController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
+  String selectedUnit = "pcs";
 
   //
   Future<void> uploadFile(String filePath, String fileName)async {
@@ -86,6 +88,7 @@ class _ProductUploadState extends State<ProductUpload> {
       'name': CommonFunctions().removeLeadingTrailingSpaces(name) ,
       'amount': price,
       'quantity': quantity,
+      'unit': selectedUnit,
       'image': image,
       'id': itemId,
       'storeId': prefs.getString(kStoreIdConstant),
@@ -182,22 +185,57 @@ class _ProductUploadState extends State<ProductUpload> {
                   height: selectedTrackingValue == false ? 350 :450,
 
                   child: imageUploaded == true ? Center(child: Text('Upload Product Image', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),) :Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
 
-                      InputFieldWidget(fontColor: kPureWhiteColor, labelText:' Product / Item Name' ,labelTextColor: kPureWhiteColor, hintText: '',hintTextColor: kFaintGrey, controller: name,keyboardType: TextInputType.text, onTypingFunction: (value){
-                        name = value;
-
-                      },),
+                      InputFieldWidget(
+                        fontColor: kPureWhiteColor,
+                        labelText: 'Product / Item Name',
+                        labelTextColor: kPureWhiteColor,
+                        hintText: '',
+                        hintTextColor: kFaintGrey,
+                        controller: name,
+                        keyboardType: TextInputType.text,
+                        onTypingFunction: (value) {
+                          name = value;
+                        },
+                      ),
                       InputFieldWidget(fontColor: kPureWhiteColor, labelText:' Description' ,labelTextColor: kBeigeColor, hintText: '', keyboardType: TextInputType.text, controller: description, onTypingFunction: (value){
                         description = value;
 
                       },),
+
                       InputFieldWidget(fontColor: kPureWhiteColor, labelText: ' Amount(Price)',labelTextColor: kBeigeColor,  hintText: '10,000', keyboardType: TextInputType.number, controller: price.toString(), onTypingFunction: (value){
                         price = int.parse(value);
                       }),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: Text("Unit of Measurement", style: kNormalTextStyle.copyWith(color: Colors.grey, fontSize: 12),),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20.0),
+                        child: DropdownButton<String>(
+                          style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Icon(Icons.scale, color: kBeigeColor,),
+                          ),
+                          dropdownColor: kBlueDarkColor,
+                          iconSize: 14,
+                          value: selectedUnit, // The currently selected department
+                          items: unitList
+                              .map((units) => DropdownMenuItem(
+                            value: units,
+                            child: Text(units,),
+                          ))
+                              .toList(),
+                          onChanged: (newItem) => setState(() => selectedUnit = newItem!), // Update the selected department when a new one is chosen
+                          hint: Text(
+                              'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                        ),
+                      ),
                       Row(
                         children: [
                           Padding(

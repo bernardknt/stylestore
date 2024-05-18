@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -11,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/products_pages/product_edit_page.dart';
-import 'package:stylestore/screens/chart_pages/stock_management_page.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
@@ -442,6 +440,7 @@ class _StorePageWebState extends State<StorePageWeb> {
                                   filteredStock[index].tracking,
                                   filteredStock[index].saleable,
                                   filteredStock[index].barcode,
+                                  filteredStock[index].unit,
 
                                 );
                                 Navigator.pushNamed(context, ProductEditPage.id);
@@ -491,13 +490,13 @@ class _StorePageWebState extends State<StorePageWeb> {
                                                       ? filteredStock[index].quantity >= 5
                                                       ? Text(
                                                       "Qty: ${filteredStock[index].quantity
-                                                          .toString()}",
+                                                          .toString()} ${filteredStock[index].unit}",
                                                       style: kNormalTextStyleSmallGrey
                                                           .copyWith(
                                                           color: kGreenThemeColor))
                                                       : Text(
                                                       "Qty: ${filteredStock[index].quantity
-                                                          .toString()}",
+                                                          .toString()} ${filteredStock[index].unit}",
                                                       style: kNormalTextStyleSmallGrey
                                                           .copyWith(
                                                           color: Colors.red))

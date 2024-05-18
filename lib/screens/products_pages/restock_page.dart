@@ -188,7 +188,7 @@ class _ReStockPageState extends State<ReStockPage> {
   }
 
 
-  Future<void> _showPriceAndQuantityDialog( String name, id) async {
+  Future<void> _showPriceAndQuantityDialog( String name, id, unit) async {
     double? inputPrice;
     double? inputQuantity;
     await
@@ -212,15 +212,38 @@ class _ReStockPageState extends State<ReStockPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  onChanged: (value) {
-                    inputQuantity = double.tryParse(value);
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Quantity Bought',
-                    hintText: 'Enter the quantity bought',
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: TextField(
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        onChanged: (value) {
+                          inputQuantity = double.tryParse(value);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Quantity Bought',
+                          hintText: 'Enter the quantity bought',
+                        ),
+                      ),
+                    ),
+                    kSmallWidthSpacing,
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        height: 45,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: kBackgroundGreyColor,
+
+                        ),
+                        child: Center(child: Text(unit)),
+                      ),
+                    )
+                  ],
                 ),
                 DropdownButtonFormField<Quality>(
                   value: selectedQuality,  // Current selected value
@@ -633,7 +656,7 @@ class _ReStockPageState extends State<ReStockPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
 
-                            Text("Select Supplier", style: Theme.of(context).textTheme.headline6),
+                            Text("Select Supplier", style: kNormalTextStyle.copyWith(color: kBlack)),
                             kLargeHeightSpacing,
                             DropdownSearch<String>(
                               items: supplierDisplayNames,
@@ -872,6 +895,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                     _showPriceAndQuantityDialog(
                                       filteredStock[index].name,
                                       filteredStock[index].documentId,
+                                      filteredStock[index].unit,
                                     );
                                     quantityControllers[index]?.text = '0';
                                     selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
@@ -911,6 +935,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                       _showPriceAndQuantityDialog(
                                         filteredStock[index].name,
                                         filteredStock[index].documentId,
+                                        filteredStock[index].unit,
                                       );
                                       quantityControllers[index]?.text = '0';
                                       selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));

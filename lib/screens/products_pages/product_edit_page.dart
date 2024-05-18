@@ -16,6 +16,8 @@ import 'dart:math';
 
 import 'package:stylestore/widgets/scanner_widget.dart';
 
+import '../../utilities/constants/word_constants.dart';
+
 class ProductEditPage extends StatefulWidget {
   static String id = 'product_edit';
 
@@ -33,10 +35,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
   bool selectedTrackingValue = false;
   bool selectedSaleableValue = false;
   String barcode = "";
+  String selectedUnit = "pcs";
   void defaultInitialization(){
 
     selectedTrackingValue = Provider.of<BeauticianData>(context, listen: false).itemTracking;
     selectedSaleableValue = Provider.of<BeauticianData>(context, listen: false).itemSaleable;
+    selectedUnit = Provider.of<BeauticianData>(context, listen: false).itemUnit;
     barcode = Provider.of<BeauticianData>(context, listen: false).itemBarcode;
     setState(() {
     });
@@ -53,6 +57,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       'tracking': selectedTrackingValue,
       'saleable': selectedSaleableValue,
       'barcode': barcode,
+      'unit': selectedUnit,
       'stockTaking': [],
 
     })
@@ -153,7 +158,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
                   SizedBox(
                     height:selectedTrackingValue == true ?600: 500,
                     child: Column(
-
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
 
 
@@ -168,7 +174,32 @@ class _ProductEditPageState extends State<ProductEditPage> {
                         InputFieldWidget(labelText: 'Price', hintText: '10000', keyboardType: TextInputType.number,controller: adminData.price.toString(), onTypingFunction: (value){
                           price = double.parse(value);
                         }),
-                        // kLargeHeightSpacing
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Text("Unit of Measurement", style: kNormalTextStyle.copyWith(color: Colors.grey, fontSize: 12),),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: DropdownButton<String>(
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Icon(Icons.scale, color: kFontGreyColor,),
+                            ),
+                            dropdownColor: kBackgroundGreyColor,
+                            iconSize: 14,
+                            value: selectedUnit, // The currently selected department
+                            items: unitList
+                                .map((units) => DropdownMenuItem(
+                              value: units,
+                              child: Text(units,),
+                            ))
+                                .toList(),
+                            onChanged: (newItem) => setState(() => selectedUnit = newItem!), // Update the selected department when a new one is chosen
+                            hint: Text(
+                              'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                          ),
+                        ),
                         Row(
                           children: [
                             Padding(

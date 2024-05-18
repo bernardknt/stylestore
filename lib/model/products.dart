@@ -9,6 +9,7 @@ class Product {
   final double minimum;
   final double amount;
   final String barcode;
+  final String unit;
 
   Product({
     required this.description,
@@ -21,6 +22,7 @@ class Product {
     required this.minimum,
     required this.amount,
     required this.barcode,
+    required this.unit,
   });
 
   // Factory constructor to create a Product from a map
@@ -36,6 +38,8 @@ class Product {
       minimum: map['minimum'] /1.0?? 0.0,
       amount: map['amount']/1.0 ?? 0.0,
       barcode: map['barcode'] ?? '',
+      unit: map['unit'] ?? '',
+
     );
   }
 }
