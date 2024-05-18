@@ -28,6 +28,7 @@ class StyleProvider extends ChangeNotifier{
   List<String> selectedStock = [];
 
   String userName = '';
+  String selectedUnit = '';
   String userEmail = '';
   String userToken = '';
   bool doesMobile = false;
@@ -184,6 +185,11 @@ class StyleProvider extends ChangeNotifier{
   Map <String, bool>debtorsChecklist = {};
   Map <String, bool>ingredientsChecklist = {};
 
+
+  void setSelectedUnit (unit){
+    selectedUnit = unit;
+    notifyListeners();
+  }
   void updateBasketItemQuantity(int index, double newQuantity) {
     if (index >= 0 && index < basketItems.length) {
       basketItems[index].quantity = newQuantity;

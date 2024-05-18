@@ -22,6 +22,7 @@ import '../../model/purchase_pdf_files/purchase_customer.dart';
 import '../../model/purchase_pdf_files/purchase_supplier.dart';
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
+import '../../utilities/constants/word_constants.dart';
 import '../../widgets/scanner_widget.dart';
 import '../../widgets/subscription_ended_widget.dart';
 
@@ -191,6 +192,8 @@ class _ReStockPageState extends State<ReStockPage> {
   Future<void> _showPriceAndQuantityDialog( String name, id, unit) async {
     double? inputPrice;
     double? inputQuantity;
+
+    String selectedUnit = unit;
     await
     showDialog(
       context: context,
@@ -231,16 +234,40 @@ class _ReStockPageState extends State<ReStockPage> {
                     ),
                     kSmallWidthSpacing,
                     Expanded(
-                      flex: 1,
+                      flex: 2,
                       child: Container(
                         height: 45,
-                        width: 30,
+                        // width: 30,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: kBackgroundGreyColor,
 
                         ),
-                        child: Center(child: Text(unit)),
+                        child:
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: DropdownButton<String>(
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Icon(Icons.scale, color: kFontGreyColor,),
+                            ),
+                            dropdownColor: kBackgroundGreyColor,
+                            iconSize: 14,
+                            value: Provider.of<StyleProvider>(context, listen: true).selectedUnit, // The currently selected department
+                            items: unitList
+                                .map((units) => DropdownMenuItem(
+                              value: units,
+                              child: Text(units,),
+                            ))
+                                .toList(),
+                            onChanged: (newItem) => setState(() => Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(newItem)), // Update the selected department when a new one is chosen
+                            hint: Text(
+                              'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                          ),
+                        ),
+                        //Center(child: Text(unit)),
                       ),
                     )
                   ],
@@ -274,24 +301,23 @@ class _ReStockPageState extends State<ReStockPage> {
               ),
               TextButton(
                 onPressed: () {
+                  print(Provider.of<StyleProvider>(context, listen: false).selectedUnit);
                   if (inputPrice != null && inputQuantity != null) {
                     setState(() {
                       int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
                       if (existingIndex != -1) {
                         selectedStocks[existingIndex].price = inputPrice!;
                         selectedStocks[existingIndex].quality = selectedQuality!.name;
+                        selectedStocks[existingIndex].unit = Provider.of<StyleProvider>(context, listen: false).selectedUnit;
                         selectedStocks[existingIndex].setRestock(inputQuantity!);
                         Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
 
                       } else {
 
 
-                        print("NOPE THIS RUN INSTEAD");
                       }
-                      //checkboxStates[index] = true;
-                      // quantityControllers[index]?.text = inputQuantity.toString();
-                      // print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
-                    });
+
+                         });
                   }
                   setState(() {
 
@@ -892,6 +918,7 @@ class _ReStockPageState extends State<ReStockPage> {
                                 onTap: (){
 
                                   if(!styleData.selectedStock.contains(filteredStock[index].name)){
+                                    Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(filteredStock[index].unit);
                                     _showPriceAndQuantityDialog(
                                       filteredStock[index].name,
                                       filteredStock[index].documentId,
