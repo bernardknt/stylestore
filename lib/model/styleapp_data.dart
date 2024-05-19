@@ -341,6 +341,12 @@ class StyleProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+
+  void removeSelectedStockList(String value) {
+      selectedStock.remove(value);
+    notifyListeners();
+  }
+
   void clearSelectedStockList() {
     selectedStock.clear();
     notifyListeners();

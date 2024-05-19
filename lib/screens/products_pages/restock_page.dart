@@ -189,7 +189,7 @@ class _ReStockPageState extends State<ReStockPage> {
   }
 
 
-  Future<void> _showPriceAndQuantityDialog( String name, id, unit) async {
+  Future<void> _showPriceAndQuantityDialog( String name, id, unit, description) async {
     double? inputPrice;
     double? inputQuantity;
 
@@ -304,18 +304,9 @@ class _ReStockPageState extends State<ReStockPage> {
                   print(Provider.of<StyleProvider>(context, listen: false).selectedUnit);
                   if (inputPrice != null && inputQuantity != null) {
                     setState(() {
-                      int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                      if (existingIndex != -1) {
-                        selectedStocks[existingIndex].price = inputPrice!;
-                        selectedStocks[existingIndex].quality = selectedQuality!.name;
-                        selectedStocks[existingIndex].unit = Provider.of<StyleProvider>(context, listen: false).selectedUnit;
-                        selectedStocks[existingIndex].setRestock(inputQuantity!);
-                        Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
 
-                      } else {
-
-
-                      }
+                      selectedStocks.add(Stock(name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: selectedQuality!.name));
+                         Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
 
                          });
                   }
@@ -915,19 +906,24 @@ class _ReStockPageState extends State<ReStockPage> {
                             children: [
 
                               GestureDetector(
-                                onTap: (){
+                                onTap: ()
+                                {
 
                                   if(!styleData.selectedStock.contains(filteredStock[index].name)){
                                     Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(filteredStock[index].unit);
-                                    _showPriceAndQuantityDialog(
-                                      filteredStock[index].name,
-                                      filteredStock[index].documentId,
-                                      filteredStock[index].unit,
+                                    _showPriceAndQuantityDialog(filteredStock[index].name, filteredStock[index].documentId, filteredStock[index].unit,
+                                      filteredStock[index].description,
                                     );
                                     quantityControllers[index]?.text = '0';
-                                    selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                    //selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
                                   }else {
+                                    Provider.of<StyleProvider>(context, listen: false).removeSelectedStockList(filteredStock[index].name);
+                                   selectedStocks.removeWhere((stock) => stock.name == filteredStock[index].name);
+                                  // selectedStocks.add(Stock(name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: selectedQuality!.name));
 
+                                   setState(() {
+
+                                   });
                                   }
                                 },
                                 child: Row(
@@ -956,20 +952,24 @@ class _ReStockPageState extends State<ReStockPage> {
                               kSmallWidthSpacing,
                               kSmallWidthSpacing,
                               GestureDetector(
-                                onTap: (){
+                                onTap: ()
+                                {
 
-                                    if(!styleData.selectedStock.contains(filteredStock[index].name)){
-                                      _showPriceAndQuantityDialog(
-                                        filteredStock[index].name,
-                                        filteredStock[index].documentId,
-                                        filteredStock[index].unit,
-                                      );
-                                      quantityControllers[index]?.text = '0';
-                                      selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
-                                    }else {
-
-                                    }
-
+                                  if(!styleData.selectedStock.contains(filteredStock[index].name)){
+                                    Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(filteredStock[index].unit);
+                                    _showPriceAndQuantityDialog(
+                                      filteredStock[index].name,
+                                      filteredStock[index].documentId,
+                                      filteredStock[index].unit,
+                                      filteredStock[index].description,
+                                    );
+                                    quantityControllers[index]?.text = '0';
+                                   // selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                  }else {
+                                    print("Else run");
+                                    // selectedStocks.remove(value)
+                                    selectedStocks.removeWhere((stock) => stock.name == filteredStock[index].name);
+                                  }
                                 },
                                 child: Container(
                                   width: 60,

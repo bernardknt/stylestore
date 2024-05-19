@@ -7,6 +7,7 @@ import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
+import '../../model/styleapp_data.dart';
 import '../products_pages/restock_page.dart';
 import '../products_pages/stock_history.dart';
 import '../products_pages/update_stock.dart';
@@ -100,9 +101,11 @@ class TakeStockWidget extends StatelessWidget {
                         final prefs = await SharedPreferences.getInstance();
                         String storeId = prefs.getString(kStoreIdConstant)??"";
                         Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);
+                        Provider.of<StyleProvider>(context, listen: false).resetSelectedStockBasket ();
                         if(mainPage == false){
                           Navigator.pop(context);
                         }
+
                         Navigator.pushNamed(
                             context, ReStockPage.id);
                       },
