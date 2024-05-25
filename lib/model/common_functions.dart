@@ -1301,21 +1301,20 @@ class CommonFunctions {
               });
         },
         onConfirmBtnTap: (){
-          // Navigator.pop(context);
-           Navigator.pushNamed(context, CustomerSearchPage.id);
-          // print("Why wont this run");
-          // showModalBottomSheet(
-          //     isScrollControlled: true,
-          //     context: context,
-          //     builder: (context) {
-          //       return Scaffold(
-          //           appBar: AppBar(
-          //             elevation: 0,
-          //             backgroundColor: kPureWhiteColor,
-          //             automaticallyImplyLeading: false,
-          //           ),
-          //           body: CustomerSearchPage());
-          //     });
+          Navigator.pop(context);
+
+          showModalBottomSheet(
+              isScrollControlled: true,
+              context: context,
+              builder: (context) {
+                return Scaffold(
+                    appBar: AppBar(
+                      elevation: 0,
+                      backgroundColor: kPureWhiteColor,
+                      automaticallyImplyLeading: false,
+                    ),
+                    body: CustomerSearchPage());
+              });
 
         }
     );

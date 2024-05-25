@@ -111,16 +111,16 @@ class _MenuPageState extends State<MenuPage> {
               // Spacer(),
               Text(
                 "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,color: kPureWhiteColor),),
-              Container(
-                  decoration: BoxDecoration(
-                      color: kAppPinkColor,
-                      borderRadius: BorderRadius.all(Radius.circular(5))
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
-                  )),
-              kLargeHeightSpacing,
+              // Container(
+              //     decoration: BoxDecoration(
+              //         color: kAppPinkColor,
+              //         borderRadius: BorderRadius.all(Radius.circular(5))
+              //     ),
+              //     child: Padding(
+              //       padding: const EdgeInsets.all(2.0),
+              //       child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
+              //     )),
+              // kLargeHeightSpacing,
               Row(
                 children: [
                   RoundImageRing(radius: 80, outsideRingColor: kPureWhiteColor, networkImageToUse: Provider.of<StyleProvider>(context).beauticianImageUrl,),
@@ -149,18 +149,18 @@ class _MenuPageState extends State<MenuPage> {
                   }
               ),
               Spacer(),
-              GestureDetector(
-                onTap: (){
-                  CommonFunctions().callPhoneNumber('0782081219');
-                //   Navigator.pushNamed(context, CustomerCarePage.id);
-                },
-                child: ListTile(
-                  selectedTileColor: kAppPinkColor,
-                  minLeadingWidth: 20,
-                  leading: Text('Customer Care', style: kNormalTextStyleBoldPink.copyWith(color: kPureWhiteColor),),
-                  trailing: Icon(Icons.support_agent, color: kPureWhiteColor,),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: (){
+              //     CommonFunctions().callPhoneNumber('0782081219');
+              //   //   Navigator.pushNamed(context, CustomerCarePage.id);
+              //   },
+              //   child: ListTile(
+              //     selectedTileColor: kAppPinkColor,
+              //     minLeadingWidth: 20,
+              //     leading: Text('Customer Care', style: kNormalTextStyleBoldPink.copyWith(color: kPureWhiteColor),),
+              //     trailing: Icon(Icons.support_agent, color: kPureWhiteColor,),
+              //   ),
+              // ),
 
               GestureDetector(
                   onTap: (){

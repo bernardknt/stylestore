@@ -2,6 +2,7 @@
 
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -532,17 +533,26 @@ class TransactionWidget extends StatelessWidget {
                             (context) =>
                             EditInvoicePage()));
               },
-              child: Text(
-                  "Edit this Transaction",
-                  style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold))),
-          kLargeHeightSpacing,
-          TextButton(onPressed: (){
-
-            PrintService().printNew(context);
-
-            // Navigator.pushNamed(context, BluetoothPage.id);
-
-          }, child: Text("Print", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                      backgroundColor: kPureWhiteColor,
+                      child: Icon(CupertinoIcons.pencil, color: kBlack,)),
+                  kMediumWidthSpacing,
+                  Text(
+                      "Edit Transaction",
+                      style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontWeight: FontWeight.bold)),
+                ],
+              )),
+          // kLargeHeightSpacing,
+          // TextButton(onPressed: (){
+          //
+          //   PrintService().printNew(context);
+          //
+          //   // Navigator.pushNamed(context, BluetoothPage.id);
+          //
+          // }, child: Text("Print", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
         ],
       ),
     );
