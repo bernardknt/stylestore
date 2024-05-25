@@ -95,24 +95,26 @@ class _HomePageWebState extends State<HomePageWeb> {
     });
   }
 
-  Future<void> updateAppointmentsWithPaymentHistory() async {
-    // Get reference to Firestore instance
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Future<void> addIgnoreFieldToDocuments(String collectionPath) async {
+    final collection = FirebaseFirestore.instance.collection(collectionPath);
+    final querySnapshot = await collection.get();
 
-    // Get all documents in the 'appointments' collection
-    CollectionReference appointmentsCollection = firestore.collection('appointments');
-    QuerySnapshot querySnapshot = await appointmentsCollection
-        .where('paymentHistory', isNull: true) // Filter for missing field
-        .get();
+    // if (querySnapshot.isEmpty) {
+    //   return; // No documents in the collection
+    // }
 
-    // Loop through each document that needs updating
-    for (var doc in querySnapshot.docs) {
-      print("Found");
-      // Update the document with the new field
-      await doc.reference.update({
-        'paymentHistory': []  // Initialize as an empty list
-      });
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final queryDocumentSnapshot in querySnapshot.docs) {
+      final document = queryDocumentSnapshot.reference;
+      final data = queryDocumentSnapshot.data();
+
+      if (!data.containsKey('ignore')) {
+        batch.update(document, {'ignore': false});
+      }
     }
+
+    await batch.commit();
   }
 
 
@@ -145,7 +147,6 @@ class _HomePageWebState extends State<HomePageWeb> {
               top: 20,
               child: FloatingActionButton(
                 onPressed: (){
-
                   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
                   showDialog(context: context, builder: (BuildContext context){
                     return

@@ -44,7 +44,7 @@ class _ProductUploadState extends State<ProductUpload> {
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   CollectionReference serviceProvided = FirebaseFirestore.instance.collection('services');
-  String serviceId = '${uuid.v1().split("-")[0]}';
+  String serviceId = '';
   UploadTask? uploadTask;
   bool selectedTrackingValue = false;
   bool selectedSaleableValue = true;
@@ -70,7 +70,7 @@ class _ProductUploadState extends State<ProductUpload> {
   Future<void> addStoreItem(itemId, image) async{
     final prefs = await SharedPreferences.getInstance();
     bool scannable = false;
-    ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(' $name code: $barcode')));
+    // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(' $name code: $barcode')));
     if(barcode == ""){
       barcode = itemId;
 
@@ -98,7 +98,8 @@ class _ProductUploadState extends State<ProductUpload> {
       'saleable': selectedSaleableValue,
       'stockTaking': [],
       'barcode': barcode,
-      'scannable': scannable
+      'scannable': scannable,
+      'ignore'  : false
 
     })
         .then((value) => print("Item Added"))
@@ -283,7 +284,7 @@ class _ProductUploadState extends State<ProductUpload> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 20.0),
-                            child: Text("Do you Need to Track Stock Levels of this Product?", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+                            child: Text("Do you Track Stock Levels of this Product?", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
                           ),
                         ],
                       ),
@@ -377,10 +378,13 @@ class _ProductUploadState extends State<ProductUpload> {
                               );
                           });
                         }else {
-
+                          String initials = await CommonFunctions().getBusinessInitials();
                           if(image?.path != null ){
+
+                            serviceId = '$initials${uuid.v1().split("-")[0]}';
                             uploadFile(image!.path, serviceId );
                           } else {
+                            serviceId = '$initials${uuid.v1().split("-")[0]}';
                             addStoreItem(serviceId, "https://mcusercontent.com/f78a91485e657cda2c219f659/images/14f4afc4-ffaf-4bb1-3384-b23499cf0df7.png");
                           }
 

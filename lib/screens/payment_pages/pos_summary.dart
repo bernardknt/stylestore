@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 import 'package:uuid/uuid.dart';
 import '../../Utilities/constants/color_constants.dart';
@@ -179,8 +180,8 @@ class PosSummary extends StatelessWidget {
                                   });
                             },
                             onConfirmBtnTap: (){
-                              Navigator.pop(context);
-
+                              // Navigator.pop(context);
+                              print("THIS LINE RUN");
                               showModalBottomSheet(
                                   isScrollControlled: true,
                                   context: context,
@@ -191,7 +192,7 @@ class PosSummary extends StatelessWidget {
                                           backgroundColor: kPureWhiteColor,
                                           automaticallyImplyLeading: false,
                                         ),
-                                        body: CustomerSearchPage());
+                                        body: MobileMoneyPage());
                                   });
 
 

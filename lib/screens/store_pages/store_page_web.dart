@@ -441,6 +441,7 @@ class _StorePageWebState extends State<StorePageWeb> {
                                   filteredStock[index].saleable,
                                   filteredStock[index].barcode,
                                   filteredStock[index].unit,
+                                  filteredStock[index].ignore,
 
                                 );
                                 Navigator.pushNamed(context, ProductEditPage.id);
@@ -471,14 +472,21 @@ class _StorePageWebState extends State<StorePageWeb> {
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         style: kHeadingTextStyle,),
-                                                      Text(
-                                                        '${formatter.format(
-                                                            filteredStock[index].amount)} $currency',
-                                                        style: kNormalTextStyle
-                                                            .copyWith(
-                                                            fontWeight: FontWeight.bold,
-                                                            color: kBlack,
-                                                            fontSize: 14),)
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            '${formatter.format(
+                                                                filteredStock[index].amount)} $currency',
+                                                            style: kNormalTextStyle
+                                                                .copyWith(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: kBlack,
+                                                                fontSize: 14),),
+                                                          kLargeHeightSpacing,
+                                                          filteredStock[index].ignore == true? Icon(CupertinoIcons.bell_slash, color: kRedColor,size: 15,):SizedBox(),
+
+                                                        ],
+                                                      )
 
                                                     ],
                                                   ),

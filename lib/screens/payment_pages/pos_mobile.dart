@@ -55,6 +55,7 @@ class _POSState extends State<POS> {
   var imgList = [];
   var nameList = [];
   var minimumList = [];
+  String storeName = "";
   var idList = [];
   var formatter = NumberFormat('#,###,000');
   var description = "";
@@ -76,6 +77,7 @@ class _POSState extends State<POS> {
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
     permissionsMap = await CommonFunctions().convertPermissionsJson();
+    storeName = await CommonFunctions().getBusinessInitials();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     currency = prefs.getString(kCurrency)??"USD";
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
@@ -328,7 +330,7 @@ class _POSState extends State<POS> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${Provider.of<StyleProvider>(context, listen: false).beauticianName} POS',
+              '${storeName} POS',
               style: kNormalTextStyle.copyWith(
                   fontWeight: FontWeight.bold,
                   color: kBlack,
@@ -520,7 +522,7 @@ class _POSState extends State<POS> {
                             child: Text(
                                                   'No Customer Selected',textAlign: TextAlign.center,
                                                   style: kNormalTextStyle.copyWith(
-                              color: kBlack, fontSize: 14),
+                              color: kBlack, fontSize: 12),
                                                 ),
                           )
                           : Center(
@@ -529,7 +531,7 @@ class _POSState extends State<POS> {
                               child: Text(
                                                     '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',textAlign: TextAlign.center,
                                                     style: kNormalTextStyle.copyWith(
-                                color: kBlack, fontSize: 16),
+                                color: kBlack, fontSize: 12),
                                                   ),
                             ),
                           ),

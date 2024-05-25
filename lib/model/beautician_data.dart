@@ -36,6 +36,7 @@ class BeauticianData extends ChangeNotifier {
   AllEmployeeData? employeeInformation;
 
   String itemUnit = '';
+  bool itemIgnore = false;
   double price = 0;
   int appointmentsToday = 0;
 
@@ -302,7 +303,7 @@ void changeOrderDetails(
 
 
   void changeItemDetails(newItemName, newQuantity, newDescription,
-      newMinimumQuantity, newItemId, newPrice, newImage, tracking, saleable, barcode, unit) {
+      newMinimumQuantity, newItemId, newPrice, newImage, tracking, saleable, barcode, unit, notification) {
     item = newItemName;
     quantity = newQuantity;
     itemDescription = newDescription;
@@ -313,6 +314,7 @@ void changeOrderDetails(
     itemTracking = tracking;
     itemBarcode = barcode;
     itemUnit = unit;
+    itemIgnore = notification;
 
     // itemUnit = newItemUnit;
     price = newPrice;

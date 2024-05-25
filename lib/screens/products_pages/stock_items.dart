@@ -14,6 +14,7 @@ class AllStockData {
   final String storeId;
   final String barcode;
   final bool saleable;
+  final bool ignore;
   final bool tracking;
   final List stockTaking;
 
@@ -30,6 +31,7 @@ class AllStockData {
     required this.saleable,
     required this.tracking,
     required this.stockTaking,
+    required this.ignore,
     required this.barcode,
     this.restockValue = 0.0,
 
@@ -51,6 +53,7 @@ class AllStockData {
       stockTaking: doc['stockTaking'],
       barcode: doc['barcode'],
       unit: doc['unit'],
+      ignore: doc['ignore'],
 
     );
   }

@@ -247,12 +247,7 @@ class TransactionWidget extends StatelessWidget {
 
                                         if(kIsWeb){
 
-
-
-                                          //final pdfFileWeb = await PdfInvoicePdfHelper.buildWebPdf(invoice, logo, "receipt_${transIdList[index]}", "RECEIPT");
                                           final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "receipt_${transIdList[index]}", logo);
-
-
 
 
                                         }else{

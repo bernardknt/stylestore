@@ -684,9 +684,25 @@ class _PosWebState extends State<PosWeb> {
               decoration: BoxDecoration(
                 color: kBackgroundGreyColor,
               ),
-              child: Column(
+              child: Stack(
                 children: [
-                  permissionsMap['sales'] == false ? Container() : GestureDetector(
+                  Column(
+                    children: [
+                        SizedBox(
+                          height: 200,
+                          child: Image.asset(
+                            "images/waiternew.png",
+                            fit: BoxFit.cover,
+                          )),
+                      Expanded(child: PosSummary(currency: currency,))
+                    ],
+                  ),
+                  Positioned(
+                    left: 10,
+                    top: 90,
+                    // bottom: 50,
+
+                    child:  permissionsMap['sales'] == false ? Container() : GestureDetector(
                     onTap: () async {
                       final prefs =
                       await SharedPreferences.getInstance();
@@ -706,38 +722,59 @@ class _PosWebState extends State<PosWeb> {
                                 body: CustomerSearchPage());
                           });
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Provider.of<StyleProvider>(context)
-                          .customerName ==
-                          ""
-                          ? Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5),
-                            ),
-                            color: kAppPinkColor,
-                          ),
+                    child:
+                    Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: kPlainBackground
+                      ),
+                      child: Provider.of<StyleProvider>(context).customerName == ""
+                          ? Center(
+                        child: Text(
+                          'No Customer Selected',textAlign: TextAlign.center,
+                          style: kNormalTextStyle.copyWith(
+                              color: kBlack, fontSize: 12),
+                        ),
+                      )
+                          : Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
                           child: Text(
-                            '+ Add Customer',
+                            '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',textAlign: TextAlign.center,
                             style: kNormalTextStyle.copyWith(
-                                color: kPureWhiteColor,
-                                fontSize: 13),
-                          ))
-                          : Text(
-                        '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',
-                        style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w600),
+                                color: kBlack, fontSize: 12),
+                          ),
+                        ),
                       ),
                     ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Provider.of<StyleProvider>(context)
+                    //       .customerName ==
+                    //       ""
+                    //       ? Container(
+                    //       padding: EdgeInsets.all(10),
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.all(
+                    //           Radius.circular(5),
+                    //         ),
+                    //         color: kAppPinkColor,
+                    //       ),
+                    //       child: Text(
+                    //         '+ Add Customer',
+                    //         style: kNormalTextStyle.copyWith(
+                    //             color: kPureWhiteColor,
+                    //             fontSize: 13),
+                    //       ))
+                    //       : Text(
+                    //     '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',
+                    //     style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w600),
+                    //   ),
+                    // ),
                   ),
-                  SizedBox(
-                      height: 200,
-                      child: Image.asset(
-                        "images/waiternew.png",
-                        fit: BoxFit.cover,
-                      )),
-                  Expanded(child: PosSummary(currency: currency,))
+                  )
                 ],
               ),
             ),

@@ -14,6 +14,7 @@ import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/expenses_pages/add_expense_widget.dart';
 import 'package:stylestore/screens/expenses_pages/edit_expense.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
 import 'package:stylestore/widgets/TicketDots.dart';
 import '../../Utilities/InputFieldWidget.dart';
 import '../../Utilities/constants/color_constants.dart';
@@ -113,7 +114,18 @@ class _ExpensesPageState extends State<ExpensesPage> {
   return Scaffold(
       backgroundColor: kPureWhiteColor,
       appBar: AppBar(
-        title: Text("Expenses", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Expenses", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, color: kBlack),),
+            kMediumWidthSpacing,
+            IconButton(onPressed: (){
+              setState(() {
+
+              });
+            }, icon: kIconRefresh)
+          ],
+        ),
         backgroundColor: kPureWhiteColor,
         elevation: 0,
         centerTitle: true,

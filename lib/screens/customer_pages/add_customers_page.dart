@@ -53,10 +53,10 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
 
   void defaultInitialization() async{
     final prefs = await SharedPreferences.getInstance();
-    final initials = prefs.getString(kBusinessNameConstant)?.split(' ')
-        .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
-        .join('');
-    customerId = 'customer${initials}${uuid.v1().split("-")[0]}';
+    // final initials = prefs.getString(kBusinessNameConstant)?.split(' ')
+    //     .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
+    //     .join('');
+    customerId = 'customer${CommonFunctions().getBusinessInitials()}${uuid.v1().split("-")[0]}';
     countryCode = prefs.getString(kCountryCode)??"+256";
 
 

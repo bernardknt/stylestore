@@ -218,7 +218,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                           // TextEditingController()..text ='${Provider.of<StyleProvider>(context).totalPrice}',
                           textAlign: TextAlign.start,
                           style: kNormalTextStyle.copyWith(fontSize: 50),
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           onChanged: (value){
                             expenseCost = value;
                           },
@@ -230,7 +230,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 kLargeHeightSpacing,
                 TextForm(label: 'Expense Name',controller: expenseController),
                 kLargeHeightSpacing,
-                TextForm(label: 'Quantity',controller: quantityController),
+                TextForm(label: 'Quantity',controller: quantityController, keyBoardType: TextInputType.numberWithOptions(decimal: true)),
                 kLargeHeightSpacing,
                 DropdownSearch<String>(
                   items: supplierDisplayNames,

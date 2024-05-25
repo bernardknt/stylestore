@@ -119,12 +119,20 @@ class _AmountToPayWidgetState extends State<AmountToPayWidget> {
                 ),
                 TextButton(onPressed: (){
                   Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => InvoicedDateCalendarPage(),
+                    builder: (context) => NewInvoicedDateCalendarPage(),
                   ),
                   );
 
                 }, child:
-                Text('Invoice Date:   ${DateFormat('dd MMMM yyy k:mm').format(Provider.of<StyleProvider>(context, listen: false).invoicedDate)}', style: kNormalTextStyle.copyWith(color: Colors.blueAccent),)),
+                Container(
+                  decoration: BoxDecoration(
+                    color: kCustomColorPurple,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Invoice Date:   ${DateFormat('dd MMMM yyy k:mm a').format(Provider.of<StyleProvider>(context, listen: false).invoicedDate)}', style: kNormalTextStyle.copyWith(color: Colors.blueAccent),),
+                    ))),
                 kLargeHeightSpacing,
                 Container(
                   padding: const EdgeInsets.all(10),

@@ -25,6 +25,7 @@ import 'package:stylestore/screens/employee_pages/biodata_page_1.dart';
 import 'package:stylestore/screens/employee_pages/employees_page.dart';
 import 'package:stylestore/screens/expenses_pages/expenses.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
+import 'package:stylestore/screens/onboarding_businesses/onboarding_business.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/products_pages/product_edit_page.dart';
 import 'package:stylestore/model/styleapp_data.dart';
@@ -153,6 +154,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => SplashPage(),
           HomePage.id: (context) => HomePage(),
+          OnboardingStepper.id: (context) => OnboardingStepper(),
           AppointmentSummary.id: (context) => AppointmentSummary(),
           ControlPageMobile.id: (context) => ControlPageMobile(),
           ControlPageWeb.id: (context) => ControlPageWeb(),

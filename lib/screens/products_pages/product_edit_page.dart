@@ -1,6 +1,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/foundation.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -36,8 +37,9 @@ class _ProductEditPageState extends State<ProductEditPage> {
   bool selectedSaleableValue = false;
   String barcode = "";
   String selectedUnit = "pcs";
+  bool? ignore;
   void defaultInitialization(){
-
+    ignore = Provider.of<BeauticianData>(context, listen: false).itemIgnore;
     selectedTrackingValue = Provider.of<BeauticianData>(context, listen: false).itemTracking;
     selectedSaleableValue = Provider.of<BeauticianData>(context, listen: false).itemSaleable;
     selectedUnit = Provider.of<BeauticianData>(context, listen: false).itemUnit;
@@ -59,6 +61,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
       'barcode': barcode,
       'unit': selectedUnit,
       'stockTaking': [],
+      'ignore': ignore
 
     })
         .then((value) => print("Message Sent"))
@@ -103,8 +106,31 @@ class _ProductEditPageState extends State<ProductEditPage> {
       floatingActionButton:
       GestureDetector(
         onTap: ()async {
-        //  CommonFunctions().updateDocumentFromServer(adminData.itemId, "stores", "active", false);
-          // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Add Barcode to $item')));
+         // CommonFunctions().updateDocumentFromServer(adminData.itemId, "stores", "active", false);
+          CoolAlert.show(
+              lottieAsset: 'images/question.json',
+              context: context,
+              type: CoolAlertType.success,
+              text: "Are you sure you want to delete $item?\nThis cannot be undone",
+              title: "Delete $item?",
+              confirmBtnText: 'Yes',
+              confirmBtnColor: Colors.red,
+              cancelBtnText: 'Cancel',
+              showCancelBtn: true,
+              backgroundColor: kAppPinkColor,
+              onConfirmBtnTap: (){
+                // Provider.of<BlenditData>(context, listen: false).deleteItemFromBasket(blendedData.basketItems[index]);
+                // FirebaseServerFunctions().removePostFavourites(docIdList[index],postId[index], userEmail);
+                CommonFunctions().deleteFirestoreDocument("stores", adminData.itemId, context);
+
+
+              }
+          );
+
+         // Navigator.pop(context);
+
+
+
          // barcode = await CommonFunctions().startBarcodeScan(context,itemId, item);
 
         },
@@ -139,24 +165,76 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 100,
-                    width: 100,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
 
-                    decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: kBackgroundGreyColor,
+                        decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: kBackgroundGreyColor,
 
-                      image: DecorationImage(image:
+                          image: DecorationImage(image:
 
-                      CachedNetworkImageProvider(adminData.itemImage),
+                          CachedNetworkImageProvider(adminData.itemImage),
 
-                          fit: BoxFit.cover
+                              fit: BoxFit.cover
+                          ),
+                        ),
+
                       ),
-                    ),
+                      Provider.of<BeauticianData>(context, listen: false).itemTracking == false?SizedBox():
+                      GestureDetector(
+                        onTap: (){
+                          showCupertinoDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CupertinoAlertDialog(
+                                title: ignore == false? Text('Turn OFF Notifications?'):Text('Turn ON Notifications?'),
+                                content: Text("Would you like to change the Notification settings for this item"),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kRedColor),),
+                                    onPressed: () {
 
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                  ),
+                                  CupertinoDialogAction(
+                                    child: Text('Yes', style: kNormalTextStyle.copyWith(color: kGreenThemeColor),),
+                                    onPressed: () {
+                                      ignore= !ignore!;
+                                      CommonFunctions().showSuccessNotification("Make sure to Update to SAVE Changes", context);
+                                      setState(() {
+
+                                      });
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                  ),
+
+                                ],
+                              );
+                            },
+                          );
+
+                        },
+                        child: Column(
+                          children: [
+                            Text("Notifications", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 12),),
+                            ignore == true? Icon(CupertinoIcons.bell_slash, color: kRedColor,):Icon(CupertinoIcons.bell, color: kGreenThemeColor,),
+                           kSmallHeightSpacing,
+                            ignore == false?Text("ON", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 10, color: kGreenThemeColor),):
+                            Text("OFF", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 10, color: kRedColor),),
+
+                          ],
+                        ),
+                      ),
+
+                    ],
                   ),
                   kSmallHeightSpacing,
                   SizedBox(
-                    height:selectedTrackingValue == true ?600: 500,
+                    height:selectedTrackingValue == true ?800: 600,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +363,10 @@ class _ProductEditPageState extends State<ProductEditPage> {
                           ],
                         ),
                         kLargeHeightSpacing,
-                        Text("Barcode: $barcode"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: Text("Barcode: $barcode", style: kNormalTextStyle.copyWith(color: kBlack),),
+                        ),
                         kLargeHeightSpacing,
                         TextButton(onPressed: ()async{
                           if(kIsWeb){

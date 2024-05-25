@@ -15,6 +15,8 @@ import '../../utilities/constants/user_constants.dart';
 import'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../onboarding_businesses/onboarding_business.dart';
+
 
 class LoginPage extends StatefulWidget {
   static String id = 'login_page';
@@ -328,6 +330,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         kLargeHeightSpacing,
+                        TextButton(onPressed: (){
+                          Navigator.pushNamed(context, OnboardingStepper.id);
+                        }, child: Text("Onboarding Screens"))
 
                       ],
                     ),

@@ -28,6 +28,7 @@ import 'package:share_plus/share_plus.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/stock_items.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
@@ -58,7 +59,7 @@ import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-// import 'dart:html' as html;
+import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -776,6 +777,16 @@ class CommonFunctions {
     return formattedElements;
   }
 
+  Future<String> getBusinessInitials ()async{
+    final prefs = await SharedPreferences.getInstance();
+    final initials = prefs.getString(kBusinessNameConstant)?.split(' ')
+        .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
+        .join('');
+    print(initials);
+
+
+    return initials.toString();
+  }
   // Sync contacts from the phone
   static Future<void> syncContacts(context,int iterations) async {
     showDialog(context: context, builder: ( context) {return Center(
@@ -1290,21 +1301,21 @@ class CommonFunctions {
               });
         },
         onConfirmBtnTap: (){
-          Navigator.pop(context);
-          // Navigator.pushNamed(context, CustomerSearchPage.id);
-
-          showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return Scaffold(
-                    appBar: AppBar(
-                      elevation: 0,
-                      backgroundColor: kPureWhiteColor,
-                      automaticallyImplyLeading: false,
-                    ),
-                    body: CustomerSearchPage());
-              });
+          // Navigator.pop(context);
+           Navigator.pushNamed(context, CustomerSearchPage.id);
+          // print("Why wont this run");
+          // showModalBottomSheet(
+          //     isScrollControlled: true,
+          //     context: context,
+          //     builder: (context) {
+          //       return Scaffold(
+          //           appBar: AppBar(
+          //             elevation: 0,
+          //             backgroundColor: kPureWhiteColor,
+          //             automaticallyImplyLeading: false,
+          //           ),
+          //           body: CustomerSearchPage());
+          //     });
 
         }
     );
@@ -2072,23 +2083,23 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     final List<int>? excelData = excel.encode();
 
     // Create a blob from the bytes and create a download link
+    //
+    // PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
+    final blob = html.Blob([excelData]);
+    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
 
-    //PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
-    // final blob = html.Blob([excelData]);
-    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-    //
-    // // Create a link element and trigger the download
-    // final anchor = html.AnchorElement(href: blobUrl)
-    //   ..target = 'download'
-    //   ..download = 'bulk_upload_data.xlsx';
-    //
-    // // Trigger the click event to start the download
-    // html.document.body?.append(anchor);
-    // anchor.click();
-    //
-    // // Clean up the temporary link
-    // html.Url.revokeObjectUrl(blobUrl);
-    // anchor.remove();
+    // Create a link element and trigger the download
+    final anchor = html.AnchorElement(href: blobUrl)
+      ..target = 'download'
+      ..download = 'bulk_upload_data.xlsx';
+
+    // Trigger the click event to start the download
+    html.document.body?.append(anchor);
+    anchor.click();
+
+    // Clean up the temporary link
+    html.Url.revokeObjectUrl(blobUrl);
+    anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 
@@ -2163,6 +2174,7 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
       final snapshot = await FirebaseFirestore.instance
           .collection('stores')
           .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .where('active', isEqualTo: true)
           .orderBy('name', descending: false)
           .get();
 
@@ -2173,6 +2185,19 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     } catch (error) {
       print('Error retrieving stock data: $error');
       return []; // Return an empty list if an error occurs
+    }
+  }
+
+  Future<void> deleteFirestoreDocument( String collectionPath, String documentId, context) async {
+    try {
+      await FirebaseFirestore.instance.collection(collectionPath).doc(documentId).delete().whenComplete((){
+      //  ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('${Provider.of<BeauticianData>(context, listen: false).item} Successfully removed')));
+       print("SuperResponsive");
+        Navigator.pushNamed(context, SuperResponsiveLayout.id);
+      });
+      print("Document successfully deleted!");
+    } catch (error) {
+      print("Error deleting document: $error");
     }
   }
 

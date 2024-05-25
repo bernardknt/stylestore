@@ -14,7 +14,7 @@ import 'invoice_supplier.dart';
 import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
-// import 'dart:html' as html;
+import 'dart:html' as html;
 
 
 class PdfInvoicePdfHelper {
@@ -43,11 +43,24 @@ static testWebPdf ()async{
   }
 
   static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
-
+    Future<Uint8List> _fetchLogoBytes(String imageUrl) async {
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode == 200) {
+        print("WAKANDA: ${invoice.paid.amount}");
+        final Uint8List bytes = response.bodyBytes;
+        final String dir = (await getTemporaryDirectory()).path;
+        final String path = '$dir/logo.png';
+        File(path).writeAsBytesSync(bytes);
+        return bytes;
+      }
+      throw Exception('Failed to fetch logo image');
+    }
 
     final pdf = Document();
     final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
-    final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
+
+    final Uint8List logoBytes = await _fetchLogoBytes(logo);
+
 
     // final response = await http.get(Uri.parse(logo));
 
@@ -77,13 +90,63 @@ static testWebPdf ()async{
 
         ]),
 
+        // pw.Stack(children:[
+
+
+        // ]
+        // ),
+
 
       ],
 
       footer: (context) => buildFooter(invoice),
     ));
+
     return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
   }
+
+  // static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
+  //
+  //
+  //   final pdf = Document();
+  //   final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
+  //   final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
+  //
+  //   // final response = await http.get(Uri.parse(logo));
+  //
+  //
+  //   pdf.addPage(MultiPage(
+  //     build: (context) => [
+  //       // Image(MemoryImage(response.bodyBytes)),
+  //
+  //
+  //       pw.Image(MemoryImage(logoBytes), height: 70, alignment: Alignment.centerRight),
+  //
+  //
+  //       buildHeader(invoice),
+  //       SizedBox(height: 2 * PdfPageFormat.cm),
+  //       buildTitle(invoice),
+  //       buildInvoice(invoice),
+  //       Divider(),
+  //       pw.Stack(children: [
+  //         buildTotal(invoice),
+  //         pw.Positioned(bottom: 0,
+  //             left:0,
+  //             child: invoice.paid.amount > 0 && invoice.template.type == "RECEIPT"?
+  //             pw.Image(MemoryImage(imagePng), height: 100, alignment: Alignment.centerRight)
+  //                 : pw.Container()
+  //
+  //         )
+  //
+  //       ]),
+  //
+  //
+  //     ],
+  //
+  //     footer: (context) => buildFooter(invoice),
+  //   ));
+  //   return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
+  // }
 
   static Future<void> generateAndDownloadPdf(Invoice invoice, String pdfFileName, String logo) async {
 
@@ -125,20 +188,20 @@ static testWebPdf ()async{
     final pdfData = await pdf.save();
 
     // Create a Blob for download
-    // final blob = html.Blob([pdfData], 'application/pdf');
-    // final url = html.Url.createObjectUrlFromBlob(blob);
-    // final anchor = html.AnchorElement()
-    //   ..href = url
-    //   ..style.display = 'none'
-    //   ..download = pdfFileName;
-    // html.document.body!.children.add(anchor);
-    //
-    // // Trigger download
-    // anchor.click();
-    //
-    // // Cleanup
-    // html.document.body!.children.remove(anchor);
-    // html.Url.revokeObjectUrl(url);
+    final blob = html.Blob([pdfData], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement()
+      ..href = url
+      ..style.display = 'none'
+      ..download = pdfFileName;
+    html.document.body!.children.add(anchor);
+
+    // Trigger download
+    anchor.click();
+
+    // Cleanup
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
   }
 
 

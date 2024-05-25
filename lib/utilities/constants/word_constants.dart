@@ -3,7 +3,7 @@
 String cNoPaymentReceived = "No Payment";
 String cPartialPayment= "Partial Payment";
 String cPaymentReceived = "Paid";
-String cPaymentOverpaid = "Overpaid";
+String cPaymentOverpaid = "Overpaid by";
 String cSeeAllTransactions = "See all Transactions";
 String cWelcome = "Welcome";
 String cHi = "Hi";
@@ -136,7 +136,7 @@ List<String> unitList = [
   'ml','L', 'gal',
   'm','cm',
   'm²','cm²','ft²',
-  'Package','Count'
+  'Boxes','Items',
 ];
 
 List<String> nationalities = [
@@ -334,5 +334,10 @@ List<String> nationalities = [
   'Zambian',
   'Zimbabwean',
 ];
+
+String cWelcomeOnboard = "Welcome Aboard,\nWe’re thrilled to have you join Business Pilot. Get ready to elevate your business operations with our all-in-one platform."
+    "From POS systems easy invoicing to inventory management and task assignments, everything you need is at your fingertips.\nFasten your seatbelt, and prepare to take your business to new heights.\nClear skies ahead!\n\nYours Captain";
+
+
 
 

@@ -31,7 +31,7 @@ class EditExpensePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kPureWhiteColor,
-        title: Text('Edit Invoice', style: kNormalTextStyle.copyWith(color: kBlack),),
+        title: Text('Edit Expense', style: kNormalTextStyle.copyWith(color: kBlack),),
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -39,12 +39,14 @@ class EditExpensePage extends StatelessWidget {
             showDialog(context: context, builder: (BuildContext context){
               return CupertinoAlertDialog(
                 title:Text('Delete Expense? '),
-                content: Text('Are you Sure you want to delete this expense for ${styleData.expense}\nThis is permanent!'),
+                content: Text('Are you Sure you want to delete ${styleData.expenseTransactionId} expense?\nThis is permanent!'),
                 actions: [
                   CupertinoDialogAction(isDestructiveAction: true,
                       onPressed: (){
                         // _btnController.reset();
-                        Navigator.pop(context);
+                        print("Purchases deleted");
+                        CommonFunctions().deleteFirestoreDocument("purchases", styleData.expenseTransactionId, context);
+
 
                         // Navigator.pushNamed(context, SuccessPageHiFive.id);
                       },

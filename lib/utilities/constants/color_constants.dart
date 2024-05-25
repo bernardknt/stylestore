@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const kBlueThemeColor = Color(0xFF18178B);
+const kBlueThemeColor = Color(0xFF006699);
 const kGreenThemeColor = Color(0xFF0AB11B);
 const kGreyLightThemeColor = Color(0xFFeeeeee);
 const kBiegeThemeColor = Color(0xFFF2efe4);

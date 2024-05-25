@@ -7,6 +7,7 @@ import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
+import 'package:stylestore/screens/onboarding_businesses/onboarding_business.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
 
 import '../../../Utilities/constants/font_constants.dart';
@@ -278,6 +279,10 @@ class _SignupWebState extends State<SignupWeb> {
                                         backgroundColor: kAppPinkColor,
                                       ),
                                     ),
+
+                                    TextButton(onPressed: (){
+                                      Navigator.pushNamed(context, OnboardingStepper.id);
+                                    }, child: Text("Onboarding Screens"))
                                   ],
                                 ),
                               ),

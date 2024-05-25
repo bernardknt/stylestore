@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -60,7 +61,7 @@ class _SuccessPageHiFiveState extends State<SuccessPageHiFive> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Lottie.asset(Provider.of<BeauticianData>(context, listen: false).lottieImage, height: 300, width: 300, fit: BoxFit.cover ),
+            kIsWeb?Image.asset("images/success.png", height: 100,):Lottie.asset(Provider.of<BeauticianData>(context, listen: false).lottieImage, height: 300, width: 300, fit: BoxFit.cover ),
             SizedBox(height: 10,),
             Center(child: Text('SUCCESS',textAlign: TextAlign.center, style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 20),)),
             SizedBox(height: 10,),

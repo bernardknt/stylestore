@@ -35,13 +35,9 @@ class EditInvoicePage extends StatelessWidget {
         title: Text('Edit Invoice', style: kNormalTextStyle.copyWith(color: kBlack),),
         centerTitle: true,
         elevation: 0,
-        // actions: [
-        //   TextButton(onPressed: (){
-        //
-        //
-        //   }, child: Text("Delete Transaction", style: kNormalTextStyle.copyWith(color: Colors.red),))
-        // ],
+
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
         backgroundColor: kBlack,
         child: Icon(Iconsax.trash, color: kPureWhiteColor,),

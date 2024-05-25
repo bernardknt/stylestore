@@ -340,6 +340,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 filteredStock[index].saleable,
                                 filteredStock[index].barcode,
                                 filteredStock[index].unit,
+                                filteredStock[index].ignore
 
 
 
@@ -373,14 +374,22 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                       overflow: TextOverflow
                                                           .ellipsis,
                                                       style: kHeadingTextStyle,),
-                                                    Text(
-                                                      '${formatter.format(
-                                                          filteredStock[index].amount)} $currency',
-                                                      style: kNormalTextStyle
-                                                          .copyWith(
-                                                        fontWeight: FontWeight.bold,
-                                                          color: kBlack,
-                                                          fontSize: 14),)
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          '${formatter.format(
+                                                              filteredStock[index].amount)} $currency',
+                                                          style: kNormalTextStyle
+                                                              .copyWith(
+                                                            fontWeight: FontWeight.bold,
+                                                              color: kBlack,
+                                                              fontSize: 14),),
+                                                        kLargeHeightSpacing,
+                                                        filteredStock[index].ignore == true? Icon(CupertinoIcons.bell_slash, color: kRedColor,size: 15,):SizedBox(),
+
+
+                                                      ],
+                                                    ),
 
                                                   ],
                                                 ),

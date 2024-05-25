@@ -269,10 +269,9 @@ class _SummaryPageState extends State<SummaryPage> {
                                         ListTile(
                                           title: Row(
                                             children: [
-                                              priceList[index] !=
-                                                      paidAmountList[index]
-                                                  ? kIconNotPaidIcon
-                                                  : kIconPaidIcon,
+                                              priceList[index] == paidAmountList[index]
+                                                  ? kIconPaidIcon
+                                                  : priceList[index] > paidAmountList[index]?kIconNotPaidIcon:kIconOverpaid,
                                               kSmallWidthSpacing,
                                               Column(
                                                 crossAxisAlignment:
@@ -337,7 +336,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                 priceList[
                                                                     index]
                                                             ? Text(
-                                                                "Overpaid ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
+                                                                "${cPaymentOverpaid.tr} ${CommonFunctions().formatter.format(paidAmountList[index] - priceList[index])} ${currencyList[index]}",
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .blue,
@@ -345,7 +344,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                                                         12),
                                                               )
                                                             : Text(
-                                                                "${cPartialPayment.tr} ${CommonFunctions().formatter.format(paidAmountList[index])} Ugx",
+                                                                "${cPartialPayment.tr} ${CommonFunctions().formatter.format(paidAmountList[index])}  ${currencyList[index]}",
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .red,
