@@ -335,8 +335,8 @@ List<String> nationalities = [
   'Zimbabwean',
 ];
 
-String cWelcomeOnboard = "Welcome Aboard,\nWe’re thrilled to have you join Business Pilot. Get ready to elevate your business operations with our all-in-one platform."
-    "From POS systems easy invoicing to inventory management and task assignments, everything you need is at your fingertips.\nFasten your seatbelt, and prepare to take your business to new heights.\nClear skies ahead!\n\nYours Captain";
+String cWelcomeOnboard = "We’re are excited to have you see you.\nGet ready to elevate your business operations with our all-in-one platform."
+    "You are going to SELL, INVOICE, keep INVENTORY and MONITOR your business like a PRO.\nFasten your seatbelt, and prepare to take your business to new heights.\nClear skies ahead!\n\nYours Captain";
 
 
 

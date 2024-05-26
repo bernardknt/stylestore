@@ -15,6 +15,8 @@ import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../controllers/responsive/responsive_page.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/select_country_region.dart';
+import '../onboarding_businesses/onboarding_business.dart';
 import 'employee_sign_in.dart';
 
 class LoginPageNewWeb extends StatefulWidget {
@@ -34,20 +36,13 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
   bool ownerLogin = false;
 
 
-  void defaultsInitiation() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool(kIsLoggedInConstant) ?? false;
-    setState(() {
-      userLoggedIn = isLoggedIn;
-      if (userLoggedIn == true) {
-        Navigator.pushNamed(context, SuperResponsiveLayout.id);
-      } else {
-        print('NOT LOGGED IN');
-      }
-    });
-  }
-
   bool userLoggedIn = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -432,6 +427,10 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                 ),
                               ),
                               kLargeHeightSpacing,
+
+                              TextButton(onPressed: (){
+                                Navigator.pushNamed(context, OnboardingStepper.id);
+                              }, child: Text("Onboarding Screens"))
                             ],
                           ),
                         ),

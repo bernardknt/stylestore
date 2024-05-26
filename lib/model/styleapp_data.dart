@@ -39,7 +39,7 @@ class StyleProvider extends ChangeNotifier{
   double subscriptionPackageAmount = 0.0;
   int subscriptionPackageDuration = 0;
   String subscriptionPackageCurrency = "UGX";
-
+  int onboardingIndex = 0;
   String customerName = '';
   String customerId = '';
   String customerNumber  = '';
@@ -186,6 +186,10 @@ class StyleProvider extends ChangeNotifier{
   Map <String, bool>ingredientsChecklist = {};
 
 
+  void setOnboardingIndex (index){
+    onboardingIndex = index;
+    notifyListeners();
+  }
   void setSelectedUnit (unit){
     selectedUnit = unit;
     notifyListeners();

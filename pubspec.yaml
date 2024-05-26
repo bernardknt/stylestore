@@ -80,7 +80,7 @@ dependencies:
   pdf: ^3.10.8
   slide_countdown: ^1.4.0
   open_file: ^3.1.0
-  webview_flutter: ^2.0.8
+  webview_flutter: ^4.8.0
   iconsax: ^0.0.8
   numeral: ^2.0.1
   firebase_analytics: ^10.5.0

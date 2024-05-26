@@ -32,6 +32,7 @@ import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import 'package:stylestore/model/stock_items.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
+import 'package:stylestore/screens/onboarding_businesses/onboarding_business.dart';
 import 'package:stylestore/widgets/ignore_ingredients_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -55,6 +56,7 @@ import '../utilities/constants/user_constants.dart';
 // import '../widgets/employee_checklist.dart';
 import '../widgets/debtors_widget.dart';
 import '../widgets/employee_checklist.dart';
+import '../widgets/select_country_region.dart';
 import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
@@ -1405,7 +1407,7 @@ class CommonFunctions {
       'doesMobile': true,
       'featured': false,
       'id': userId,
-      'image': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/52f30eb6-c476-adfd-3a24-0831ce256da0.jpg',
+      'image': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/7e5d9ad3-e663-11d4-bb3e-96678f9428ec.png',
       'location': location,
       'modes': ['In-Premise', 'Mobile'],
       'newSpeciality': {},
@@ -1431,7 +1433,7 @@ class CommonFunctions {
 
     }).whenComplete((){
       Navigator.pop(context);
-      Navigator.pushNamed(context, StoreSetup.id);
+      Navigator.pushNamed(context, OnboardingStepper.id);
     });
   }
 
@@ -1523,16 +1525,36 @@ class CommonFunctions {
         'supplierId': Provider.of<StyleProvider>(context, listen: false).supplierId,
         'paid':false
 
-
       });
     }
-
-
 
     ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('${selectedStocks.length} Items were Restocked')));
     Navigator.pop(context);
     Navigator.pop(context);
   }
+
+  void showCountryPreference(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+
+              Text('Choose your Country',style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 16, fontWeight: FontWeight.bold),),
+              Icon(CupertinoIcons.globe)
+            ],
+          )),
+          content: Container(
+              height: 280,
+              width: 300,
+              child: PreferredCountrySelection()),
+        );
+      },
+    );
+  }
+
 
   Future<void> updateEmployeeSignInAndOutDoc (bool value)async {
     final deviceInfoPlugin = DeviceInfoPlugin();

@@ -129,24 +129,9 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
       'phoneNumber': phoneNumber,
       'role': positionController.text,
       'name': fullNameController.text,
-      'email': emailController.text,
-      'gender': gender,
-      'nationality': selectedNationality,
-      'dateOfBirth': selectedBirthday,
-      'address': addressController.text,
-      'nextOfKin': kinController.text,
-      'nextOfKinNumber': kinNumberController.text,
-      'nationalIdNumber': nationalIdNumberController.text,
-      'tin': tinController.text,
-      'department': selectedDepartment,
-      'code': code,
-      'maritalStatus': 'Single',
+      'location': addressController.text,
       'picture': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/5320d4cd-cde9-74be-c923-506a8da6ed8a.png',
-      'signedIn': {
-        "${DateFormat('hh:mm a EE, dd, MMM').format(DateTime.now())}": false
-      },
       'storeId': prefs.getString(kStoreIdConstant),
-      'token': "token goes here",
       'permissions': '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }',
       'checklist': []
     })
@@ -175,232 +160,229 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPureWhiteColor,
+      // floatingActionButton: FloatingActionButton(onPressed: () {  },child: Text("Submit Details"),),
       body: SingleChildScrollView(
         child: Center(
-          child: Container(
-            color: kPureWhiteColor,
-            width: 400,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Departments dropdown
-                Row(mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Business Information",
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Departments dropdown
+
+              Row(mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Business Information",
+                    style: kNormalTextStyle.copyWith(
+                        color: kBlack,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              kLargeHeightSpacing,
+              Row(
+                children: [
+                  Container(
+                    height: 70,
+                    width: 70,
+
+                    decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: kPlainBackground,
+
+
+                    ),
+                    child: Opacity(
+                        opacity: 0.2,
+                        child: Image.asset("images/new_logo.png", height: 20,width: 20,)),
+
+                  ),
+                  kMediumWidthSpacing,
+                  kMediumWidthSpacing,
+
+                  Text("Add Business Logo",
                       style: kNormalTextStyle.copyWith(
                           color: kBlack,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                          fontWeight: FontWeight.bold
+                      )),
+                ],
+              ),
+
+              kLargeHeightSpacing,
+              TextForm(label:'Business Name', controller:fullNameController),
+              kLargeHeightSpacing,
+              Text("Business Phone Number *",
+                  style: kNormalTextStyle.copyWith(
+                    color: kBlack,
+                    fontWeight: FontWeight.bold
+                  )),
+              // Phone number goes here
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 0, right: 0, top: 10, bottom: 8),
+                child: Container(
+                  height: 53,
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: kBlack),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      CountryCodePicker(
+                        textStyle: kNormalTextStyle,
+
+                        onInit: (value) {
+                          countryCode = value!.dialCode!;
+                        },
+                        onChanged: (value) {
+                          countryCode = value.dialCode!;
+                        },
+                        // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                        initialSelection: 'UG',
+                        favorite: const ['+254', '+255', "US"],
+                        // optional. Shows only country name and flag
+                        showCountryOnly: false,
+                        // optional. Shows only country name and flag when popup is closed.
+                        showOnlyCountryWhenClosed: false,
+                        // optional. aligns the flag and the Text left
+                        alignLeft: false,
+                      ),
+                      Text(
+                        "|",
+                        style:
+                        TextStyle(fontSize: 25, color: kAppPinkColor),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                          child: TextFormField(
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                            validator: (value) {
+                              List letters = List<String>.generate(
+                                  value!.length, (index) => value[index]);
+                              print(letters);
+
+                              if (value != null && value.length > 10) {
+                                return 'Number is too long';
+                              } else if (value == "") {
+                                return 'Enter phone number';
+                              } else if (letters[0] == '0') {
+                                return 'Number cannot start with a 0';
+                              } else if (value != null && value.length < 9) {
+                                return 'Number short';
+                              } else {
+                                return null;
+                              }
+                            },
+                            onChanged: (value) {
+                              phoneNumber = countryCode + value;
+                            },
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "77000000",
+                                hintStyle: kNormalTextStyle.copyWith(
+                                    color: Colors.grey[500])),
+                          ))
+                    ],
+                  ),
                 ),
-                kLargeHeightSpacing,
-                TextForm(label:'Business Name', controller:fullNameController),
-                kLargeHeightSpacing,
-                Text("Business Phone Number *",
-                    style: kNormalTextStyle.copyWith(
-                      color: kBlack,
-                      fontWeight: FontWeight.bold
-                    )),
-                // Phone number goes here
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 0, right: 0, top: 10, bottom: 8),
-                  child: Container(
-                    height: 53,
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: kBlack),
-                        borderRadius: BorderRadius.circular(10)),
+              ),
+              kLargeHeightSpacing,
+              GestureDetector(
+                onTap: (){
+                  _showTimePickerForOpeningTime(context);
+
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: kBackgroundGreyColor,
+                      borderRadius: BorderRadius.circular(10),),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                       children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        CountryCodePicker(
-                          textStyle: kNormalTextStyle,
-
-                          onInit: (value) {
-                            countryCode = value!.dialCode!;
-                          },
-                          onChanged: (value) {
-                            countryCode = value.dialCode!;
-                          },
-                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                          initialSelection: 'UG',
-                          favorite: const ['+254', '+255', "US"],
-                          // optional. Shows only country name and flag
-                          showCountryOnly: false,
-                          // optional. Shows only country name and flag when popup is closed.
-                          showOnlyCountryWhenClosed: false,
-                          // optional. aligns the flag and the Text left
-                          alignLeft: false,
-                        ),
-                        Text(
-                          "|",
-                          style:
-                          TextStyle(fontSize: 25, color: kAppPinkColor),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                            child: TextFormField(
-                              style: kNormalTextStyle.copyWith(color: kBlack),
-                              validator: (value) {
-                                List letters = List<String>.generate(
-                                    value!.length, (index) => value[index]);
-                                print(letters);
-
-                                if (value != null && value.length > 10) {
-                                  return 'Number is too long';
-                                } else if (value == "") {
-                                  return 'Enter phone number';
-                                } else if (letters[0] == '0') {
-                                  return 'Number cannot start with a 0';
-                                } else if (value != null && value.length < 9) {
-                                  return 'Number short';
-                                } else {
-                                  return null;
-                                }
-                              },
-                              onChanged: (value) {
-                                phoneNumber = countryCode + value;
-                              },
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "77000000",
-                                  hintStyle: kNormalTextStyle.copyWith(
-                                      color: Colors.grey[500])),
-                            ))
+                        Text("Opening Time",
+                            style: kNormalTextStyle.copyWith(
+                                color: kBlack,
+                                fontWeight: FontWeight.bold
+                            )),
+                        kMediumWidthSpacing,
+                        Container(height: 30,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: kGreenThemeColor.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Center(
+                            child: Text("$selectedOpeningTime ${openingPeriod.name}", style: kNormalTextStyle.copyWith(
+                                color: kPureWhiteColor,
+                                fontWeight: FontWeight.bold
+                            )),
+                          ),
+                        )
                       ],
                     ),
                   ),
                 ),
-                kLargeHeightSpacing,
-                GestureDetector(
-                  onTap: (){
-                    _showTimePickerForOpeningTime(context);
+              ),
+              kLargeHeightSpacing,
+              GestureDetector(
+                onTap: (){
+                  _showTimePickerForClosingTime(context);
 
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kBackgroundGreyColor,
-                        borderRadius: BorderRadius.circular(10),),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                        children: [
-                          Text("Opening Time",
-                              style: kNormalTextStyle.copyWith(
-                                  color: kBlack,
-                                  fontWeight: FontWeight.bold
-                              )),
-                          kMediumWidthSpacing,
-                          Container(height: 30,
-                            width: 100,
-                            decoration: BoxDecoration(
-                                color: kGreenThemeColor.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Center(
-                              child: Text("$selectedOpeningTime ${openingPeriod.name}", style: kNormalTextStyle.copyWith(
-                                  color: kPureWhiteColor,
-                                  fontWeight: FontWeight.bold
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: kBackgroundGreyColor,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Closing Time",
+                            style: kNormalTextStyle.copyWith(
+                                color: kBlack,
+                                fontWeight: FontWeight.bold
+                            )),
+                        kMediumWidthSpacing,
+                        Container(height: 30,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: kRedColor.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Center(
+                            child: Text("$selectedClosingTime ${closingPeriod.name}", style: kNormalTextStyle.copyWith(
+                                color: kBlack,
+                                fontWeight: FontWeight.bold
+                            )),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
-                kLargeHeightSpacing,
-                GestureDetector(
-                  onTap: (){
-                    _showTimePickerForClosingTime(context);
+              ),
+              kLargeHeightSpacing,
 
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kBackgroundGreyColor,
-                      borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Closing Time",
-                              style: kNormalTextStyle.copyWith(
-                                  color: kBlack,
-                                  fontWeight: FontWeight.bold
-                              )),
-                          kMediumWidthSpacing,
-                          Container(height: 30,
-                            width: 100,
-                            decoration: BoxDecoration(
-                                color: kRedColor.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(10)
-                            ),
-                            child: Center(
-                              child: Text("$selectedClosingTime ${closingPeriod.name}", style: kNormalTextStyle.copyWith(
-                                  color: kBlack,
-                                  fontWeight: FontWeight.bold
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                kLargeHeightSpacing,
-
-                // TextForm(label: 'Email',controller: emailController),
-                TextForm(label:'Location', controller:addressController),
-                kLargeHeightSpacing,
-                Row(
-                  children: [
-                    Container(
-                      height: 100,
-                      width: 100,
-
-                      decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), color: kBackgroundGreyColor,
-
-                        // image: Image.asset(name)
-                        // DecorationImage(image:
-                        //     Image.asset("images/logo.png"),
-                        // // CachedNetworkImageProvider(adminData.itemImage),
-                        //
-                        //     fit: BoxFit.cover
-                        // ),
-                      ),
-                      child: Opacity(
-                          opacity: 0.3,
-                          child: Image.asset("images/new_logo.png", height: 20,width: 20,)),
-
-                    ),
-                    kMediumWidthSpacing,
-                    kMediumWidthSpacing,
-
-                    Text("Add Business Logo",
-                        style: kNormalTextStyle.copyWith(
-                            color: kBlack,
-                            fontWeight: FontWeight.bold
-                        )),
-                  ],
-                ),
+              // TextForm(label: 'Email',controller: emailController),
+              TextForm(label:'Location', controller:addressController),
+              kLargeHeightSpacing,
 
 
-                kLargeHeightSpacing,
 
-                ElevatedButton(
+              kLargeHeightSpacing,
+
+              Center(
+                child: ElevatedButton(
                   onPressed: () {
                     // Add your form submission logic here
                     if (selectedDepartment == "" || gender == "" || phoneNumber == ''|| positionController.text ==""|| fullNameController.text == ""|| selectedDepartment == null) {
@@ -477,8 +459,9 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
                     backgroundColor: kAppPinkColor,
                   ),
                 ),
-              ],
-            ),
+              ),
+              kLargeHeightSpacing,
+            ],
           ),
         ),
       ),

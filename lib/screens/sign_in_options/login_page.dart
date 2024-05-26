@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
       if(userLoggedIn == true){
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
       }else{
-        print('NOT LOGGED IN');
+        // CommonFunctions().showCountryPreference(context);
       }
     });
   }
