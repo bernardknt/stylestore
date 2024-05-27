@@ -97,11 +97,10 @@ class _SignupMobileState extends State<SignupMobile> {
                     // mainAxisAlignment: MainAxisAlignment.center,
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Container(
-                          height: 500,
-                                             
-                        ),
+                      Container(
+                        height: 500,
+                        width: double.maxFinite,
+
                       ),
                       Image.asset("images/jet.png"),
                       Positioned(
@@ -151,8 +150,10 @@ class _SignupMobileState extends State<SignupMobile> {
                                           if (newUser != null){
 
                                             final prefs = await SharedPreferences.getInstance();
+
                                             // prefs.setString(kLoginPersonName, businessNameController.text );
                                             prefs.setString(kStoreIdConstant, newUser.user!.uid);
+                                            prefs.setBool(kOnboarding, false );
                                             // prefs.setString(kCountryCode, countryCode);
                                             // prefs.setString(kCurrency, CommonFunctions().getCurrencyCode(countryCode, context));
                                             prefs.setString(kEmailConstant, email);

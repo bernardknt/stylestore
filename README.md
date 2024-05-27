@@ -1,6 +1,6 @@
 # stylestore
 
-A new Flutter project.
+Automate Your Business.
 
 ## Getting Started
 

@@ -33,8 +33,8 @@ class _SignupWebState extends State<SignupWeb> {
   Map<String, String> optionsToUpload = {};
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
-  String countryCode = ' ';
-  String country = ' ';
+  String countryCode = '';
+  String country = '';
   double opacityOfTextFields = 1.0;
   final RoundedLoadingButtonController _btnController =
   RoundedLoadingButtonController();

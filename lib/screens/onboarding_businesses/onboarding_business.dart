@@ -17,6 +17,8 @@ import '../../Utilities/constants/font_constants.dart';
 import '../../utilities/constants/word_constants.dart';
 import '../sign_in_options/signup_pages/signup_web.dart';
 import 'onboarding_business_setup.dart';
+import 'onboarding_complete.dart';
+import 'onboarding_employee.dart';
 
 class OnboardingStepper extends StatefulWidget {
   static String id = "onboarding_data_stepper";
@@ -49,10 +51,15 @@ class _OnboardingStepperState extends State<OnboardingStepper> {
           height: 600,
           child: OnboardingBusiness()),
     ),
-    Container(color: kCustomColor, height: 300, width: 300,),
-    Container(color: kGreenThemeColor, height: 300, width: 300,),
-    Container(color: kRedColor, height: 300, width: 300,),
-    Container(color: kRedColor, height: 300, width: 300,),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+          width: 500,
+          height: 600,
+          child: OnboardingEmployee()),
+    ),
+    OnboardingSuccessPage(),
+
 
   ];
 
@@ -121,7 +128,6 @@ class _OnboardingStepperState extends State<OnboardingStepper> {
                               customStep: Image.asset("images/pilot2.png",height: 30, fit: BoxFit.fitHeight,),
                               title: 'Welcome',
                               lineText: 'Setup Business',
-                              // lineText: 'Frutsexpress',
                             ),
                             EasyStep(
                               icon: Icon(kIconStore),

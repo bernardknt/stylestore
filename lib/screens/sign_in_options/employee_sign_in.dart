@@ -35,19 +35,9 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
   TextEditingController countryController = TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String token = "this_is_a_web_token_updated";
-  Map<String, dynamic> permissionsMap = {};
 
 
-  void updateNotificationsIfAdmin(documentId)async{
-    permissionsMap = await CommonFunctions().convertPermissionsJson();
-    print("C'est le token: $token");
-    if (permissionsMap['admin'] == true) {
-      FirebaseFirestore.instance.collection('medics').doc(documentId)
-          .update({
-        'adminTokens': FieldValue.arrayUnion([token]),
-      });
-    }
-  }
+
 
 
 
@@ -112,7 +102,7 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
           prefs.setBool(kIsLoggedInConstant, true);
           Provider.of<StyleProvider>(context, listen: false).setStoreName(store['name']);
           CommonFunctions().deliveryStream(context);
-          updateNotificationsIfAdmin(storeId);
+          CommonFunctions().updateNotificationsIfAdmin(storeId, token);
           CommonFunctions().updateUserNotificationToken(users['id']);
           Navigator.pushNamed(context, SignInUserPage.id);
 

@@ -335,7 +335,7 @@ List<String> nationalities = [
   'Zimbabwean',
 ];
 
-String cWelcomeOnboard = "We’re are excited to have you see you.\nGet ready to elevate your business operations with our all-in-one platform."
+String cWelcomeOnboard = "We are excited to see you.\nGet ready to elevate your business operations with our all-in-one platform."
     "You are going to SELL, INVOICE, keep INVENTORY and MONITOR your business like a PRO.\nFasten your seatbelt, and prepare to take your business to new heights.\nClear skies ahead!\n\nYours Captain";
 
 

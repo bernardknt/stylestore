@@ -61,7 +61,7 @@ import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -1391,7 +1391,8 @@ class CommonFunctions {
   setupStoreInFirestore(userId, email, ownerName, location, phone, description, name, countryCode, country, currency, context)async{
 
     var firestore = FirebaseFirestore.instance;
-    CircularProgressIndicator(color: kAppPinkColor,);
+    showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
+      color: kAppPinkColor,));});
     await firestore.collection('medics').doc(userId).set({
       'active': true,
       'adminTokens':[],
@@ -1429,7 +1430,8 @@ class CommonFunctions {
       'token': 'userTokenGoesHere',
       'countryCode': countryCode,
       'country': country,
-      'sms': 500
+      'sms': 500,
+      'checklist': []
 
     }).whenComplete((){
       Navigator.pop(context);
@@ -1950,6 +1952,20 @@ class CommonFunctions {
     });
 
   }
+
+
+  void updateNotificationsIfAdmin(documentId,token)async{
+    permissionsMap = await CommonFunctions().convertPermissionsJson();
+    print("C'est le token: $token");
+    if (permissionsMap['admin'] == true) {
+      FirebaseFirestore.instance.collection('medics').doc(documentId)
+          .update({
+        'adminTokens': FieldValue.arrayUnion([token]),
+      });
+    }
+  }
+
+
   Future <dynamic> updateOnlineStoreInfo(docId, field, fieldValue ){
 
     return FirebaseFirestore.instance
@@ -2106,21 +2122,21 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     // Create a blob from the bytes and create a download link
     //
     // PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
-    final blob = html.Blob([excelData]);
-    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create a link element and trigger the download
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..target = 'download'
-      ..download = 'bulk_upload_data.xlsx';
-
-    // Trigger the click event to start the download
-    html.document.body?.append(anchor);
-    anchor.click();
-
-    // Clean up the temporary link
-    html.Url.revokeObjectUrl(blobUrl);
-    anchor.remove();
+    // final blob = html.Blob([excelData]);
+    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+    //
+    // // Create a link element and trigger the download
+    // final anchor = html.AnchorElement(href: blobUrl)
+    //   ..target = 'download'
+    //   ..download = 'bulk_upload_data.xlsx';
+    //
+    // // Trigger the click event to start the download
+    // html.document.body?.append(anchor);
+    // anchor.click();
+    //
+    // // Clean up the temporary link
+    // html.Url.revokeObjectUrl(blobUrl);
+    // anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 

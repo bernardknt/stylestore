@@ -8,12 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
-import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
+
 import '../../utilities/constants/word_constants.dart';
 import '../../widgets/text_form.dart';
 import '../MobileMoneyPages/mobile_money_page.dart';
@@ -26,43 +29,15 @@ class OnboardingBusiness extends StatefulWidget {
 
 class _OnboardingBusinessState extends State<OnboardingBusiness> {
   // Controller for text input fields
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController businessNameController = TextEditingController();
   final TextEditingController otherNamesController = TextEditingController();
-  final TextEditingController positionController = TextEditingController();
-  final TextEditingController nationalityController = TextEditingController();
-  final TextEditingController idNumberController = TextEditingController();
-  final TextEditingController nationalIdNumberController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  final TextEditingController districtController = TextEditingController();
-  final TextEditingController kinNumberController = TextEditingController();
-  final TextEditingController kinController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController subCountyController = TextEditingController();
-  final TextEditingController tinController = TextEditingController();
-
-  // Gender selection
-  String gender = '';
-  String? selectedDepartment;
-  String selectedNationality = "Ugandan";
-
+  String country = '';
   int selectedOpeningTime = 8;
   int selectedClosingTime = 18;
   DayPeriod openingPeriod = DayPeriod.am;
   DayPeriod closingPeriod = DayPeriod.pm;
-  _selectBirthday(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != selectedBirthday) {
-      setState(() {
-        selectedBirthday = picked;
-      });
-    }
-  }
 
   Future<void> _showTimePickerForOpeningTime(BuildContext context,) async {
     final TimeOfDay? pickedTime = await showTimePicker(
@@ -92,18 +67,12 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
       });
     }
   }
-  
-  
 
-  DateTime selectedBirthday =
-  DateTime(1998, 1, 16); // Variable to store the selected birthday
-
-
-  
 
   final RoundedLoadingButtonController _btnController = RoundedLoadingButtonController();
   File? image;
   var imageUploaded = false;
+  String imageToUpload = 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/7e5d9ad3-e663-11d4-bb3e-96678f9428ec.png';
   var code = "";
   final storage = FirebaseStorage.instance;
   String serviceId = 'emp${uuid.v1().split("-")[0]}';
@@ -111,42 +80,73 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
   String customerId = "";
   String phoneNumber = "";
   String password = '';
+  String storeId = '';
+  String initialCountryCode = '+256';
   Map<String, String> optionsToUpload = {};
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
-  String countryCode = ' ';
+  String countryCode = '';
   double opacityOfTextFields = 1.0;
-  CollectionReference customerProvided =
-  FirebaseFirestore.instance.collection('employees');
+  CollectionReference storesDb = FirebaseFirestore.instance.collection('medics');
 
-  Future<void> addNewEmployee() async {
+
+  Future<void> updateBusiness() async {
     final prefs = await SharedPreferences.getInstance();
-    return customerProvided
-        .doc(customerId)
-        .set({
-      'id': customerId,
-      'active': true,
-      'phoneNumber': phoneNumber,
-      'role': positionController.text,
-      'name': fullNameController.text,
+    showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
+      color: kAppPinkColor,));});
+
+    return storesDb
+        .doc(storeId)
+        .update({
+      'businessPhone': phoneNumber,
+      'phone': phoneNumber,
+      'name': businessNameController.text,
       'location': addressController.text,
-      'picture': 'https://mcusercontent.com/f78a91485e657cda2c219f659/images/5320d4cd-cde9-74be-c923-506a8da6ed8a.png',
-      'storeId': prefs.getString(kStoreIdConstant),
+      'close': selectedClosingTime,
+      'open': selectedOpeningTime,
+      'image': imageToUpload,
+      'countryCode': countryCode,
+      'country':country,
+      'currency':CommonFunctions().getCurrencyCode(countryCode, context),
       'permissions': '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }',
       'checklist': []
+    }).whenComplete((){
+
+      prefs.setString(kCountryCode, countryCode);
+      prefs.setString(kCountry, country);
+      prefs.setString(kCurrency, CommonFunctions().getCurrencyCode(countryCode, context));
+      prefs.setInt(kStoreOpeningTime, selectedOpeningTime);
+      prefs.setInt(kStoreClosingTime, selectedClosingTime);
+      prefs.setString(kPhoneNumberConstant, phoneNumber);
+      prefs.setString(kBusinessNameConstant, businessNameController.text);
+      prefs.setString(kLocationConstant, addressController.text);
+      prefs.setString(kImageConstant, imageToUpload);
+      prefs.setString(kPhoneNumberConstant,phoneNumber);
+      Provider.of<StyleProvider>(context, listen: false).setStoreName(businessNameController.text);
+      Provider.of<StyleProvider>(context, listen: false).setOnboardingIndex(2);
+      CommonFunctions().showSuccessNotification("Business Details Updated", context);
+      Navigator.pop(context);
     })
         .then((value) => print("Service Added"))
         .catchError((error) => print("Failed to add service: $error"));
   }
 
+
+
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
+    initialCountryCode = prefs.getString(kCountryCode)??"+1";
+    storeId = prefs.getString(kStoreIdConstant)??"";
+    print("HERE IS THE STORE ID: $storeId");
     final initials = prefs
         .getString(kBusinessNameConstant)
         ?.split(' ')
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
     customerId = 'employee${initials}${uuid.v1().split("-")[0]}';
+    setState(() {
+
+    });
   }
 
   @override
@@ -208,13 +208,14 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
               ),
 
               kLargeHeightSpacing,
-              TextForm(label:'Business Name', controller:fullNameController),
+              TextForm(label:'Business Name', controller:businessNameController),
               kLargeHeightSpacing,
               Text("Business Phone Number *",
                   style: kNormalTextStyle.copyWith(
                     color: kBlack,
                     fontWeight: FontWeight.bold
                   )),
+              // Phone number goes here
               // Phone number goes here
               Padding(
                 padding: const EdgeInsets.only(
@@ -235,12 +236,14 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
 
                         onInit: (value) {
                           countryCode = value!.dialCode!;
+                          country = value.name!;
                         },
                         onChanged: (value) {
                           countryCode = value.dialCode!;
+                          country = value.name!;
                         },
                         // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                        initialSelection: 'UG',
+                        initialSelection: initialCountryCode,
                         favorite: const ['+254', '+255', "US"],
                         // optional. Shows only country name and flag
                         showCountryOnly: false,
@@ -385,70 +388,13 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Add your form submission logic here
-                    if (selectedDepartment == "" || gender == "" || phoneNumber == ''|| positionController.text ==""|| fullNameController.text == ""|| selectedDepartment == null) {
+                    if ( phoneNumber == ''|| addressController.text ==""|| businessNameController.text == "") {
                       CommonFunctions().alertDialogueError(context);
 
                     } else
                     {
-                      showModalBottomSheet(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Container(
-                              // height: 200,
-                              color: kBlueDarkColor,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.center,
-                                  children: [
-                                    kLargeHeightSpacing,
-                                    Text(
-                                      "Create Pass Pin for ${fullNameController.text}",
-                                      style: kNormalTextStyle.copyWith(
-                                          color: kPureWhiteColor),
-                                    ),
-                                    kLargeHeightSpacing,
-                                    Pinput(
-                                      length: 4,
-                                      onChanged: (value) {
-                                        code = value;
-                                      },
-                                      showCursor: true,
-                                      onCompleted: (pin) => print(pin),
-                                    ),
-                                    kLargeHeightSpacing,
-                                    RoundedLoadingButton(
-                                      color: kAppPinkColor,
-                                      child: Text('Add new Employee', style: TextStyle(color: Colors.white)),
-                                      controller: _btnController,
-                                      onPressed: () async {
-                                        if (code.length < 4) {
-                                          _btnController.error();
-                                          showDialog(context: context, builder: (BuildContext context){
-                                            return
-                                              CupertinoAlertDialog(
-                                                title: Text('Code is too short'),
-                                                content: Text('Make sure you have entered a 4 digit code'),
-                                                actions: [CupertinoDialogAction(isDestructiveAction: true,
-                                                    onPressed: (){
-                                                      _btnController.reset();
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text('Cancel'))],
-                                              );
-                                          });
-                                        }else {
-                                          addNewEmployee();
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          });
+                      updateBusiness();
+
                     }
                   },
                   child: Text('Submit',

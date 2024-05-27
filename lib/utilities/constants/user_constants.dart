@@ -23,6 +23,7 @@ String kIsFirstTimeUser = 'firstTimer';
 String kIsCheckedIn = 'checkedIn';
 String kAttendanceCode = 'attendance';
 String kStoreIdConstant = 'storeId';
+String kOnboarding = 'onboarding';
 String kStartAnayltics = 'kStartAnayltics';
 String kDoesMobileConstant = 'mobile';
 String kAnalysisMode = 'analysisMode';
