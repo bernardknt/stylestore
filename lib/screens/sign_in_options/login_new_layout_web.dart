@@ -34,13 +34,33 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
   RoundedLoadingButtonController();
   bool showSpinner = false;
   bool ownerLogin = false;
-
-
   bool userLoggedIn = false;
+
+
+  void defaultsInitiation () async{
+    final prefs = await SharedPreferences.getInstance();
+
+    bool isLoggedIn = prefs.getBool(kIsLoggedInConstant) ?? false;
+    setState(() {
+      userLoggedIn = isLoggedIn ;
+      if(userLoggedIn == true){
+        Navigator.pushNamed(context, SuperResponsiveLayout.id);
+      }else{
+        if(prefs.getString(kCountryCode)!= null){
+
+        }else {
+          CommonFunctions().showCountryPreference(context);
+
+        }
+        // CommonFunctions().showCountryPreference(context);
+      }
+    });
+  }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    defaultsInitiation();
 
   }
   @override
@@ -298,7 +318,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                             .get();
                                         if (users['subscribed'] == false) {
                                           print("WE ENTERED HERE");
-              
+
                                           final store =
                                           await FirebaseFirestore
                                               .instance
@@ -334,7 +354,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                           prefs.setString(
                                               kEmployeeId, users.id);
                                           //prefs.setStringList(kStoreIdConstant, store['blackout']);
-              
+
                                           prefs.setString(
                                               kPhoneNumberConstant,
                                               users['phoneNumber']);
@@ -342,7 +362,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                               kIsLoggedInConstant, true);
                                           // subscribeToTopic();
                                           CommonFunctions().deliveryStream(context);
-              
+
                                           Navigator.pushNamed(context,
                                               SuperResponsiveLayout.id);
                                         } else {
@@ -371,7 +391,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                                 );
                                               });
                                         }
-              
+
                                         //showSpinner = false;
                                       } catch (e) {
                                         _btnController.error();
@@ -426,11 +446,9 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                       )),
                                 ),
                               ),
-                              kLargeHeightSpacing,
 
-                              TextButton(onPressed: (){
-                                Navigator.pushNamed(context, OnboardingStepper.id);
-                              }, child: Text("Onboarding Screens"))
+
+
                             ],
                           ),
                         ),

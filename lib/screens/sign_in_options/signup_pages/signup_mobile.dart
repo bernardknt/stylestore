@@ -61,7 +61,7 @@ class _SignupMobileState extends State<SignupMobile> {
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
       } else {
         print('NOT LOGGED IN');
-        CommonFunctions().showCountryPreference(context);
+       // CommonFunctions().showCountryPreference(context);
       }
     });
   }
@@ -80,6 +80,7 @@ class _SignupMobileState extends State<SignupMobile> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        centerTitle: true,
         title: Text("Create Account", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 16),),
       ),
       body:

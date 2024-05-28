@@ -40,7 +40,7 @@ class _PreferredCountrySelectionState extends State<PreferredCountrySelection> {
             width: double.infinity,
           ),
           Text(
-            'To optimize your experience and ensure access to relevant services, please select your country.',
+            'To optimize your experience, please select your country.',
             textAlign: TextAlign.center,
             style: kNormalTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
           ),
@@ -61,10 +61,8 @@ class _PreferredCountrySelectionState extends State<PreferredCountrySelection> {
                     initialSelection: 'UG',
                     favorite: const [
                       "+250",
-                      "+243",
                       "+256",
                       "+254",
-                      "+1"
                     ],
 
                     showCountryOnly: false,

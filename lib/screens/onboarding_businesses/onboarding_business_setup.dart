@@ -1,13 +1,9 @@
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -244,7 +240,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
                         },
                         // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
                         initialSelection: initialCountryCode,
-                        favorite: const ['+254', '+255', "US"],
+                        favorite: const ['+256','+254', '+255', "US"],
                         // optional. Shows only country name and flag
                         showCountryOnly: false,
                         // optional. Shows only country name and flag when popup is closed.

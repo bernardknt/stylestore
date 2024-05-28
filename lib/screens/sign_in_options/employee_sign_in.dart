@@ -35,18 +35,27 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
   TextEditingController countryController = TextEditingController();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   String token = "this_is_a_web_token_updated";
+  String initialCountryCode = "";
 
 
 
 
 
 
+defaultInitialization()async{
+  final prefs = await SharedPreferences.getInstance();
+  initialCountryCode = prefs.getString(kCountryCode)??"+1";
+  setState(() {
+
+  });
+}
 
   @override
   void initState() {
     // TODO: implement initState
     countryController.text = "+256";
     super.initState();
+    defaultInitialization();
     _firebaseMessaging.getToken().then((value) async{
       final prefs = await SharedPreferences.getInstance();
       token = value!;
@@ -202,8 +211,8 @@ class _EmployeeSignInState extends State<EmployeeSignIn> {
 
                           },
                           // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                          initialSelection: 'UG',
-                          favorite: const ['+254','+255',"US"],
+                          initialSelection: initialCountryCode,
+                          favorite: const ['+256','+254','+255',"US"],
                           // optional. Shows only country name and flag
                           showCountryOnly: false,
                           // optional. Shows only country name and flag when popup is closed.

@@ -604,7 +604,10 @@ class _POSState extends State<POS> {
             child: ListView.builder(
                 itemCount: filteredStock.length,
                 itemBuilder: (context, index) {
-                  return filteredStock.isEmpty ? CustomPopupWidget(
+                  print("CHECK CHECK CHECK${filteredStock.length}");
+                  return filteredStock.isEmpty ?
+                  //Text("It is working")
+                  CustomPopupWidget(
                     backgroundColour: kBlueDarkColor,
                     actionButton: 'Create Product',
                     subTitle: 'Add Products: Tap and sell',
@@ -616,16 +619,14 @@ class _POSState extends State<POS> {
                           context: context,
                           builder: (context) {
                             return Scaffold(
-                                appBar: AppBar(
-                                  automaticallyImplyLeading:
-                                  false,
-                                  backgroundColor: kBlack,
+                                appBar: AppBar(automaticallyImplyLeading:
+                                  false, backgroundColor: kBlack,
                                 ),
                                 body: ProductUpload());
                           });
                     },
-                    youtubeLink: videoMap['sales'],) :
-                  GestureDetector(
+                    youtubeLink: videoMap['sales'],)
+                      : GestureDetector(
                       onTap: () {
                         description = filteredStock[index].description;
                         amount = filteredStock[index].amount.toDouble();

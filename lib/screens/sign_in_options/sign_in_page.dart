@@ -102,48 +102,45 @@ class _SignInUserPageState extends State<SignInUserPage> {
     });
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((barcode) {
-      print("${barcode.code}");
-
-      // Navigator.pushNamed(context, ControlPage.id);
-     // Navigator.pop(context);
-
-      setState(() {
-        qrCode = barcode.code?? "";
-      });
-      if (qrCode == storeId){
-        controller.dispose();
-        uploadSignin();
-      } else {
-        controller.dispose();
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CupertinoAlertDialog(
-              title: Text("Wrong Code Scanned"),
-              content: Text("Wrong code scanned for this store."),
-              actions: [
-                CupertinoDialogAction(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    setState(() {
-
-                    });
-                    // Close the dialog
-                  // Navigate back to the home page
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-
-    });
-  }
+  // void _onQRViewCreated(QRViewController controller) {
+  //   this.controller = controller;
+  //   controller.scannedDataStream.listen((barcode) {
+  //     print("${barcode.code}");
+  //
+  //     setState(() {
+  //       qrCode = barcode.code?? "";
+  //     });
+  //     if (qrCode == storeId){
+  //       controller.dispose();
+  //       uploadSignin();
+  //     } else {
+  //       controller.dispose();
+  //       showDialog(
+  //         context: context,
+  //         builder: (BuildContext context) {
+  //           return CupertinoAlertDialog(
+  //             title: Text("Wrong Code Scanned"),
+  //             content: Text("Wrong code scanned for this store."),
+  //             actions: [
+  //               CupertinoDialogAction(
+  //                 child: Text("OK"),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                   setState(() {
+  //
+  //                   });
+  //                   // Close the dialog
+  //                 // Navigate back to the home page
+  //                 },
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     }
+  //
+  //   });
+  // }
 
   @override
   void dispose() {

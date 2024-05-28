@@ -60,7 +60,7 @@ class _SignupWebState extends State<SignupWeb> {
       if (userLoggedIn == true) {
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
       } else {
-        CommonFunctions().showCountryPreference(context);
+       // CommonFunctions().showCountryPreference(context);
       }
     });
   }

@@ -199,7 +199,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Edit Profile for ${Provider.of<BeauticianData>(context, listen: false).employeeInformation!.fullNames}'),
+              Text('${Provider.of<BeauticianData>(context, listen: false).employeeInformation!.fullNames}', style: kNormalTextStyle,),
               kMediumWidthSpacing,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(

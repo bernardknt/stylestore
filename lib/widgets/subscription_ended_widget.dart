@@ -31,7 +31,7 @@ class SubcriptionEndedWidget extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: Container(
                 width: 260,
-                height: 250,
+                height: 300,
                 child: Column(
                     crossAxisAlignment:CrossAxisAlignment.start ,
 
