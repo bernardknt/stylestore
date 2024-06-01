@@ -79,7 +79,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     // TODO: implement initState
     super.initState();
     defaultInitialization();
-    print(Provider.of<StyleProvider>(context, listen: false).beauticianId);
+
 
   }
 
@@ -307,14 +307,17 @@ class _ExpensesPageState extends State<ExpensesPage> {
                   }
                   listOfProducts.add(array);
                   priceOfProducts.add(CommonFunctions().sumArrayElements(prices));
-                  print("${listOfProducts}");
+
                 }
 
 
               }
 
               return
-                productList.isEmpty? CustomPopupWidget(backgroundColour: kBlueDarkColor,actionButton: 'Add Expense', subTitle: 'No matter how small', image: 'expense.jpg', title: 'Track Every Expense', function:
+                productList.isEmpty? CustomPopupWidget(
+                  backgroundColour: kBlueDarkColor,actionButton: 'Add Expense',
+                  subTitle: 'No matter how small', image: 'expense.jpg', title: 'Track Every Expense',
+                  function:
                     () {
 
                       showModalBottomSheet(
@@ -329,7 +332,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                 ),
                                 body: AddExpenseWidget());
                           });
-                }, youtubeLink: videoMap['expenses']
+                }, youtubeLink: videoMap['store']
                   ,
                 ):
                 Column(

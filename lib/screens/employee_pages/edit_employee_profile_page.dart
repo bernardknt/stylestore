@@ -22,6 +22,7 @@ import '../../controllers/home_page_controllers/home_control_page_web.dart';
 import '../../model/common_functions.dart';
 import '../../widgets/rounded_icon_widget.dart';
 import '../../widgets/text_form.dart';
+import '../team_pages/employee_permissions_page.dart';
 
 
 
@@ -283,7 +284,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               //Image.file(image!, height: 180,)
                               kIsWeb? Image.network(image!.path, height: 180,):Image.file(image!, height: 180,)
                           ),
-                          kMediumWidthSpacing,
+                          kLargeHeightSpacing,
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: SizedBox(
+                                  width: 100,
+                                  child: TextButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlack)
+                                  )
+                                  ,onPressed: (){
+
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
+
+                                  }, child: Text("Edit Permissions", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+                                ),
+                              ),
+                              Expanded(
+                                  flex: 4,
+                                  child: Container())
+                            ],
+                          ),
+                          kSmallHeightSpacing,
                           TextForm(  label: 'Full Names', controller: fullNameController,),
                           Text("Birthday", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
                           GestureDetector(

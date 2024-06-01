@@ -29,6 +29,7 @@ import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
 import '../barcode_page.dart';
 import '../products_pages/stock_items.dart';
+import '../store_pages/store_page_mobile.dart';
 
 class PosWeb extends StatefulWidget {
   static String id = 'pos_widget_web';
@@ -59,7 +60,6 @@ class _PosWebState extends State<PosWeb> {
   bool empty = false;
   var currency = "";
   List<Product> products = [];
-  List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
 
 
@@ -77,8 +77,8 @@ class _PosWebState extends State<PosWeb> {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
-    newStock = await retrieveSupplierData();
-    filteredStock.addAll(newStock);
+    newStock = await CommonFunctions().retrieveSalableStockData(context);
+
 
     Provider.of<StyleProvider>(context, listen: false).resetCustomerDetails();
     setState(() {});
@@ -105,7 +105,7 @@ class _PosWebState extends State<PosWeb> {
       favorite: ['USD', 'EUR', 'UGX', 'KES'], // Can pre-select favorites
     );
   }
-  Future<void> _startBarcodeScan() async {
+  Future<void> startBarcodeScan() async {
     isScanning = true;
     while (isScanning) {
       isScanning = false;
@@ -113,186 +113,165 @@ class _PosWebState extends State<PosWeb> {
         "#FF0000", // Custom red color for the scanner
         "Cancel", // Button text for cancelling the scan
         true, // Show flash icon
-        ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
+        ScanMode.BARCODE,
       );
 
       if (barcodeScanRes != '-1') {
-        int index = barcodeList.indexOf(barcodeScanRes);
-        if (index != -1) {
-          CommonFunctions().playBeepSound();
-          isScanning = false;
+        isScanning = false;
+        // var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+        try {
+          var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+          if (barcodeItem != null)
+          {
+            if(barcodeItem.tracking == true){
+              print(barcodeItem.quantity);
+              if (1<=barcodeItem.quantity){
+                Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
+                    name: barcodeItem.name, quantity: 1.0,
+                    amount: barcodeItem.amount / 1.0,
+                    details: barcodeItem.description,
+                    tracking: barcodeItem.tracking));
+                selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+                CommonFunctions().playBeepSound();
+                showDialog(context: context, builder: ( context) {return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [CircularProgressIndicator(color: kAppPinkColor,),
+                        kSmallHeightSpacing,
+                        DefaultTextStyle(
+                          style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                          child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
+                        )
+                        // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                      ],));});
+                await Future.delayed(const Duration(seconds: 1));
+                Navigator.pop(context);
+                startBarcodeScan();
 
-          if (filteredStock[index].tracking == true) {
-            if (1 <= filteredStock[index].quantity) {
-              print(description);
+              }
+              else {
 
-              Provider.of<StyleProvider>(context, listen: false)
-                  .addToServiceBasket(BasketItem(
-                  name: filteredStock[index].name,
-                  quantity: 1.0,
-                  amount: filteredStock[index].amount / 1.0,
-                  details: filteredStock[index].description,
-                  tracking: filteredStock[index].tracking));
-              selectedStocks.add(Stock(
-                  name: filteredStock[index].name,
-                  id: filteredStock[index].documentId,
-                  restock: 1,
-                  price: filteredStock[index].amount / 1.0));
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return CupertinoAlertDialog(
-                    title: Text("Scan another Item?"),
-                    content: Text("Would you like to scan another item?"),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text(
-                          "Cancel",
-                          style: TextStyle(color: kRedColor),
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CupertinoAlertDialog(
+                        title: const Text('OUT OF STOCK'),
+                        content: Text(
+                          "The quantity available for ${barcodeItem.name} is ${barcodeItem.quantity}! You have tried to sell 1 unit!",
+                          style: kNormalTextStyle.copyWith(color: kBlack),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                      ),
-                      CupertinoDialogAction(
-                        child: const Text("Scan Another"),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                          _startBarcodeScan();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-              // Navigator.pop(context);
-            } else {
-              // Navigator.pop(context);
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: const Text('Quantity Too High'),
-                      content: Text(
-                        "The quantity available for ${filteredStock[index].amount} is ${filteredStock[index].quantity}! You have tried to sell 1 unit!",
-                        style: kNormalTextStyle.copyWith(color: kBlack),
-                      ),
-                      actions: [
-                        CupertinoDialogAction(
-                            isDestructiveAction: true,
-                            onPressed: () {
-                              // _btnController.reset();
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Cancel')),
-                        CupertinoDialogAction(
-                            isDefaultAction: true,
-                            onPressed: () async {
-                              final prefs =
-                              await SharedPreferences.getInstance();
-                              Provider.of<BeauticianData>(context,
-                                  listen: false)
-                                  .setStoreId(
-                                  prefs.getString(kStoreIdConstant));
+                        actions: [
+                          CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              onPressed: () {
+                                // _btnController.reset();
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel')),
+                          CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () async {
+                                final prefs =
+                                await SharedPreferences.getInstance();
+                                Provider.of<BeauticianData>(context,
+                                    listen: false)
+                                    .setStoreId(
+                                    prefs.getString(kStoreIdConstant));
 
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, UpdateStockPage.id);
-                            },
-                            child: const Text('Update Stock')),
-                      ],
-                    );
-                  });
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pushNamed(context, UpdateStockPage.id);
+                              },
+                              child: const Text('Update Stock')),
+                        ],
+                      );
+                    });
+              }
+            } else {
+              Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
+                  name: barcodeItem.name, quantity: 1.0,
+                  amount: barcodeItem.amount / 1.0,
+                  details: barcodeItem.description,
+                  tracking: barcodeItem.tracking));
+              selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+              CommonFunctions().playBeepSound();
+              showDialog(context: context, builder: ( context) {return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [CircularProgressIndicator(color: kAppPinkColor,),
+                      kSmallHeightSpacing,
+                      DefaultTextStyle(
+                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                        child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
+                      )
+                      // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                    ],));});
+              await Future.delayed(const Duration(seconds: 1));
+              Navigator.pop(context);
+              startBarcodeScan();
             }
+
+            print("${barcodeItem.name} ${barcodeItem.tracking} Item Exists");
+          } else{
+
           }
-          else {
-            Provider.of<StyleProvider>(context, listen: false)
-                .addToServiceBasket(BasketItem(
-                name: filteredStock[index].name,
-                quantity: 1.0,
-                amount: filteredStock[index].amount / 1.0,
-                details: filteredStock[index].description,
-                tracking: filteredStock[index].tracking));
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('TRACKING TRUE ${filteredStock[index].name} added')));
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: Text("Scan another Item?"),
-                  content: Text("Would you like to scan another item?"),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(color: kRedColor),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                    ),
-                    CupertinoDialogAction(
-                      child: const Text("Scan Another"),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                        _startBarcodeScan();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        }
-        else {
+          // Use barcodeItem here
+        } on StateError catch (e) {
+          // Handle the case where no element is found (e.g., show a message)
+          print("Item does not Exist");
           isScanning = false;
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Item is not in your Inventory')));
-          // Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: Text("ITEM BARCODE NOT FOUND?"),
+                content: Text("This could mean either the item is not in the inventory or is not set 'For Sale'\nWould you like to add this item to the inventory?"),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "Cancel", style: TextStyle(color: kRedColor),),
+                    onPressed: () {
+                      Navigator.of(context).pop();// Close the dialog
+
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("Add to Inventory"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                                appBar: AppBar(
+                                  elevation: 0,
+                                  backgroundColor: kPureWhiteColor,
+                                  automaticallyImplyLeading: false,
+                                ),
+                                body: StorePageMobile());
+                          });
+
+
+
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
+
+      }
+      else{
+
+
       }
     }
   }
 
-  Future<List<AllStockData>> retrieveSupplierData() async {
-
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('stores')
-          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
-          .where('active', isEqualTo: true)
-          .where('saleable', isEqualTo: true)
-          .orderBy('name', descending: false)
-          .get();
-      // if (snapshot.connectionState == ConnectionState.waiting) {
-      //   return const Center(
-      //     child: CircularProgressIndicator(color: kAppPinkColor,),
-      //   );
-      // }
-
-      final stockDataList = snapshot.docs
-          .map((doc) => AllStockData.fromFirestore(doc))
-          .toList();
-      if (stockDataList.isEmpty){
-        empty = true;
-      }
-      return stockDataList;
-    } catch (error) {
-      print('Error retrieving stock data: $error');
-      return []; // Return an empty list if an error occurs
-    }
-  }
-
-  void filterStock(String query) {
-    setState(() {
-      filteredStock = newStock
-          .where((stock) =>
-      stock.name.toLowerCase().contains(query.toLowerCase()) ||
-          stock.description.toLowerCase().contains(query.toLowerCase())
-      )
-          .toList();
-    });
-  }
 
   @override
   void initState() {
@@ -303,6 +282,8 @@ class _PosWebState extends State<PosWeb> {
 
   @override
   Widget build(BuildContext context) {
+    var styleDataListen = Provider.of<StyleProvider>(context);
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: kPlainBackground,
       appBar: AppBar(
@@ -348,7 +329,7 @@ class _PosWebState extends State<PosWeb> {
               padding: const EdgeInsets.only(right: 30.0, top: 10),
               child: GestureDetector(
                   onTap: () {
-                    _startBarcodeScan();
+                    startBarcodeScan();
                   },
                   child: Icon(
                     Iconsax.scan,
@@ -378,7 +359,7 @@ class _PosWebState extends State<PosWeb> {
                             hintText: 'By Product Name / Id',
                             hintFadeDuration: Duration(milliseconds: 100),
                           ),
-                          onChanged: filterStock,
+                          onChanged: styleData.filterStockQuery,
                         ),
 
                       ),
@@ -434,12 +415,12 @@ class _PosWebState extends State<PosWeb> {
                 ):
                 Expanded(
                   child: ListView.builder(
-                      itemCount: filteredStock.length,
+                      itemCount: styleDataListen.filteredStock.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                             onTap: () {
-                              description = filteredStock[index].description;
-                              amount = filteredStock[index].amount.toDouble();
+                              description = styleData.filteredStock[index].description;
+                              amount = styleData.filteredStock[index].amount.toDouble();
                               quantity = 1.0;
                               showDialog(
                                   context: context,
@@ -459,7 +440,7 @@ class _PosWebState extends State<PosWeb> {
                                                 hintText:
                                                 "",
                                                 controller:
-                                                filteredStock[index].name,
+                                                styleData.filteredStock[index].name,
                                                 onTypingFunction:
                                                     (value) {},
                                                 keyboardType: TextInputType.text,
@@ -467,7 +448,7 @@ class _PosWebState extends State<PosWeb> {
                                                 "Name 🔒"),
                                             InputFieldWidget(
                                                 readOnly: false, hintText: "",
-                                                controller: filteredStock[index].description,
+                                                controller: styleData.filteredStock[index].description,
                                                 onTypingFunction:
                                                     (value) {description = value;
                                                 },
@@ -488,7 +469,7 @@ class _PosWebState extends State<PosWeb> {
                                                 hintText:
                                                 "",
                                                 controller:
-                                                filteredStock[index].amount
+                                                styleData.filteredStock[index].amount
                                                     .toString(),
                                                 onTypingFunction:
                                                     (value) {
@@ -531,17 +512,17 @@ class _PosWebState extends State<PosWeb> {
                                                   onPressed:
                                                       () {
 
-                                                    if (filteredStock[index].tracking == true) {
-                                                      if (quantity <= filteredStock[index].quantity) {
+                                                    if (styleData.filteredStock[index].tracking == true) {
+                                                      if (quantity <= styleData.filteredStock[index].quantity) {
                                                         Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                                                            name: filteredStock[index].name,
+                                                            name: styleData.filteredStock[index].name,
                                                             quantity: quantity,
                                                             amount: amount,
                                                             details: description,
-                                                            tracking: filteredStock[index].tracking));
+                                                            tracking: styleData.filteredStock[index].tracking));
                                                         selectedStocks.add(Stock(
-                                                            name: filteredStock[index].name,
-                                                            id: filteredStock[index].documentId,
+                                                            name: styleData.filteredStock[index].name,
+                                                            id: styleData.filteredStock[index].documentId,
                                                             restock: quantity,
                                                             price: amount / 1.0));
                                                         Navigator.pop(context);
@@ -553,7 +534,7 @@ class _PosWebState extends State<PosWeb> {
                                                               return CupertinoAlertDialog(
                                                                 title: const Text('Quantity Too High'),
                                                                 content: Text(
-                                                                  "The quantity available for ${filteredStock[index].name} is ${filteredStock[index].quantity}! You have tried to sell ${quantity} units!",
+                                                                  "The quantity available for ${styleData.filteredStock[index].name} is ${styleData.filteredStock[index].quantity}! You have tried to sell ${quantity} units!",
                                                                   style: kNormalTextStyle.copyWith(color: kBlack),
                                                                 ),
                                                                 actions: [
@@ -581,11 +562,11 @@ class _PosWebState extends State<PosWeb> {
                                                       }
                                                     } else {
                                                       Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                                                          name: filteredStock[index].name,
+                                                          name: styleData.filteredStock[index].name,
                                                           quantity: quantity,
                                                           amount: amount,
                                                           details: description,
-                                                          tracking: filteredStock[index].tracking
+                                                          tracking: styleData.filteredStock[index].tracking
                                                       )
                                                       );
                                                       Navigator.pop(
@@ -638,27 +619,27 @@ class _PosWebState extends State<PosWeb> {
                                             CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                filteredStock[index].name,
+                                                styleData.filteredStock[index].name,
                                                 overflow:
                                                 TextOverflow.clip,
                                                 style:
                                                 kHeadingTextStyle,
                                               ),
-                                              filteredStock[index].tracking == false
+                                              styleData.filteredStock[index].tracking == false
                                                   ? Container() :
                                               // If the minimum quantity at index is greater or equal to the current quantity
-                                              filteredStock[index].minimum >= filteredStock[index].quantity
-                                                  ? Text("Qty: ${filteredStock[index].quantity.toString()}",
+                                              styleData.filteredStock[index].minimum >= styleData.filteredStock[index].quantity
+                                                  ? Text("Qty: ${styleData.filteredStock[index].quantity.toString()}",
                                                 overflow: TextOverflow.clip,
                                                 style: kHeadingTextStyle.copyWith(fontSize: 12, color: Colors.red),
                                               )
-                                                  : Text("Qty: ${filteredStock[index].quantity.toString()}",
+                                                  : Text("Qty: ${styleData.filteredStock[index].quantity.toString()}",
                                                 overflow: TextOverflow.clip,
                                                 style: kHeadingTextStyle.copyWith(fontSize: 12, color: kGreenThemeColor),
                                               ),
                                             ],
                                           ),
-                                          Text("$currency ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
+                                          Text("$currency ${CommonFunctions().formatter.format(styleData.filteredStock[index].amount)}",
                                             style: kNormalTextStyle.copyWith(
                                                 fontWeight: FontWeight.bold,
                                                 color: kBlack, fontSize: 15),

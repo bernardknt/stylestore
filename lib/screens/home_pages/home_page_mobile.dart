@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
   String businessName = 'Business';
   String userName = "";
   String image = '';
+  bool runOnce = false;
   String storeId = '';
   Map<String, dynamic> permissionsMap = {};
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -255,7 +256,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -272,6 +272,18 @@ class _HomePageState extends State<HomePage> {
     });
 
 }
+
+  // @override
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //   super.didChangeDependencies();
+  //   final notificationIcon = Provider.of<StyleProvider>(context).notificationIcon;
+  //   if (notificationIcon && runOnce == false) {
+  //     runOnce = true;
+  //     CommonFunctions().ShowCaptain(context, true );
+  //   }
+  // }
+
   final sound = 'message_alert.wav';
 
   @override

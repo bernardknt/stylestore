@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/model/styleapp_data.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
@@ -79,6 +81,8 @@ class _SupplierFormState extends State<SupplierForm> {
 
 
   Future<void> addNewSupplier() async {
+    showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
+      color: kAppPinkColor,));});
     final prefs = await SharedPreferences.getInstance();
     return customerProvided
         .doc(supplierId)
@@ -89,12 +93,20 @@ class _SupplierFormState extends State<SupplierForm> {
       'phoneNumber': phoneNumber,
       'name': fullNameController.text,
       'email': emailController.text,
-      'nationality': selectedNationality,
+      // 'nationality': selectedNationality,
       'address': addressController.text,
       'storeId': prefs.getString(kStoreIdConstant),
 
     })
-        .then((value) => print("Service Added"))
+        .then((value) {
+         // CommonFunctions().showSuccessNotification("Provider ${fullNameController.text} Added", context);
+      Provider.of<StyleProvider>(context, listen: false).addSupplierDetails(
+          supplierId, fullNameController.text, "${fullNameController.text} (${serviceSuppliedController.text})");
+      Navigator.pop(context);
+          CommonFunctions().showSuccessNotification("Provider ${fullNameController.text} Added", context);
+      Navigator.pop(context);
+
+    })
         .catchError((error) => print("Failed to add service: $error"));
   }
 
@@ -241,25 +253,25 @@ class _SupplierFormState extends State<SupplierForm> {
 
                     TextForm(label: 'Email',controller: emailController),
                     TextForm(label:'Physical Address', controller:addressController),
-                    Text('Country',
-                        style: kNormalTextStyle.copyWith(
-                          color: kBlack,
-                        )),
-                    DropdownButton<String>(
-                      value:
-                      selectedNationality, // The currently selected department
-                      items: nationalities
-                          .map((department) => DropdownMenuItem(
-                        value: department,
-                        child: Text(department),
-                      ))
-                          .toList(),
-                      onChanged: (newNationality) => setState(() =>
-                      selectedNationality =
-                      newNationality!), // Update the selected department when a new one is chosen
-                      hint: Text(
-                          'Select Nationality'), // Placeholder text before a department is selected
-                    ),
+                    // Text('Country',
+                    //     style: kNormalTextStyle.copyWith(
+                    //       color: kBlack,
+                    //     )),
+                    // DropdownButton<String>(
+                    //   value:
+                    //   selectedNationality, // The currently selected department
+                    //   items: nationalities
+                    //       .map((department) => DropdownMenuItem(
+                    //     value: department,
+                    //     child: Text(department),
+                    //   ))
+                    //       .toList(),
+                    //   onChanged: (newNationality) => setState(() =>
+                    //   selectedNationality =
+                    //   newNationality!), // Update the selected department when a new one is chosen
+                    //   hint: Text(
+                    //       'Select Nationality'), // Placeholder text before a department is selected
+                    // ),
 
                     ElevatedButton(
                       onPressed: () {
@@ -270,7 +282,7 @@ class _SupplierFormState extends State<SupplierForm> {
                         } else
                         {
                           addNewSupplier();
-                          Navigator.pop(context);
+
                         }
                       },
                       child: Text('Submit',

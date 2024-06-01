@@ -56,15 +56,16 @@ class _SubscriptionControllerState extends State<SubscriptionController> {
                 unselectedLabelColor: kBlueDarkColorOld,
                 tabs: [
 
+
+                  Tab(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Annual'),
+                  ),),
                   Tab(child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:[
 
                         Text('Monthly')]
-                  ),),
-                  Tab(child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Annual'),
                   ),),
 
 
@@ -73,8 +74,9 @@ class _SubscriptionControllerState extends State<SubscriptionController> {
             ),
             body: TabBarView(
               children: [
-                PremiumMonthlySubscriptionsPage(),
                 PremiumAnnualSubscriptionsPage(),
+                PremiumMonthlySubscriptionsPage(),
+
 
 
 

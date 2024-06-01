@@ -63,7 +63,7 @@ class _POSState extends State<POS> {
   var quantity = 1.0;
   var isStoreEmpty = false;
   List<Product> products = [];
-  List<AllStockData> filteredStock = [];
+  // List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
   var currency = "";
 
@@ -81,15 +81,15 @@ class _POSState extends State<POS> {
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     currency = prefs.getString(kCurrency)??"USD";
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
-    newStock = await retrieveSupplierData();
-    filteredStock.addAll(newStock);
+    newStock = await CommonFunctions().retrieveSalableStockData(context);
+
 
     setState(() {});
   }
 
 
 
-  // Future<void> _startBarcodeScan(BuildContext context) async {
+
   bool isScanning = false;
   Future<void> startBarcodeScan() async {
     isScanning = true;
@@ -258,25 +258,7 @@ class _POSState extends State<POS> {
     }
   }
 
-  Future<List<AllStockData>> retrieveSupplierData() async {
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('stores')
-          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
-          .where('active', isEqualTo: true)
-          .where('saleable', isEqualTo: true)
-          .orderBy('name', descending: false)
-          .get();
 
-      final stockDataList = snapshot.docs
-          .map((doc) => AllStockData.fromFirestore(doc))
-          .toList();
-      return stockDataList;
-    } catch (error) {
-      print('Error retrieving stock data: $error');
-      return []; // Return an empty list if an error occurs
-    }
-  }
   void _showCurrencyPicker(BuildContext context) {
     showCurrencyPicker(
       context: context,
@@ -296,16 +278,6 @@ class _POSState extends State<POS> {
     );
   }
 
-  void filterStock(String query) {
-    setState(() {
-      filteredStock = newStock
-          .where((stock) =>
-      stock.name.toLowerCase().contains(query.toLowerCase()) ||
-          stock.description.toLowerCase().contains(query.toLowerCase())
-      )
-          .toList();
-    });
-  }
 
   @override
   void initState() {
@@ -316,7 +288,8 @@ class _POSState extends State<POS> {
 
   @override
   Widget build(BuildContext context) {
-    var styleData = Provider.of<StyleProvider>(context);
+    var styleDataListen = Provider.of<StyleProvider>(context);
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
     return Scaffold(
 
       backgroundColor: kBackgroundGreyColor,
@@ -325,7 +298,8 @@ class _POSState extends State<POS> {
         backgroundColor: kPlainBackground,
         automaticallyImplyLeading: widget.showBackButton,
         elevation: 0,
-        title: Row(
+        title:permissionsMap['sales'] == false
+            ? Container(): Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -544,9 +518,9 @@ class _POSState extends State<POS> {
                       child: SizedBox(
                         height: 100,
 
-                        child: ListView.builder(itemCount: styleData.basketItems.length,
+                        child: ListView.builder(itemCount: styleDataListen.basketItems.length,
                           itemBuilder: (context, index) {
-                            return buildItemRow(context, styleData.basketItems[index],currency, kBlack,index);},),
+                            return buildItemRow(context, styleDataListen.basketItems[index],currency, kBlack,index);},),
                       ),
                     )
                     
@@ -570,7 +544,7 @@ class _POSState extends State<POS> {
                       hintText: 'By Product Name / Id',
                       hintFadeDuration: Duration(milliseconds: 100),
                     ),
-                    onChanged: filterStock,
+                    onChanged: styleData.filterStockQuery,
                   ),
 
                 ),
@@ -602,10 +576,10 @@ class _POSState extends State<POS> {
           ),
           Expanded(
             child: ListView.builder(
-                itemCount: filteredStock.length,
+                itemCount: styleDataListen.filteredStock.length,
                 itemBuilder: (context, index) {
-                  print("CHECK CHECK CHECK${filteredStock.length}");
-                  return filteredStock.isEmpty ?
+
+                  return styleData.filteredStock.isEmpty ?
                   //Text("It is working")
                   CustomPopupWidget(
                     backgroundColour: kBlueDarkColor,
@@ -628,8 +602,8 @@ class _POSState extends State<POS> {
                     youtubeLink: videoMap['sales'],)
                       : GestureDetector(
                       onTap: () {
-                        description = filteredStock[index].description;
-                        amount = filteredStock[index].amount.toDouble();
+                        description = styleData.filteredStock[index].description;
+                        amount = styleData.filteredStock[index].amount.toDouble();
                         quantity = 1.0;
                         showDialog(
                             context: context,
@@ -649,7 +623,7 @@ class _POSState extends State<POS> {
                                           hintText:
                                           "",
                                           controller:
-                                          filteredStock[index].name,
+                                          styleData.filteredStock[index].name,
                                           onTypingFunction:
                                               (value) {},
                                           keyboardType:
@@ -659,7 +633,7 @@ class _POSState extends State<POS> {
                                           "Name 🔒"),
                                       InputFieldWidget(
                                           readOnly: false, hintText: "",
-                                          controller: filteredStock[index].description,
+                                          controller: styleData.filteredStock[index].description,
                                           onTypingFunction:
                                               (value) {description = value;
                                           },
@@ -680,7 +654,7 @@ class _POSState extends State<POS> {
                                           hintText:
                                           "",
                                           controller:
-                                          filteredStock[index].amount
+                                          styleData.filteredStock[index].amount
                                               .toString(),
                                           onTypingFunction:
                                               (value) {
@@ -722,17 +696,17 @@ class _POSState extends State<POS> {
                                             onPressed:
                                                 () {
 
-                                              if (filteredStock[index].tracking == true) {
-                                                if (quantity <= filteredStock[index].quantity) {
+                                              if (styleData.filteredStock[index].tracking == true) {
+                                                if (quantity <= styleData.filteredStock[index].quantity) {
                                                   Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                                                      name: filteredStock[index].name,
+                                                      name: styleData.filteredStock[index].name,
                                                       quantity: quantity,
                                                       amount: amount,
                                                       details: description,
-                                                      tracking: filteredStock[index].tracking));
+                                                      tracking: styleData.filteredStock[index].tracking));
                                                   selectedStocks.add(Stock(
-                                                      name: filteredStock[index].name,
-                                                      id: filteredStock[index].documentId,
+                                                      name: styleData.filteredStock[index].name,
+                                                      id: styleData.filteredStock[index].documentId,
                                                       restock: quantity,
                                                       price: amount / 1.0));
                                                   Navigator.pop(context);
@@ -744,7 +718,7 @@ class _POSState extends State<POS> {
                                                         return CupertinoAlertDialog(
                                                           title: const Text('Quantity Too High'),
                                                           content: Text(
-                                                            "The quantity available for ${filteredStock[index].name} is ${filteredStock[index].quantity}! You have tried to sell ${quantity} units!",
+                                                            "The quantity available for ${styleData.filteredStock[index].name} is ${styleData.filteredStock[index].quantity}! You have tried to sell ${quantity} units!",
                                                             style: kNormalTextStyle.copyWith(color: kBlack),
                                                           ),
                                                           actions: [
@@ -772,11 +746,11 @@ class _POSState extends State<POS> {
                                                 }
                                               } else {
                                                 Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                                                    name: filteredStock[index].name,
+                                                    name: styleData.filteredStock[index].name,
                                                     quantity: quantity,
                                                     amount: amount,
                                                     details: description,
-                                                    tracking: filteredStock[index].tracking
+                                                    tracking: styleData.filteredStock[index].tracking
                                                 )
                                                 );
                                                 Navigator.pop(
@@ -827,27 +801,27 @@ class _POSState extends State<POS> {
                                       CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          filteredStock[index].name,
+                                          styleData.filteredStock[index].name,
                                           overflow:
                                           TextOverflow.clip,
                                           style:
                                           kHeadingTextStyle,
                                         ),
-                                        filteredStock[index].tracking == false
+                                        styleData.filteredStock[index].tracking == false
                                             ? Container() :
                                         // If the minimum quantity at index is greater or equal to the current quantity
-                                        filteredStock[index].minimum >= filteredStock[index].quantity
-                                            ? Text("Qty: ${filteredStock[index].quantity.toString()}",
+                                        styleData.filteredStock[index].minimum >= styleData.filteredStock[index].quantity
+                                            ? Text("Qty: ${styleData.filteredStock[index].quantity.toString()}",
                                           overflow: TextOverflow.clip,
                                           style: kHeadingTextStyle.copyWith(fontSize: 12, color: Colors.red),
                                         )
-                                            : Text("Qty: ${filteredStock[index].quantity.toString()}",
+                                            : Text("Qty: ${styleData.filteredStock[index].quantity.toString()}",
                                           overflow: TextOverflow.clip,
                                           style: kHeadingTextStyle.copyWith(fontSize: 12, color: kGreenThemeColor),
                                         ),
                                       ],
                                     ),
-                                    Text("${currency} ${CommonFunctions().formatter.format(filteredStock[index].amount)}",
+                                    Text("${currency} ${CommonFunctions().formatter.format(styleData.filteredStock[index].amount)}",
                                       style: kNormalTextStyle.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: kBlack, fontSize: 15),

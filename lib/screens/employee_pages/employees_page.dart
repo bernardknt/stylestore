@@ -332,7 +332,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
           // Put the title in the center
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Employees'),
+            const Text('Team'),
             kMediumWidthSpacing,
             // A Icon button that downloads the employee data
             IconButton(
@@ -485,22 +485,23 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                       buildButton(context, 'View ${filteredEmployees[index].fullNames} Details', Icons.person,
                                               () async {
                                         Navigator.pop(context);
-
+                                        Provider.of<BeauticianData>(context, listen: false).setEmployeeDetails(filteredEmployees[index].fullNames, filteredEmployees[index].phone, filteredEmployees[index].position,CommonFunctions().convertJsonString( filteredEmployees[index].permissions),
+                                            filteredEmployees[index].code, filteredEmployees[index].documentId);
                                                 Provider.of<BeauticianData>(context, listen: false).setEmployeeProfile(filteredEmployees[index]);
                                                 Navigator.pushNamed(context, EditProfilePage.id);
                                           }
                                       ),
-                                      buildButton(context, 'Change ${filteredEmployees[index].fullNames} Permissions', Icons.edit,
-                                              () async {
-
-                                            Provider.of<BeauticianData>(context, listen: false).setEmployeeDetails(filteredEmployees[index].fullNames, filteredEmployees[index].phone, filteredEmployees[index].position,CommonFunctions().convertJsonString( filteredEmployees[index].permissions),
-                                                filteredEmployees[index].code, filteredEmployees[index].documentId);
-                                            Navigator.pop(context);
-                                            Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
-
-
-                                          }
-                                      ),
+                                      // buildButton(context, 'Change ${filteredEmployees[index].fullNames} Permissions', Icons.edit,
+                                      //         () async {
+                                      //
+                                      //       Provider.of<BeauticianData>(context, listen: false).setEmployeeDetails(filteredEmployees[index].fullNames, filteredEmployees[index].phone, filteredEmployees[index].position,CommonFunctions().convertJsonString( filteredEmployees[index].permissions),
+                                      //           filteredEmployees[index].code, filteredEmployees[index].documentId);
+                                      //       // Navigator.pop(context);
+                                      //       // Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
+                                      //
+                                      //
+                                      //     }
+                                      // ),
 
                                       buildButton(context, 'Share ${filteredEmployees[index].fullNames} Credentials', Icons.share,  () async {
                                         Share.share('Login instructions for ${filteredEmployees[index].fullNames}\n1. Start by downloading the BusinessPilot app on ios or android or via the website.\n2. On the login page, click on the "Join Business as Staff Member".\n3.Enter the phone number and code below\n4. Login.\nNumber: ${filteredEmployees[index].phone}\nCode: ${filteredEmployees[index].code}', subject: 'Login to BusinessPilot');

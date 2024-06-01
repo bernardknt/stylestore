@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/model/common_functions.dart';
 
 import '../Utilities/constants/color_constants.dart';
 import '../screens/videos/videos_page.dart';
@@ -60,28 +61,27 @@ class CustomPopupWidget extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        showModalBottomSheet(isScrollControlled: true, context: context, builder: (context) {
-                          return
-                            Scaffold(
-                              backgroundColor: kBlack,
-                              appBar: AppBar(
-                                automaticallyImplyLeading: false,
-                                backgroundColor: kBlack,
-                                foregroundColor: kPureWhiteColor,
-                              ),
-
-                              body: Column(
-                                children: [
-                                  ExpandableVideoPlayer(videoUrl: youtubeLink),
-                                  kLargeHeightSpacing,
-                                  TextButton(onPressed: (){Navigator.pop(context);}, child: Text("Go Back", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
-                                ],
-                              ));
-                        });
-
-
-                        // Add your continue button functionality here
-                      },
+                        CommonFunctions().openLink(youtubeLink);
+                        // showModalBottomSheet(isScrollControlled: true, context: context, builder: (context) {
+                        //   return
+                        //     Scaffold(
+                        //       backgroundColor: kBlack,
+                        //       appBar: AppBar(
+                        //         automaticallyImplyLeading: false,
+                        //         backgroundColor: kBlack,
+                        //         foregroundColor: kPureWhiteColor,
+                        //       ),
+                        //
+                        //       body: Column(
+                        //         children: [
+                        //           ExpandableVideoPlayer(videoUrl: youtubeLink),
+                        //           kLargeHeightSpacing,
+                        //           TextButton(onPressed: (){Navigator.pop(context);}, child: Text("Go Back", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
+                        //         ],
+                        //       ));
+                        // });
+                        //
+                        },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kCustomColor,
                         foregroundColor: Colors.black,
@@ -95,10 +95,7 @@ class CustomPopupWidget extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // Navigator.pop(context);
                           function();
-                      
-                          // Add your continue button functionality here
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,

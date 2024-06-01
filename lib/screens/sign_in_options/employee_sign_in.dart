@@ -235,6 +235,7 @@ defaultInitialization()async{
 
                               onChanged: (value){
                                 phoneNumber = countryCode + value;
+                                print(phoneNumber);
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(

@@ -76,7 +76,7 @@ class _PremiumMonthlySubscriptionsPageState extends State<PremiumMonthlySubscrip
 
                 children: [
                   kLargeHeightSpacing,
-                  Text("Select a Package", style: kNormalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
+                  Text("Select Monthly Package", style: kNormalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(

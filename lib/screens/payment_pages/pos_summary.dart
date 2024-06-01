@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
@@ -18,6 +19,7 @@ import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/stock_items.dart';
+import '../../widgets/cool_dialogue.dart';
 import '../../widgets/pos_summary_widget.dart';
 import '../customer_pages/search_customer.dart';
 import 'amount_widget.dart';
@@ -146,58 +148,71 @@ class PosSummary extends StatelessWidget {
                       Provider.of<BeauticianData>(context, listen: false)
                           .setStoreId(prefs.getString(kStoreIdConstant));
                       if (Provider.of<StyleProvider>(context, listen: false).customerName == ""){
+                        showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      builder: (context) {
+                                        return Scaffold(
+                                            appBar: AppBar(
+                                              automaticallyImplyLeading: false,
+                                              backgroundColor: kPureWhiteColor,
+                                              elevation: 0,
+                                            ),
 
-                        CoolAlert.show(
-                            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-                            lottieAsset: 'images/leave.json',
-                            context: context,
-                            type: CoolAlertType.success,
-                            text: 'No Customer Added',
-                            title:'Add a Customer',
-                            confirmBtnText: 'Add',
-                            cancelBtnText: "Continue with Customer",
-                            cancelBtnTextStyle: kNormalTextStyle,
-                            confirmBtnTextStyle: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-                            showCancelBtn: true,
-                            confirmBtnColor: Colors.green,
-                            backgroundColor: kBlueDarkColor,
-                            onCancelBtnTap: (){
-                              Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
-                              Navigator.pop(context);
-                              Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return Scaffold(
-                                        appBar: AppBar(
-                                          automaticallyImplyLeading: false,
-                                          backgroundColor: kPureWhiteColor,
-                                          elevation: 0,
-                                        ),
-
-                                        body: AmountToPayWidget());
-                                  });
-                            },
-                            onConfirmBtnTap: (){
-                              // Navigator.pop(context);
-                              print("THIS LINE RUN");
-                              showModalBottomSheet(
-                                  isScrollControlled: true,
-                                  context: context,
-                                  builder: (context) {
-                                    return Scaffold(
-                                        appBar: AppBar(
-                                          elevation: 0,
-                                          backgroundColor: kPureWhiteColor,
-                                          automaticallyImplyLeading: false,
-                                        ),
-                                        body: MobileMoneyPage());
-                                  });
-
-
-                            }
-                        );
+                                            body: AddCustomerDialog());
+                                      });
+                        AddCustomerDialog();
+                        // CoolAlert.show(
+                        //     width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+                        //     lottieAsset: 'images/leave.json',
+                        //     context: context,
+                        //     type: CoolAlertType.success,
+                        //     text: 'No Customer Added',
+                        //     title:'Add a Customer',
+                        //     confirmBtnText: 'Add',
+                        //     cancelBtnText: "Continue with Customer",
+                        //     cancelBtnTextStyle: kNormalTextStyle,
+                        //     confirmBtnTextStyle: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                        //     showCancelBtn: true,
+                        //     confirmBtnColor: Colors.green,
+                        //     backgroundColor: kBlueDarkColor,
+                        //     onCancelBtnTap: (){
+                        //       Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
+                        //       Navigator.pop(context);
+                        //       Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
+                        //       showModalBottomSheet(
+                        //           context: context,
+                        //           isScrollControlled: true,
+                        //           builder: (context) {
+                        //             return Scaffold(
+                        //                 appBar: AppBar(
+                        //                   automaticallyImplyLeading: false,
+                        //                   backgroundColor: kPureWhiteColor,
+                        //                   elevation: 0,
+                        //                 ),
+                        //
+                        //                 body: AmountToPayWidget());
+                        //           });
+                        //     },
+                        //     onConfirmBtnTap: (){
+                        //       // Navigator.pop(context);
+                        //       print("THIS LINE RUN");
+                        //       showModalBottomSheet(
+                        //           isScrollControlled: true,
+                        //           context: context,
+                        //           builder: (context) {
+                        //             return Scaffold(
+                        //                 appBar: AppBar(
+                        //                   elevation: 0,
+                        //                   backgroundColor: kPureWhiteColor,
+                        //                   automaticallyImplyLeading: false,
+                        //                 ),
+                        //                 body: MobileMoneyPage());
+                        //           });
+                        //
+                        //
+                        //     }
+                        // );
                       } else {
 
 

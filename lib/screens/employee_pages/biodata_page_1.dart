@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:pinput/pinput.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/controllers/responsive/responsive_page.dart';
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
@@ -110,7 +111,7 @@ class _BioDataFormState extends State<BioDataForm> {
       'permissions': '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }',
       'checklist': []
     })
-        .then((value) => print("Service Added"))
+        .then((value) => CommonFunctions().showSuccessNotification("Successfully Added", context))
         .catchError((error) => print("Failed to add service: $error"));
   }
 
@@ -425,7 +426,7 @@ class _BioDataFormState extends State<BioDataForm> {
                                               });
                                             }else {
                                               addNewEmployee();
-                                              Navigator.pop(context);
+                                              Navigator.pushNamed(context, SuperResponsiveLayout.id);
                                             }
                                           },
                                         ),

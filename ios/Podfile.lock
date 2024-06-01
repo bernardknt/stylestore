@@ -958,11 +958,11 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.32)
   - camera_avfoundation (0.0.1):
     - Flutter
-  - cloud_firestore (4.17.3):
+  - cloud_firestore (4.17.4):
     - Firebase/Firestore (= 10.25.0)
     - firebase_core
     - Flutter
-  - cloud_functions (4.7.4):
+  - cloud_functions (4.7.5):
     - Firebase/Functions (= 10.25.0)
     - firebase_core
     - Flutter
@@ -1026,22 +1026,22 @@ PODS:
   - Firebase/Storage (10.25.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 10.25.0)
-  - firebase_analytics (10.10.5):
+  - firebase_analytics (10.10.6):
     - Firebase/Analytics (= 10.25.0)
     - firebase_core
     - Flutter
-  - firebase_auth (4.19.5):
+  - firebase_auth (4.19.6):
     - Firebase/Auth (= 10.25.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.31.0):
+  - firebase_core (2.31.1):
     - Firebase/CoreOnly (= 10.25.0)
     - Flutter
-  - firebase_messaging (14.9.2):
+  - firebase_messaging (14.9.3):
     - Firebase/Messaging (= 10.25.0)
     - firebase_core
     - Flutter
-  - firebase_storage (11.7.5):
+  - firebase_storage (11.7.6):
     - Firebase/Storage (= 10.25.0)
     - firebase_core
     - Flutter
@@ -1354,6 +1354,9 @@ PODS:
     - Flutter
   - vibration (1.7.5):
     - Flutter
+  - video_player_avfoundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - webview_flutter_wkwebview (0.0.1):
     - Flutter
 
@@ -1392,6 +1395,7 @@ DEPENDENCIES:
   - sqflite (from `.symlinks/plugins/sqflite/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
+  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
   - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/ios`)
 
 SPEC REPOS:
@@ -1504,6 +1508,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   vibration:
     :path: ".symlinks/plugins/vibration/ios"
+  video_player_avfoundation:
+    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
   webview_flutter_wkwebview:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
@@ -1513,19 +1519,19 @@ SPEC CHECKSUMS:
   blue_thermal_printer: c83405103d2c17f8d67aaa43fcff94df5d616a66
   BoringSSL-GRPC: 1e2348957acdbcad360b80a264a90799984b2ba6
   camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
-  cloud_firestore: 792f773e5e8c080ffcbadd49f9fb397927f29af6
-  cloud_functions: 84f27bc4ef64af3dc5f94e0d7d632693fa839ea0
+  cloud_firestore: bf5f14c0a7d1e9f5f831015d9ae9f738e92065b4
+  cloud_functions: b488e858925b406acfd261ec03497a789bd319e0
   contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
   DKPhotoGallery: b3834fecb755ee09a593d7c9e389d8b5d6deed60
   file_picker: ce3938a0df3cc1ef404671531facef740d03f920
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
-  firebase_analytics: 0b2b459312872129295c3f9c44225eda552fd8f3
-  firebase_auth: 76ea642e91a9e914b3af751a416046ce1a965cf4
-  firebase_core: 0b39f4f424e02eecabb2356ddf331fa07b772af8
-  firebase_messaging: 8999827b6efc9c3ab4b1f9dc246deaa7f13dbf88
-  firebase_storage: e8b44d3f47e35f60dde2a119da11dc6e8962bef3
+  firebase_analytics: 12eee4d99a168adaf820e54e65720aea450e97f3
+  firebase_auth: 193301a23be35329120526c6a83672ea40676472
+  firebase_core: 22e117a2e0dec3cb318c8f53f2dd01c140375617
+  firebase_messaging: 7c04a2151f0da85796b41e01ad7da870af6a27e2
+  firebase_storage: f370e615a09cce01a5d5bc31c45b1adeff3e9453
   FirebaseAnalytics: ec00fe8b93b41dc6fe4a28784b8e51da0647a248
   FirebaseAppCheckInterop: 5da5ce93e8797a215e3f677fb0654b74e736c8b8
   FirebaseAuth: c0f93dcc570c9da2bffb576969d793e95c344fbb
@@ -1580,7 +1586,8 @@ SPEC CHECKSUMS:
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   vibration: 7d883d141656a1c1a6d8d238616b2042a51a1241
-  webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
+  video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
+  webview_flutter_wkwebview: be0f0d33777f1bfd0c9fdcb594786704dbf65f36
 
 PODFILE CHECKSUM: f2497a5df11f38b9a34265527e470dd4ec1466d8
 

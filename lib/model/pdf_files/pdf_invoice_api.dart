@@ -32,15 +32,15 @@ class PdfInvoicePdfHelper {
     throw Exception('Failed to fetch logo image');
   }
 
-static testWebPdf ()async{
-   final data = CustomData(name: 'Alice');
-   final pdfFile = await generateDocument(PdfPageFormat.a4, data);
-
-   // Decide what to do with the pdfFile (example: save to file system)
-   final pathProvider = await getTemporaryDirectory();
-   final file = File('${pathProvider.path}/sample.pdf');
-   await file.writeAsBytes(pdfFile);
-  }
+// static testWebPdf ()async{
+//    final data = CustomData(name: 'Alice');
+//    final pdfFile = await generateDocument(PdfPageFormat.a4, data);
+//
+//    // Decide what to do with the pdfFile (example: save to file system)
+//    final pathProvider = await getTemporaryDirectory();
+//    final file = File('${pathProvider.path}/sample.pdf');
+//    await file.writeAsBytes(pdfFile);
+//   }
 
   static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
     Future<Uint8List> _fetchLogoBytes(String imageUrl) async {

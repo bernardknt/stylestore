@@ -134,7 +134,7 @@ class _EditShopPageState extends State<EditShopPage> {
                       //BannerPictureRoundedEdges(image: styleData.beauticianImageUrl),
                       // CarouselPhotosWidget(urlImages: styleData.beauticianClients),
                       Center(
-                        child: Image.asset("images/new_logo.png",
+                        child: Image.asset("images/store_design.png",
                           height: 200,
                         ),
                       ),

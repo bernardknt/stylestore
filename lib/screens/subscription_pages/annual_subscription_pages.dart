@@ -77,7 +77,7 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
 
                 children: [
                   kLargeHeightSpacing,
-                  Text("Select a Package", style: kNormalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
+                  Text("Select Annual Package", style: kNormalTextStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),),
                   kSmallHeightSpacing,
                   Container(
                     decoration: BoxDecoration(

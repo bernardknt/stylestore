@@ -401,7 +401,7 @@ class _ChatPageState extends State<ChatPage> {
                               stream: FirebaseFirestore.instance
                                   .collection('chat')
                                   .where('userId', isEqualTo: storeId)
-                                  .orderBy('time',descending: true)
+                                  .orderBy('time',descending: true).limit(20)
                                   .snapshots(),
                               builder: (context, snapshot)
                               {

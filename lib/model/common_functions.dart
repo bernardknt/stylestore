@@ -44,6 +44,7 @@ import '../Utilities/constants/font_constants.dart';
 import '../main.dart';
 import '../screens/Messages/bulk_message.dart';
 import '../screens/Messages/message.dart';
+import '../screens/chat_messages/chat.dart';
 import '../screens/customer_pages/customer_data.dart';
 import '../screens/customer_pages/sync_customer.dart';
 import '../screens/payment_pages/pos_summary.dart';
@@ -152,6 +153,44 @@ class CommonFunctions {
           .map((doc) => AllStockData.fromFirestore(doc))
           .toList();
 
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
+
+  void ShowCaptain(context, bool admin){
+    Future.delayed(Duration(seconds: 3), () {
+      if (Provider.of<StyleProvider>(context, listen: false).notificationIcon && admin == true) {
+        showDialog(context: context, builder: (BuildContext context){
+          return
+            GestureDetector(
+                onTap: (){
+                  Navigator.pop(context);
+                },
+                child:
+                ChatPage()
+            );
+        });
+      }
+    });
+  }
+
+  Future<List<AllStockData>> retrieveSalableStockData(context) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .where('active', isEqualTo: true)
+          .where('saleable', isEqualTo: true)
+          .orderBy('name', descending: false)
+          .get();
+
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      Provider.of<StyleProvider>(context, listen: false).setFilteredStock(stockDataList);
       return stockDataList;
     } catch (error) {
       print('Error retrieving stock data: $error');
@@ -784,7 +823,7 @@ class CommonFunctions {
     final initials = prefs.getString(kBusinessNameConstant)?.split(' ')
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
-    print(initials);
+
 
 
     return initials.toString();
@@ -1006,7 +1045,7 @@ class CommonFunctions {
   String smsValue (business, businessNumber, customerName, countryCode) {
 
 
-    businessNumber = '$countryCode${formatPhoneNumber(businessNumber, countryCode)}';
+    // businessNumber = '$countryCode${formatPhoneNumber(businessNumber, countryCode)}';
     var sms = '{"thankyou": "Dear $customerName, Thank you for choosing $business! We appreciate your business. For any assistance, please call $businessNumber.","reminder": "Dear $customerName, kindly make payment for your outstanding purchase with $business. For any assistance, please call $businessNumber.","options": ["We value your business $customerName! Thank you for choosing $business. For any assistance, please call $businessNumber.","Thank you for your support $customerName! $business is here to serve you. For any assistance, please call $businessNumber.","Your order is on its way $customerName! Thank you for choosing $business. For any assistance, please call $businessNumber.","We appreciate your trust in $business! For any assistance, please call $businessNumber."]}';
  return sms;
   }
@@ -1194,11 +1233,11 @@ class CommonFunctions {
     }
   }
 
-  Future<void> addCustomer( nameOfCustomer, phoneNumberOfCustomer, context, customerId) async{
+  Future<void> addCustomer( nameOfCustomer, phoneNumberOfCustomer, context, customerId, location) async{
     CollectionReference customerProvided = FirebaseFirestore.instance.collection('customers');
     final prefs = await SharedPreferences.getInstance();
     String account = prefs.getString(kLoginPersonName) ?? "";
-    String location = prefs.getString(kLocationConstant) ?? "";
+
     Map<String, String> optionsToUpload = {
       'Joined': '${DateFormat('EE, dd, MMM, hh:mm a').format(DateTime.now())}',
     };
@@ -1440,12 +1479,61 @@ class CommonFunctions {
   }
 
 
+// Retrieve Supplier details
+  Future<void> fetchSupplierNames(context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String storeId = prefs.getString(kStoreIdConstant)!;
+    String storeName = prefs.getString(kBusinessNameConstant)??"";
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('suppliers')
+        .where("storeId", isEqualTo: storeId)
+        .get();
+    List<String> supplierIds = ["supplierId","$storeName id"];
+    List<String> supplierRealNames = ["Supplier",storeName];
+    List<String> supplierData = querySnapshot.docs.map((doc) {
+      String name = doc['name'] as String;
+      String supplies = doc['supplies'] as String;
 
+      supplierIds.add(doc.id);
+      supplierRealNames.add(doc['name']);
+      return "$name ($supplies)";
+    }).toList();
+    List<String>  supplierDisplayNames = ["Supplier",storeName,...supplierData];
+    Provider.of<StyleProvider>(context, listen: false).setSupplierDetails(supplierIds, supplierRealNames, supplierDisplayNames);
+
+
+  }
   // Launch Google Maps to webview
   Future<void> openMap(double latitude, double longitude) async {
     String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
 
     launchUrl(Uri.parse(googleUrl));
+  }
+
+  // Launch Google Maps to webview
+  Future<void> openLink(String url) async {
+  //  String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+    launchUrl(Uri.parse(url));
+  }
+
+  Future<List<AllStockData>> retrieveStockTrackedData(context) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .where('tracking', isEqualTo: true)
+          .orderBy('name', descending: false)
+          .get();
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      Provider.of<StyleProvider>(context, listen: false).setFilteredStock(stockDataList);
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return [];
+    }
   }
 
   void callPhoneNumber (String phoneNumber){
@@ -2166,7 +2254,9 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
           'minimum': rowData.minimum,
           'image': "https://mcusercontent.com/f78a91485e657cda2c219f659/images/14f4afc4-ffaf-4bb1-3384-b23499cf0df7.png",
           'storeId': prefs.getString(kStoreIdConstant),
-          'stockTaking': []
+          'stockTaking': [],
+          'unit':'pcs',
+          'scannable': false,
         }).onError((error, stackTrace) =>  ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error! $error'))
         ))

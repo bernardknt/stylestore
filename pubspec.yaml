@@ -39,6 +39,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   url_launcher: ^6.2.6
   youtube_player_flutter: ^9.0.1
+  youtube_player_iframe: ^5.1.2
   firebase_auth: ^4.19.5
   country_code_picker: ^3.0.0
   cloud_functions: ^4.4.1
@@ -64,7 +65,7 @@ dependencies:
   provider: ^5.0.0
   cloud_firestore: ^4.14.0
   syncfusion_flutter_charts: ^24.2.7
-
+  video_player: ^2.8.6
   fl_chart: ^0.68.0
   simple_circular_progress_bar: ^1.0.2
   dropdown_search: ^5.0.6

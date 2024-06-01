@@ -200,46 +200,50 @@ class _CustomerTransactionsWebState extends State<CustomerTransactionsWeb> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
+                            child: Stack(
+                              children: [
+                                Container(
 
-                              decoration: BoxDecoration(
-                                  color: kPureWhiteColor,
-                                  borderRadius: BorderRadius.circular(10)
-                              ),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        // RoundImageRing(radius: 80,networkImageToUse: Provider.of<BeauticianData>(context,listen: false).customerImage, outsideRingColor: kBackgroundGreyColor),
-                                        //
-                                        CircleAvatar(
-                                          radius: 40,
-                                          backgroundColor: kPlainBackground,
-                                          child:  Icon(Icons.person, size: 40,color: kAppPinkColor,),
-                                        ),
-                                        kMediumWidthSpacing,
-                                        kMediumWidthSpacing,
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            CustomerTag(iconToUse: Icon(Icons.person, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerName,),
-                                            kSmallHeightSpacing,
-                                            CustomerTag(iconToUse: Icon(Icons.location_on, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerLocation,),
-                                            kSmallHeightSpacing,
-                                            CustomerTag(iconToUse: Icon(Icons.phone, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerPhoneNumber,),
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                  decoration: BoxDecoration(
+                                      color: kPureWhiteColor,
+                                      borderRadius: BorderRadius.circular(10)
                                   ),
-                                ],
-                              ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            // RoundImageRing(radius: 80,networkImageToUse: Provider.of<BeauticianData>(context,listen: false).customerImage, outsideRingColor: kBackgroundGreyColor),
+                                            //
+                                            CircleAvatar(
+                                              radius: 40,
+                                              backgroundColor: kPlainBackground,
+                                              child:  Icon(Icons.person, size: 40,color: kAppPinkColor,),
+                                            ),
+                                            kMediumWidthSpacing,
+                                            kMediumWidthSpacing,
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                CustomerTag(iconToUse: Icon(Icons.person, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerName,),
+                                                kSmallHeightSpacing,
+                                                CustomerTag(iconToUse: Icon(Icons.location_on, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerLocation,),
+                                                kSmallHeightSpacing,
+                                                CustomerTag(iconToUse: Icon(Icons.phone, size: 20,), value: Provider.of<BeauticianData>(context,listen: false).customerPhoneNumber,),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
 
+                                ),
+                              ],
                             ),
                           ),
                         ),

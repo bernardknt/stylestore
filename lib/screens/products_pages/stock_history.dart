@@ -197,9 +197,10 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                                 Text( "${productList[index].length} Items ${activityList[index]}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize, fontWeight: FontWeight.bold)),
                                                 Container(
                                                     width: 200,
-                                                    child: Text( "${listOProducts[index].join(", ")}",overflow: TextOverflow.fade, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize))),
+                                                    child:
+                                                    Text( "${listOProducts[index].join(", ")}",overflow: TextOverflow.fade, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize))),
                                                 //Text( "${listOfItems[index]}",overflow: TextOverflow.clip, style: TextStyle(fontFamily: fontFamilyMont,fontSize: textSize)),
-                                                Text("Done by:${createdByList[index]}", style: kNormalTextStyle.copyWith(fontSize: 12),),
+                                                Text("Recorded by: ${createdByList[index]}", style: kNormalTextStyle.copyWith(fontSize: 12),),
                                                 Text('${DateFormat('d/MMM hh:mm a').format(dateList[index])}', style: kNormalTextStyle.copyWith(fontSize: 11),),
                                               ],
                                             ),

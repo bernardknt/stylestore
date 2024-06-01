@@ -172,8 +172,8 @@ class _CustomerPageState extends State<CustomerPage> {
     var storeData = Provider.of<BeauticianData>(context, listen: false);
     return Scaffold(
         backgroundColor: Colors.white,
-        floatingActionButtonLocation:
-        FloatingActionButtonLocation.miniCenterFloat,
+        // floatingActionButtonLocation:
+        // FloatingActionButtonLocation.miniCenterFloat,
         floatingActionButton: permissionsMap['customers'] == false
             ? Container() : FloatingActionButton(backgroundColor: kAppPinkColor, onPressed: () {
               // add Ingredient Here

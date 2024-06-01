@@ -11,6 +11,7 @@ import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/text_form.dart';
 import '../add_service.dart';
 
 class SyncCustomersPage extends StatefulWidget {
@@ -25,6 +26,9 @@ class _SyncCustomersPageState extends State<SyncCustomersPage> {
   List displayedContacts = [];
   List newContacts = [];
   TextEditingController searchController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController numberController = TextEditingController();
 
   void defaultInitialization () async{
 
@@ -113,6 +117,8 @@ class _SyncCustomersPageState extends State<SyncCustomersPage> {
                     //Text(info.phones?.first?.value ?? 'N/A'),
                     onTap: () async{
                       // _showContactDetails(info);
+                      nameController..text = info.displayName?? 'N/A';
+                      numberController..text = info.phones![0].value?? 'N/A';
                       final prefs = await SharedPreferences.getInstance();
 
                       final initials = prefs.getString(kBusinessNameConstant)?.split(' ')
@@ -121,32 +127,40 @@ class _SyncCustomersPageState extends State<SyncCustomersPage> {
                       customerId = 'customer${initials}${uuid.v1().split("-")[0]}';
                       showDialog(context: context, builder: (BuildContext context){
                         return
-                          CupertinoAlertDialog(
-                            title: Text('Add ${info.displayName ?? 'N/A'}?'),
-                            content: Column(
-                              children: [
-                                Text("Are you sure you want to add ${info.displayName ?? 'N/A'} : ${info.phones![0].value ?? 'N/A'}", style: kNormalTextStyle.copyWith(color: kBlack),),
+                          Material(
+                            color:Colors.transparent,
+                            child: CupertinoAlertDialog(
+                              title: Text('Add ${info.displayName ?? 'N/A'}?'),
+                              content: Column(
+                                children: [
+                                 // Text("Are you sure you want to add ${info.displayName ?? 'N/A'} : ${info.phones![0].value ?? 'N/A'}", style: kNormalTextStyle.copyWith(color: kBlack),),
+                                  TextForm(label:'Name', controller:nameController),
+                                  TextForm(label:'Number', controller:numberController),
+                                  TextForm(label:'Location', controller:locationController),
 
+                                ],
+                              ),
+                              actions: [
+                            
+                                CupertinoDialogAction(isDestructiveAction: true,
+                                    onPressed: (){
+                                      // _btnController.reset();
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('Cancel')),
+                                CupertinoDialogAction(isDefaultAction: true,
+                                    onPressed: ()async{
+                                  final prefs = await SharedPreferences.getInstance();
+                                  String location = prefs.getString(kLocationConstant) ?? "";
+
+                            
+                                      CommonFunctions().addCustomer(nameController.text, numberController.text,context,customerId,locationController.text );
+                            
+                                    },
+                                    child: const Text('Add Contact')),
+                            
                               ],
                             ),
-                            actions: [
-
-                              CupertinoDialogAction(isDestructiveAction: true,
-                                  onPressed: (){
-                                    // _btnController.reset();
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Cancel')),
-                              CupertinoDialogAction(isDefaultAction: true,
-                                  onPressed: (){
-                                    // _btnController.reset();
-
-                                    CommonFunctions().addCustomer(info.displayName ?? 'N/A', info.phones![0].value ?? 'N/A',context,customerId );
-
-                                  },
-                                  child: const Text('Add Contact')),
-
-                            ],
                           );
                       });
 

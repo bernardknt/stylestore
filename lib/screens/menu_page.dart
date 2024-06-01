@@ -1,6 +1,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -62,12 +63,14 @@ class _MenuPageState extends State<MenuPage> {
   var liveColor = Colors.green;
   String userName = "";
   String checkInTime = "";
+  String initialCountryCode = "UG";
 
   final auth = FirebaseAuth.instance;
   Map<String, dynamic> permissionsMap = {};
 
   void defaultsInitiation()async{
     final prefs = await SharedPreferences.getInstance();
+    initialCountryCode = prefs.getString(kCountry)??"UG";
     userName = prefs.getString(kLoginPersonName) ?? "Hi";
     int? storedTimestamp = prefs.getInt(kSignInTime);
     DateTime lastSignInTime = DateTime.now();
@@ -111,16 +114,7 @@ class _MenuPageState extends State<MenuPage> {
               // Spacer(),
               Text(
                 "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,color: kPureWhiteColor),),
-              // Container(
-              //     decoration: BoxDecoration(
-              //         color: kAppPinkColor,
-              //         borderRadius: BorderRadius.all(Radius.circular(5))
-              //     ),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(2.0),
-              //       child: Text(checkInTime, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),),
-              //     )),
-              // kLargeHeightSpacing,
+
               Row(
                 children: [
                   RoundImageRing(radius: 80, outsideRingColor: kPureWhiteColor, networkImageToUse: Provider.of<StyleProvider>(context).beauticianImageUrl,),
@@ -161,43 +155,72 @@ class _MenuPageState extends State<MenuPage> {
               //     trailing: Icon(Icons.support_agent, color: kPureWhiteColor,),
               //   ),
               // ),
+              CountryCodePicker(
+                textStyle: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                initialSelection: initialCountryCode,
+                favorite: const [
+                  "+250",
+                  "+256",
+                  "+254",
+                ],
 
-              GestureDetector(
-                  onTap: (){
-                    CoolAlert.show(
-                        context: context,
-                        type: CoolAlertType.success,
-                        widget: Column(
-                          children: [
-                            Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
+                // showCountryOnly: false,
+                // showFlag: true,
+                showOnlyCountryWhenClosed: true,
+                showFlagMain: true,
+                // Only show country name (optional)
+                onChanged: (code) async{
+                  final prefs = await SharedPreferences.getInstance();
+                  prefs.setString(kCountry, code.name!);
+                  prefs.setString(kCountryCode, code.dialCode!);
 
-                          ],
-                        ),
-                        title: 'Log Out?',
+                  String currency = CommonFunctions().getCurrencyCode(code.dialCode!, context);
+                  prefs.setString(kCurrency, currency);
+                  setState(() {
 
-                        confirmBtnColor: kFontGreyColor,
-                        confirmBtnText: 'Yes',
-                        confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
-                        lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
+                  });
+                },
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: GestureDetector(
+                    onTap: (){
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.success,
+                          widget: Column(
+                            children: [
+                              Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
+
+                            ],
+                          ),
+                          title: 'Log Out?',
+
+                          confirmBtnColor: kFontGreyColor,
+                          confirmBtnText: 'Yes',
+                          confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
+                          lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
 
 
-                        onConfirmBtnTap: () async{
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.setBool(kIsLoggedInConstant, false);
-                          prefs.setBool(kIsFirstTimeUser, true);
-                          await auth.signOut().then((value) => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SuperResponsiveLayout(
-                                mobileBody: LoginPage(),
-                                desktopBody: LoginPageNewWeb(),
+                          onConfirmBtnTap: () async{
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setBool(kIsLoggedInConstant, false);
+                            prefs.setBool(kIsFirstTimeUser, true);
+                            await auth.signOut().then((value) => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SuperResponsiveLayout(
+                                  mobileBody: LoginPage(),
+                                  desktopBody: LoginPageNewWeb(),
+                                ),
                               ),
-                            ),
-                          ));
-                        }
-                    );
-                  },
-                  child: Text("Log Out", style:kNormalTextStyleBoldPink.copyWith(color: Colors.blue) ,)),
+                            ));
+                          }
+                      );
+                    },
+                    child: Text("Log Out", style:kNormalTextStyleBoldPink.copyWith(color: Colors.blue) ,)),
+              ),
               kLargeHeightSpacing,
               permissionsMap['admin'] == true ?
               TextButton(onPressed: (){

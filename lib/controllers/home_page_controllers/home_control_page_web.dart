@@ -1,4 +1,5 @@
 import 'package:cool_alert/cool_alert.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -46,10 +47,11 @@ class _ControlPageWebState extends State<ControlPageWeb> {
   Color selectedColor = kGreenThemeColor.withOpacity(0.5); // Default selected widget
   final auth = FirebaseAuth.instance;
   final divider = Divider(color: kBlack.withOpacity(0.3), height: 1);
-
+  String initialCountryCode = '+256';
   defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     subscriptionDate = prefs.getInt(kSubscriptionEndDate)??subscriptionDate;
+    initialCountryCode = prefs.getString(kCountryCode)?? "+256";
 
 
     setState(() {
@@ -120,61 +122,104 @@ class _ControlPageWebState extends State<ControlPageWeb> {
             footerBuilder: (context, extended) {
               return
 
-                Column(
+                Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        onTap:(){
-                          Navigator.pushNamed(context, EditShopPage.id);
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15.0, bottom: 8, top: 3),
+                          child: GestureDetector(
+                            onTap:(){
+                              Navigator.pushNamed(context, EditShopPage.id);
 
-                        },
-                          child: const Icon(Icons.settings)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                          onTap: () async {
-
-                            CoolAlert.show(
-                                width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-
-                                context: context,
-                                type: CoolAlertType.success,
-                                widget: Column(
-                                  children: [
-                                    Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
-
-                                  ],
-                                ),
-                                title: 'Log Out?',
-
-                                confirmBtnColor: kFontGreyColor,
-                                confirmBtnText: 'Yes',
-                                confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
-                                lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
+                            },
+                              child: Row(
 
 
-                                onConfirmBtnTap: () async{
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setBool(kIsLoggedInConstant, false);
-                                  prefs.setBool(kIsFirstTimeUser, true);
-                                  await auth.signOut().then((value) => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SuperResponsiveLayout(
-                                        mobileBody: LoginPage(),
-                                        desktopBody: LoginPageNewWeb(),
-                                      ),
-                                    ),
-                                  )
-                                  );
-                                }
+                                children: [
+                                  const Icon(Icons.settings),
+                                  kMediumWidthSpacing,
+                                  kMediumWidthSpacing,
 
+                                  Text("Settings")
+                                ],
+                              )),
+                        ),
+                        CountryCodePicker(
+                          initialSelection: initialCountryCode,
+                          favorite: const [
+                            "+250",
+                            "+256",
+                            "+254",
+                          ],
 
-                            );
+                          // showCountryOnly: false,
+                          // showFlag: true,
+                          showOnlyCountryWhenClosed: true,
+                          showFlagMain: true,
+                          // Only show country name (optional)
+                          onChanged: (code) async{
+                            final prefs = await SharedPreferences.getInstance();
+                            prefs.setString(kCountry, code.name!);
+                            prefs.setString(kCountryCode, code.dialCode!);
+
+                            String currency = CommonFunctions().getCurrencyCode(code.dialCode!, context);
+                            prefs.setString(kCurrency, currency);
+                            setState(() {
+
+                            });
                           },
-                          child: const Text('Log out', style: kNormalTextStyle,))
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left:16.0, top: 8),
+                          child: GestureDetector(
+                              onTap: () async {
+
+                                CoolAlert.show(
+                                    width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+
+                                    context: context,
+                                    type: CoolAlertType.success,
+                                    widget: Column(
+                                      children: [
+                                        Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
+
+                                      ],
+                                    ),
+                                    title: 'Log Out?',
+
+                                    confirmBtnColor: kFontGreyColor,
+                                    confirmBtnText: 'Yes',
+                                    confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
+                                    lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
+
+
+                                    onConfirmBtnTap: () async{
+                                      final prefs = await SharedPreferences.getInstance();
+                                      prefs.setBool(kIsLoggedInConstant, false);
+                                      prefs.setBool(kIsFirstTimeUser, true);
+                                      await auth.signOut().then((value) => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SuperResponsiveLayout(
+                                            mobileBody: LoginPage(),
+                                            desktopBody: LoginPageNewWeb(),
+                                          ),
+                                        ),
+                                      )
+                                      );
+                                    }
+
+
+                                );
+                              },
+                              child:  Text('Log out', style: kNormalTextStyle.copyWith(color: kBlueThemeColor),)),
+                        ),
+
+
+                      ],
                     ),
                   ],
                 );
@@ -182,16 +227,17 @@ class _ControlPageWebState extends State<ControlPageWeb> {
 
             headerBuilder: (context, extended) {
               return SizedBox(
-                height: 50,
+
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      Image.asset('images/new_logo.png'),
+                      Image.asset('images/new_logo.png', width: 30,),
                       kSmallWidthSpacing,
                      subscriptionDate>= DateTime.now().millisecondsSinceEpoch ?
                      Text("Business Class",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
-                     :Text("Basic",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),)
+                     :Text("Basic",overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: kAppPinkColor, fontWeight: FontWeight.bold, fontSize: 12),),
+
                     ],
                   ),
                 ),

@@ -8,9 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/model/styleapp_data.dart';
+import 'package:stylestore/screens/products_pages/stock_items.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/scanner_widget.dart';
@@ -69,6 +72,7 @@ class _ProductUploadState extends State<ProductUpload> {
 
   Future<void> addStoreItem(itemId, image) async{
     final prefs = await SharedPreferences.getInstance();
+    String storeId = prefs.getString(kStoreIdConstant)??"";
     bool scannable = false;
     // ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text(' $name code: $barcode')));
     if(barcode == ""){
@@ -91,7 +95,7 @@ class _ProductUploadState extends State<ProductUpload> {
       'unit': selectedUnit,
       'image': image,
       'id': itemId,
-      'storeId': prefs.getString(kStoreIdConstant),
+      'storeId': storeId,
       'date': DateTime.now(),
       'minimum': minimum,
       'tracking': selectedTrackingValue,
@@ -102,7 +106,14 @@ class _ProductUploadState extends State<ProductUpload> {
       'ignore'  : false
 
     })
-        .then((value) => print("Item Added"))
+        .then((value)
+        {
+          Provider.of<StyleProvider>(context, listen: false).addFilteredStock(AllStockData(documentId: itemId, storeId: storeId, amount: price/1.0,
+              unit: selectedUnit, quantity: quantity, minimum: minimum,
+              description: description, image: image, name: name, saleable: selectedSaleableValue,
+              tracking: selectedTrackingValue, stockTaking: [], ignore: false, barcode: barcode));
+          Navigator.pop(context);
+        })
         .catchError((error) => print("Failed to add Item: $error"));
   }
 
@@ -165,7 +176,8 @@ class _ProductUploadState extends State<ProductUpload> {
 
                   child:
 
-                  image != null ? Image.file(image!, height: 180,) : Container(
+                  image != null ? Image.file(image!, height: 180,) :
+                  Container(
                     width: double.infinity,
                     height: 180,
                     child: !kIsWeb?Lottie.asset("images/beauty.json", width: 40):Column(
@@ -323,7 +335,8 @@ class _ProductUploadState extends State<ProductUpload> {
                         ],
                       ),
 
-                      selectedTrackingValue == true ? InputFieldWidget(fontColor: kPureWhiteColor,controller: quantity.toString(),labelText: ' Quantity (Current Stock)',labelTextColor: kBeigeColor,  hintText: '10', keyboardType: TextInputType.number, onTypingFunction: (value){
+                      selectedTrackingValue == true ?
+                      InputFieldWidget(fontColor: kPureWhiteColor,controller: quantity.toString(),labelText: ' Quantity (Current Stock)',labelTextColor: kBeigeColor,  hintText: '10', keyboardType: TextInputType.number, onTypingFunction: (value){
                         quantity = double.parse(value);
                       }):Container(),
                       selectedTrackingValue == true ? InputFieldWidget(
@@ -356,12 +369,14 @@ class _ProductUploadState extends State<ProductUpload> {
                     RoundedLoadingButton(
                       width: 120,
                       color: kBabyPinkThemeColor,
+                      valueColor: kBlack,
+
                       child: Text('Create Product', style: TextStyle(color: barcode!=""?kGreenThemeColor:kAppPinkColor)),
                       controller: _btnController,
                       onPressed: () async {
                         if ( name == '' || price == 0){
-                          print(name);
-                          print(price);
+
+
 
                           _btnController.error();
                           showDialog(context: context, builder: (BuildContext context){
@@ -388,7 +403,7 @@ class _ProductUploadState extends State<ProductUpload> {
                             addStoreItem(serviceId, "https://mcusercontent.com/f78a91485e657cda2c219f659/images/14f4afc4-ffaf-4bb1-3384-b23499cf0df7.png");
                           }
 
-                          Navigator.pop(context);
+
 
                           //Implement registration functionality.
                         }
@@ -408,17 +423,7 @@ class _ProductUploadState extends State<ProductUpload> {
                       },
                       child:
                         ScannerWidget(backgroundColor: kBlack,scannerColor: barcode == ""?kPureWhiteColor:kGreenThemeColor,)
-                      // Container(
-                      //   height: 45,
-                      //   width: 45,
-                      //   decoration: BoxDecoration(
-                      //       color: kCustomColor,
-                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
-                      //       boxShadow: [BoxShadow(color: kFaintGrey.withOpacity(0.5), spreadRadius: 2,blurRadius: 2 )]
-                      //
-                      //   ),
-                      //   child: Icon(Iconsax.scan),
-                      // ),
+
                     ),
 
                   ],

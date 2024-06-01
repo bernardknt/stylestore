@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/screens/chat_messages/chat.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
+import 'package:stylestore/screens/video_tutoria_page.dart';
 import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -26,6 +27,7 @@ import '../customer_pages/customers_page.dart';
 import '../expenses_pages/expenses.dart';
 import '../sign_in_options/sign_in_page.dart';
 import '../tasks_pages/tasks_widget.dart';
+import '../video_page.dart';
 
 class HomePageWeb extends StatefulWidget {
   static String id = "home_page_web";
@@ -42,6 +44,7 @@ class _HomePageWebState extends State<HomePageWeb> {
   String userName = "";
   String image = '';
   String storeId = '';
+  bool runOnce = false;
   var storeLocation = "";
   late bool isCheckedIn;
   String checkInTime="..loading";
@@ -127,6 +130,17 @@ class _HomePageWebState extends State<HomePageWeb> {
     super.initState();
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   // TODO: implement didChangeDependencies
+  //   super.didChangeDependencies();
+  //   final notificationIcon = Provider.of<StyleProvider>(context).notificationIcon;
+  //   if (notificationIcon && runOnce == false) {
+  //     runOnce = true;
+  //     CommonFunctions().ShowCaptain(context, true );
+  //   }
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +168,10 @@ class _HomePageWebState extends State<HomePageWeb> {
                           onTap: (){
                             Navigator.pop(context);
                           },
-                          child: ChatPage());
+                          child:
+                          //TutorialVideoPage(videoUrl: "https://www.youtube.com/watch?v=3dtwm9RgDlU&ab_channel=Jayse")
+                         ChatPage()
+                      );
                   });
                 },
 
@@ -169,11 +186,7 @@ class _HomePageWebState extends State<HomePageWeb> {
               top: 10,
               child: 
                 Lottie.asset("images/notificationIcon.json", height: 40)
-              // CircleAvatar(
-              //   backgroundColor: kAppPinkColor,
-              //   radius: 7,
-              //   child: Text("1", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 10),),
-              // ),
+
             ):const SizedBox(),
           ]
       ),

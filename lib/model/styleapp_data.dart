@@ -18,14 +18,21 @@ class StyleProvider extends ChangeNotifier{
   Map<String, String> countryNumbers = {
     "+213": "DZD", "+244": "AOA", "+229": "XOF", "+267": "BWP", "+226": "XOF", "+257": "BIF", "+238": "CVE", "+237": "XAF", "+236": "XAF", "+235": "XAF", "+269": "KMF",
     "+242": "XAF","+243": "CDF","+253": "DJF", "+20": "EGP", "+240": "XAF", "+291": "ERN", "+268": "SZL", "+251": "ETB", "+241": "XAF", "+220": "GMD", "+233": "GHS", "+224": "GNF", "+245": "XOF", "+225": "XOF", "+254": "KES", "+266": "LSL", "+231": "LRD", "+218": "LYD","+261": "MGA", "+265": "MWK", "+223": "XOF", "+222": "MRU", "+230": "MUR", "+212": "MAD", "+258": "MZN", "+264": "NAD", "+227": "XOF", "+234": "NGN", "+250": "RWF", "+239": "STN", "+221": "XOF", "+248": "SCR", "+232": "SLL", "+252": "SOS",
-    "+27": "ZAR", "+211": "SSP", "+249": "SDG", "+255": "TZS", "+228": "XOF", "+216": "TND", "+256": "UGX", "+260": "ZMW", "+263": "ZWL","+1":"USD"
+    "+27": "ZAR", "+211": "SSP", "+249": "SDG", "+255": "TZS", "+228": "XOF", "+216": "TND", "+256": "UGX", "+260": "ZMW", "+263": "ZWL","+1":"USD",
 
-  }
-  ;
-
+  };
+  bool videoButtonVisible = false;
   List<String>  bulkNumbers = [];
   List<String>  bulkNames = [];
   List<String> selectedStock = [];
+  // Supplier Details
+  List<String> supplierDisplayNames = ["Nice"];
+  List<String> supplierIds = ["default"];
+  List<String> supplierRealNames = ["Supplier"];
+
+
+  List<AllStockData> filteredStock = [];
+  List<AllStockData> filteredStockDisplayed = [];
 
   String userName = '';
   String selectedUnit = '';
@@ -185,6 +192,53 @@ class StyleProvider extends ChangeNotifier{
   Map <String, bool>debtorsChecklist = {};
   Map <String, bool>ingredientsChecklist = {};
 
+
+  void setVideoButtonVisible(state){
+    videoButtonVisible = state;
+    notifyListeners();
+  }
+  void setFilteredStock (List<AllStockData>data){
+    filteredStock = data;
+   filteredStockDisplayed = data;
+    notifyListeners();
+  }
+
+  void addFilteredStock(AllStockData value){
+    filteredStockDisplayed.add(value);
+    filteredStock.add(value);
+    notifyListeners();
+  }
+
+  void filterStockQuery(String query) {
+
+   filteredStock = filteredStockDisplayed
+          .where((stock) =>
+      stock.name.toLowerCase().contains(query.toLowerCase()) ||
+          stock.description.toLowerCase().contains(query.toLowerCase())
+      ).toList();
+   notifyListeners();
+
+    // });
+  }
+
+  void setSupplierDetails (List<String> ids, List<String> realNames, List<String> displayNames){
+    supplierIds = ids;
+    supplierRealNames = realNames;
+    supplierDisplayNames = displayNames;
+    notifyListeners();
+  }
+
+
+
+
+  void addSupplierDetails (String ids, String realNames,String displayNames){
+    supplierIds.add(ids);
+    supplierRealNames.add(realNames);
+    supplierDisplayNames.add(displayNames);
+    print("id: $ids, name: $realNames ,display: $displayNames");
+
+    notifyListeners();
+  }
 
   void setOnboardingIndex (index){
     onboardingIndex = index;

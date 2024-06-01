@@ -88,7 +88,7 @@ class _OnboardingEmployeeState extends State<OnboardingEmployee> {
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   String countryCode = ' ';
-  String permissions = '{"transactions": true,"expenses": true,"customers": true,"sales": true,"store": true,"analytics": true,"messages": true,"tasks": true,"admin": true,"summary": true,"employees": true,"notifications": true,"signIn": false,"takeStock": true, "qrCode": false}';
+  String permissions = '{"transactions": true,"expenses": true,"customers": true,"sales": true,"store": true,"analytics": true,"messages": true,"tasks": true,"admin": true,"summary": true,"employees": true,"notifications": true,"signIn": true,"takeStock": true, "qrCode": false}';
   double opacityOfTextFields = 1.0;
   CollectionReference storesDb = FirebaseFirestore.instance.collection('medics');
   CollectionReference employeeDb = FirebaseFirestore.instance.collection('employees');

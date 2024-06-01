@@ -174,7 +174,7 @@ class _AddCustomersPageState extends State<AddCustomersPage> {
       backgroundColor: kBackgroundGreyColor,
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
 
             Padding(

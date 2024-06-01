@@ -14,6 +14,7 @@ import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
 import '../../widgets/text_form.dart';
+import '../suppliers/supplier_form.dart';
 
 
 class AddExpenseWidget extends StatefulWidget {
@@ -34,14 +35,14 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   var originalBasketToPost = [];
   var storeId = "";
   String? selectedDepartment;
-  List<String> supplierDisplayNames = [];
-  List<String> supplierIds = ["default"];
-  List<String> supplierRealNames = ["Supplier"];
+  // List<String> supplierDisplayNames = [];
+  // List<String> supplierIds = ["default"];
+  // List<String> supplierRealNames = ["Supplier"];
   String? selectedSupplierDisplayName;
   String? selectedSupplierId;
   String? selectedSupplierRealName;
   List<String> _filteredSupplierDisplayNames = [];
-  late TextEditingController expenseController;
+  TextEditingController expenseController = TextEditingController();
   late TextEditingController quantityController;
   String currency = "";
 
@@ -69,22 +70,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     }
   }
 
-  Future<void> fetchSupplierNames() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('suppliers')
-        .where("storeId", isEqualTo: storeId)
-        .get();
-    List<String> supplierData = querySnapshot.docs.map((doc) {
-      String name = doc['name'] as String;
-      String supplies = doc['supplies'] as String;
-      supplierIds.add(doc.id);
-      supplierRealNames.add(doc['name']);
-      return "$name ($supplies)";
-    }).toList();
-    setState(() {
-      supplierDisplayNames = ["Supplier",...supplierData];
-    });
-  }
+
 
   Future<void> uploadPhoto(String filePath, String fileName)async {
     File file = File(filePath);
@@ -94,6 +80,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
 
       });
       final urlDownload = await snapshot.ref.getDownloadURL();
+      print("$selectedSupplierRealName:$selectedSupplierId,");
       CommonFunctions().uploadExpense(originalBasketToPost, context, expenseOrderNumber, urlDownload, selectedSupplierRealName, selectedSupplierId, currency);
     }  catch(e){
       print(e);
@@ -106,10 +93,10 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
     final prefs = await SharedPreferences.getInstance();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     expenseOrderNumber = "Expense_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
-    fetchSupplierNames();
+    CommonFunctions().fetchSupplierNames(context);
     expenseController = TextEditingController(text: styleData.expense);
     quantityController = TextEditingController(text: expenseQuantity);
-    _filteredSupplierDisplayNames = supplierDisplayNames;
+    // _filteredSupplierDisplayNames = supplierDisplayNames;
     currency = prefs.getString(kCurrency)??"USD"; //Provider.of<StyleProvider>(context, listen: false).storeCurrency;
     setState(() {
 
@@ -160,6 +147,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
               }
             ];
             originalBasketToPost = basketToPost;
+            print("$selectedSupplierRealName:$selectedSupplierId,");
             image == null ? CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber, "",selectedSupplierRealName, selectedSupplierId, currency) : uploadPhoto(image!.path, expenseOrderNumber,);
             // CommonFunctions().uploadExpense(basketToPost, context, expenseOrderNumber);
           }else {
@@ -232,41 +220,69 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 kLargeHeightSpacing,
                 TextForm(label: 'Quantity',controller: quantityController, keyBoardType: TextInputType.numberWithOptions(decimal: true)),
                 kLargeHeightSpacing,
-                DropdownSearch<String>(
-                  items: supplierDisplayNames,
-
-                  popupProps:
-                  const PopupProps.menu(
-                    showSearchBox: true,
-                    showSelectedItems: true, // Show selected items at the top
-                    searchFieldProps: TextFieldProps(
-                      autofocus: true, // Focus the search field when popup opens
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        prefixIcon: Icon(Icons.search),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: DropdownSearch<String>(
+                        items: Provider.of<StyleProvider>(context, listen: true).supplierDisplayNames,
+                      
+                        popupProps:
+                        const PopupProps.menu(
+                          showSearchBox: true,
+                          showSelectedItems: true, // Show selected items at the top
+                          searchFieldProps: TextFieldProps(
+                            autofocus: true, // Focus the search field when popup opens
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              prefixIcon: Icon(Icons.search),
+                            ),
+                      
+                          ),
+                      
+                        ),
+                        dropdownDecoratorProps:  DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            labelText: "Select Supplier",
+                            hintText: "Supplier for goods",
+                          ),
+                        ),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedSupplierDisplayName = newValue!;
+                            int position = Provider.of<StyleProvider>(context, listen: false).supplierDisplayNames.indexOf(newValue);
+                            print("The index is $position");
+                            selectedSupplierRealName = Provider.of<StyleProvider>(context, listen: false).supplierRealNames[position];
+                            selectedSupplierId = Provider.of<StyleProvider>(context, listen: false).supplierIds[position];
+                            print("KOKOKOKOK $selectedSupplierRealName: $selectedSupplierId");
+                          });
+                        },
+                        filterFn: (item, query) {
+                          return item.toLowerCase().contains(query!.toLowerCase());
+                        },
                       ),
-
                     ),
+                    Expanded(
+                        flex: 2,
+                        child:
+                        TextButton(
+                          onPressed: (){
+                            Navigator.pushNamed(context, SupplierForm.id);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: kCustomColor,
+                              borderRadius: BorderRadius.circular(10)
+                            ),
 
-                  ),
-                  dropdownDecoratorProps: const DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      labelText: "Select Supplier",
-                      hintText: "Supplier for goods",
-                    ),
-                  ),
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedSupplierDisplayName = newValue!;
-                      int position = supplierDisplayNames.indexOf(newValue);
-                      selectedSupplierRealName = supplierRealNames[position];
-                      selectedSupplierId = supplierIds[position];
-                      print("$selectedSupplierRealName: $selectedSupplierId");
-                    });
-                  },
-                  filterFn: (item, query) {
-                    return item.toLowerCase().contains(query!.toLowerCase());
-                  },
+                                                child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(child: Text("+ Supplier", style: kNormalTextStyle.copyWith(color: kBlack),)),
+                                                ),
+                                              ),
+                        )
+                    )
+                  ],
                 ),
               ],
             ),
