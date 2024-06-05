@@ -10,6 +10,7 @@ import 'package:mailer/mailer.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stylestore/controllers/subscription_controller.dart';
 import 'package:stylestore/screens/chat_messages/chat.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/video_tutoria_page.dart';
@@ -171,6 +172,7 @@ class _HomePageWebState extends State<HomePageWeb> {
                           child:
                           //TutorialVideoPage(videoUrl: "https://www.youtube.com/watch?v=3dtwm9RgDlU&ab_channel=Jayse")
                          ChatPage()
+                        // SubscriptionController()
                       );
                   });
                 },

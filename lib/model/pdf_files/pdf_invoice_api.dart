@@ -32,15 +32,6 @@ class PdfInvoicePdfHelper {
     throw Exception('Failed to fetch logo image');
   }
 
-// static testWebPdf ()async{
-//    final data = CustomData(name: 'Alice');
-//    final pdfFile = await generateDocument(PdfPageFormat.a4, data);
-//
-//    // Decide what to do with the pdfFile (example: save to file system)
-//    final pathProvider = await getTemporaryDirectory();
-//    final file = File('${pathProvider.path}/sample.pdf');
-//    await file.writeAsBytes(pdfFile);
-//   }
 
   static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
     Future<Uint8List> _fetchLogoBytes(String imageUrl) async {
@@ -63,6 +54,8 @@ class PdfInvoicePdfHelper {
 
 
     // final response = await http.get(Uri.parse(logo));
+
+    // final Uint8List logoBytes = (await rootBundle.load("images/plain_white.png")).buffer.asUint8List();
 
 
     pdf.addPage(MultiPage(
@@ -105,48 +98,6 @@ class PdfInvoicePdfHelper {
     return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
   }
 
-  // static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
-  //
-  //
-  //   final pdf = Document();
-  //   final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
-  //   final Uint8List logoBytes = await CommonFunctions().fetchLogoBytes(logo);
-  //
-  //   // final response = await http.get(Uri.parse(logo));
-  //
-  //
-  //   pdf.addPage(MultiPage(
-  //     build: (context) => [
-  //       // Image(MemoryImage(response.bodyBytes)),
-  //
-  //
-  //       pw.Image(MemoryImage(logoBytes), height: 70, alignment: Alignment.centerRight),
-  //
-  //
-  //       buildHeader(invoice),
-  //       SizedBox(height: 2 * PdfPageFormat.cm),
-  //       buildTitle(invoice),
-  //       buildInvoice(invoice),
-  //       Divider(),
-  //       pw.Stack(children: [
-  //         buildTotal(invoice),
-  //         pw.Positioned(bottom: 0,
-  //             left:0,
-  //             child: invoice.paid.amount > 0 && invoice.template.type == "RECEIPT"?
-  //             pw.Image(MemoryImage(imagePng), height: 100, alignment: Alignment.centerRight)
-  //                 : pw.Container()
-  //
-  //         )
-  //
-  //       ]),
-  //
-  //
-  //     ],
-  //
-  //     footer: (context) => buildFooter(invoice),
-  //   ));
-  //   return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
-  // }
 
   static Future<void> generateAndDownloadPdf(Invoice invoice, String pdfFileName, String logo) async {
 

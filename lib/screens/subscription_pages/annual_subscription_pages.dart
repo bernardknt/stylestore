@@ -42,7 +42,7 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
 
   List<Offering> offerings = [
     Offering(title: 'Business Class', price: 499000, isSelected: false, benefits: ["Autopilot Business Notifications", "Barcode Scanning of Products", "Unlimited Products", "Up to 5 Employees", "Full Business Analytics"], duration: 365, ),
-    Offering(title: 'First Class', price: 1000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 365, popular: true),
+    Offering(title: 'First Class', price: 999000, isSelected: false, benefits: ["Everything in Premium", "Up to 10 Employees", "Custom Reports"], duration: 365, popular: true),
     Offering(title: 'VIP Class', price: 1499000, isSelected: false, benefits: ["Everything in Premium", "Location Tracking of Employees", "Up to 20 Employees"], duration: 365),
   ];
 
@@ -104,24 +104,75 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
                   ),
                   kLargeHeightSpacing,
                   Provider.of<StyleProvider>(context, listen: true).subscriptionPackageToBuy == ""?Container():
-                  MobileMoneyPaymentButton(buttonTextColor:Colors.white,buttonColor: kAppPinkColor,lineIconFirstButton: LineIcons.paypal,
-                      firstButtonFunction: ()async{
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return Scaffold(
-                                  appBar: AppBar(
-                                    elevation: 0,
-                                    backgroundColor: kPureWhiteColor,
-                                    automaticallyImplyLeading: false,
-                                  ),
-                                  body: SubscriptionMobileMoneyPage());
-                            });
 
-                      }, firstButtonText: 'Select ${Provider.of<StyleProvider>(context, listen: true).subscriptionPackageToBuy}'),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: MobileMoneyPaymentButton(buttonTextColor:Colors.white,buttonColor: kAppPinkColor,lineIconFirstButton: LineIcons.paypal,
+                        firstButtonFunction: ()async{
+                          showModalBottomSheet(
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return Scaffold(
+                                    appBar: AppBar(
+                                      elevation: 0,
+                                      backgroundColor: kPureWhiteColor,
+                                      automaticallyImplyLeading: false,
+                                    ),
+                                    body: SubscriptionMobileMoneyPage());
+                              });
+
+                        }, firstButtonText: 'Select ${Provider.of<StyleProvider>(context, listen: true).subscriptionPackageToBuy}'),
+                  ),
                   kSmallHeightSpacing,
-                  const CancelButtonWidget()
+                  Provider.of<StyleProvider>(context, listen: true).trial?
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: 500,
+                      decoration: BoxDecoration(
+
+                        // color: kBlueDarkColor,
+                          gradient: LinearGradient(
+                            colors: [kBlueDarkColor, kAppPinkColor],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("START 14 DAY FREE TRIAL", style: kNormalTextStyle.copyWith(fontSize: 14, fontWeight: FontWeight.bold, color: kPureWhiteColor, letterSpacing: 3),),
+                                Text("Try first and decide later",  style: kNormalTextStyle.copyWith(  color: kPureWhiteColor),),
+                              ],
+                            ),
+                            // Text("START FREE TRIAL"),
+                            TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor: CommonFunctions().convertToMaterialStateProperty(kPureWhiteColor)
+                                ),
+                                onPressed: ()async{
+                                  final prefs = await
+                                  SharedPreferences.getInstance();
+                                  String storeId  = prefs.getString(kStoreIdConstant)??"";
+
+                                  CommonFunctions().setTrialInFirestore(context, storeId);
+                                }, child: Text("Start Trial", style: kNormalTextStyle.copyWith(color: kBlack),))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ):Container(),
+                  kLargeHeightSpacing,
+
+                  Provider.of<StyleProvider>(context, listen: true).trial? const CancelButtonWidget():Container()
 
                 ],
               ),
@@ -138,7 +189,16 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
       duration: Duration(milliseconds: 200),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        color: offering.isSelected ? kCustomColor : Colors.grey[200],
+        gradient:  offering.isSelected ? LinearGradient(
+          colors: [kBlueDarkColor, kAppPinkColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ): LinearGradient(
+          colors: [ Colors.grey.shade200,  Colors.grey.shade200],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        // color: offering.isSelected ? kCustomColor : Colors.grey[200],
       ),
       child: Material(
         color: Colors.transparent,
@@ -161,10 +221,11 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
                   offering.title,
                   style: kNormalTextStyle.copyWith(
                     // fontSize: 16.0,
-                    color: offering.isSelected ? kBlack:kFontGreyColor,
+                    color: offering.isSelected ? kPureWhiteColor:kFontGreyColor,
                     fontWeight: offering.isSelected ? FontWeight.bold : null,
                   ),
                 ),
+                kSmallHeightSpacing,
                 Container(
                   decoration: BoxDecoration(
                       color: offering.isSelected ? kPureWhiteColor:Colors.transparent,
@@ -183,6 +244,7 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
                           CommonFunctions().formatter.format(offering.price),
                           style: TextStyle(
                             fontSize: 30.0,
+
                             fontWeight: offering.isSelected ? FontWeight.bold : null,
                           ),
                         ),
@@ -201,10 +263,10 @@ class _PremiumAnnualSubscriptionsPageState extends State<PremiumAnnualSubscripti
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Row(children: [
-                              Icon(Icons.check, size: 10, color: kAppPinkColor,),
+                              Icon(Icons.check, size: 10,  color: offering.isSelected ? kPureWhiteColor:kFontGreyColor,),
                               kSmallWidthSpacing,
                               kSmallWidthSpacing,
-                              Expanded(child: Text(offering.benefits[index], style: kNormalTextStyle.copyWith(color: kBlack),)),
+                              Expanded(child: Text(offering.benefits[index], style: kNormalTextStyle.copyWith( color: offering.isSelected ? kPureWhiteColor:kBlack,),)),
                             ],),
                           );
 

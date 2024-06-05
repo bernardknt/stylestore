@@ -14,10 +14,12 @@ import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/widgets/report_widgets/best_customers_widget.dart';
 import 'package:stylestore/widgets/report_widgets/best_products_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
+import '../../../model/common_functions.dart';
 import '../../../model/styleapp_data.dart';
 import '../../../widgets/graphs/purchases_graph.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/graphs/sales_graph_widget.dart';
+import '../../../widgets/locked_widget.dart';
 class AnalyticsNewWeb extends StatefulWidget {
   const AnalyticsNewWeb({super.key});
 
@@ -31,7 +33,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
   String storeId = "storeId";
   DateTime _selectedDay = DateTime.now();
   DateTime _selectedEndDay = DateTime.now().subtract(const Duration(days: 7));
-
+  Map<String, dynamic> permissionsMap = {};
 
 
 
@@ -131,11 +133,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
       print("*********************AFTER ENCODING*****************************");
       final jsonString = jsonEncode(reportData);
       print(jsonString);
-      // dynamic serverCallableVariable = await callableSmsCustomer.call(<String, dynamic>{
-      //   "message" : message,
-      //   "number" : number,
-      //
-      // })
+
       dynamic response = await callable.call(<String, dynamic>{
         'body': jsonString
 
@@ -152,6 +150,13 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
     }
   }
 
+  defaultInitialization()async{
+    permissionsMap = await CommonFunctions().convertPermissionsJson();
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var styleData = Provider.of<StyleProvider>(context, listen: false);
@@ -159,11 +164,11 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
     return Scaffold(
       backgroundColor: kPlainBackground,
       appBar: AppBar(
-        title:  Text('ANALYTICS\nFrom (${DateFormat('dd MMM yyyy').format(_selectedEndDay)}) to (${DateFormat('dd MMM yyyy').format(_selectedDay)})',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
+        title:  permissionsMap['analytics'] == false ?SizedBox(): Text('ANALYTICS\nFrom (${DateFormat('dd MMM yyyy').format(_selectedEndDay)}) to (${DateFormat('dd MMM yyyy').format(_selectedDay)})',textAlign: TextAlign.center,style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold,color: kBlack ),),
         automaticallyImplyLeading: false,
         elevation: 0,
       ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
+      floatingActionButton:  permissionsMap['analytics'] == false ?SizedBox():FloatingActionButton(onPressed: (){
         styleData.setBusinessJSON(styleDataListen.salesReportJSON, styleDataListen.purchasesReportJSON);
         print(styleData.businessReportJSON);
         sendDataToCloudFunction(styleData.businessReportJSON);
@@ -171,7 +176,7 @@ class _AnalyticsNewWebState extends State<AnalyticsNewWeb> {
       },child: Tooltip(
           message: "Generate Report",
           child: Icon(Iconsax.document,color: kPureWhiteColor,)),backgroundColor: kAppPinkColor,),
-      body: SingleChildScrollView(
+      body:  permissionsMap['analytics'] == false ?LockedWidget(page: "Analytics"):SingleChildScrollView(
         child:
         Row(
           mainAxisAlignment: MainAxisAlignment.start,

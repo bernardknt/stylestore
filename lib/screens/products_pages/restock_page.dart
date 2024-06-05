@@ -441,7 +441,8 @@ class _ReStockPageState extends State<ReStockPage> {
         'description':selectedStocks[i].description,
         'quantity': selectedStocks[i].restock,
         'totalPrice':selectedStocks[i].price,
-        'quality': selectedStocks[i].quality
+        'quality': selectedStocks[i].quality,
+        'unit': selectedStocks[i].unit,
       }
       );
     }
@@ -607,9 +608,10 @@ class _ReStockPageState extends State<ReStockPage> {
                               onPressed: () {
                                 Navigator.pop(context); // Close the sheet
                                 // Execute your function
-                                _handleUpdateStockButton();
                                 Provider.of<StyleProvider>(context, listen: false).setSupplierValues(selectedSupplierId, selectedSupplierRealName);
-                              },
+
+                                _handleUpdateStockButton();
+                                 },
                               child: Text('Upload Stock', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
                             )
                             // : SizedBox.shrink(),

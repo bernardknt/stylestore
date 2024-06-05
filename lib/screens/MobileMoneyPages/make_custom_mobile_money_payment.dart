@@ -43,7 +43,7 @@ class _CustomMobileMoneyPageState extends State<CustomMobileMoneyPage> {
     double? newAmount = prefs.getDouble(kBillValue);
     String newPhoneNumber = prefs.getString(kPhoneNumberConstant) ?? '0';
     String? newOrderId = const Uuid().v4();
-    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0');
+    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0',  prefs.getString(kCountryCode)??"");
 
     // orderId = const Uuid().v4();
 

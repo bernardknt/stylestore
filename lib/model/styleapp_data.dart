@@ -12,6 +12,7 @@ import 'package:stylestore/utilities/constants/user_constants.dart';
 import '../Utilities/constants/color_constants.dart';
 import '../utilities/basket_items.dart';
 import '../utilities/customer_items.dart';
+import 'common_functions.dart';
 
 class StyleProvider extends ChangeNotifier{
   // User defauults
@@ -22,6 +23,7 @@ class StyleProvider extends ChangeNotifier{
 
   };
   bool videoButtonVisible = false;
+  bool trial = false;
   List<String>  bulkNumbers = [];
   List<String>  bulkNames = [];
   List<String> selectedStock = [];
@@ -191,8 +193,18 @@ class StyleProvider extends ChangeNotifier{
   Map employeeChecklist = {};
   Map <String, bool>debtorsChecklist = {};
   Map <String, bool>ingredientsChecklist = {};
+  Map<String, dynamic> videoMap = {};
 
 
+
+  setVideoTutorials ()async{
+    videoMap = await CommonFunctions().convertWalkthroughVideoJson();
+    notifyListeners();
+  }
+  void setTrialMode (){
+    trial = true;
+    notifyListeners();
+  }
   void setVideoButtonVisible(state){
     videoButtonVisible = state;
     notifyListeners();

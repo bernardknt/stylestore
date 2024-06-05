@@ -6,6 +6,7 @@ String cPaymentReceived = "Paid";
 String cPaymentOverpaid = "Overpaid by";
 String cSeeAllTransactions = "See all Transactions";
 String cWelcome = "Welcome";
+String cWatchTutorial = "Watch Tutorial";
 String cHi = "Hi";
 String cPOS = "Point of Sale";
 

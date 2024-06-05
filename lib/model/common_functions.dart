@@ -198,6 +198,42 @@ class CommonFunctions {
     }
   }
 
+
+  void setTrialInFirestore(context, String id)async{
+    showDialog(context: context, builder: ( context) {return Center(
+        child:
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: kAppPinkColor,),
+            kSmallHeightSpacing,
+            DefaultTextStyle(
+              style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+              child: Text("Setting Up Your Business Class\nAccount", textAlign: TextAlign.center,),
+            )
+            // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+          ],
+        ));});
+
+    final firestore = FirebaseFirestore.instance;
+    final docRef = firestore.collection('medics').doc(id);
+
+    final now = DateTime.now();
+    final subscriptionEndDate = now.add(const Duration(days: 14));
+
+    await docRef.update({
+      'subscriptionEndDate': subscriptionEndDate,
+      'subscriptionStartDate': now,
+      'package': "Business Class"
+    }).whenComplete((){
+      showSuccessNotification("Business Class Trial Successfully Started", context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+    });
+
+
+
+  }
   void showDebtorsDialog(BuildContext context, Map<String, bool> list) {
     Provider.of<StyleProvider>(context, listen: false).changeDebtorChecklistValues(list);
     showDialog(
@@ -1318,47 +1354,111 @@ class CommonFunctions {
         required String currency,
 
       }) {
-    return CoolAlert.show(
-        width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-        lottieAsset: imagePath,
-        context: context,
-        type: CoolAlertType.success,
-        text: text,
-        title: title,
-        confirmBtnText: 'Add',
-        cancelBtnText: cancelButtonText,
-        showCancelBtn: true,
-        confirmBtnColor: Colors.green,
-        backgroundColor: kBlueDarkColor,
-        onCancelBtnTap: (){
-          Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
-          Provider.of<StyleProvider>(context, listen: false).setSelectedStockItems(selectedStocks);
-          Navigator.pop(context);
-          Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return PosSummary(currency: currency,);
-              });
-        },
-        onConfirmBtnTap: (){
-          Navigator.pop(context);
+    return
+      showDialog(context: context, builder: (BuildContext context){
+        return
+          Material(
+            color:Colors.transparent,
+            child: CupertinoAlertDialog(
+              title: Text('No Customer Added'),
+              content: Text("Press Continue if you dont know the customers details or Add a customer to continue"),
+              actions: [
 
-          showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return Scaffold(
-                    appBar: AppBar(
-                      elevation: 0,
-                      backgroundColor: kPureWhiteColor,
-                      automaticallyImplyLeading: false,
-                    ),
-                    body: CustomerSearchPage());
-              });
+                CupertinoDialogAction(isDestructiveAction: true,
+                    onPressed: (){
+                            Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
+                            Provider.of<StyleProvider>(context, listen: false).setSelectedStockItems(selectedStocks);
+                            Navigator.pop(context);
+                            Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return PosSummary(currency: currency,);
+                                });
+                    },
+                    child: const Text('Continue')),
+                CupertinoDialogAction(isDefaultAction: true,
+                    onPressed: ()async{
 
-        }
-    );
+                            Navigator.pop(context);
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return Scaffold(
+                                      appBar: AppBar(
+                                        elevation: 0,
+                                        backgroundColor: kPureWhiteColor,
+                                        automaticallyImplyLeading: false,
+                                      ),
+                                      body:
+                                      CustomerSearchPage());
+                                });
+
+                   //   CommonFunctions().addCustomer(nameController.text, numberController.text,context,customerId,locationController.text );
+
+                    },
+                    child: const Text('Add Customer')),
+
+              ],
+            ),
+          );
+      });
+
+    //   CoolAlert.show(
+    //     width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+    //     lottieAsset: imagePath,
+    //     context: context,
+    //     type: CoolAlertType.success,
+    //     text: text,
+    //     title: title,
+    //     confirmBtnText: 'Add',
+    //     cancelBtnText: cancelButtonText,
+    //     showCancelBtn: true,
+    //     confirmBtnColor: Colors.green,
+    //     backgroundColor: kBlueDarkColor,
+    //     onCancelBtnTap: (){
+    //       Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
+    //       Provider.of<StyleProvider>(context, listen: false).setSelectedStockItems(selectedStocks);
+    //       Navigator.pop(context);
+    //       Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
+    //       showModalBottomSheet(
+    //           context: context,
+    //           builder: (context) {
+    //             return PosSummary(currency: currency,);
+    //           });
+    //     },
+    //     onConfirmBtnTap: (){
+    //       // Navigator.pop(context);
+    //       showModalBottomSheet(
+    //           isScrollControlled: true,
+    //           context: context,
+    //           builder: (context) {
+    //             return Scaffold(
+    //                 appBar: AppBar(
+    //                   elevation: 0,
+    //                   backgroundColor: kPureWhiteColor,
+    //                   automaticallyImplyLeading: false,
+    //                 ),
+    //                 body:
+    //                 CustomerSearchPage());
+    //           });
+    //
+    //       // showModalBottomSheet(
+    //       //     isScrollControlled: true,
+    //       //     context: context,
+    //       //     builder: (context) {
+    //       //       return Scaffold(
+    //       //           appBar: AppBar(
+    //       //             elevation: 0,
+    //       //             backgroundColor: kPureWhiteColor,
+    //       //             automaticallyImplyLeading: false,
+    //       //           ),
+    //       //           body: CustomerSearchPage());
+    //       //     });
+    //
+    //     }
+    // );
   }
 
   // Method to calculate the total price from the priceList.
@@ -1569,7 +1669,6 @@ class CommonFunctions {
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
       color: kAppPinkColor,));});
-    // Loop through the selectedStocks list and update the Firestore documents.
     for (var stock in selectedStocks) {
       print("${stock.name}:${stock.id}");
 
@@ -2189,10 +2288,17 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     return start;
   }
 
-  String processPhoneNumber(String phoneNumber) {
+  String processPhoneNumber(String phoneNumber, countryCode) {
+    String cleanNumber = phoneNumber.replaceAll(" ", "");
     if (phoneNumber.startsWith("0")) {
       return phoneNumber.substring(1); // Remove the leading '0'
-    } else {
+    } else if (phoneNumber.startsWith(countryCode) ){
+    phoneNumber = cleanNumber.substring(countryCode.length);
+    return phoneNumber; // Remove the leading "+256"
+    }
+
+    else {
+
       return phoneNumber; // Number doesn't start with 0, return as-is
     }
   }

@@ -6,7 +6,7 @@ class AllEmployeeData {
   final String fullNames;
   final String gender;
   final String position;
-  final String nationality;
+  // final String nationality;
   final String phone;
   final String address;
   final String token;
@@ -29,7 +29,7 @@ class AllEmployeeData {
     required this.fullNames,
     required this.gender,
     required this.position,
-    required this.nationality,
+    // required this.nationality,
     required this.phone,
     required this.address,
     required this.department,
@@ -53,7 +53,7 @@ class AllEmployeeData {
       fullNames: doc['name'] ?? '',
       gender: doc['gender'] ?? '',
       position: doc['role'] ?? '',
-      nationality: doc['nationality'] ?? '',
+      // nationality: doc['nationality'] ?? '',
       phone: doc['phoneNumber'] ?? '',
       address: doc['address'] ?? '',
       department: doc['department'] ?? '',

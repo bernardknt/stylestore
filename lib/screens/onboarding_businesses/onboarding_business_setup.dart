@@ -103,6 +103,7 @@ class _OnboardingBusinessState extends State<OnboardingBusiness> {
       'image': imageToUpload,
       'countryCode': countryCode,
       'country':country,
+      'package': "Basic",
       'currency':CommonFunctions().getCurrencyCode(countryCode, context),
       'permissions': '{ "transactions": false,   "expenses": true,   "customers": false,   "sales": true,   "store": true,   "analytics": false,   "messages": false, "tasks": false, "admin": false, "summary": true, "employees": false, "notifications": false, "signIn": true, "takeStock": true, "qrCode": false, "suppliers":true,"checklist":true }',
       'checklist': []

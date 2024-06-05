@@ -24,6 +24,7 @@ import '../widgets/dividing_line_widget.dart';
 import '../widgets/locked_widget.dart';
 import '../widgets/rounded_buttons.dart';
 import '../widgets/rounded_icon_widget.dart';
+import '../widgets/text_form.dart';
 
 class EditShopPage extends StatefulWidget {
   static String id = 'beautician_page';
@@ -186,61 +187,28 @@ class _EditShopPageState extends State<EditShopPage> {
                       trailing: GestureDetector(
                           onTap: (){
                             // buildShowDialog(context);
-                            CoolAlert.show(
+                            showDialog(context: context, builder: (BuildContext context){
+                              return
+                                Material(
+                                  color:Colors.transparent,
+                                  child: CupertinoAlertDialog(
+                                    title: Text('Edit Business Name'),
+                                    content: TextForm(label:'Business Name', controller:TextEditingController()..text = styleDataDisplay.beauticianName),
+                                    actions: [
+                                      CupertinoDialogAction(isDestructiveAction: true,
+                                          onPressed: (){
+                                        Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel')),
+                                      CupertinoDialogAction(isDefaultAction: true,
+                                          onPressed: ()async{
 
-                                lottieAsset: 'images/details.json',
-                                context: context,
-                                type: CoolAlertType.success,
-                                widget: SingleChildScrollView(
-
-                                    child:
-                                    Container(
-                                      child: Column(
-                                        children: [
-
-                                          TextField(
-                                            // controller: TextEditingController!..text = "",
-                                            controller: TextEditingController()..text = styleDataDisplay.beauticianName,
-                                            keyboardType: TextInputType.text,
-
-                                            onChanged: (customerNumber){
-                                              businessName = customerNumber;
-
-                                            },
-                                            decoration: InputDecoration(
-
-                                              // border: InputBorder.none,
-                                                labelText: 'Business Name',
-                                                labelStyle: kNormalTextStyleExtraSmall,
-
-                                                hintText:  '',
-                                                hintStyle: kNormalTextStyle
-                                            ) ,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                                // text: 'Enter customers details',
-                                title: 'Business Name',
-                                confirmBtnText: 'Ok',
-                                showCancelBtn: true,
-                                confirmBtnColor: Colors.green,
-                                backgroundColor: kBlueDarkColor,
-                                onConfirmBtnTap: () async
-                                {
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString(kBusinessNameConstant, businessName);
-                                  print("Value set to businessName");
-                                  CommonFunctions().updateOnlineStoreInfo(storeId, "name", businessName);
-                                  setState(() {
-
-                                  });
-                                  Navigator.pop(context);
-
-                                }
-                            );
-
+                                          },
+                                          child: const Text('Update Name')),
+                                    ],
+                                  ),
+                                );
+                            });
                           },
                           child: Icon(LineIcons.pen, color: kAppPinkColor,)),
                     ),
@@ -252,60 +220,35 @@ class _EditShopPageState extends State<EditShopPage> {
                       trailing: GestureDetector(
                           onTap: (){
                             // buildShowDialog(context);
-                            CoolAlert.show(
+                            showDialog(context: context, builder: (BuildContext context){
+                              return
+                                Material(
+                                  color:Colors.transparent,
+                                  child: CupertinoAlertDialog(
+                                    title: Text('Edit Your Name'),
+                                    content: TextForm(label:'Your Names', controller: TextEditingController()..text = userName),
+                                    actions: [
+                                      CupertinoDialogAction(isDestructiveAction: true,
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel')),
+                                      CupertinoDialogAction(isDefaultAction: true,
+                                          onPressed: ()async{
+                                            final prefs = await SharedPreferences.getInstance();
+                                            prefs.setString(kLoginPersonName, userName);
+                                            print("Value set to businessName");
+                                            CommonFunctions().updateOnlineStoreInfo(storeId, "ownerName", userName);
+                                            Navigator.pop(context);
+                                            setState(() {
 
-                                lottieAsset: 'images/details.json',
-                                context: context,
-                                type: CoolAlertType.success,
-                                widget: SingleChildScrollView(
-
-                                    child:
-                                    Container(
-                                      child: Column(
-                                        children: [
-
-                                          TextField(
-                                            // controller: TextEditingController!..text = "",
-                                            controller: TextEditingController()..text = userName,
-                                            keyboardType: TextInputType.text,
-
-                                            onChanged: (customerNumber){
-                                              userName = customerNumber;
-
-                                            },
-                                            decoration: InputDecoration(
-
-                                              // border: InputBorder.none,
-                                                labelText: 'Your Name',
-                                                labelStyle: kNormalTextStyleExtraSmall,
-
-                                                hintText:  '',
-                                                hintStyle: kNormalTextStyle
-                                            ) ,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                                // text: 'Enter customers details',
-                                title: 'Your Name',
-                                confirmBtnText: 'Ok',
-                                showCancelBtn: true,
-                                confirmBtnColor: Colors.green,
-                                backgroundColor: kBlueDarkColor,
-                                onConfirmBtnTap: () async
-                                {
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString(kLoginPersonName, userName);
-                                  print("Value set to businessName");
-                                  CommonFunctions().updateOnlineStoreInfo(storeId, "ownerName", userName);
-                                  Navigator.pop(context);
-                                  setState(() {
-
-                                  });
-                                }
-                            );
-
+                                            });
+                                          },
+                                          child: const Text('Update Name')),
+                                    ],
+                                  ),
+                                );
+                            });
                           },
                           child: Icon(LineIcons.pen, color: kAppPinkColor,)),
 
@@ -316,58 +259,36 @@ class _EditShopPageState extends State<EditShopPage> {
                       title: Text(styleDataDisplay.beauticianLocation, style: kNormalTextStyle.copyWith(),),
                       trailing: GestureDetector(
                           onTap: (){
-                            CoolAlert.show(
 
-                                lottieAsset: 'images/details.json',
-                                context: context,
-                                type: CoolAlertType.success,
-                                widget: SingleChildScrollView(
+                            showDialog(context: context, builder: (BuildContext context){
+                              return
+                                Material(
+                                  color:Colors.transparent,
+                                  child: CupertinoAlertDialog(
+                                    title: Text('Edit Location'),
+                                    content: TextForm(label:'Location', controller: TextEditingController()..text = styleDataDisplay.beauticianLocation),
+                                    actions: [
+                                      CupertinoDialogAction(isDestructiveAction: true,
+                                          onPressed: (){
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Cancel')),
+                                      CupertinoDialogAction(isDefaultAction: true,
+                                          onPressed: ()async{
+                                            final prefs = await SharedPreferences.getInstance();
+                                            prefs.setString(kLocationConstant, businessLocation);
+                                            CommonFunctions().updateOnlineStoreInfo(storeId, "location", businessLocation);
 
-                                    child:
-                                    Container(
-                                      child: Column(
-                                        children: [
+                                            Navigator.pop(context);
+                                            setState(() {
 
-                                          TextField(
-                                            // controller: TextEditingController!..text = "",
-                                            controller: TextEditingController()..text = styleDataDisplay.beauticianLocation,
-                                            keyboardType: TextInputType.text,
-
-                                            onChanged: (customerLocation){
-                                              businessLocation = customerLocation;
-
-                                            },
-                                            decoration: InputDecoration(
-
-                                              // border: InputBorder.none,
-                                                labelText: 'Business Location',
-                                                labelStyle: kNormalTextStyleExtraSmall,
-
-                                                hintText:  '',
-                                                hintStyle: kNormalTextStyle
-                                            ) ,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                                // text: 'Enter customers details',
-                                title: 'Business Location',
-                                confirmBtnText: 'Ok',
-                                showCancelBtn: true,
-                                confirmBtnColor: Colors.green,
-                                backgroundColor: kBlueDarkColor,
-                                onConfirmBtnTap: ()async{
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString(kLocationConstant, businessLocation);
-                                  CommonFunctions().updateOnlineStoreInfo(storeId, "location", businessLocation);
-
-                                  Navigator.pop(context);
-                                  setState(() {
-
-                                  });
-                                }
-                            );
+                                            });
+                                          },
+                                          child: const Text('Update Name')),
+                                    ],
+                                  ),
+                                );
+                            });
                           },
                           child: Icon(LineIcons.pen, color: kAppPinkColor,)),
                     ),
@@ -377,7 +298,7 @@ class _EditShopPageState extends State<EditShopPage> {
                       subtitle: Text('Opening Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: GestureDetector(
                           onTap: (){
-                            // buildShowDialog(context);
+                            buildShowDialog(context);
                             // DatePicker.showTimePicker(context,
                             //     currentTime: DateTime(2022,12,9,10,00),
                             //     showSecondsColumn: false,

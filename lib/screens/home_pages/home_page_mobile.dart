@@ -27,6 +27,7 @@ import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/photo_widget.dart';
 import 'package:stylestore/widgets/report_popup.dart';
 import '../../controllers/responsive/responsive_dimensions.dart';
+import '../../controllers/subscription_controller.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../utilities/constants/user_constants.dart';
@@ -390,16 +391,32 @@ class _HomePageState extends State<HomePage> {
               right: 0,
               top: 20,
               child: FloatingActionButton(
-                onPressed: (){
+                onPressed: ()async{
+                  final prefs = await SharedPreferences.getInstance();
+                  String name = prefs.getString(kBusinessNameConstant)??"";
 
                   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
+                  // Provider.of<StyleProvider>(context, listen: false).setTrialMode();
                   showDialog(context: context, builder: (BuildContext context){
                     return
                       GestureDetector(
                           onTap: (){
                             Navigator.pop(context);
                           },
-                          child: ChatPage());
+                          child:
+                          Scaffold(
+                              appBar: AppBar(
+                                automaticallyImplyLeading: false,
+                                backgroundColor: kPureWhiteColor,
+                                elevation: 0,
+                                centerTitle: true,
+                                title: Text("Automate $name", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 2, color: kAppPinkColor),),
+                              ),
+                              body: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SubscriptionController(),
+                              ))
+                      );
                   });
                 },
 

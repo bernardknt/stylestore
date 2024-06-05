@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
+import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/screens/subscription_pages/annual_subscription_pages.dart';
 
 
@@ -55,12 +57,6 @@ class _SubscriptionControllerState extends State<SubscriptionController> {
                 labelColor: kBlueDarkColorOld,
                 unselectedLabelColor: kBlueDarkColorOld,
                 tabs: [
-
-
-                  Tab(child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Annual'),
-                  ),),
                   Tab(child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:[
@@ -68,19 +64,20 @@ class _SubscriptionControllerState extends State<SubscriptionController> {
                         Text('Monthly')]
                   ),),
 
+                  Tab(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Annual'),
+                  ),),
+
+
 
                 ],
               ),
             ),
             body: TabBarView(
               children: [
-                PremiumAnnualSubscriptionsPage(),
                 PremiumMonthlySubscriptionsPage(),
-
-
-
-
-                // VisaPage(),
+                PremiumAnnualSubscriptionsPage(),
               ],
             )
         ),

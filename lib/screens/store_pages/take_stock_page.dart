@@ -24,7 +24,7 @@ class TakeStockWidget extends StatelessWidget {
     if (mainPage == true){
       CommonFunctions().retrieveSuppliesData(context);
     }
-
+    Provider.of<StyleProvider>(context, listen: false).setVideoTutorials();
     return Scaffold(
       backgroundColor: kBlack,
       appBar: AppBar(
@@ -137,6 +137,14 @@ class TakeStockWidget extends StatelessWidget {
             kLargeHeightSpacing,
             kLargeHeightSpacing,
             kLargeHeightSpacing,
+            GestureDetector(
+                onTap: (){
+
+                  Map<String, dynamic> videoMap = Provider.of<StyleProvider>(context, listen: false).videoMap;
+                  print(videoMap);
+                  CommonFunctions().openLink(videoMap['store']);
+                },
+                child: Text("Watch Tutorial", style: kNormalTextStyle.copyWith(color: Colors.blue),)),
             kLargeHeightSpacing,
             kLargeHeightSpacing,
             mainPage == false ? Text("Cancel", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),): SizedBox()

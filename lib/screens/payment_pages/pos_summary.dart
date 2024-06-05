@@ -148,20 +148,65 @@ class PosSummary extends StatelessWidget {
                       Provider.of<BeauticianData>(context, listen: false)
                           .setStoreId(prefs.getString(kStoreIdConstant));
                       if (Provider.of<StyleProvider>(context, listen: false).customerName == ""){
-                        showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      builder: (context) {
-                                        return Scaffold(
-                                            appBar: AppBar(
-                                              automaticallyImplyLeading: false,
-                                              backgroundColor: kPureWhiteColor,
-                                              elevation: 0,
-                                            ),
 
-                                            body: AddCustomerDialog());
-                                      });
-                        AddCustomerDialog();
+                        showDialog(context: context, builder: (BuildContext context){
+                          return
+                            Material(
+                              color:Colors.transparent,
+                              child: CupertinoAlertDialog(
+                                title: Text('No Customer Added'),
+                                content: Text("Press Continue if you dont know the customers details or Add a customer to continue"),
+                                actions: [
+
+                                  CupertinoDialogAction(isDestructiveAction: true,
+                                      onPressed: (){
+
+                                              Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
+                                              Navigator.pop(context);
+                                              Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  isScrollControlled: true,
+                                                  builder: (context) {
+                                                    return Scaffold(
+                                                        appBar: AppBar(
+                                                          automaticallyImplyLeading: false,
+                                                          backgroundColor: kPureWhiteColor,
+                                                          elevation: 0,
+                                                        ),
+
+                                                        body: AmountToPayWidget());
+                                                  });
+                                      },
+                                      child: const Text('Continue')),
+                                  CupertinoDialogAction(isDefaultAction: true,
+                                      onPressed: ()async{
+
+                                        Navigator.pop(context);
+                                        showModalBottomSheet(
+                                            isScrollControlled: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return Scaffold(
+                                                  appBar: AppBar(
+                                                    elevation: 0,
+                                                    backgroundColor: kPureWhiteColor,
+                                                    automaticallyImplyLeading: false,
+                                                  ),
+                                                  body:
+                                                  CustomerSearchPage());
+                                            });
+
+                                        //   CommonFunctions().addCustomer(nameController.text, numberController.text,context,customerId,locationController.text );
+
+                                      },
+                                      child: const Text('Add Customer')),
+
+                                ],
+                              ),
+                            );
+                        });
+
                         // CoolAlert.show(
                         //     width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
                         //     lottieAsset: 'images/leave.json',

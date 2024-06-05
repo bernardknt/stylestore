@@ -106,6 +106,7 @@ class _SummaryPageState extends State<SummaryPage> {
   String fontFamilyMont = 'Montserrat-Medium';
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         backgroundColor: kPureWhiteColor,
         body: permissionsMap['summary'] == false
@@ -132,7 +133,7 @@ class _SummaryPageState extends State<SummaryPage> {
                     );
                   }
                   if (!snapshot.hasData) {
-                    return Container();
+                    return Container(child: Center(child: Text("Testing"),),);
                   }
                   else {
                     productList = [];
@@ -192,15 +193,23 @@ class _SummaryPageState extends State<SummaryPage> {
                     return Column(
                       children: [
                         kSmallHeightSpacing,
-                        productList.length >= 0
-                            ? Text(
-                                "Last 4 Transactions",
-                                style: kNormalTextStyle,
-                              )
-                            : Text(
-                                "No Transactions Today",
-                                style: kNormalTextStyle,
-                              ),
+                        productList.length > 0 ? Text("Last 4 Transactions", style: kNormalTextStyle,)
+                            : Container(height: 200, child: Center(child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Transactions will Appear Here", style: kNormalTextStyle,),
+                                kSmallHeightSpacing,
+                                TextButton(
+                                    style: ButtonStyle(
+                                      backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlueDarkColor)
+                                    ),
+                                    onPressed: (){
+                                  
+
+                                 CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['general']) ;
+                                }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
+                              ],
+                            ))),
                         kSmallHeightSpacing,
                         Expanded(
                           child: ListView.builder(
@@ -375,8 +384,9 @@ class _SummaryPageState extends State<SummaryPage> {
                               }),
                         ),
                         // kSmallHeightSpacing,
-                        productList.length >= 4
-                            ? GestureDetector(
+                        productList.length >= 1
+                            ?
+                        GestureDetector(
                                 onTap: () {
                                   Navigator.pushNamed(
                                       context, TransactionsController.id);
@@ -387,7 +397,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                       color: Colors.blue),
                                 ))
                             : Text(
-                                "No Transactions Today",
+                                "No Transactions",
                                 style: kNormalTextStyle,
                               ),
                         // const Text("Today's Last 4 Transactions",style: kNormalTextStyle,),

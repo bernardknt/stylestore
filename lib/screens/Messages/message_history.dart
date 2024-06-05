@@ -1,5 +1,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:iconsax/iconsax.dart';
@@ -16,6 +17,7 @@ import 'package:stylestore/screens/Messages/message.dart';
 import 'package:stylestore/screens/Messages/sms_class.dart';
 import 'package:stylestore/screens/Messages/sms_details_page.dart';
 import 'package:stylestore/screens/MobileMoneyPages/mobile_money_page.dart';
+import 'package:stylestore/utilities/constants/icon_constants.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import 'package:stylestore/widgets/locked_widget.dart';
@@ -136,7 +138,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
         elevation: 0,
         centerTitle: MediaQuery.of(context).size.width< 600 ?false:true,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: permissionsMap['messages'] == false ? SizedBox():FloatingActionButton(
         onPressed: () {
           // Navigate to the MessagesPage
           Provider.of<StyleProvider>(context, listen: false).clearBulkSmsList();
@@ -205,7 +207,10 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Lottie.asset("images/mailtime.json",height: 100), Text(cNoMessages.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),) ]),
+                      children: [
+                        kIsWeb?Icon(Icons.mark_email_read, color: kPureWhiteColor,):Lottie.asset("images/mailtime.json",height: 100),
+
+                        Text(cNoMessages.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),) ]),
                 ):ListView.builder(
                   shrinkWrap: true,
                   itemCount: messageList.length,

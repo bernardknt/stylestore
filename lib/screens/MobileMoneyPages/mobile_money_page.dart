@@ -39,7 +39,7 @@ class _MobileMoneyPageState extends State<MobileMoneyPage> {
     double? newAmount = prefs.getDouble(kBillValue);
     String newPhoneNumber = prefs.getString(kPhoneNumberConstant) ?? '0';
     String? newOrderId = prefs.getString(kOrderId);
-    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0');
+    myController = TextEditingController()..text = CommonFunctions().processPhoneNumber(prefs.getString(kPhoneNumberConstant) ?? '0',  prefs.getString(kCountryCode)??"");
 
     setState(() {
       print(newAmount.runtimeType);

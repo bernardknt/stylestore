@@ -332,7 +332,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                 ),
                                 body: AddExpenseWidget());
                           });
-                }, youtubeLink: videoMap['store']
+                }, youtubeLink: videoMap['expenses']
                   ,
                 ):
                 Column(

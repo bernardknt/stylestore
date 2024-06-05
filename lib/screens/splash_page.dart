@@ -48,11 +48,10 @@ class _SplashPageState extends State<SplashPage> {
               .setVideoVariables(
             users['videos'],
           );
+          CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).setVideoTutorials()) ;
           prefs.setString(kWalkthroughVideos, users["walkthroughs"]);
 
-          Provider.of<BeauticianData>(context, listen: false)
-              .setAllEmployeePermission(CommonFunctions()
-                  .convertPermissionsStringToJson(users["walkthroughs"]));
+          Provider.of<BeauticianData>(context, listen: false).setAllEmployeePermission(CommonFunctions().convertPermissionsStringToJson(users["walkthroughs"]));
         });
       });
     });

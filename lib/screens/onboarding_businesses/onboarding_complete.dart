@@ -3,9 +3,12 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 
 import '../../Utilities/constants/color_constants.dart';
+import '../../controllers/subscription_controller.dart';
+import '../../model/styleapp_data.dart';
 import '../sign_in_options/sign_in_page.dart';
 
 class OnboardingSuccessPage extends StatelessWidget {
@@ -45,9 +48,17 @@ class OnboardingSuccessPage extends StatelessWidget {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  // Navigate to the user's account page
-                  // Implement the actual navigation logic here
+                  Provider.of<StyleProvider>(context, listen: false).setTrialMode();
                   Navigator.pushNamed(context, SignInUserPage.id);
+                  showDialog(context: context, builder: (BuildContext context){
+                    return
+                      GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: SubscriptionController()
+                      );
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),

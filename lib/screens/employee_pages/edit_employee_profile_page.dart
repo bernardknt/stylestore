@@ -166,7 +166,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     selectedDepartment = broadcastProvider.employeeInformation?.department ?? "Administration";
     fullNameController.text = broadcastProvider.employeeInformation?.fullNames ?? "";
     positionController.text = broadcastProvider.employeeInformation?.position ?? "";
-    nationalityController.text = broadcastProvider.employeeInformation?.nationality ?? "";
+    // nationalityController.text = broadcastProvider.employeeInformation?.nationality ?? "";
     phoneController.text = broadcastProvider.employeeInformation?.phone ?? "";
     addressController.text = broadcastProvider.employeeInformation?.address ?? "";
     kinNumberController.text = broadcastProvider.employeeInformation?.kinNumber ?? "";

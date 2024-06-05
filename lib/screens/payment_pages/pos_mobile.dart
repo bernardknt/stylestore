@@ -467,8 +467,7 @@ class _POSState extends State<POS> {
                       onTap: () async {
                         final prefs = await SharedPreferences.getInstance();
 
-                        Provider.of<BeauticianData>(context, listen: false)
-                            .setStoreId(prefs.getString(kStoreIdConstant));
+                        Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
                         Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
 
                         showModalBottomSheet(
@@ -481,7 +480,8 @@ class _POSState extends State<POS> {
                                     backgroundColor: kPureWhiteColor,
                                     automaticallyImplyLeading: false,
                                   ),
-                                  body: CustomerSearchPage());
+                                  body:
+                                  CustomerSearchPage());
                             });
                       },
                       child: Container(

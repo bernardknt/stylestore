@@ -7,6 +7,7 @@ import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
+import 'package:stylestore/screens/sign_in_options/delete_account.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_mobile.dart';
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_web.dart';
@@ -446,6 +447,18 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                       )),
                                 ),
                               ),
+                              kLargeHeightSpacing,
+                              kLargeHeightSpacing,
+                              kLargeHeightSpacing,
+                              kLargeHeightSpacing,
+                              kLargeHeightSpacing,
+                              TextButton(onPressed: (){
+                                // Navigator.of(context).pushReplacement(
+                                //   MaterialPageRoute(builder: (context) => AccountDeletionPage()),
+                                // );
+                                Navigator.pushNamed(context, AccountDeletionPage.id);
+
+                              }, child: Text("Delete Account"))
 
 
 

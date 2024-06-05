@@ -49,6 +49,7 @@ import 'package:stylestore/screens/products_pages/stock_history.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
 import 'package:stylestore/screens/reviews_page.dart';
+import 'package:stylestore/screens/sign_in_options/delete_account.dart';
 import 'package:stylestore/screens/sign_in_options/employee_sign_in.dart';
 import 'package:stylestore/screens/sign_in_options/login_new_layout_web.dart';
 import 'package:stylestore/screens/sign_in_options/sign_in_page.dart';
@@ -171,6 +172,7 @@ class MyApp extends StatelessWidget {
           TransactionsOnlinePage.id: (context) => TransactionsOnlinePage(),
           SuccessPageHiFive.id: (context) => SuccessPageHiFive(),
           AddBlogPage.id: (context) => AddBlogPage(),
+          AccountDeletionPage.id: (context) => AccountDeletionPage(),
           DeliveryController.id: (context) => DeliveryController(),
           TransactionsController.id: (context) => TransactionsController(),
           CalendarPageOld.id: (context) => CalendarPageOld(),

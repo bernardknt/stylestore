@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
+import 'package:stylestore/utilities/constants/word_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
@@ -332,21 +333,34 @@ class _EmployeesPageState extends State<EmployeesPage> {
           // Put the title in the center
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Team'),
-            kMediumWidthSpacing,
-            // A Icon button that downloads the employee data
-            IconButton(
-              icon: const Tooltip(
-                  message: 'Download Employee Data',
-                  child: Icon(
-                    Icons.download,
-                    color: kAppPinkColor,
-                  )),
-              onPressed: () {
-                generateExcel();
-                // Implement download action here
-              },
+            permissionsMap['employees'] == false ? SizedBox(): Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('Team'),
+                kMediumWidthSpacing,
+
+                TextButton(
+                    style: ButtonStyle(backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlueDarkColor)),
+                    onPressed: (){
+                  CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['team']) ;
+                }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
+              ],
             ),
+            // kMediumWidthSpacing,
+            // // A Icon button that downloads the employee data
+            // IconButton(
+            //   icon: const Tooltip(
+            //       message: 'Download Employee Data',
+            //       child: Icon(
+            //         Icons.download,
+            //         color: kAppPinkColor,
+            //       )),
+            //   onPressed: () {
+            //     generateExcel();
+            //     // Implement download action here
+            //   },
+            // ),
           ],
         ),
         automaticallyImplyLeading:  MediaQuery.of(context).size.width > 600 ? false: true,

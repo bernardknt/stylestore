@@ -273,7 +273,17 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
 
 
                       },
-                      child: Lottie.asset('images/round.json', height: 50),
+                      child: Container (
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: kAppPinkColor, 
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Center(child: Text("+", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 28),)),
+
+                      )
+                      //Lottie.asset('images/round.json', height: 50),
                     ),
                     Text("Create Customer",style: kNormalTextStyle.copyWith(color: kBlueDarkColor, fontSize: 10),)
                   ],

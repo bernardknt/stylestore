@@ -26,6 +26,7 @@ import '../../controllers/responsive/responsive_dimensions.dart';
 import '../../utilities/constants/icon_constants.dart';
 import '../../utilities/constants/user_constants.dart';
 import 'package:intl/intl.dart';
+import '../../utilities/constants/word_constants.dart';
 import '../../widgets/custom_popup.dart';
 import '../../widgets/locked_widget.dart';
 import '../../widgets/modalButton.dart';
@@ -309,7 +310,22 @@ class _CustomerPageState extends State<CustomerPage> {
 
                 filteredCustomer.isEmpty ?
 
-                    Container(child: Text("Let us add some customers"),)
+                    Container(child: Container(
+                        height: 200,
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Add some Customers", style: kNormalTextStyle,),
+                            kSmallHeightSpacing,
+                            TextButton(
+                                style: ButtonStyle(
+                                    backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlueDarkColor)
+                                ),
+                                onPressed: (){
+                                  CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['customers']) ;
+                                }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
+                          ],
+                    )),)
 
                 // CustomPopupWidget(
                 //   backgroundColour: kBlueDarkColor,
