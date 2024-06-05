@@ -697,24 +697,24 @@ class _ReStockPageState extends State<ReStockPage> {
                                     ),
                                     items: StockItems,
                                     template: StockTemplate(
-                                        type: 'SHOPPING LIST',
-                                        salutation: 'Purchase List',
+                                        type: 'PURCHASE ORDER',
+                                        salutation: 'Purchase Order',
                                         totalStatement: "Total"),
                                     paid: Receipt( amount: 30000)
 
                                 );
+                                CommonFunctions().showSuccessNotification("Loading Purchase Order", context);
 
-                                showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(color: kAppPinkColor,));});
-                                final pdfFile = await PdfPurchasePdfHelper
-                                    .generate(shoppingList, "Shopping_"+ purchaseOrderNumber);
-                                Navigator.pop(context);
-                                PdfPurchaseHelper.openFile(
-                                    pdfFile);
+                                // showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(color: kAppPinkColor,));});
+                                final pdfFile = await PdfPurchasePdfHelper.generate(shoppingList, "LPO_"+ purchaseOrderNumber);
+                                print(pdfFile.path);
 
-
+                                PdfPurchaseHelper.openFile(pdfFile);
 
 
-                              }, child: Text("Shopping List", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
+
+
+                              }, child: Text("Purchase Details", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),),
                           ],
                         ),
                       ):

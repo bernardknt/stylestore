@@ -70,37 +70,6 @@ class TakeStockWidget extends StatelessWidget {
                         final prefs = await SharedPreferences.getInstance();
                         String storeId = prefs.getString(kStoreIdConstant)??"";
                         Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);
-                        if(mainPage == false){
-                          Navigator.pop(context);
-                        }
-                        Navigator.pushNamed(
-                            context, UpdateStockPage.id);
-                      },
-                      child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: kCustomColor
-                              .withOpacity(1),
-                          child: const Icon(
-                            Iconsax.box, color: kBlack,
-                            size: 20,)),
-                    ),
-                    Text("Update / Check\nStock",
-                      textAlign: TextAlign.center,
-                      style: kNormalTextStyle.copyWith(
-                          color: kPureWhiteColor,
-                          fontSize: 12),)
-                  ],
-                ),
-                kMediumWidthSpacing,
-                kMediumWidthSpacing,
-                kMediumWidthSpacing,
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async{
-                        final prefs = await SharedPreferences.getInstance();
-                        String storeId = prefs.getString(kStoreIdConstant)??"";
-                        Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);
                         Provider.of<StyleProvider>(context, listen: false).resetSelectedStockBasket ();
                         if(mainPage == false){
                           Navigator.pop(context);
@@ -125,6 +94,38 @@ class TakeStockWidget extends StatelessWidget {
                           fontSize: 12),)
                   ],
                 ),
+                kMediumWidthSpacing,
+                kMediumWidthSpacing,
+                kMediumWidthSpacing,
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async{
+                        final prefs = await SharedPreferences.getInstance();
+                        String storeId = prefs.getString(kStoreIdConstant)??"";
+                        Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);
+                        if(mainPage == false){
+                          Navigator.pop(context);
+                        }
+                        Navigator.pushNamed(
+                            context, UpdateStockPage.id);
+                      },
+                      child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: kCustomColor
+                              .withOpacity(1),
+                          child: const Icon(
+                            Iconsax.box, color: kBlack,
+                            size: 20,)),
+                    ),
+                    Text("Update / Check\nStock",
+                      textAlign: TextAlign.center,
+                      style: kNormalTextStyle.copyWith(
+                          color: kPureWhiteColor,
+                          fontSize: 12),)
+                  ],
+                ),
+
 
               ],
             )),

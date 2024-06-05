@@ -70,6 +70,23 @@ class TransactionWidget extends StatelessWidget {
   final List clientLocationList;
   final String logo;
 
+  void showCircularProgressIndicator(context, message){
+    showDialog(context: context, builder: ( context) {return Center(
+        child:
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(color: kAppPinkColor,),
+            kSmallHeightSpacing,
+            DefaultTextStyle(
+              style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+              child: Text(message, textAlign: TextAlign.center,),
+            )
+            // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+          ],
+        ));});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -252,7 +269,9 @@ class TransactionWidget extends StatelessWidget {
 
 
                                         }else{
+                                          CommonFunctions().showSuccessNotification("Generating Receipt", context);
                                           final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
+
                                           PdfHelper.openFile(pdfFile);
                                         }
                                       })
@@ -289,8 +308,13 @@ class TransactionWidget extends StatelessWidget {
                                           final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "quotation_${transIdList[index]}", logo);
 
                                         }else{
+                                          // showCircularProgressIndicator(context, "Loading Quotation");
+                                          CommonFunctions().showSuccessNotification("Generating Quotation", context);
                                           final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "quotation_${transIdList[index]}", logo);
-                                          PdfHelper.openFile(pdfFile);
+
+                                            PdfHelper.openFile(pdfFile);
+                                          // }
+
                                         }
 
                                       }),
@@ -322,11 +346,15 @@ class TransactionWidget extends StatelessWidget {
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
                                         if(kIsWeb){
 
+
                                           final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "invoice_${transIdList[index]}", logo);
 
                                         }else{
+                                          CommonFunctions().showSuccessNotification("Generating Invoice", context);
                                           final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
+
                                           PdfHelper.openFile(pdfFile);
+
                                         }
 
                                       }),

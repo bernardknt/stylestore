@@ -351,9 +351,6 @@ class _HomePageState extends State<HomePage> {
                     ],
                   );
                 });
-
-
-
               },
               child: Container(
                 // height: 10,
@@ -363,7 +360,6 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(child: Text(cSignOutOfWork.tr, style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 13),)),
-                // color: kAirPink,
               ),
             ),
           ),
@@ -372,7 +368,6 @@ class _HomePageState extends State<HomePage> {
         leading: GestureDetector(
             onTap: (){
               ZoomDrawer.of(context)!.toggle();
-
             },
             child: Icon(Icons.menu))
       ),
@@ -397,27 +392,7 @@ class _HomePageState extends State<HomePage> {
 
                   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
                   // Provider.of<StyleProvider>(context, listen: false).setTrialMode();
-                  showDialog(context: context, builder: (BuildContext context){
-                    return
-                      GestureDetector(
-                          onTap: (){
-                            Navigator.pop(context);
-                          },
-                          child:
-                          Scaffold(
-                              appBar: AppBar(
-                                automaticallyImplyLeading: false,
-                                backgroundColor: kPureWhiteColor,
-                                elevation: 0,
-                                centerTitle: true,
-                                title: Text("Automate $name", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 2, color: kAppPinkColor),),
-                              ),
-                              body: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SubscriptionController(),
-                              ))
-                      );
-                  });
+
                 },
 
                 backgroundColor: kBlueDarkColor,

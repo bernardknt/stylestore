@@ -23,6 +23,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -197,6 +198,8 @@ class CommonFunctions {
       return []; // Return an empty list if an error occurs
     }
   }
+
+
 
 
   void setTrialInFirestore(context, String id)async{
@@ -611,7 +614,7 @@ class CommonFunctions {
     return names;
   }
 
-  showSuccessNotification (message, context){
+  showSuccessNotification (message, context,){
     // snackbar to show success message at the top of the screen
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1342,6 +1345,18 @@ class CommonFunctions {
           Navigator.pop(context);
         }
     );
+  }
+
+  Future<bool> requestPermissions() async {
+    if (await Permission.manageExternalStorage.request().isGranted) {
+      // Permission granted, proceed with the desired operation
+      return true;
+    } else {
+      return false;
+      // Handle the case where the permission was denied
+      // For example, show a dialog explaining why the permission is needed
+      // and guide the user to the app settings to grant the permission manually
+    }
   }
   // This function uploads the user token to the server
   Future<dynamic> AlertPopUpCustomers(BuildContext context,

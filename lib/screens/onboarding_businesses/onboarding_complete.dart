@@ -56,9 +56,22 @@ class OnboardingSuccessPage extends StatelessWidget {
                           onTap: (){
                             Navigator.pop(context);
                           },
-                          child: SubscriptionController()
+                          child:
+                          Scaffold(
+                              appBar: AppBar(
+                                automaticallyImplyLeading: false,
+                                backgroundColor: kPureWhiteColor,
+                                elevation: 0,
+                                centerTitle: true,
+                                title: Text("Automate your Business", style: kNormalTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 15, letterSpacing: 2, color: kAppPinkColor),),
+                              ),
+                              body: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SubscriptionController(),
+                              ))
                       );
                   });
+
                 },
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),

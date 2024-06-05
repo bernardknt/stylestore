@@ -107,6 +107,7 @@ dependencies:
   excel: ^2.0.4
   mailer: ^6.1.0
   table_calendar: ^3.0.9
+  open_file_plus: ^3.4.1+1
 #  new_version: ^0.3.1
   circular_countdown_timer: ^0.2.0
   pinput: ^3.0.1
