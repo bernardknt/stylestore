@@ -53,9 +53,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/products_pages/stock_items.dart';
 import '../screens/sign_in_options/sign_in_page.dart';
-import '../screens/store_setup.dart';
 import '../utilities/constants/user_constants.dart';
-// import '../widgets/employee_checklist.dart';
 import '../widgets/debtors_widget.dart';
 import '../widgets/employee_checklist.dart';
 import '../widgets/select_country_region.dart';
@@ -63,7 +61,7 @@ import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-// import 'dart:html' as html;
+import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -1420,60 +1418,6 @@ class CommonFunctions {
           );
       });
 
-    //   CoolAlert.show(
-    //     width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-    //     lottieAsset: imagePath,
-    //     context: context,
-    //     type: CoolAlertType.success,
-    //     text: text,
-    //     title: title,
-    //     confirmBtnText: 'Add',
-    //     cancelBtnText: cancelButtonText,
-    //     showCancelBtn: true,
-    //     confirmBtnColor: Colors.green,
-    //     backgroundColor: kBlueDarkColor,
-    //     onCancelBtnTap: (){
-    //       Provider.of<StyleProvider>(context, listen: false).clearSelectedStockItems();
-    //       Provider.of<StyleProvider>(context, listen: false).setSelectedStockItems(selectedStocks);
-    //       Navigator.pop(context);
-    //       Provider.of<StyleProvider>(context, listen: false).setCustomerNameOnly("Customer");
-    //       showModalBottomSheet(
-    //           context: context,
-    //           builder: (context) {
-    //             return PosSummary(currency: currency,);
-    //           });
-    //     },
-    //     onConfirmBtnTap: (){
-    //       // Navigator.pop(context);
-    //       showModalBottomSheet(
-    //           isScrollControlled: true,
-    //           context: context,
-    //           builder: (context) {
-    //             return Scaffold(
-    //                 appBar: AppBar(
-    //                   elevation: 0,
-    //                   backgroundColor: kPureWhiteColor,
-    //                   automaticallyImplyLeading: false,
-    //                 ),
-    //                 body:
-    //                 CustomerSearchPage());
-    //           });
-    //
-    //       // showModalBottomSheet(
-    //       //     isScrollControlled: true,
-    //       //     context: context,
-    //       //     builder: (context) {
-    //       //       return Scaffold(
-    //       //           appBar: AppBar(
-    //       //             elevation: 0,
-    //       //             backgroundColor: kPureWhiteColor,
-    //       //             automaticallyImplyLeading: false,
-    //       //           ),
-    //       //           body: CustomerSearchPage());
-    //       //     });
-    //
-    //     }
-    // );
   }
 
   // Method to calculate the total price from the priceList.
@@ -1503,8 +1447,6 @@ class CommonFunctions {
         prefs.setString(kImageConstant, doc['image']);
         prefs.setDouble(kSmsAmount, doc['sms'].toDouble());
         prefs.setString(kCurrency,  doc['currency']);
-        DateTime subscription = doc['subscriptionEndDate'].toDate();
-        print("subrip: $subscription");
         prefs.setInt(kSubscriptionEndDate, doc['subscriptionEndDate'].toDate().millisecondsSinceEpoch);
         Provider.of<StyleProvider>(context, listen: false).setAllStoreDefaults(
             doc['active'],
@@ -1520,9 +1462,6 @@ class CommonFunctions {
             doc['image'],
             doc['transport'],
             doc['sms'],
-
-
-
         );
       });
     });
@@ -1680,20 +1619,20 @@ class CommonFunctions {
   }
 // THIS IS CODE FOR STOCKING AND RESTOCKING AND REDUCING STOCK
   Future<void> uploadRestockedItems(selectedStocks, basketToPost, context, docId, currency) async {
+    print("YOUYOUYOU: $selectedStocks");
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
       color: kAppPinkColor,));});
     for (var stock in selectedStocks) {
-      print("${stock.name}:${stock.id}");
+
 
       try {
         await FirebaseFirestore.instance
             .collection('stores')
-            .doc(stock.id)
+            .doc(stock.transactionId)
             .get()
             .then((documentSnapshot) {
-          // Get the quantity from the document.
           var quantity = documentSnapshot.data()!['quantity'];
           double updateStock = (stock.restock) + quantity;
 
@@ -1701,7 +1640,7 @@ class CommonFunctions {
           var result = 'R$updateStock?$now';
 
           // Add the result to an array in the same document.
-          FirebaseFirestore.instance.collection('stores').doc(stock.id)
+          FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
               .update({
             'quantity': FieldValue.increment(stock.restock),
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -1796,14 +1735,14 @@ class CommonFunctions {
       color: kAppPinkColor,));});
     // Loop through the selectedStocks list and update the Firestore documents.
     for (var stock in selectedStocks) {
-      print("${stock.name}:${stock.id}");
+
 
       try {
 
           var result = 'U${stock.restock}?$now';
 
           // Add the result to an array in the same document.
-          await FirebaseFirestore.instance.collection('stores').doc(stock.id)
+          await FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
               .update({
             'quantity': stock.restock,
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -1854,12 +1793,12 @@ class CommonFunctions {
 
 
     for (var stock in selectedStocks) {
-      print("${stock.name}:${stock.id}");
+
 
       try {
         await FirebaseFirestore.instance
             .collection('stores')
-            .doc(stock.id)
+            .doc(stock.transactionId)
             .get()
             .then((documentSnapshot) {
           // Get the quantity from the document.
@@ -1870,7 +1809,7 @@ class CommonFunctions {
           var result = 'S$updateStock?$now';
 
           // Add the result to an array in the same document.
-          FirebaseFirestore.instance.collection('stores').doc(stock.id)
+          FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
               .update({
             'quantity': FieldValue.increment(-stock.restock),
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -2242,6 +2181,7 @@ class CommonFunctions {
   }
   Future<Map<String, dynamic>> convertWalkthroughVideoJson()async {
     final prefs = await SharedPreferences.getInstance();
+    print(prefs.getString(kWalkthroughVideos)??"NO WALKTHROUGH HERE");
     Map<String, dynamic> jsonMap = json.decode(prefs.getString(kWalkthroughVideos)??"");
     return jsonMap;
   }
@@ -2331,21 +2271,21 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     // Create a blob from the bytes and create a download link
     //
     // PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
-    // final blob = html.Blob([excelData]);
-    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-    //
-    // // Create a link element and trigger the download
-    // final anchor = html.AnchorElement(href: blobUrl)
-    //   ..target = 'download'
-    //   ..download = 'bulk_upload_data.xlsx';
-    //
-    // // Trigger the click event to start the download
-    // html.document.body?.append(anchor);
-    // anchor.click();
-    //
-    // // Clean up the temporary link
-    // html.Url.revokeObjectUrl(blobUrl);
-    // anchor.remove();
+    final blob = html.Blob([excelData]);
+    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    // Create a link element and trigger the download
+    final anchor = html.AnchorElement(href: blobUrl)
+      ..target = 'download'
+      ..download = 'bulk_upload_data.xlsx';
+
+    // Trigger the click event to start the download
+    html.document.body?.append(anchor);
+    anchor.click();
+
+    // Clean up the temporary link
+    html.Url.revokeObjectUrl(blobUrl);
+    anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 

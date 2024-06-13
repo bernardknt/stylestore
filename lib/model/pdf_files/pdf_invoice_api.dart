@@ -14,7 +14,7 @@ import 'invoice_supplier.dart';
 import 'invoice_utils.dart';
 import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
-// import 'dart:html' as html;
+import 'dart:html' as html;
 
 
 class PdfInvoicePdfHelper {
@@ -33,7 +33,7 @@ class PdfInvoicePdfHelper {
   }
 
 
-  static Future<File> generate(Invoice invoice, String pdfFileName, String logo) async {
+  static Future<File> generatePdfForMobileDevices(Invoice invoice, String pdfFileName, String logo) async {
     Future<Uint8List> _fetchLogoBytes(String imageUrl) async {
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
@@ -51,12 +51,6 @@ class PdfInvoicePdfHelper {
     final imagePng = (await rootBundle.load("images/paid.png")).buffer.asUint8List();
 
     final Uint8List logoBytes = await _fetchLogoBytes(logo);
-
-
-    // final response = await http.get(Uri.parse(logo));
-
-    // final Uint8List logoBytes = (await rootBundle.load("images/plain_white.png")).buffer.asUint8List();
-
 
     pdf.addPage(MultiPage(
       build: (context) => [
@@ -82,14 +76,6 @@ class PdfInvoicePdfHelper {
           )
 
         ]),
-
-        // pw.Stack(children:[
-
-
-        // ]
-        // ),
-
-
       ],
 
       footer: (context) => buildFooter(invoice),
@@ -99,7 +85,7 @@ class PdfInvoicePdfHelper {
   }
 
 
-  static Future<void> generateAndDownloadPdf(Invoice invoice, String pdfFileName, String logo) async {
+  static Future<void> generateAndDownloadPdfForWeb(Invoice invoice, String pdfFileName, String logo) async {
 
 
     final pdf = Document();
@@ -139,20 +125,20 @@ class PdfInvoicePdfHelper {
     final pdfData = await pdf.save();
 
     // Create a Blob for download
-    // final blob = html.Blob([pdfData], 'application/pdf');
-    // final url = html.Url.createObjectUrlFromBlob(blob);
-    // final anchor = html.AnchorElement()
-    //   ..href = url
-    //   ..style.display = 'none'
-    //   ..download = pdfFileName;
-    // html.document.body!.children.add(anchor);
-    //
-    // // Trigger download
-    // anchor.click();
-    //
-    // // Cleanup
-    // html.document.body!.children.remove(anchor);
-    // html.Url.revokeObjectUrl(url);
+    final blob = html.Blob([pdfData], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement()
+      ..href = url
+      ..style.display = 'none'
+      ..download = pdfFileName;
+    html.document.body!.children.add(anchor);
+
+    // Trigger download
+    anchor.click();
+
+    // Cleanup
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
   }
 
 

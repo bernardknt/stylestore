@@ -25,6 +25,7 @@ import '../../model/styleapp_data.dart';
 import '../../utilities/constants/word_constants.dart';
 import '../../widgets/scanner_widget.dart';
 import '../../widgets/subscription_ended_widget.dart';
+import '../store_pages/store_page_mobile.dart';
 
 class ReStockPage extends StatefulWidget {
   static String id = "take_stock";
@@ -35,7 +36,7 @@ class ReStockPage extends StatefulWidget {
 
 class _ReStockPageState extends State<ReStockPage> {
   late Stream<QuerySnapshot> _customerStream;
-  TextEditingController _searchController = TextEditingController();
+
   List<Map<String, dynamic>> _searchResults = [];
   List<Map<String, dynamic>> _allItems = [];
   var basketToPost = [];
@@ -118,25 +119,83 @@ class _ReStockPageState extends State<ReStockPage> {
       );
       print("Here is barcodeRes: $barcodeScanRes");
       if (barcodeScanRes != '-1') {
+        try{
+          var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+          print("We reached this point: ${barcodeItem}");
+          if (barcodeItem != null) {
 
-        var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
-        print("We reached this point: ${barcodeItem}");
-        if (barcodeItem != null) {
+            CommonFunctions().playBeepSound();
 
-          CommonFunctions().playBeepSound();
+            isScanning = false;
+            // selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 0, description:barcodeItem.description));
+            Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(barcodeItem.unit);
+            showPriceAndQuantityDialogForBarScanner(barcodeItem.name, barcodeItem.documentId, barcodeItem.description);
 
-          isScanning = false;
-          selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 0, description:barcodeItem.description));
-         // showPriceAndQuantityDialogForBarScanner(1, barcodeItem.name, barcodeItem.documentId);
-          Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(barcodeItem.unit);
-          showPriceAndQuantityDialogForBarScanner(barcodeItem.name, barcodeItem.documentId, barcodeItem.description);
+          } else
+          {
 
-        } else
+            isScanning = false;
+            ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
+            // Navigator.pop(context);
+          }
+        }on StateError catch (e)
         {
-
+          // Handle the case where no element is found (e.g., show a message)
+          print("Item does not Exist");
           isScanning = false;
-          ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
-          // Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Item is not in your Inventory')));
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: Text("ITEM BARCODE NOT FOUND?"),
+                content: Text("This could mean either the item is not in the inventory or is not set 'Trackable'\nWould you like to add this item to the inventory, or change its property to Trackable?"),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "Cancel", style: TextStyle(color: kRedColor),),
+                    onPressed: () {
+                      Navigator.of(context).pop();// Close the dialog
+
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("Add to Inventory"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                elevation: 0,
+                                backgroundColor: kPlainBackground,
+                                foregroundColor: kBlack,
+                                automaticallyImplyLeading: false,
+                              ),
+                              body: Scaffold(
+                                  appBar: AppBar(
+                                    elevation: 0,
+                                    title: Text("Drag down to Go Back"),
+                                    centerTitle: true,
+                                    backgroundColor: kPureWhiteColor,
+                                    foregroundColor: kBlack,
+                                    automaticallyImplyLeading: false,
+                                  ),
+                                  body: StorePageMobile()),
+                            );
+                          });
+
+
+
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
       }
     }
@@ -344,8 +403,7 @@ class _ReStockPageState extends State<ReStockPage> {
                       flex: 2,
                       child:
                       Container(
-                        // height: 45,
-                        // width: 30,
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: kBackgroundGreyColor,
@@ -409,21 +467,21 @@ class _ReStockPageState extends State<ReStockPage> {
                 child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async{
                   print(Provider.of<StyleProvider>(context, listen: false).selectedUnit);
                   if (inputPrice != null && inputQuantity != null) {
-                    print("THE PRICE IS $inputPrice, Quantity: $inputQuantity");
+
+
                     setState(() {
 
                       selectedStocks.add(Stock(price: inputPrice!, name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: selectedQuality!.name));
                       Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
-
                     });
                   }
-                  setState(() {
-
-                  });
                   Navigator.pop(context);
+                  await Future.delayed(const Duration(seconds: 1));
+
+                  _startBarcodeScan();
                 },
                 child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
               ),
@@ -622,7 +680,8 @@ class _ReStockPageState extends State<ReStockPage> {
                 });
             // _handleUpdateStockButton();
           }else{
-            CommonFunctions().showErrorDialog("No Items added", context);
+            CommonFunctions().showErrorDialog("No Items have been Restocked!\nPlease add some items First", context);
+
           }
         },
         icon:  CircleAvatar(
@@ -639,7 +698,7 @@ class _ReStockPageState extends State<ReStockPage> {
         child:
         Center(
           child: Container(
-            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+            width: kIsWeb? MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8:double.maxFinite,
 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -699,17 +758,22 @@ class _ReStockPageState extends State<ReStockPage> {
                                     template: StockTemplate(
                                         type: 'PURCHASE ORDER',
                                         salutation: 'Purchase Order',
-                                        totalStatement: "Total"),
+                                        totalStatement: "Total",
+                                      currency: currency,
+                                    ),
                                     paid: Receipt( amount: 30000)
 
                                 );
                                 CommonFunctions().showSuccessNotification("Loading Purchase Order", context);
 
                                 // showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(color: kAppPinkColor,));});
-                                final pdfFile = await PdfPurchasePdfHelper.generate(shoppingList, "LPO_"+ purchaseOrderNumber);
-                                print(pdfFile.path);
+                               if(kIsWeb){
+                                 final pdfFile = await PdfPurchasePdfHelper.generateAndDownloadPurhcasePdfForWeb(shoppingList, "LPO_"+ purchaseOrderNumber, currency);
+                               }else {
+                                 final pdfFile = await PdfPurchasePdfHelper.generate(shoppingList, "LPO_"+ purchaseOrderNumber, currency);
+                                 PdfPurchaseHelper.openFile(pdfFile);
+                               }
 
-                                PdfPurchaseHelper.openFile(pdfFile);
 
 
 

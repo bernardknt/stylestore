@@ -49,10 +49,14 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
   late int quantity = 1;
   DateTime? _previousDate;
   double smsAmount = 0.0;
+  String country = "";
+  String currency = "";
   var formatter = NumberFormat('#,###,000');
 
   defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
+    country = prefs.getString(kCountry)??"Kenya";
+    currency = prefs.getString(kCurrency)??"USD";
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     smsAmount = prefs.getDouble(kSmsAmount)??0.0;
     business = prefs.getString(kBusinessNameConstant)??"";
@@ -60,8 +64,6 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
 
     });
   }
-
-
 
   @override
   void initState() {
@@ -96,7 +98,16 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
     double width = MediaQuery.of(context).size.width * 0.6;
 
 
-  return Scaffold(
+  return country!="Uganda"?Scaffold(
+    backgroundColor: kBlack,
+
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(child:Text("This service is not yet available in\n$country. We are working on it",textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
+      ],
+    ),
+  ):Scaffold(
     backgroundColor: kBlack,
       appBar: AppBar(
         automaticallyImplyLeading: widget.showBackButton,
@@ -117,7 +128,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   });
             },
             child: Tooltip(
-              message: "${cSmsAccountBalance.tr} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} Ugx",
+              message: "${cSmsAccountBalance.tr} ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} $currency",
               child: Padding(
                 padding: const EdgeInsets.only(right: 10.0),
                 child: Row(
@@ -125,7 +136,7 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
                   children: [
                     const Icon(Icons.wallet),
                     kMediumWidthSpacing,
-                    Text('${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} Ugx', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                    Text('${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context, listen: true).storeSmsBalance)} $currency', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
                   ],
                 ),
               ),

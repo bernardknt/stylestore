@@ -102,45 +102,6 @@ class _SignInUserPageState extends State<SignInUserPage> {
     });
   }
 
-  // void _onQRViewCreated(QRViewController controller) {
-  //   this.controller = controller;
-  //   controller.scannedDataStream.listen((barcode) {
-  //     print("${barcode.code}");
-  //
-  //     setState(() {
-  //       qrCode = barcode.code?? "";
-  //     });
-  //     if (qrCode == storeId){
-  //       controller.dispose();
-  //       uploadSignin();
-  //     } else {
-  //       controller.dispose();
-  //       showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return CupertinoAlertDialog(
-  //             title: Text("Wrong Code Scanned"),
-  //             content: Text("Wrong code scanned for this store."),
-  //             actions: [
-  //               CupertinoDialogAction(
-  //                 child: Text("OK"),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                   setState(() {
-  //
-  //                   });
-  //                   // Close the dialog
-  //                 // Navigate back to the home page
-  //                 },
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     }
-  //
-  //   });
-  // }
 
   @override
   void dispose() {
@@ -185,8 +146,6 @@ class _SignInUserPageState extends State<SignInUserPage> {
                       ),
                       body: TasksWidget());
               });
-
-
 
             },
             child: Container(
@@ -249,7 +208,45 @@ class _SignInUserPageState extends State<SignInUserPage> {
 
                 Text("Welcome to ${Provider.of<StyleProvider>(context, listen: false).beauticianName}\n $name",textAlign: TextAlign.center, style: kHeading2TextStyleBold.copyWith(color: kPureWhiteColor),),
                 kLargeHeightSpacing,
-                permissionsMap['qrCode'] ?? false == true  ?
+                permissionsMap['qrCode'] == true  ? kIsWeb?
+                Center(
+                  child:
+                  SliderButton(
+                    action: () async{
+                      final prefs = await SharedPreferences.getInstance();
+                      prefs.setBool(kIsCheckedIn, true);
+                      uploadSignin();
+
+                    },
+                    ///Put label over here
+                    label:
+                    Text(
+                      "Slide to Sign Into Work",
+                      style: kNormalTextStyle.copyWith(fontSize: 14),
+                    ),
+                    icon: const Center(
+
+                        child: Icon(
+                          LineIcons.signature,
+                          color: Colors.white,
+                          size: 30.0,
+                        )
+                    ),
+
+                    //Put BoxShadow here
+                    boxShadow: BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 4,
+                    ),
+                    width: 250,
+                    radius: 100,
+                    buttonColor: kAppPinkColor,
+                    backgroundColor: kBiegeThemeColor,
+                    highlightedColor: Colors.black,
+                    baseColor: kAppPinkColor,
+                  ),
+
+                ):
                 Column(
 
                   children: [

@@ -33,32 +33,35 @@ class _SplashPageState extends State<SplashPage> {
     CommonFunctions().deliveryStream(context);
 
     CommonFunctions().userSubscription(context);
+    print("SPLASH PAGE VALUES START HERE");
     String oldPermissions = prefs.getString(kPermissions) ?? "";
     bool ownerStatus = prefs.getBool(kIsOwner) ?? false;
     _firebaseMessaging
         .getToken()
         .then((value) => prefs.setString(kToken, value!));
-    var start = FirebaseFirestore.instance
+   FirebaseFirestore.instance
         .collection('variables')
         .snapshots()
         .listen((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((users) async {
         setState(() {
-          Provider.of<StyleProvider>(context, listen: false)
-              .setVideoVariables(
-            users['videos'],
-          );
-          CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).setVideoTutorials()) ;
-          prefs.setString(kWalkthroughVideos, users["walkthroughs"]);
+          print("THIS POINT WAS REACHED");
 
-          Provider.of<BeauticianData>(context, listen: false).setAllEmployeePermission(CommonFunctions().convertPermissionsStringToJson(users["walkthroughs"]));
+          print("LOOOPOOOOO: ${users["walkthroughs"]}");
+          Provider.of<StyleProvider>(context, listen: false).setVideoVariables(users['videos'],);
+          prefs.setString(kWalkthroughVideos, users["walkthroughs"].toString());
+          //
+          // CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).setVideoTutorials()) ;
+          print("LOOOPOOOOO: ${users["walkthroughs"]}");
+
+    //      Provider.of<BeauticianData>(context, listen: false).setAllEmployeePermission(CommonFunctions().convertPermissionsStringToJson(users["walkthroughs"]));
         });
       });
     });
 
 
     if (ownerStatus == false) {
-      var employ = FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection('employees')
           .where("id", isEqualTo: prefs.getString(kEmployeeId) ?? "")
           .snapshots()

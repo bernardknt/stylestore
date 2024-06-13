@@ -140,9 +140,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
             automaticallyImplyLeading: false,
 
         ),
-        //
-        // floatingActionButtonLocation: FloatingActionButtonLocation
-        //     .miniCenterFloat,
+
         floatingActionButton:permissionsMap['store'] == false ?Container(): FloatingActionButton(
             backgroundColor: kAppPinkColor,
             onPressed: () {
@@ -394,7 +392,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                   ],
                                                 ),
                                                 kSmallHeightSpacing,
-                                                Text(filteredStock[index].description,
+                                                Text(filteredStock[index].barcode,
                                                     style: kNormalTextStyleSmallGrey),
                                                 kSmallHeightSpacing,
                                                 filteredStock[index].tracking == true

@@ -8,12 +8,12 @@ import 'purchase.dart';
 import 'purchase_customer.dart';
 import 'purchase_supplier.dart';
 import 'purchase_utils.dart';
-
+import 'dart:html' as html;
 
 class PdfPurchasePdfHelper {
 
 
-  static Future<File> generate(PurchaseOrder invoice, String pdfFileName) async {
+  static Future<File> generate(PurchaseOrder invoice, String pdfFileName, String currency) async {
     final pdf = Document();
 
     pdf.addPage(MultiPage(
@@ -21,15 +21,56 @@ class PdfPurchasePdfHelper {
         buildHeader(invoice),
         SizedBox(height: 3 * PdfPageFormat.cm),
         buildTitle(invoice),
-        buildInvoice(invoice),
+        buildInvoice(invoice, currency),
         Divider(),
-        buildTotal(invoice),
+        buildTotal(invoice, currency),
       ],
       footer: (context) => buildFooter(invoice),
     ));
 
     return PdfHelper.saveDocument(name: pdfFileName, pdf: pdf);
   }
+
+  static Future<void> generateAndDownloadPurhcasePdfForWeb(PurchaseOrder invoice, String pdfFileName, String currency) async {
+
+
+    final pdf = Document();
+
+
+
+    // ... (Rest of your PDF generation logic) ...
+    pdf.addPage(MultiPage(
+      build: (context) => [
+        buildHeader(invoice),
+        SizedBox(height: 3 * PdfPageFormat.cm),
+        buildTitle(invoice),
+        buildInvoice(invoice, currency),
+        Divider(),
+        buildTotal(invoice, currency),
+      ],
+      footer: (context) => buildFooter(invoice),
+    ));
+
+    // Generate PDF data in-memory
+    final pdfData = await pdf.save();
+
+    // Create a Blob for download
+    final blob = html.Blob([pdfData], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement()
+      ..href = url
+      ..style.display = 'none'
+      ..download = pdfFileName;
+    html.document.body!.children.add(anchor);
+
+    // Trigger download
+    anchor.click();
+
+    // Cleanup
+    html.document.body!.children.remove(anchor);
+    html.Url.revokeObjectUrl(url);
+  }
+
 
   static Widget buildHeader(PurchaseOrder invoice) => Column(
 
@@ -108,15 +149,12 @@ class PdfPurchasePdfHelper {
     ],
   );
 
-  static Widget buildInvoice(PurchaseOrder invoice) {
+  static Widget buildInvoice(PurchaseOrder invoice, String currency) {
     final headers = [
       'Description',
       'Quantity',
       'Unit Cost',
       'Cost',
-
-
-      // 'VAT',
       'Amount'
     ];
     final data = invoice.items.map((item) {
@@ -125,10 +163,9 @@ class PdfPurchasePdfHelper {
 
       return [
         item.description,
-        // Utils.formatDate(item.date),
         '${item.quantity}',
         '${(item.unitPrice/ item.quantity).toStringAsFixed(1)}',
-        'Ugx ${(CommonFunctions().formatter.format(total))}',
+        '${currency} ${(CommonFunctions().formatter.format(total))}',
       ];
     }).toList();
 
@@ -150,29 +187,16 @@ class PdfPurchasePdfHelper {
     );
   }
 
-  static Widget buildTotal(PurchaseOrder invoice) {
+  static Widget buildTotal(PurchaseOrder invoice, String currency) {
     final receiptAmount = invoice.paid.amount;
-    // final netTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity))
-    //     .fold<double>(0.0, (previousValue, item) => (previousValue as double) + item)  - receiptAmount;
 
-    // final netTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity) - receiptAmount)
-    //     .fold(0.0, (previousValue, item) => (previousValue ?? 0.0) + item);
     final netTotal = invoice.items
         .map((item) => (item.unitPrice) )
         .reduce((item1, item2) => item1 + item2);
-    // final billTotal = invoice.items
-    //     .map((item) => (item.unitPrice * item.quantity))
-    //     .fold<double>(0.0, (previousValue, item) => (previousValue as double) + item);
 
     final billTotal = invoice.items
         .map((item) => item.unitPrice)
         .reduce((item1, item2) => item1 + item2);
-
-    // final vatPercent = invoice.items.first.vat;
-    // final vat = netTotal * vatPercent;
-    // final total = netTotal + vat;
     final total = netTotal;
 
     return
@@ -189,7 +213,7 @@ class PdfPurchasePdfHelper {
               children: [
                 buildText(
                   title: 'Total',
-                  value: Utils.formatPrice(billTotal),
+                  value: "$currency ${Utils.formatPrice(billTotal)}",
                   unite: true,
                 ),
                 Divider(),
@@ -199,7 +223,7 @@ class PdfPurchasePdfHelper {
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
-                  value: Utils.formatPrice(total),
+                  value: "$currency ${Utils.formatPrice(total)}",
                   unite: true,
                 ),
                 SizedBox(height: 2 * PdfPageFormat.mm),

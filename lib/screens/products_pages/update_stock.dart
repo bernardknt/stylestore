@@ -3,20 +3,21 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
+import 'package:stylestore/screens/products_pages/stock_items.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/beautician_data.dart';
 import '../../model/common_functions.dart';
 import '../../model/stock_items.dart';
 import '../../model/styleapp_data.dart';
+import '../../utilities/constants/word_constants.dart';
 import '../../widgets/scanner_widget.dart';
-import '../../widgets/subscription_ended_widget.dart';
+import '../store_pages/store_page_mobile.dart';
+
 
 class UpdateStockPage extends StatefulWidget {
   static String id = "update_stock";
@@ -27,7 +28,7 @@ class UpdateStockPage extends StatefulWidget {
 
 class _UpdateStockPageState extends State<UpdateStockPage> {
   late Stream<QuerySnapshot> _customerStream;
-  TextEditingController _searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> _searchResults = [];
   var basketToPost = [];
   String updateOrderNumber = "";
@@ -37,7 +38,9 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
   var quantityList = [];
   var minimumList = [];
   var barcodeList = [];
+  Color mainColor = kPureWhiteColor;
   bool isScanning = false;
+  List<AllStockData> newStock = [];
 
   Future<void> _startBarcodeScan() async {
     isScanning = true;
@@ -52,32 +55,127 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       );
       print("Here is barcodeRes: $barcodeScanRes");
       if (barcodeScanRes != '-1') {
-        print("We reached this point");
+        try{
+          var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+          print("We reached this point: ${barcodeItem}");
+          if (barcodeItem != null) {
 
-        int index = barcodeList.indexOf(barcodeScanRes);
-        print("The int value is : $index");
+            CommonFunctions().playBeepSound();
 
-        if (index != -1) {
-          CommonFunctions().playBeepSound();
+            isScanning = false;
+         //   selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 0, description:barcodeItem.description));
+            Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(barcodeItem.unit);
+            showPriceAndQuantityDialogForBarScanner(barcodeItem.name, barcodeItem.documentId, barcodeItem.description);
+
+          } else
+          {
+
+            isScanning = false;
+            ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
+            // Navigator.pop(context);
+          }
+        }on StateError catch (e)
+        {
+          // Handle the case where no element is found (e.g., show a message)
+          print("Item does not Exist");
           isScanning = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Item is not in your Inventory')));
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: Text("ITEM BARCODE NOT FOUND?"),
+                content: Text("This could mean either the item is not in the inventory or is not set 'Trackable'\nWould you like to add this item to the inventory, or change its property to Trackable?"),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "Cancel", style: TextStyle(color: kRedColor),),
+                    onPressed: () {
+                      Navigator.of(context).pop();// Close the dialog
 
-          quantityControllers[index]?.text = '0';
-          // Add the selected stock to the list.
-          selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index]));
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("Add to Inventory"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                              appBar: AppBar(
+                                elevation: 0,
+                                backgroundColor: kPlainBackground,
+                                foregroundColor: kBlack,
+                                automaticallyImplyLeading: false,
+                              ),
+                              body: Scaffold(
+                                  appBar: AppBar(
+                                    elevation: 0,
+                                    title: Text("Drag down to Go Back"),
+                                    centerTitle: true,
+                                    backgroundColor: kPureWhiteColor,
+                                    foregroundColor: kBlack,
+                                    automaticallyImplyLeading: false,
+                                  ),
+                                  body: StorePageMobile()),
+                            );
+                          });
 
-          showPriceAndQuantityDialogForBarScanner(index, nameList[index], itemIdList[index], descriptionList[index] );
-        } else {
-          isScanning = false;
-          ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
 
+
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
       }
     }
   }
+  // Future<void> _startBarcodeScan() async {
+  //   isScanning = true;
+  //   while(isScanning) {
+  //     isScanning = false;
+  //
+  //     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+  //       "#FF0000", // Custom red color for the scanner
+  //       "Cancel", // Button text for cancelling the scan
+  //       true, // Show flash icon
+  //       ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
+  //     );
+  //     print("Here is barcodeRes: $barcodeScanRes");
+  //     if (barcodeScanRes != '-1') {
+  //       print("We reached this point");
+  //
+  //       int index = barcodeList.indexOf(barcodeScanRes);
+  //       print("The int value is : $index");
+  //
+  //       if (index != -1) {
+  //         CommonFunctions().playBeepSound();
+  //         isScanning = false;
+  //
+  //         quantityControllers[index]?.text = '0';
+  //         // Add the selected stock to the list.
+  //         selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index]));
+  //
+  //         showPriceAndQuantityDialogForBarScanner(nameList[index], itemIdList[index], descriptionList[index] );
+  //       } else {
+  //         isScanning = false;
+  //         ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
+  //
+  //       }
+  //     }
+  //   }
+  // }
   void defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     var storeId = prefs.getString(kStoreIdConstant);
     updateOrderNumber = "UP_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
+    newStock = await CommonFunctions().retrieveStockTrackedData(context);
 
   }
   TextEditingController _getOrCreateController(int index) {
@@ -106,195 +204,216 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
     );
   }
 
-
-  Future<void> _showPriceAndQuantityDialog(int index, String name, id, description) async {
+  Future<void> _showPriceAndQuantityDialog( String name, id, unit, description) async {
     double? inputPrice;
     double? inputQuantity;
-    await showDialog(
+
+    await
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update Quantity details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // TextField(
-              //   keyboardType: TextInputType.number,
-              //   onChanged: (value) {
-              //     inputPrice = double.tryParse(value);
-              //   },
-              //   decoration: InputDecoration(
-              //     labelText: 'Price',
-              //     hintText: 'Enter the total purchase price for $name',
-              //   ),
-              // ),
-              // SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputQuantity = double.tryParse(value);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Quantity',
-                  hintText: 'Enter Updated $name quantity',
+        return
+          AlertDialog(
+            title: Text('Update for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack,fontWeight: FontWeight.bold, fontSize: 16),),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: TextField(
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        onChanged: (value) {
+                          inputQuantity = double.tryParse(value);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Quantity',
+                          hintText: 'Available quantity',
+                        ),
+                      ),
+                    ),
+                    kSmallWidthSpacing,
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        height: 45,
+                        // width: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: kBackgroundGreyColor,
+
+                        ),
+                        child:
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: DropdownButton<String>(
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Icon(Icons.scale, color: kFontGreyColor,),
+                            ),
+                            dropdownColor: kBackgroundGreyColor,
+                            iconSize: 14,
+                            value: Provider.of<StyleProvider>(context, listen: true).selectedUnit, // The currently selected department
+                            items: unitList
+                                .map((units) => DropdownMenuItem(
+                              value: units,
+                              child: Text(units,),
+                            ))
+                                .toList(),
+                            onChanged: (newItem) => setState(() => Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(newItem)), // Update the selected department when a new one is chosen
+                            hint: Text(
+                              'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                          ),
+                        ),
+                        //Center(child: Text(unit)),
+                      ),
+                    )
+                  ],
                 ),
+
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
+              ),
+              TextButton(
+                onPressed: () {
+                  print(Provider.of<StyleProvider>(context, listen: false).selectedUnit);
+                  if (inputQuantity != null) {
+
+                    setState(() {
+
+                      selectedStocks.add(Stock(price: 0.0, name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: "ok"));
+                      Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
+
+                    });
+                  }
+                  setState(() {
+
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (inputQuantity != null) {
-                  setState(() {
-                    // Stock selectedStock = Stock(
-                    //   name: name,
-                    //   id: id,
-                    //   restock: inputQuantity!,
-                    //   price: inputPrice!,
-                    //   description: description
-                    // );
-                    // selectedStocks[index].price = inputPrice!;
-                    // Check if the selected stock already exists in the list.
-                    int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                    print("EXISTING INDEX = $existingIndex");
-                    if (existingIndex != -1) {
-                      // If the stock already exists, update its price and quantity.
-                      // selectedStocks[existingIndex].price = inputPrice!;
-                      selectedStocks[existingIndex].setRestock(inputQuantity!);
-                      // quantityControllers[existingIndex]?.text = inputQuantity.toString();
-
-                    } else {
-                      // If the stock is not in the list, add it to the list.
-                      // selectedStocks.add(selectedStock);
-                      print("NOPE THIS RUN INSTEAD");
-                    }
-                    checkboxStates[index] = true;
-                    quantityControllers[index]?.text = inputQuantity.toString();
-                    print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
-                  });
-                }
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
+          );
       },
     );
   }
-  Future<void> showPriceAndQuantityDialogForBarScanner(int index, String name, id, description) async {
+
+  Future<void> showPriceAndQuantityDialogForBarScanner( String name, id, description) async {
     double? inputPrice;
     double? inputQuantity;
-    await showDialog(
+
+    await
+    showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update Quantity details for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 22),),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // TextField(
-              //   keyboardType: TextInputType.number,
-              //   onChanged: (value) {
-              //     inputPrice = double.tryParse(value);
-              //   },
-              //   decoration: InputDecoration(
-              //     labelText: 'Price',
-              //     hintText: 'Enter the total purchase price for $name',
-              //   ),
-              // ),
-              // SizedBox(height: 10),
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                onChanged: (value) {
-                  inputQuantity = double.tryParse(value);
-                },
-                decoration: InputDecoration(
-                  labelText: 'Quantity',
-                  hintText: 'Enter Updated $name quantity',
+        return
+          AlertDialog(
+            title: Text('Update for $name', textAlign: TextAlign.center, style: kNormalTextStyle.copyWith(color: kBlack,fontWeight: FontWeight.bold, fontSize: 16),),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: TextField(
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    onChanged: (value) {
+                      inputQuantity = double.tryParse(value);
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Quantity',
+                      hintText: 'Enter available quantity',
+                    ),
+                  ),
                 ),
+                kSmallWidthSpacing,
+                Expanded(
+                  flex: 2,
+                  child:
+                  Container(
+                    // height: 45,
+                    // width: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: kBackgroundGreyColor,
+
+                    ),
+                    child:
+
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child:
+                      DropdownButton<String>(
+                        style: kNormalTextStyle.copyWith(color: kBlack),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Icon(Icons.scale, color: kFontGreyColor,),
+                        ),
+                        dropdownColor: kBackgroundGreyColor,
+                        iconSize: 12,
+                        value: Provider.of<StyleProvider>(context, listen: true).selectedUnit, // The currently selected department
+                        items: unitList
+                            .map((units) => DropdownMenuItem(
+                          value: units,
+                          child: Text(units,),
+                        ))
+                            .toList(),
+                        onChanged: (newItem) => setState(() => Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(newItem)), // Update the selected department when a new one is chosen
+                        hint: Text(
+                          'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                      ),
+                    ),
+                    //Center(child: Text(unit)),
+                  ),
+                )
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Cancel', style: kNormalTextStyle.copyWith(color: kFontGreyColor),),
+              ),
+              TextButton(
+                onPressed: ()async {
+                  print(Provider.of<StyleProvider>(context, listen: false).selectedUnit);
+                  if (inputQuantity != null) {
+
+                    setState(() {
+                      selectedStocks.add(Stock(price: 0.0, name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: "ok"));
+                      Provider.of<StyleProvider>(context, listen: false).addSelectedStockList(name);
+
+                    });
+                  }
+                  setState(() {
+
+                  });
+                  Navigator.pop(context);
+                  await Future.delayed(const Duration(seconds: 1));
+
+                  _startBarcodeScan();
+                },
+                child: Text('OK', style: kNormalTextStyle.copyWith(color: kGreenThemeColor, fontSize: 16),),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (inputQuantity != null) {
-                  setState(() {
-                    // Stock selectedStock = Stock(
-                    //   name: name,
-                    //   id: id,
-                    //   restock: inputQuantity!,
-                    //   price: inputPrice!,
-                    //   description: description
-                    // );
-                    // selectedStocks[index].price = inputPrice!;
-                    // Check if the selected stock already exists in the list.
-                    int existingIndex = selectedStocks.indexWhere((stock) => stock.id == id);
-                    print("EXISTING INDEX = $existingIndex");
-                    if (existingIndex != -1) {
-                      // If the stock already exists, update its price and quantity.
-                      // selectedStocks[existingIndex].price = inputPrice!;
-                      selectedStocks[existingIndex].setRestock(inputQuantity!);
-                      // quantityControllers[existingIndex]?.text = inputQuantity.toString();
-
-                    } else {
-                      // If the stock is not in the list, add it to the list.
-                      // selectedStocks.add(selectedStock);
-                      print("NOPE THIS RUN INSTEAD");
-                    }
-                    checkboxStates[index] = true;
-                    quantityControllers[index]?.text = inputQuantity.toString();
-                    print("HERE RUN BRO and selected stock price is  ${selectedStocks[existingIndex].name}:${selectedStocks[existingIndex].restock}");
-                  });
-                }
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return CupertinoAlertDialog(
-                      title: Text("Scan another Item?"),
-                      content: Text("Would you like to scan another item?"),
-                      actions: [
-                        CupertinoDialogAction(
-                          child: const Text(
-                            "Cancel", style: TextStyle(color: kRedColor),),
-                          onPressed: () {
-                            Navigator.of(context).pop();// Close the dialog
-
-                          },
-                        ),
-                        CupertinoDialogAction(
-                          child: const Text("Scan Another"),
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Close the dialog
-                            _startBarcodeScan();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
+          );
       },
     );
   }
+
 
   void _handleUpdateStockButton() {
 
@@ -304,7 +423,8 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
         'product' : selectedStocks[i].name,
         'description':selectedStocks[i].description,
         'quantity': selectedStocks[i].restock,
-        'totalPrice':selectedStocks[i].price
+        'totalPrice':selectedStocks[i].price,
+        'unit': selectedStocks[i].unit
       }
       );
     }
@@ -325,13 +445,15 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
         .orderBy('name',descending: false).snapshots();
   }
 
-  Map<int, bool> checkboxStates = {}; // Map to track checkbox states.
+  // Map<int, bool> checkboxStates = {}; // Map to track checkbox states.
   Map<int, TextEditingController> quantityControllers = {}; // Map to track quantity text controllers.
   List<Stock> selectedStocks = []; // List to store selected stocks.
 
 
   @override
   Widget build(BuildContext context) {
+    var styleDataListen = Provider.of<StyleProvider>(context, listen: true);
+    var styleData = Provider.of<StyleProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: kBlack,
       appBar: AppBar(
@@ -359,28 +481,6 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
                 ],
               ),
             ),
-            // GestureDetector(
-            //     onTap: (){
-            //       showDialog(context: context, builder: (BuildContext context){
-            //         return
-            //           CupertinoAlertDialog(
-            //             title: const Text('30s Video on Stock'),
-            //             content: Text("This will take you to a short video on stock taking", style: kNormalTextStyle.copyWith(color: kBlack),),
-            //             actions: [
-            //
-            //               CupertinoDialogAction(isDestructiveAction: true,
-            //                   onPressed: (){
-            //                     // _btnController.reset();
-            //                     Navigator.pop(context);
-            //                   },
-            //                   child: const Text('Cancel')),
-            //
-            //
-            //             ],
-            //           );
-            //       });
-            //     },
-            //     child: Lottie.asset("images/video.json", width: 40)),
           )
         ],
         // title: Text('Customer List'),
@@ -390,7 +490,12 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
         backgroundColor: kAppPinkColor,
         onPressed: () {
           // Handle the "Update Stock" button press.
-          _handleUpdateStockButton();
+          if(selectedStocks.length == 0){
+            CommonFunctions().showErrorDialog("No Items have been Updated!\nPlease update some items First", context);
+          }else {
+            _handleUpdateStockButton();
+          }
+
 
         },
         icon:  CircleAvatar(
@@ -402,266 +507,425 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
+      body:
+      SafeArea(
+        child:
+        Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      kIsWeb?Container():GestureDetector(
+                        onTap: ()async{
+                          if(await CommonFunctions().subscriptionActive() == false ){
 
-                kLargeHeightSpacing,
-
-                kIsWeb?Container():GestureDetector(
-                  onTap: ()async{
-                    if(await CommonFunctions().subscriptionActive() == false ){
-
-                      CommonFunctions().buildSubscriptionPaymentModal(context);
-                    }else {
-                      _startBarcodeScan();
-                    }
-                  },
-                  child:
-                  const ScannerWidget(backgroundColor: kCustomColor,scannerColor: kBlack,)
+                            CommonFunctions().buildSubscriptionPaymentModal(context);
+                          }else {
+                            _startBarcodeScan();
+                          }
+                        },
+                        child:
+                        const ScannerWidget(),),
+                    ],
+                  ),
                 ),
                 kSmallHeightSpacing,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(
+                    children: [
+                      TextField(
+                        controller: searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search, color: kPureWhiteColor,),
+                          hintText: 'By Product Name / Id',
+                          hintFadeDuration: Duration(milliseconds: 100),
+                        ),
+                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                        onChanged: styleData.filterStockQuery,
+                      ),
+                    ],
+                  ),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
                   child: Row(
                     children: [
-                      Text("Add |", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+                      Text("Add |", style: kNormalTextStyle.copyWith(color: mainColor),),
                       kSmallWidthSpacing,
                       kSmallWidthSpacing,
-                      Text("Item", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
-                      Spacer(),
-                      Text("Current level |", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+                      Text("Item", style: kNormalTextStyle.copyWith(color:mainColor),),
+                      const Spacer(),
+                      Text("Current level |", style: kNormalTextStyle.copyWith(color: mainColor),),
                       kSmallWidthSpacing,
                       kSmallWidthSpacing,
-                      Text("Stock", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+                      Text("Stock", style: kNormalTextStyle.copyWith(color: mainColor),),
 
                     ],
                   ),
                 ),
 
-
                 Expanded(
-                  child: _searchResults.isEmpty
-                      ?
-                  StreamBuilder<QuerySnapshot>(
-                    stream: _customerStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text('Error: ${snapshot.error}'),
-                        );
-                      }
+                    child:
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
-                        return Center(
-                          child: Text('No items found.',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                        );
-                      }
-                      var stocks = snapshot.data!.docs;
-                      barcodeList = [];
-                      nameList = [];
-                      minimumList = [];
-                      quantityList = [];
-                      for (var stock in stocks) {
-                        barcodeList.add(stock.get('barcode'));
-                        nameList.add(stock.get('name'));
-                        minimumList.add(stock.get('minimum'));
-                        quantityList.add(stock.get('quantity'));
-                        descriptionList.add(stock.get('description'));
-                        itemIdList.add(stock.get('id'));
-
-                      }
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          var item = snapshot.data!.docs[index];
-                          var name = item['name'];
-                          var amount = item['amount'];
-                          var description = item['description'];
-                          var quantity = item['quantity'];
-                          var minimum = item['minimum'];
-
-                          // Define a TextEditingController to handle the quantity input in the TextField.
-                          TextEditingController quantityController = TextEditingController();
-
-                          if (!checkboxStates.containsKey(index)) {
-                            // Initialize checkbox state when the item is first shown.
-                            checkboxStates[index] = false;
-                          }
-
-                          if (!quantityControllers.containsKey(index)) {
-                            // Initialize quantity text controller when the item is first shown.
-                            quantityControllers[index] = TextEditingController();
-                          }
-
-                          return ListTile(
-                            // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                            subtitle: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // Text('${CommonFunctions().formatter.format(amount)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                                Checkbox(
-                                  fillColor: CommonFunctions().convertToMaterialStateProperty(kBeigeColor),
-                                  checkColor: kBlack,
-                                  value: checkboxStates[index], // Add your own logic here to set the value of the checkbox.
-                                  onChanged: (value) {
-
-                                    setState(() {
-                                      bool newValue = value ?? false;
-                                      checkboxStates[index] = newValue;
-                                      // Set the default value of the TextField to 0 when the checkbox is checked.
-                                      if (newValue) {
-                                        _showPriceAndQuantityDialog(index, name, item.id, description );
-                                        quantityControllers[index]?.text = '0';
-
-                                        // Add the selected stock to the list.
-                                        selectedStocks.add(Stock(name: name, id: item.id, restock: 0));
-                                      } else {
-                                        // Remove the selected stock from the list.
-                                        selectedStocks.removeWhere((stock) => stock.id == item.id);
-                                      }
-                                    });
-                                    // Add your logic to handle checkbox value change.
-                                  },
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('$name', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                                    Text('($description)', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
-                                  ],
-                                ),
+                    ListView.builder(
+                      itemCount: styleDataListen.filteredStock.length,
+                      itemBuilder: (context, index) {
 
 
-                                Spacer(),
-                                minimum  < quantity ? Text('$quantity ', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)):Text('$quantity ', style: kNormalTextStyle.copyWith(color: Colors.red)),
-                                kSmallWidthSpacing,
-                                kSmallWidthSpacing,
-                                kSmallWidthSpacing,
-                                GestureDetector(
-                                  onTap: (){
-                                    if (!checkboxStates[index]!) {
-                                      // Show the popup only when the TextField is disabled (checkbox is unchecked).
-                                      _showPopup(context);
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 60,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                    ),
-                                    child: Center(
-                                      child: TextField(
 
-                                        enabled: checkboxStates[index], // Set the TextField's editable state based on checkbox state.
-                                        controller: _getOrCreateController(index),
-                                        //quantityControllers[index],
-                                        textAlign: TextAlign.center,
-                                        keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-                                        onChanged: (value) {
-                                          // Update the restock value of the corresponding Stock instance in the list.
-                                          double restockValue = double.tryParse(value) ?? 0;
-                                          selectedStocks
-                                              .firstWhere((stock) => stock.id == item.id, orElse: () => Stock(name: name, id: item.id, restock: 0))
-                                              .setRestock(restockValue);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
 
-                    },
-                  ):
-                  // Text("Something exists")
-                  ListView.builder(
-                    itemCount: _searchResults.length,
-                    itemBuilder: (context, index) {
-                      var customer = _searchResults[index];
-                      var name = customer['name'];
-                      var amount = customer['amount'];
-                      var description = customer['description'];
-                      var quantity = customer['quantity'];
+                        if (!quantityControllers.containsKey(index)) {
+                          // Initialize quantity text controller when the item is first shown.
+                          quantityControllers[index] = TextEditingController();
+                        }
 
-                      if (!checkboxStates.containsKey(index)) {
-                        // Initialize checkbox state when the item is first shown.
-                        checkboxStates[index] = false;
-                      }
-
-                      if (!quantityControllers.containsKey(index)) {
-                        // Initialize quantity text controller when the item is first shown.
-                        quantityControllers[index] = TextEditingController();
-                      }
-
-                      return GestureDetector(
-                        onTap: (){
-                          Navigator.pop(context);
-                          //Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(name:  name, quantity: 1, amount: amount, details: name));
-                        },
-                        child: ListTile(
-                          title: Text(name,style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                          subtitle: Column(
+                        return ListTile(
+                          // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+                          subtitle: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text('${CommonFunctions().formatter.format(amount)}',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                              Text('$description',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                              Text('$quantity',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
 
+                              GestureDetector(
+                                onTap: ()
+                                {
+
+                                  if(!styleDataListen.selectedStock.contains(styleData.filteredStock[index].name)){
+                                    Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(styleData.filteredStock[index].unit);
+                                    _showPriceAndQuantityDialog(styleData.filteredStock[index].name , styleData.filteredStock[index].documentId, styleData.filteredStock[index].unit,
+                                      styleData.filteredStock[index].description,
+                                    );
+                                    quantityControllers[index]?.text = '0';
+                                    //selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                  }else {
+                                    Provider.of<StyleProvider>(context, listen: false).removeSelectedStockList(styleData.filteredStock[index].name);
+                                    selectedStocks.removeWhere((stock) => stock.name == styleData.filteredStock[index].name);
+                                    // selectedStocks.add(Stock(name: name, id: id, restock: inputQuantity!, description:description, unit: Provider.of<StyleProvider>(context, listen: false).selectedUnit, quality: selectedQuality!.name));
+
+                                    setState(() {
+
+                                    });
+                                  }
+                                },
+                                child: Row(
+                                  children: [
+                                    styleDataListen.selectedStock.contains(styleData.filteredStock[index].name)?Icon(Icons.check_box_outlined, color: kBeigeColor,):Icon(Icons.check_box_outline_blank_outlined, color: kPlainBackground,),
+                                    kMediumWidthSpacing,
+                                    Container(
+                                      width: 140,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('${styleData.filteredStock[index].name}',overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith(color: mainColor)),
+                                          Text('${styleData.filteredStock[index].description}',overflow: TextOverflow.ellipsis, style: kNormalTextStyle.copyWith()),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+
+
+                              Spacer(),
+                              styleData.filteredStock[index].minimum  < styleData.filteredStock[index].quantity ? Text('${styleData.filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: mainColor)):Text('${styleData.filteredStock[index].quantity} ', style: kNormalTextStyle.copyWith(color: Colors.red)),
+                              kSmallWidthSpacing,
+                              // kSmallWidthSpacing,
+                              // kSmallWidthSpacing,
+                              GestureDetector(
+                                onTap: ()
+                                {
+
+                                  if(!styleDataListen.selectedStock.contains(styleData.filteredStock[index].name)){
+                                    Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(styleData.filteredStock[index].unit);
+                                    _showPriceAndQuantityDialog(
+                                      styleData.filteredStock[index].name,
+                                      styleData.filteredStock[index].documentId,
+                                      styleData.filteredStock[index].unit,
+                                      styleData.filteredStock[index].description,
+                                    );
+                                    quantityControllers[index]?.text = '0';
+                                    // selectedStocks.add(Stock(name: filteredStock[index].name, id: filteredStock[index].documentId, restock: 0, description:filteredStock[index].description));
+                                  }else {
+
+                                    selectedStocks.removeWhere((stock) => stock.name == styleData.filteredStock[index].name);
+                                  }
+                                },
+                                child: Container(
+                                  width: 60,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                        height: 70,
+                                        width:120,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: kBlack)
+                                        ),
+                                        child: Center(
+                                          child:
+                                          //Text("1"))
+                                          styleDataListen.selectedStock.contains(styleData.filteredStock[index].name)?
+                                          Text(selectedStocks[ selectedStocks.indexWhere((stock) => stock.name == styleData.filteredStock[index].name)].restock.toString(), style: kNormalTextStyle.copyWith(color: kBeigeColor),):
+                                          Container(),)
+                                    ),
+
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      );
-                    },
-                  ),
+                        );
+                      },
+                    )
                 ),
               ],
             ),
-            // Positioned(
-            //     bottom: 50,
-            //     right: 5,
-            //     child: Column(
-            //       children: [
-            //         GestureDetector(
-            //
-            //           onTap: (){
-            //             Navigator.pop(context);
-            //             showModalBottomSheet(
-            //                 isScrollControlled: true,
-            //                 context: context,
-            //                 builder: (context) {
-            //                   return  Scaffold(
-            //                       appBar: AppBar(
-            //                         automaticallyImplyLeading: false,
-            //                         backgroundColor: kBlack,
-            //                       ),
-            //                       body: ProductUpload());
-            //                 });
-            //
-            //           },
-            //           child: Lottie.asset('images/round.json', height: 50),
-            //         ),
-            //         Text("Create Product",style: kNormalTextStyle.copyWith(color: kBlueDarkColor, fontSize: 10),)
-            //       ],
-            //     )
-            //     )
-          ],
+          ),
         ),
       ),
+      // SafeArea(
+      //   child: Stack(
+      //     children: [
+      //       Column(
+      //         children: [
+      //
+      //           kLargeHeightSpacing,
+      //
+      //           kIsWeb?Container():GestureDetector(
+      //             onTap: ()async{
+      //               if(await CommonFunctions().subscriptionActive() == false ){
+      //
+      //                 CommonFunctions().buildSubscriptionPaymentModal(context);
+      //               }else {
+      //                 _startBarcodeScan();
+      //               }
+      //             },
+      //             child:
+      //             const ScannerWidget(backgroundColor: kCustomColor,scannerColor: kBlack,)
+      //           ),
+      //           kSmallHeightSpacing,
+      //           Padding(
+      //             padding: const EdgeInsets.only(left: 20.0, right: 20),
+      //             child: Row(
+      //               children: [
+      //                 Text("Add |", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+      //                 kSmallWidthSpacing,
+      //                 kSmallWidthSpacing,
+      //                 Text("Item", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+      //                 Spacer(),
+      //                 Text("Current level |", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+      //                 kSmallWidthSpacing,
+      //                 kSmallWidthSpacing,
+      //                 Text("Stock", style: kNormalTextStyle.copyWith(color: kBeigeColor),),
+      //
+      //               ],
+      //             ),
+      //           ),
+      //           Expanded(
+      //             child: _searchResults.isEmpty
+      //                 ?
+      //             StreamBuilder<QuerySnapshot>(
+      //               stream: _customerStream,
+      //               builder: (context, snapshot) {
+      //                 if (snapshot.hasError) {
+      //                   return Center(
+      //                     child: Text('Error: ${snapshot.error}'),
+      //                   );
+      //                 }
+      //
+      //                 if (snapshot.connectionState == ConnectionState.waiting) {
+      //                   return Center(
+      //                     child: CircularProgressIndicator(),
+      //                   );
+      //                 }
+      //
+      //                 if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+      //                   return Center(
+      //                     child: Text('No items found.',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+      //                   );
+      //                 }
+      //                 var stocks = snapshot.data!.docs;
+      //                 barcodeList = [];
+      //                 nameList = [];
+      //                 minimumList = [];
+      //                 quantityList = [];
+      //                 for (var stock in stocks) {
+      //                   barcodeList.add(stock.get('barcode'));
+      //                   nameList.add(stock.get('name'));
+      //                   minimumList.add(stock.get('minimum'));
+      //                   quantityList.add(stock.get('quantity'));
+      //                   descriptionList.add(stock.get('description'));
+      //                   itemIdList.add(stock.get('id'));
+      //
+      //                 }
+      //                 return ListView.builder(
+      //                   itemCount: snapshot.data!.docs.length,
+      //                   itemBuilder: (context, index) {
+      //                     var item = snapshot.data!.docs[index];
+      //                     var name = item['name'];
+      //                     var amount = item['amount'];
+      //                     var description = item['description'];
+      //                     var quantity = item['quantity'];
+      //                     var minimum = item['minimum'];
+      //
+      //                     // Define a TextEditingController to handle the quantity input in the TextField.
+      //                     TextEditingController quantityController = TextEditingController();
+      //
+      //                     if (!checkboxStates.containsKey(index)) {
+      //                       // Initialize checkbox state when the item is first shown.
+      //                       checkboxStates[index] = false;
+      //                     }
+      //
+      //                     if (!quantityControllers.containsKey(index)) {
+      //                       // Initialize quantity text controller when the item is first shown.
+      //                       quantityControllers[index] = TextEditingController();
+      //                     }
+      //
+      //                     return ListTile(
+      //                       // title: Text(name, style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+      //                       subtitle: Row(
+      //                         crossAxisAlignment: CrossAxisAlignment.center,
+      //                         mainAxisAlignment: MainAxisAlignment.start,
+      //                         children: [
+      //                           // Text('${CommonFunctions().formatter.format(amount)}', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+      //                           Checkbox(
+      //                             fillColor: CommonFunctions().convertToMaterialStateProperty(kBeigeColor),
+      //                             checkColor: kBlack,
+      //                             value: checkboxStates[index], // Add your own logic here to set the value of the checkbox.
+      //                             onChanged: (value) {
+      //
+      //                               setState(() {
+      //                                 bool newValue = value ?? false;
+      //                                 checkboxStates[index] = newValue;
+      //                                 // Set the default value of the TextField to 0 when the checkbox is checked.
+      //                                 if (newValue) {
+      //                                   _showPriceAndQuantityDialog(index, name, item.id, description );
+      //                                   quantityControllers[index]?.text = '0';
+      //
+      //                                   // Add the selected stock to the list.
+      //                                   selectedStocks.add(Stock(name: name, id: item.id, restock: 0));
+      //                                 } else {
+      //                                   // Remove the selected stock from the list.
+      //                                   selectedStocks.removeWhere((stock) => stock.id == item.id);
+      //                                 }
+      //                               });
+      //                               // Add your logic to handle checkbox value change.
+      //                             },
+      //                           ),
+      //                           Column(
+      //                             crossAxisAlignment: CrossAxisAlignment.start,
+      //                             children: [
+      //                               Text('$name', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+      //                               Text('($description)', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)),
+      //                             ],
+      //                           ),
+      //
+      //
+      //                           Spacer(),
+      //                           minimum  < quantity ? Text('$quantity ', style: kNormalTextStyle.copyWith(color: kPureWhiteColor)):Text('$quantity ', style: kNormalTextStyle.copyWith(color: Colors.red)),
+      //                           kSmallWidthSpacing,
+      //                           kSmallWidthSpacing,
+      //                           kSmallWidthSpacing,
+      //                           GestureDetector(
+      //                             onTap: (){
+      //                               if (!checkboxStates[index]!) {
+      //                                 // Show the popup only when the TextField is disabled (checkbox is unchecked).
+      //                                 _showPopup(context);
+      //                               }
+      //                             },
+      //                             child: Container(
+      //                               width: 60,
+      //                               height: 30,
+      //                               decoration: BoxDecoration(
+      //                                 border: Border.all(color: Colors.grey),
+      //                               ),
+      //                               child: Center(
+      //                                 child: TextField(
+      //
+      //                                   enabled: checkboxStates[index], // Set the TextField's editable state based on checkbox state.
+      //                                   controller: _getOrCreateController(index),
+      //                                   //quantityControllers[index],
+      //                                   textAlign: TextAlign.center,
+      //                                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+      //                                   style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+      //                                   onChanged: (value) {
+      //                                     // Update the restock value of the corresponding Stock instance in the list.
+      //                                     double restockValue = double.tryParse(value) ?? 0;
+      //                                     selectedStocks
+      //                                         .firstWhere((stock) => stock.id == item.id, orElse: () => Stock(name: name, id: item.id, restock: 0))
+      //                                         .setRestock(restockValue);
+      //                                   },
+      //                                 ),
+      //                               ),
+      //                             ),
+      //                           ),
+      //                         ],
+      //                       ),
+      //                     );
+      //                   },
+      //                 );
+      //
+      //               },
+      //             ):
+      //             // Text("Something exists")
+      //             ListView.builder(
+      //               itemCount: _searchResults.length,
+      //               itemBuilder: (context, index) {
+      //                 var customer = _searchResults[index];
+      //                 var name = customer['name'];
+      //                 var amount = customer['amount'];
+      //                 var description = customer['description'];
+      //                 var quantity = customer['quantity'];
+      //
+      //                 if (!checkboxStates.containsKey(index)) {
+      //                   // Initialize checkbox state when the item is first shown.
+      //                   checkboxStates[index] = false;
+      //                 }
+      //
+      //                 if (!quantityControllers.containsKey(index)) {
+      //                   // Initialize quantity text controller when the item is first shown.
+      //                   quantityControllers[index] = TextEditingController();
+      //                 }
+      //
+      //                 return GestureDetector(
+      //                   onTap: (){
+      //                     Navigator.pop(context);
+      //                     //Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(name:  name, quantity: 1, amount: amount, details: name));
+      //                   },
+      //                   child: ListTile(
+      //                     title: Text(name,style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+      //                     subtitle: Column(
+      //                       mainAxisAlignment: MainAxisAlignment.start,
+      //                       children: [
+      //                         Text('${CommonFunctions().formatter.format(amount)}',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+      //                         Text('$description',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+      //                         Text('$quantity',style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+      //
+      //                       ],
+      //                     ),
+      //                   ),
+      //                 );
+      //               },
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 

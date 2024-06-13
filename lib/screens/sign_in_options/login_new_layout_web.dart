@@ -11,13 +11,9 @@ import 'package:stylestore/screens/sign_in_options/delete_account.dart';
 import 'package:stylestore/screens/sign_in_options/signup_page.dart';
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_mobile.dart';
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_web.dart';
-
 import '../../Utilities/constants/font_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../controllers/responsive/responsive_page.dart';
-import '../../model/styleapp_data.dart';
-import '../../widgets/select_country_region.dart';
-import '../onboarding_businesses/onboarding_business.dart';
 import 'employee_sign_in.dart';
 
 class LoginPageNewWeb extends StatefulWidget {
@@ -28,15 +24,13 @@ class LoginPageNewWeb extends StatefulWidget {
 
 class _LoginPageNewWebState extends State<LoginPageNewWeb> {
   final auth = FirebaseAuth.instance;
-  String email = ' ';
-  String password = ' ';
-
+  String email = '';
+  String password = '';
   final RoundedLoadingButtonController _btnController =
   RoundedLoadingButtonController();
   bool showSpinner = false;
   bool ownerLogin = false;
   bool userLoggedIn = false;
-
 
   void defaultsInitiation () async{
     final prefs = await SharedPreferences.getInstance();
@@ -48,12 +42,9 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
         Navigator.pushNamed(context, SuperResponsiveLayout.id);
       }else{
         if(prefs.getString(kCountryCode)!= null){
-
         }else {
           CommonFunctions().showCountryPreference(context);
-
         }
-        // CommonFunctions().showCountryPreference(context);
       }
     });
   }

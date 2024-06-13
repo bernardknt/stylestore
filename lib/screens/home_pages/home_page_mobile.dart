@@ -391,7 +391,18 @@ class _HomePageState extends State<HomePage> {
                   String name = prefs.getString(kBusinessNameConstant)??"";
 
                   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
-                  // Provider.of<StyleProvider>(context, listen: false).setTrialMode();
+                  showDialog(context: context, builder: (BuildContext context){
+                    return
+                      GestureDetector(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child:
+                          //TutorialVideoPage(videoUrl: "https://www.youtube.com/watch?v=3dtwm9RgDlU&ab_channel=Jayse")
+                          ChatPage()
+                        // SubscriptionController()
+                      );
+                  });
 
                 },
 

@@ -122,105 +122,102 @@ class _ControlPageWebState extends State<ControlPageWeb> {
             footerBuilder: (context, extended) {
               return
 
-                Row(
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15.0, bottom: 8, top: 3),
-                          child: GestureDetector(
-                            onTap:(){
-                              Navigator.pushNamed(context, EditShopPage.id);
+                    Padding(
+                      padding: const EdgeInsets.only(left: 17.0, bottom: 8, top: 10),
+                      child: GestureDetector(
+                        onTap:(){
+                          Navigator.pushNamed(context, EditShopPage.id);
 
-                            },
-                              child: Row(
+                        },
+                          child: Row(
 
 
-                                children: [
-                                  const Icon(Icons.settings),
-                                  kMediumWidthSpacing,
-                                  kMediumWidthSpacing,
+                            children: [
+                              const Icon(Icons.settings),
+                              kMediumWidthSpacing,
+                              kMediumWidthSpacing,
 
-                                  Text("Settings")
-                                ],
-                              )),
-                        ),
-                        CountryCodePicker(
-                          initialSelection: initialCountryCode,
-                          favorite: const [
-                            "+250",
-                            "+256",
-                            "+254",
-                          ],
-
-                          // showCountryOnly: false,
-                          // showFlag: true,
-                          showOnlyCountryWhenClosed: true,
-                          showFlagMain: true,
-                          // Only show country name (optional)
-                          onChanged: (code) async{
-                            final prefs = await SharedPreferences.getInstance();
-                            prefs.setString(kCountry, code.name!);
-                            prefs.setString(kCountryCode, code.dialCode!);
-
-                            String currency = CommonFunctions().getCurrencyCode(code.dialCode!, context);
-                            prefs.setString(kCurrency, currency);
-                            setState(() {
-
-                            });
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left:16.0, top: 8),
-                          child: GestureDetector(
-                              onTap: () async {
-
-                                CoolAlert.show(
-                                    width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
-
-                                    context: context,
-                                    type: CoolAlertType.success,
-                                    widget: Column(
-                                      children: [
-                                        Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
-
-                                      ],
-                                    ),
-                                    title: 'Log Out?',
-
-                                    confirmBtnColor: kFontGreyColor,
-                                    confirmBtnText: 'Yes',
-                                    confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
-                                    lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
-
-
-                                    onConfirmBtnTap: () async{
-                                      final prefs = await SharedPreferences.getInstance();
-                                      prefs.setBool(kIsLoggedInConstant, false);
-                                      prefs.setBool(kIsFirstTimeUser, true);
-                                      await auth.signOut().then((value) => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SuperResponsiveLayout(
-                                            mobileBody: LoginPage(),
-                                            desktopBody: LoginPageNewWeb(),
-                                          ),
-                                        ),
-                                      )
-                                      );
-                                    }
-
-
-                                );
-                              },
-                              child:  Text('Log out', style: kNormalTextStyle.copyWith(color: kBlueThemeColor),)),
-                        ),
-
-
-                      ],
+                              Text("Settings")
+                            ],
+                          )),
                     ),
+                    CountryCodePicker(
+                      initialSelection: initialCountryCode,
+                      favorite: const [
+                        "+250",
+                        "+256",
+                        "+254",
+                      ],
+
+                      // showCountryOnly: false,
+                      // showFlag: true,
+                      showOnlyCountryWhenClosed: true,
+                      showFlagMain: true,
+                      // Only show country name (optional)
+                      onChanged: (code) async{
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setString(kCountry, code.name!);
+                        prefs.setString(kCountryCode, code.dialCode!);
+
+                        String currency = CommonFunctions().getCurrencyCode(code.dialCode!, context);
+                        prefs.setString(kCurrency, currency);
+                        CommonFunctions().showSuccessNotification("Default Country set to ${code.name}", context);
+                        setState(() {
+
+                        });
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left:16.0, top: 8),
+                      child: GestureDetector(
+                          onTap: () async {
+
+                            CoolAlert.show(
+                                width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+
+                                context: context,
+                                type: CoolAlertType.success,
+                                widget: Column(
+                                  children: [
+                                    Text('Are you sure you want to Log Out?', textAlign: TextAlign.center, style: kNormalTextStyle,),
+
+                                  ],
+                                ),
+                                title: 'Log Out?',
+
+                                confirmBtnColor: kFontGreyColor,
+                                confirmBtnText: 'Yes',
+                                confirmBtnTextStyle: kNormalTextStyleWhiteButtons,
+                                lottieAsset: 'images/leave.json', showCancelBtn: true, backgroundColor: kBlack,
+
+
+                                onConfirmBtnTap: () async{
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setBool(kIsLoggedInConstant, false);
+                                  prefs.setBool(kIsFirstTimeUser, true);
+                                  await auth.signOut().then((value) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SuperResponsiveLayout(
+                                        mobileBody: LoginPage(),
+                                        desktopBody: LoginPageNewWeb(),
+                                      ),
+                                    ),
+                                  )
+                                  );
+                                }
+
+
+                            );
+                          },
+                          child:  Text('Log out', style: kNormalTextStyle.copyWith(color: kBlueThemeColor),)),
+                    ),
+
+
                   ],
                 );
             },
@@ -291,17 +288,19 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     _selectedWidget = SuppliersPage();
                   });
                 },
-                iconWidget: Stack(children: [
-                  const SizedBox(
-                      height: 40,
-                      width: 30,
-
-                      child: Icon(kIconSuppliers)),
-                  subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
-                ],)
+                  icon: kIconSuppliers,
+                // iconWidget:Icon(kIconSuppliers)
+                // Stack(children: [
+                //   const SizedBox(
+                //       height: 40,
+                //       width: 30,
+                //
+                //       child: Icon(kIconSuppliers)),
+                //   subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
+                //       top: 0,
+                //       right: 0,
+                //       child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
+                // ],)
               ),
               SidebarXItem(
                 label: cMessagingTab,
@@ -310,13 +309,8 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     _selectedWidget = MessageHistoryPage(showBackButton: false,);
                   });
                 },
-                // page: AttendancePage(),
-                iconWidget: Stack(children: [
-                  const SizedBox(
-                      width: 30,
-                      child: Icon( kIconMessage)),
-                ],),
-                // icon: kIconMessage,
+                  icon:kIconMessage,
+                // iconWidget:
               ),
               SidebarXItem(
                 label: cTransactions,
@@ -325,35 +319,27 @@ class _ControlPageWebState extends State<ControlPageWeb> {
                     _selectedWidget = TransactionsController(showBackButton: false,);
                   });
                 },
-                // page: AttendancePage(),
-                //icon: kIconTransaction,
-                  iconWidget: Stack(children: [
-                    const SizedBox(
-                        // height: 10,
-                        width: 30,
+                  icon: kIconTransaction,
+                  // iconWidget: Icon(kIconTransaction)
 
-                        child: Icon(kIconTransaction)),
-                    // subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
-                    //     top: 0,
-                    //     right: 0,
-                    //     child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
-                  ],)
               ),
               SidebarXItem(
                 label: cAnalytics,
                 // page: ReportsPage(),
                 // icon: kIconAnalytics,
-                  iconWidget: Stack(children: [
-                    const SizedBox(
-                        height: 40,
-                        width: 30,
-
-                        child: Icon(kIconAnalytics)),
-                    subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
-                  ],),
+                icon: kIconAnalytics,
+                  // iconWidget:Icon(kIconAnalytics),
+                  // Stack(children: [
+                  //   const SizedBox(
+                  //       height: 40,
+                  //       width: 30,
+                  //
+                  //       child: Icon(kIconAnalytics)),
+                  //   subscriptionDate>= DateTime.now().millisecondsSinceEpoch?Container(): Positioned(
+                  //       top: 0,
+                  //       right: 0,
+                  //       child: Icon(Iconsax.crown1, size: 10,color: kGoldColor,))
+                  // ],),
 
                 onTap: () {
                   setState(() {

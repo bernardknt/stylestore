@@ -173,7 +173,8 @@ class _POSState extends State<POS> {
                         );
                       });
                 }
-              } else {
+              }
+              else {
                 Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
                     name: barcodeItem.name, quantity: 1.0,
                     amount: barcodeItem.amount / 1.0,

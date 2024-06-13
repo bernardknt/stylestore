@@ -322,7 +322,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                     backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlueDarkColor)
                                 ),
                                 onPressed: (){
-                                  CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['customers']) ;
+                                  CommonFunctions().openLink(videoMap['customers']) ;
                                 }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
                           ],
                     )),)

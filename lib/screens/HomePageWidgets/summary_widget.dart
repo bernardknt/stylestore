@@ -55,9 +55,11 @@ class _SummaryPageState extends State<SummaryPage> {
   var dateSeparator = '';
   var logo = '';
   Map<String, dynamic> permissionsMap = {};
+  Map<String, dynamic> videoMap = {};
 
   void defaultInitialization() async {
     var prefs = await SharedPreferences.getInstance();
+    videoMap = await CommonFunctions().convertWalkthroughVideoJson();
 
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     storeName = prefs.getString(kBusinessNameConstant)!;
@@ -206,7 +208,7 @@ class _SummaryPageState extends State<SummaryPage> {
                                     onPressed: (){
                                   
 
-                                 CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['general']) ;
+                                 CommonFunctions().openLink(videoMap['general']) ;
                                 }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
                               ],
                             ))),

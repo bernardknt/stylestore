@@ -252,13 +252,7 @@ class _EditCustomerSearchPageState extends State<EditCustomerSearchPage> {
 
                                       ],
                                     )),
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
-                                    // kLargeHeightSpacing,
+
                                     // Text("Cancel", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
                                   ],
                                 ),
@@ -268,7 +262,15 @@ class _EditCustomerSearchPageState extends State<EditCustomerSearchPage> {
 
 
                       },
-                      child: Lottie.asset('images/round.json', height: 50),
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: kAppPinkColor,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Center(child: Icon(Icons.add),),
+                      )
                     ),
                     Text("Create Customer",style: kNormalTextStyle.copyWith(color: kBlueDarkColor, fontSize: 10),)
                   ],

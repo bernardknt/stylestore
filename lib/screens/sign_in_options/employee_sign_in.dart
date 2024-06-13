@@ -161,10 +161,11 @@ defaultInitialization()async{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: kAppPinkColor,
-        foregroundColor: kPureWhiteColor,
+        backgroundColor: kPureWhiteColor,
+        foregroundColor: kBlack,
+        elevation: 0,
         centerTitle: true,
-        title: Text("Employee Sign In",style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
+        title: Text("Employee Sign In",style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),),
       ),
       body: Center(
         child: Form(
@@ -181,7 +182,7 @@ defaultInitialization()async{
 
                   Text(
                     "Enter Your Phone Number and\nEmployee Pin",textAlign: TextAlign.center,
-                    style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 18),
+                    style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 18, fontWeight: FontWeight.w600),
                   ),
 
                   kLargeHeightSpacing,
@@ -230,37 +231,77 @@ defaultInitialization()async{
                         Expanded(
                             child:
 
+                            // TextFormField(
+                            //
+                            //
+                            //   onChanged: (value){
+                            //     phoneNumber = countryCode + value;
+                            //     print(phoneNumber);
+                            //   },
+                            //   keyboardType: TextInputType.phone,
+                            //   decoration: InputDecoration(
+                            //
+                            //       border: InputBorder.none,
+                            //       hintText: "771234567",
+                            //       hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
+                            //
+                            //   ),
+                            // )
                             TextFormField(
+                              onChanged: (value) {
+                                // Remove leading zero if it exists
+                                if (value.startsWith('0')) {
+                                  value = value.substring(1);
+                                }
 
-
-                              onChanged: (value){
                                 phoneNumber = countryCode + value;
                                 print(phoneNumber);
                               },
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
-
-                                  border: InputBorder.none,
-                                  hintText: "771234567",
-                                  hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500])
-
+                                border: InputBorder.none,
+                                hintText: "771234567",
+                                hintStyle: kNormalTextStyle.copyWith(color: Colors.grey[500]),
                               ),
-                            ))
+                            )
+
+                        )
                       ],
                     ),
                   ),
                   kLargeHeightSpacing,
                   Pinput(
+                    defaultPinTheme: PinTheme(
+                      height: 60,
+                      width: 60,
+                      textStyle: kNormalTextStyle.copyWith(color: kBlack, fontSize: 20, fontWeight: FontWeight.bold),
+                      decoration: BoxDecoration(
+                        color: kFontGreyColor.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(10)
+                      )
+                    ),
                     length: 4,
 
                     onChanged: (value){
                       code = value;
-                      print(value);
+
 
                     },
 
                     showCursor: true,
-                    onCompleted: (pin) => print(pin),
+                    onCompleted: (pin) {
+                      _btnController.start();
+                      if (phoneNumber == ""){
+                        CommonFunctions().showErrorDialog("No Phone Number added", context);
+
+                        _btnController.error();
+                        _btnController.reset();
+
+                      } else {
+                        checkPhoneNumberAndCode(phoneNumber, code);
+                      }
+                    },
+
                   ),
                   kLargeHeightSpacing,
 
@@ -273,8 +314,11 @@ defaultInitialization()async{
                       print("$phoneNumber : $code");
                       if (phoneNumber == ""||code ==""){
                         _btnController.error();
+                        _btnController.reset();
+                        CommonFunctions().showErrorDialog("No Phone Number added", context);
+
                       } else {
-                        checkPhoneNumberAndCode(phoneNumber, code);
+                      //  checkPhoneNumberAndCode(phoneNumber, code);
                       }
 
 

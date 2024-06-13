@@ -153,6 +153,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
   void defaultInitialization() async {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
+    print(videoMap);
     newEmployees = await retrieveEmployeeData();
     print(newEmployees);
     filteredEmployees.addAll(newEmployees);
@@ -342,8 +343,9 @@ class _EmployeesPageState extends State<EmployeesPage> {
 
                 TextButton(
                     style: ButtonStyle(backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlueDarkColor)),
-                    onPressed: (){
-                  CommonFunctions().openLink(Provider.of<StyleProvider>(context, listen: false).videoMap['team']) ;
+                    onPressed: ()async {
+
+                  CommonFunctions().openLink(videoMap['team']) ;
                 }, child: Text(cWatchTutorial, style: kNormalTextStyle.copyWith(color: kPureWhiteColor),))
               ],
             ),

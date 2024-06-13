@@ -185,7 +185,15 @@ class SelectServicePage extends StatelessWidget {
                         });
 
                   },
-                  child: Lottie.asset('images/round.json', height: 60),
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        color: kAppPinkColor,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Center(child: Icon(Icons.add),),
+                  )
                 ),
                 Text("Create Service",style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 12),)
               ],

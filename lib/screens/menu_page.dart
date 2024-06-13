@@ -176,6 +176,7 @@ class _MenuPageState extends State<MenuPage> {
 
                   String currency = CommonFunctions().getCurrencyCode(code.dialCode!, context);
                   prefs.setString(kCurrency, currency);
+                  CommonFunctions().showSuccessNotification("Default Country set to ${code.name}", context);
                   setState(() {
 
                   });

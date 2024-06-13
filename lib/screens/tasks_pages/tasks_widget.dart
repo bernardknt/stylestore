@@ -448,11 +448,14 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                       right: 10,
                                                       child:
                                                       Center(
-                                                        child: CommonFunctions().convertDatesToString(taskDates[index]) == -1?Container(): taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="Done"?Text("This task is completed", style: kNormalTextStyle.copyWith(fontSize: 14, color: kPureWhiteColor),):SliderButton(
-                                                          action: () async {
-                                                            int mainIndex = CommonFunctions().convertDatesToString(taskDates[index]);
-                                                            print("Here is the taskStatus: ${taskStatus[index][mainIndex ]} ... ");
-                                                            if(taskStatus[index][mainIndex ] =="In Progress"){
+                                                        child: CommonFunctions().convertDatesToString(taskDates[index]) == -1?Container(): taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="Done"?Text("This task is completed", style: kNormalTextStyle.copyWith(fontSize: 14, color: kPureWhiteColor),):
+                                                        taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"?TextButton(
+                                                          style: ButtonStyle(
+                                                            backgroundColor: CommonFunctions().convertToMaterialStateProperty(kAppPinkColor)
+                                                          ),
+                                                            
+                                                            onPressed: ()async{
+                                                              int mainIndex = CommonFunctions().convertDatesToString(taskDates[index]);
                                                               final prefs = await SharedPreferences.getInstance();
                                                               var changedFinishedAtList  = executionAtList[index];
                                                               var changedFinishedByList = executionByList[index];
@@ -464,9 +467,15 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                               changedFinishedAtList[index] = DateTime.now();
 
                                                               CommonFunctions().updateTaskDone(idList[index], "tasks", changedFinishedAtList, changedFinishedByList,changedTaskStatusList,changedTaskList, context);
-                                                              // Navigator.pop(context);
-                                                             // CommonFunctions().updateTaskInProgress(idList[index], "tasks", changedExecutionAtList, changedExecutionByList,changedTaskStatusList,context);
 
+
+
+
+                                                            }, child: Text("Press to Complete", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)) :SliderButton(
+                                                          action: () async {
+                                                            int mainIndex = CommonFunctions().convertDatesToString(taskDates[index]);
+                                                            print("Here is the taskStatus: ${taskStatus[index][mainIndex ]} ... ");
+                                                            if(taskStatus[index][mainIndex ] =="In Progress"){
 
                                                             }else{
                                                               print("This run");
@@ -491,7 +500,8 @@ class _TasksWidgetState extends State<TasksWidget> {
                                                           ///Put label over here
                                                           label:
                                                           // Text("data"),
-                                                         taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"? Text("Slide to Finish Task", style: kNormalTextStyle.copyWith(fontSize: 14),):Text("Slide to Start Task", style: kNormalTextStyle.copyWith(fontSize: 14),),
+                                                         taskStatus[index][CommonFunctions().convertDatesToString(taskDates[index])] =="In Progress"?
+                                                         Text("Slide to Finish Task", style: kNormalTextStyle.copyWith(fontSize: 14),):Text("Slide to Start Task", style: kNormalTextStyle.copyWith(fontSize: 14),),
                                                           icon: Center(
                                                             // child: Image.asset('images/logo.png',height: 40,)
                                                               child:

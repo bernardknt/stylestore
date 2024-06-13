@@ -201,7 +201,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
                                 GestureDetector(
                                   onTap: (){
                                     Navigator.pop(context);
-
+                                    Provider.of<StyleProvider>(context, listen: false).setSelectedUnit("pcs");
                                     showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: true,

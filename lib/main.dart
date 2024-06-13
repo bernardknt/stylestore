@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:stylestore/controllers/homepage_controller.dart';
 import 'package:stylestore/controllers/messages_controller.dart';
@@ -26,6 +27,7 @@ import 'package:stylestore/screens/employee_pages/employees_page.dart';
 import 'package:stylestore/screens/expenses_pages/expenses.dart';
 import 'package:stylestore/screens/home_pages/home_page_web.dart';
 import 'package:stylestore/screens/onboarding_businesses/onboarding_business.dart';
+import 'package:stylestore/screens/payment_pages/external_payment_page.dart';
 import 'package:stylestore/screens/payment_pages/pos_web.dart';
 import 'package:stylestore/screens/products_pages/product_edit_page.dart';
 import 'package:stylestore/model/styleapp_data.dart';
@@ -89,7 +91,24 @@ import 'model/translations_model.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-
+final GoRouter _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return  SplashPage();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'details',
+          builder: (BuildContext context, GoRouterState state) {
+            return SplashPage();
+          },
+        ),
+      ],
+    ),
+  ],
+);
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
@@ -229,9 +248,27 @@ class MyApp extends StatelessWidget {
           SignupWeb.id: (context) => SignupWeb(),
           BluetoothPage.id: (context) => BluetoothPage(),
           EditProfilePage.id: (context) => EditProfilePage(),
+          // PaymentPage.id: (context) => PaymentPage(transactionId: '',),
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),
         },
+        onGenerateRoute: (settings) {
+          final uri = Uri.parse(settings.name!);
+          print("SIMPOOOOOLINGIIII: $uri");
+          print("SIMPOOOOOLINGIIII: ${uri.pathSegments[1]}");
+          if (settings.name != null && settings.name!.startsWith('/payment/')) {
+            print("YEEESSSSS WE ARE NOW INTO THE DEEP LINK");
+            final id = settings.name!.replaceFirst('/payment/', '');
+            return
+              MaterialPageRoute(
+              builder: (context) => PaymentPage(transactionId: id),
+            );
+          }
+          return MaterialPageRoute(
+            builder: (context) => MobileMoneyPage(),
+          );
+        },
+
       ),
     );
   }

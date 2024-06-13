@@ -264,9 +264,6 @@ class _ChatPageState extends State<ChatPage> {
                       maxLines: null,
                       // maxLength: 200,
                       clipBehavior: Clip.antiAlias,
-                      // keyboardType: TextInputType.multiline,
-                      // minLines: 2,
-                      // expands: true,
 
                       decoration: InputDecoration(
                         hintText: "...lets talk",
@@ -607,16 +604,30 @@ class _ChatPageState extends State<ChatPage> {
                                                                                     ),
                                                                                     onPressed: (){
 
+                                                                                      showModalBottomSheet(
+                                                                                          isScrollControlled: true,
+                                                                                          context: context,
+                                                                                          builder: (context) {
+                                                                                            return Scaffold(
+                                                                                              appBar: AppBar(
+                                                                                                elevation: 0,
+                                                                                                backgroundColor: kPlainBackground,
+                                                                                                foregroundColor: kBlack,
+                                                                                                automaticallyImplyLeading: false,
+                                                                                              ),
+                                                                                              body: Scaffold(
+                                                                                                  appBar: AppBar(
+                                                                                                    elevation: 0,
+                                                                                                    title: Text("Drag down to Go Back"),
+                                                                                                    centerTitle: true,
+                                                                                                    backgroundColor: kPureWhiteColor,
+                                                                                                    foregroundColor: kBlack,
+                                                                                                    automaticallyImplyLeading: false,
+                                                                                                  ),
+                                                                                                  body: SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb())),
+                                                                                            );
+                                                                                          });
 
-                                                                                      showDialog(context: context, builder: (BuildContext context){
-                                                                                        return
-                                                                                           Scaffold(
-                                                                                               appBar: AppBar(
-
-
-                                                                                               ),
-                                                                                               body: SuperResponsiveLayout(mobileBody: StorePageMobile(), desktopBody: StorePageWeb()));
-                                                                                      });
                                                                                     }, child: Text("See Stock", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
                                                                                 kSmallWidthSpacing,
                                                                                 TextButton(

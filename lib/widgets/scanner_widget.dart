@@ -6,17 +6,19 @@ import '../Utilities/constants/color_constants.dart';
 class ScannerWidget extends StatelessWidget {
   final Color scannerColor;
   final Color backgroundColor;
+  final double boxHeight;
+  final double boxWidth;
 
 
   const ScannerWidget({
-    super.key, this.scannerColor = kPureWhiteColor, this.backgroundColor = kBlueDarkColor,
+    super.key, this.scannerColor = kPureWhiteColor, this.backgroundColor = kBlueDarkColor, this.boxHeight = 60, this.boxWidth = 60
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
-      width: 60,
+      height: boxHeight,
+      width: boxWidth,
       decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.all(Radius.circular(10)),

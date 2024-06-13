@@ -265,12 +265,12 @@ class TransactionWidget extends StatelessWidget {
 
                                         if(kIsWeb){
 
-                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "receipt_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdfForWeb(invoice, "receipt_${transIdList[index]}", logo);
 
 
                                         }else{
                                           CommonFunctions().showSuccessNotification("Generating Receipt", context);
-                                          final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "receipt_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generatePdfForMobileDevices(invoice, "receipt_${transIdList[index]}", logo);
 
                                           PdfHelper.openFile(pdfFile);
                                         }
@@ -305,12 +305,12 @@ class TransactionWidget extends StatelessWidget {
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
                                         if(kIsWeb){
 
-                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "quotation_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdfForWeb(invoice, "quotation_${transIdList[index]}", logo);
 
                                         }else{
                                           // showCircularProgressIndicator(context, "Loading Quotation");
                                           CommonFunctions().showSuccessNotification("Generating Quotation", context);
-                                          final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "quotation_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generatePdfForMobileDevices(invoice, "quotation_${transIdList[index]}", logo);
 
                                             PdfHelper.openFile(pdfFile);
                                           // }
@@ -347,11 +347,11 @@ class TransactionWidget extends StatelessWidget {
                                         if(kIsWeb){
 
 
-                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdf(invoice, "invoice_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdfForWeb(invoice, "invoice_${transIdList[index]}", logo);
 
                                         }else{
                                           CommonFunctions().showSuccessNotification("Generating Invoice", context);
-                                          final pdfFile = await PdfInvoicePdfHelper.generate(invoice, "invoice_${transIdList[index]}", logo);
+                                          final pdfFile = await PdfInvoicePdfHelper.generatePdfForMobileDevices(invoice, "invoice_${transIdList[index]}", logo);
 
                                           PdfHelper.openFile(pdfFile);
 

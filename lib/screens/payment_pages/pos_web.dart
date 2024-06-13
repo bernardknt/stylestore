@@ -19,6 +19,7 @@ import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/utilities/basket_items.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
 import 'package:stylestore/utilities/constants/user_constants.dart';
+import 'package:stylestore/widgets/scanner_widget.dart';
 
 import '../../../../../Utilities/constants/color_constants.dart';
 import '../../../../../Utilities/constants/font_constants.dart';
@@ -303,7 +304,7 @@ class _PosWebState extends State<PosWeb> {
                   color: kBlack,
                   fontSize: 20),
             ),
-            kSmallWidthSpacing,
+            kMediumWidthSpacing,
             GestureDetector(
               onTap: (){
                 _showCurrencyPicker(context);
@@ -320,23 +321,32 @@ class _PosWebState extends State<PosWeb> {
                   child: Text( Provider.of<StyleProvider>(context, listen: true).storeCurrency, style: kNormalTextStyle.copyWith(fontSize: 12),),
                 ),
               ),
-            )
+            ),
+            kSmallWidthSpacing,
+            if (!kIsWeb)
+              Padding(
+                padding: const EdgeInsets.all(5.0,),
+                child: GestureDetector(
+                    onTap: () {
+                      startBarcodeScan();
+                    },
+                    child: ScannerWidget(boxHeight: 40,boxWidth: 60,)
+                ),
+              )
           ],
         ),
-        actions: [
-          if (!kIsWeb)
-            Padding(
-              padding: const EdgeInsets.only(right: 30.0, top: 10),
-              child: GestureDetector(
-                  onTap: () {
-                    startBarcodeScan();
-                  },
-                  child: Icon(
-                    Iconsax.scan,
-                    size: 40,
-                  )),
-            )
-        ],
+        // actions: [
+        //   if (kIsWeb)
+        //     Padding(
+        //       padding: const EdgeInsets.only(right: 30.0, top: 10),
+        //       child: GestureDetector(
+        //           onTap: () {
+        //             startBarcodeScan();
+        //           },
+        //           child: ScannerWidget()
+        //       ),
+        //     )
+        // ],
       ),
 
       body: permissionsMap['sales'] == false

@@ -13,6 +13,7 @@ import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/user_constants.dart';
 import '../../model/common_functions.dart';
 import '../../model/styleapp_data.dart';
+import '../../utilities/constants/word_constants.dart';
 import '../../widgets/text_form.dart';
 import '../suppliers/supplier_form.dart';
 
@@ -35,15 +36,13 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
   var originalBasketToPost = [];
   var storeId = "";
   String? selectedDepartment;
-  // List<String> supplierDisplayNames = [];
-  // List<String> supplierIds = ["default"];
-  // List<String> supplierRealNames = ["Supplier"];
+
   String? selectedSupplierDisplayName;
   String? selectedSupplierId;
   String? selectedSupplierRealName;
   List<String> _filteredSupplierDisplayNames = [];
   TextEditingController expenseController = TextEditingController();
-  late TextEditingController quantityController;
+  TextEditingController quantityController = TextEditingController();
   String currency = "";
 
   File? image;
@@ -143,6 +142,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 'quantity': double.tryParse(quantityController.text) ?? 0,
                 'totalPrice': double.tryParse(expenseCost) ?? 0,
                 'quality': 'Ok',
+                'unit': Provider.of<StyleProvider>(context, listen: false).selectedUnit
 
               }
             ];
@@ -180,7 +180,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20),
-          child: Container(
+          child: SizedBox(
             height: 450,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +218,52 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
                 kLargeHeightSpacing,
                 TextForm(label: 'Expense Name',controller: expenseController),
                 kLargeHeightSpacing,
-                TextForm(label: 'Quantity',controller: quantityController, keyBoardType: TextInputType.numberWithOptions(decimal: true)),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 4,
+                        child: TextForm(label: 'Quantity',controller: quantityController, keyBoardType: TextInputType.numberWithOptions(decimal: true)
+                        )
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        height: 45,
+                        // width: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: kBackgroundGreyColor,
+
+                        ),
+                        child:
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: DropdownButton<String>(
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Icon(Icons.scale, color: kFontGreyColor,),
+                            ),
+                            dropdownColor: kBackgroundGreyColor,
+                            iconSize: 14,
+                            value: Provider.of<StyleProvider>(context, listen: true).selectedUnit, // The currently selected department
+                            items: unitList
+                                .map((units) => DropdownMenuItem(
+                              value: units,
+                              child: Text(units,),
+                            ))
+                                .toList(),
+                            onChanged: (newItem) => setState(() => Provider.of<StyleProvider>(context, listen: false).setSelectedUnit(newItem)), // Update the selected department when a new one is chosen
+                            hint: Text(
+                              'Select Unit', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),), // Placeholder text before a department is selected
+                          ),
+                        ),
+                        //Center(child: Text(unit)),
+                      ),
+                    )
+                  ],
+                ),
                 kLargeHeightSpacing,
                 Row(
                   children: [

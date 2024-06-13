@@ -283,7 +283,7 @@ class _CustomerSearchPageState extends State<CustomerSearchPage> {
                         child: Center(child: Text("+", style: kNormalTextStyle.copyWith(color: kPureWhiteColor, fontSize: 28),)),
 
                       )
-                      //Lottie.asset('images/round.json', height: 50),
+
                     ),
                     Text("Create Customer",style: kNormalTextStyle.copyWith(color: kBlueDarkColor, fontSize: 10),)
                   ],
