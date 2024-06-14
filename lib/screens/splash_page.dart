@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +76,7 @@ class _SplashPageState extends State<SplashPage> {
             if (users["permissions"] != oldPermissions) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Permissions were Updated')));
+
               Navigator.pushNamed(context, SplashPage.id);
             }
 
@@ -92,12 +92,14 @@ class _SplashPageState extends State<SplashPage> {
       if (userLoggedIn == true) {
         _timer = new Timer(const Duration(milliseconds: 1500), () {
           // _checkAppVersion();
-          Navigator.pushNamed(context, SuperResponsiveLayout.id);
+
+         Navigator.pushNamed(context, SuperResponsiveLayout.id);
           print("Yeeeeep This run");
           // _checkAppVersion();
         });
       } else {
         _timer = new Timer(const Duration(milliseconds: 1000), () {
+
           Navigator.push(
             context,
             MaterialPageRoute(

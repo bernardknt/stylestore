@@ -6,7 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:stylestore/controllers/homepage_controller.dart';
 import 'package:stylestore/controllers/messages_controller.dart';
@@ -77,6 +76,7 @@ import 'package:stylestore/screens/tutorials_page.dart';
 import 'package:stylestore/screens/upload_trend.dart';
 import 'package:stylestore/screens/customer_pages/search_customer.dart';
 import 'package:stylestore/screens/wallets_page.dart';
+import 'package:stylestore/widgets/404_page.dart';
 import 'package:stylestore/widgets/success_hi_five.dart';
 import 'package:stylestore/screens/videos/tutorials_page_new.dart';
 import 'controllers/adding_controller.dart';
@@ -86,29 +86,13 @@ import 'controllers/home_page_controllers/home_control_page_web.dart';
 import 'controllers/responsive/responsive_page.dart';
 import 'controllers/services_controller.dart';
 import 'model/beautician_data.dart';
+import 'model/pdf_files/invoice_confirmation.dart';
 import 'model/push_notification_model.dart';
 import 'model/translations_model.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-final GoRouter _router = GoRouter(
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return  SplashPage();
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'details',
-          builder: (BuildContext context, GoRouterState state) {
-            return SplashPage();
-          },
-        ),
-      ],
-    ),
-  ],
-);
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message ${message.messageId}');
@@ -142,6 +126,7 @@ void main() async {
   runApp(MyApp());
 
 }
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -248,24 +233,24 @@ class MyApp extends StatelessWidget {
           SignupWeb.id: (context) => SignupWeb(),
           BluetoothPage.id: (context) => BluetoothPage(),
           EditProfilePage.id: (context) => EditProfilePage(),
-          // PaymentPage.id: (context) => PaymentPage(transactionId: '',),
+          InvoiceConfirmation.id: (context) => InvoiceConfirmation(),
+
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),
         },
         onGenerateRoute: (settings) {
           final uri = Uri.parse(settings.name!);
-          print("SIMPOOOOOLINGIIII: $uri");
-          print("SIMPOOOOOLINGIIII: ${uri.pathSegments[1]}");
-          if (settings.name != null && settings.name!.startsWith('/payment/')) {
-            print("YEEESSSSS WE ARE NOW INTO THE DEEP LINK");
-            final id = settings.name!.replaceFirst('/payment/', '');
+          print(uri);
+          if (settings.name != null && settings.name!.startsWith('payment')) {
+            final id = settings.name!.replaceFirst('payment', '');
+            print(id);
             return
               MaterialPageRoute(
               builder: (context) => PaymentPage(transactionId: id),
             );
           }
           return MaterialPageRoute(
-            builder: (context) => MobileMoneyPage(),
+            builder: (context) => DirectoryNotFoundPage (),
           );
         },
 

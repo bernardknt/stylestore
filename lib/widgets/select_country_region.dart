@@ -103,10 +103,9 @@ class _PreferredCountrySelectionState extends State<PreferredCountrySelection> {
               prefs.setString(kCurrency, currency);
               prefs.setString(kCountryCode, selectedCountryCode);
               prefs.setString(kCountry, selectedCountry);
-              // CommonFunctions().showSuccessNotification("$selectedCountry selected", "$selectedCountry and currency $currency have been set as your default");
-              print("$currency, $selectedCountry");
-              CommonFunctions().showSuccessNotification("Default Country set to $selectedCountry", context);
+               CommonFunctions().showSuccessNotification("Default Country set to $selectedCountry", context);
               Navigator.pop(context);
+
             },
             child: Text(
               'Confirm $selectedCountry',

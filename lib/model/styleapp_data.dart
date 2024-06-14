@@ -37,6 +37,8 @@ class StyleProvider extends ChangeNotifier{
   List<AllStockData> filteredStockDisplayed = [];
 
   String userName = '';
+  String orderId = '';
+  bool displayInvoiceReceiptButton = false;
   String selectedUnit = '';
   String userEmail = '';
   String userToken = '';
@@ -196,7 +198,16 @@ class StyleProvider extends ChangeNotifier{
   Map<String, dynamic> videoMap = {};
 
 
+  setDisplayReceiptButton(bool state){
+    displayInvoiceReceiptButton = state;
+    print("Display Button");
+    notifyListeners();
+  }
 
+  setOrderId(String id){
+    orderId = id;
+   notifyListeners();
+  }
   setVideoTutorials ()async{
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     notifyListeners();

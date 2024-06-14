@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:stylestore/Utilities/constants/color_constants.dart';
 
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/model/pdf_files/pdf_api.dart';
@@ -37,7 +38,7 @@ class PdfInvoicePdfHelper {
     Future<Uint8List> _fetchLogoBytes(String imageUrl) async {
       final response = await http.get(Uri.parse(imageUrl));
       if (response.statusCode == 200) {
-        print("WAKANDA: ${invoice.paid.amount}");
+
         final Uint8List bytes = response.bodyBytes;
         final String dir = (await getTemporaryDirectory()).path;
         final String path = '$dir/logo.png';
@@ -268,10 +269,11 @@ class PdfInvoicePdfHelper {
   }
 
   static Widget buildTotal(Invoice invoice) {
-    final receiptAmount = invoice.paid.amount;
+    final receivedAmount =  invoice.paid.amount;
+    final invoiceNumber = invoice.info.number;
     final netTotal = invoice.items
         .map((item) => (item.unitPrice * item.quantity) )
-        .reduce((item1, item2) => item1 + item2) - receiptAmount;
+        .reduce((item1, item2) => item1 + item2) - receivedAmount;
 
     final billTotal = invoice.items
         .map((item) => item.unitPrice * item.quantity)
@@ -280,7 +282,7 @@ class PdfInvoicePdfHelper {
     final total = netTotal;
 
     return
-      receiptAmount != 0.0 ?
+      receivedAmount != 0.0 ?
       Container(
       alignment: Alignment.centerRight,
       child: Row(
@@ -305,7 +307,7 @@ class PdfInvoicePdfHelper {
                     color: PdfColor.fromHex("#0AB11B"),
                     fontWeight: FontWeight.normal,
                   ),
-                  value: "${invoice.template.currency} ${Utils.formatPrice(receiptAmount)}",
+                  value: "${invoice.template.currency} ${Utils.formatPrice(receivedAmount)}",
                   unite: true,
                 ),
                 Divider(),
@@ -322,6 +324,29 @@ class PdfInvoicePdfHelper {
                 Container(height: 1, color: PdfColors.grey400),
                 SizedBox(height: 0.5 * PdfPageFormat.mm),
                 Container(height: 1, color: PdfColors.grey400),
+                SizedBox(height: 2 * PdfPageFormat.mm),
+                SizedBox(height: 2 * PdfPageFormat.mm),
+                invoice.template.type == "INVOICE"&& netTotal != 0.0? pw.Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children:[pw.Container(
+                      decoration: pw.BoxDecoration(
+                        color: PdfColor.fromHex("#0AB11B"),
+                        borderRadius: pw.BorderRadius.all(pw.Radius.circular(10)),
+                      ),
+                      child: pw.Padding(
+                        padding: pw.EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                        child: pw.UrlLink(
+                          destination:
+                           // 'http://localhost:54702/#payment/${invoiceNumber}',
+                         'https://businesspilotapp.com/#payment/${invoiceNumber}',
+                          child: pw.Text(
+                            "Tap to Pay Invoice",
+                            style: pw.TextStyle(color: PdfColor.fromHex("ffffff"), fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    )]): pw.SizedBox(),
+                SizedBox(height: 2 * PdfPageFormat.mm),
               ],
             ),
           ),
@@ -330,7 +355,8 @@ class PdfInvoicePdfHelper {
     ):
       Container(
         alignment: Alignment.centerRight,
-        child: Row(
+        child:
+        Row(
           children: [
             Spacer(flex: 6),
             Expanded(
@@ -358,6 +384,29 @@ class PdfInvoicePdfHelper {
                   Container(height: 1, color: PdfColors.grey400),
                   SizedBox(height: 0.5 * PdfPageFormat.mm),
                   Container(height: 1, color: PdfColors.grey400),
+                  SizedBox(height: 3 * PdfPageFormat.mm),
+                  SizedBox(height: 3 * PdfPageFormat.mm),
+                  invoice.template.type == "INVOICE"? pw.Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children:[pw.Container(
+                    decoration: pw.BoxDecoration(
+                      color: PdfColor.fromHex("#0AB11B"),
+                      borderRadius: pw.BorderRadius.all(pw.Radius.circular(10)),
+                    ),
+                    child: pw.Padding(
+                      padding: pw.EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                      child: pw.UrlLink(
+                        destination:
+                       // 'http://localhost:54702/#payment/${invoiceNumber}',
+                         'https://businesspilotapp.com/#payment/${invoiceNumber}',
+                        child: pw.Text(
+                          "Tap to Pay Invoice",
+                          style: pw.TextStyle(color: PdfColor.fromHex("ffffff"), fontSize: 10),
+                        ),
+                      ),
+                    ),
+                  )]): pw.SizedBox(),
+                  SizedBox(height: 2 * PdfPageFormat.mm),
                 ],
               ),
             ),
@@ -369,6 +418,7 @@ class PdfInvoicePdfHelper {
   static Widget buildFooter(Invoice invoice) => Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
+
       Divider(),
       SizedBox(height: 2 * PdfPageFormat.mm),
       buildSimpleText(title: 'Address', value: invoice.supplier.address),

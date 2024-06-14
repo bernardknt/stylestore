@@ -47,14 +47,13 @@ class _MobileMoneyPageState extends State<MobileMoneyPage> {
       //amount = int.parse(newAmount);
 
       phoneNumber = newPhoneNumber;
-      //myController = initialController
-      // formattedAmount = formatter.format(newAmount);
+
       orderId = newOrderId!;
 
     });
   }
 // CALLABLE FUNCTIONS FOR THE NODEJS SERVER (FIREBASE)
-  final HttpsCallable callableBeyonicPayment = FirebaseFunctions.instance.httpsCallable(kBeyonicServerName);
+
   // final HttpsCallable callableTransactionEmail = FirebaseFunctions.instance.httpsCallable(kEmailServerName);
 
 
@@ -264,7 +263,7 @@ class _MobileMoneyPageState extends State<MobileMoneyPage> {
 
                     String number = '256$phoneNumber';
                     amountToCharge = amount.toString();
-                    dynamic resp = await callableBeyonicPayment.call(<String, dynamic>{
+                    dynamic resp = await CommonFunctions().callableBeyonicPayment.call(<String, dynamic>{
                       'number': number,
                       'amount':amountToCharge,
                       'transId': transactionId
@@ -272,10 +271,7 @@ class _MobileMoneyPageState extends State<MobileMoneyPage> {
                     });
                     transactionStream();
                     addMobileMoneyTransaction();
-                    final prefs = await SharedPreferences.getInstance();
-                    //prefs.setString(kChurchTransactionIdConstant, transactionId);
-                    print('+256$phoneNumber message sent');
-                    // Create a document in the Transactions Db
+
                   }, firstButtonText: 'Make Payment'),
                   SizedBox(height: 10,),
                   Opacity(

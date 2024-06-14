@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -59,13 +60,7 @@ class _MakePaymentPageState extends State<MakePaymentPage> {
               kLargeHeightSpacing,
               kLargeHeightSpacing,
               kLargeHeightSpacing,
-              MobileMoneyPaymentButton(firstButtonFunction: (){Navigator.pushNamed(context, SuperResponsiveLayout.id); }, firstButtonText: 'Go Home',buttonTextColor: kPureWhiteColor, lineIconFirstButton: Icons.check_circle_outline,)
-
-              // SizedBox(height: 10,),
-              // Center(child: Text('You have Earned',textAlign: TextAlign.center, style: GoogleFonts.lato( fontSize: 30),)),
-              //SizedBox(height: 10,),
-              // Center(child: Text('${points.toString()} points',textAlign: TextAlign.center, style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 30, color: Colors.green),)),
-            ],
+              MobileMoneyPaymentButton(firstButtonFunction: (){Navigator.pushNamed(context, SuperResponsiveLayout.id); }, firstButtonText: 'Go Home',buttonTextColor: kPureWhiteColor, lineIconFirstButton: Icons.check_circle_outline,)],
           ),
         ),
       ),

@@ -67,7 +67,7 @@ import 'excel_model.dart';
 
 class CommonFunctions {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final HttpsCallable callableBeyonicPayment = FirebaseFunctions.instance.httpsCallable(kBeyonicServerName);
   var formatter = NumberFormat('#,###');
   final auth = FirebaseAuth.instance;
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -76,7 +76,6 @@ class CommonFunctions {
   CollectionReference users = FirebaseFirestore.instance.collection('medics');
   CollectionReference attendanceCollection = FirebaseFirestore.instance.collection('attendance');
 
-  // final HttpsCallable callableSmsTransaction = FirebaseFunctions.instance.httpsCallable('updateAiSMS');
   final HttpsCallable callableSmsCustomer = FirebaseFunctions.instance.httpsCallable('smsCustomer');
 
   // CollectionReference appointments = FirebaseFirestore.instance.collection('testing');
