@@ -44,10 +44,11 @@ class _EmployeePermissionsPageState extends State<EmployeePermissionsPage> {
     return Scaffold(
       backgroundColor: kPlainBackground,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: kPureWhiteColor,
         elevation: 0,
         title: Text(
-          '${Provider.of<BeauticianData>(context, listen: false).employeeName} Store Permissions',
+          '${Provider.of<BeauticianData>(context, listen: false).employeeName} Access Permissions',
           textAlign: TextAlign.center,
           style: kNormalTextStyle.copyWith(color: kBlack),
         ),

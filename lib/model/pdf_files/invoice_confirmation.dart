@@ -15,11 +15,15 @@ import '../../model/styleapp_data.dart';
 import '../../screens/MobileMoneyPages/mm_payment_button_widget.dart';
 
 
+import '../Payments.dart';
 import 'invoice.dart';
 import 'invoice_customer.dart';
 
 class InvoiceConfirmation extends StatefulWidget {
   static String id = 'invoice_confirmation_payment_page';
+  final Payments product;
+
+  InvoiceConfirmation({required this.product});
 
   @override
   _InvoiceConfirmationState createState() => _InvoiceConfirmationState();
@@ -46,6 +50,10 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
             .setDisplayReceiptButton(true);
       }
     });
+  }
+
+  defaultInitialization(){
+
   }
 
   @override
@@ -102,6 +110,7 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
                           children: [
                             Text(
                               "Waiting for Payment Confirmation",
+                              textAlign: TextAlign.center,
                               style: kNormalTextStyle.copyWith(
                                   color: kBlack, fontSize: 26),
                             ),
@@ -114,9 +123,11 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
                           _setDisplayReceiptButton(context);
                         }
                         return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
                               "Payment Received",
+                              textAlign: TextAlign.center,
                               style: kNormalTextStyle.copyWith(
                                   color: kBlack, fontSize: 26),
                             ),
@@ -126,7 +137,7 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
                         );
                       }
                     } else {
-                      return Text("Nothing");
+                      return Text("Please check your internet Connection", textAlign: TextAlign.center,);
                     }
                   },
                 ),
@@ -135,38 +146,48 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
                 kLargeHeightSpacing,
                 Provider.of<StyleProvider>(context).displayInvoiceReceiptButton ==
                     true
-                    ? MobileMoneyPaymentButton(
+                    ?
+                MobileMoneyPaymentButton(
                   firstButtonFunction: () async{
                     final invoice = Invoice(
                         supplier: Supplier(
-                          name: "Fruts Express",//storeName,
-                          address: "Kulambiro",//location,
-                          phoneNumber: "0782081219",//phoneNumber,
-                          paymentInfo: "0782081219",//phoneNumber,
+                          name: widget.product.storeName,//storeName,
+                          address: widget.product.storeLocation,//location,
+                          phoneNumber:widget.product.storePhone,//phoneNumber,
+                          paymentInfo: widget.product.storePhone,//phoneNumber,
                         ),
                         customer: Customer(
-                          name: "Milly",//clientList[index],
-                          address: "Kabowa",//clientLocationList[index],
-                          phone:'0789008899',// clientPhoneList[index],
+                          name: widget.product.client,//clientList[index],
+                          address: widget.product.clientLocation,//clientLocationList[index],
+                          phone: widget.product.clientPhone,// clientPhoneList[index],
                         ),
                         info: InvoiceInfo(
                           date: DateTime.now(),
                           dueDate: DateTime.now(),
                           description: '',
-                          number: '6782689-Receipt',
+                          number: widget.product.id,
                         ),
-                        items: [InvoiceItem(name: "Books", quantity: 10, unitPrice: 1000)],
-                        template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due", currency: "UGX"),
-                        paid: Receipt(amount: 10000.0 / 1.0));
+                        items:
+                        widget.product.items.map<InvoiceItem>((item) {
+                          return InvoiceItem(
+                            name: item['product'],
+                            quantity: item['quantity'],
+                            unitPrice: item['totalPrice'],
+                          );
+                        }).toList(),
+
+                        // [InvoiceItem(name: "Books", quantity: 10, unitPrice: 1000)]
+
+                        template: InvoiceTemplate(type: 'RECEIPT', salutation: 'TO', totalStatement: "Total Amount Due", currency: widget.product.currency),
+                        paid: Receipt(amount: widget.product.totalFee / 1.0));
 
                     if(kIsWeb){
 
-                      final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdfForWeb(invoice, "receipt_transaction_id", "https://mcusercontent.com/f78a91485e657cda2c219f659/images/7e5d9ad3-e663-11d4-bb3e-96678f9428ec.png");
-
+                      final pdfFile = await PdfInvoicePdfHelper.generateAndDownloadPdfForWeb(invoice, "receipt_${widget.product.id}", "https://mcusercontent.com/f78a91485e657cda2c219f659/images/7e5d9ad3-e663-11d4-bb3e-96678f9428ec.png");
 
                     }else{
                       CommonFunctions().showSuccessNotification("Generating Receipt", context);
-                      final pdfFile = await PdfInvoicePdfHelper.generatePdfForMobileDevices(invoice, "receipt_transaction_id", "logo");
+                      final pdfFile = await PdfInvoicePdfHelper.generatePdfForMobileDevices(invoice, "receipt_${widget.product.id}", "logo");
 
                       PdfHelper.openFile(pdfFile);
                     }
@@ -175,7 +196,12 @@ class _InvoiceConfirmationState extends State<InvoiceConfirmation> {
                   buttonTextColor: kPureWhiteColor,
                   lineIconFirstButton: Iconsax.receipt,
                 )
-                    : Text("...Complete Payment"),
+                    : Text("...Complete Payment..."),
+                kLargeHeightSpacing,
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                  // Navigator.pushNamed(context, '/#payment/${widget.product.id}');
+                }, child: Text("Go Back"))
               ],
             ),
           ),

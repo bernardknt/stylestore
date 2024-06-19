@@ -112,12 +112,16 @@ class _SupplierFormState extends State<SupplierForm> {
 
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
+    countryCode = prefs.getString(kCountryCode)??"UG";
     final initials = prefs
         .getString(kBusinessNameConstant)
         ?.split(' ')
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
     supplierId = 'supplier${initials}${uuid.v1().split("-")[0]}';
+    setState(() {
+
+    });
   }
 
   @override
@@ -198,7 +202,7 @@ class _SupplierFormState extends State<SupplierForm> {
                                 countryCode = value.dialCode!;
                               },
                               // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                              initialSelection: 'UG',
+                              initialSelection: countryCode,
                               favorite: const ['+254', '+255', "US"],
                               // optional. Shows only country name and flag
                               showCountryOnly: false,

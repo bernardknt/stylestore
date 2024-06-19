@@ -36,6 +36,7 @@ String kCountry = 'country_name';
 String kSubscriptionEndDate = 'subscriptionEndDate';
 String kWalkthroughVideos = 'kWalkthroughVideos';
 String kLoginPersonName = 'loggedInPerson';
+String kInvoicePay = 'kInvoicePay';
 String kSignInTime = 'kSignInTime';
 String kFirstNameConstant = 'kFirstNameConstant';
 String kUniqueUserPhoneId = 'kUniqueUserPhoneId';

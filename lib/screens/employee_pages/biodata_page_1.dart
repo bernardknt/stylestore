@@ -75,7 +75,7 @@ class _BioDataFormState extends State<BioDataForm> {
   Map<String, String> optionsToUpload = {};
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
-  String countryCode = ' ';
+  String countryCode = '';
   double opacityOfTextFields = 1.0;
   CollectionReference customerProvided =
   FirebaseFirestore.instance.collection('employees');
@@ -117,12 +117,16 @@ class _BioDataFormState extends State<BioDataForm> {
 
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
+    countryCode = prefs.getString(kCountryCode)??"UG";
     final initials = prefs
         .getString(kBusinessNameConstant)
         ?.split(' ')
         .map((word) => word.isNotEmpty ? word[0].toUpperCase() : '')
         .join('');
     customerId = 'employee${initials}${uuid.v1().split("-")[0]}';
+    setState(() {
+
+    });
   }
 
   @override
@@ -261,7 +265,7 @@ class _BioDataFormState extends State<BioDataForm> {
                                 countryCode = value.dialCode!;
                               },
                               // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                              initialSelection: 'UG',
+                              initialSelection: countryCode,
                               favorite: const ['+254', '+255', "US"],
                               // optional. Shows only country name and flag
                               showCountryOnly: false,

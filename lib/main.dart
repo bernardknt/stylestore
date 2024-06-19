@@ -47,6 +47,7 @@ import 'package:stylestore/screens/payment_pages/pos_mobile.dart';
 import 'package:stylestore/screens/products_pages/products_upload.dart';
 import 'package:stylestore/screens/products_pages/restock_page.dart';
 import 'package:stylestore/screens/products_pages/stock_history.dart';
+import 'package:stylestore/screens/products_pages/stock_timeline_page.dart';
 import 'package:stylestore/screens/products_pages/update_stock.dart';
 import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
 import 'package:stylestore/screens/reviews_page.dart';
@@ -85,6 +86,7 @@ import 'controllers/home_page_controllers/home_controller_mobile.dart';
 import 'controllers/home_page_controllers/home_control_page_web.dart';
 import 'controllers/responsive/responsive_page.dart';
 import 'controllers/services_controller.dart';
+import 'controllers/team_controller_page.dart';
 import 'model/beautician_data.dart';
 import 'model/pdf_files/invoice_confirmation.dart';
 import 'model/push_notification_model.dart';
@@ -233,7 +235,9 @@ class MyApp extends StatelessWidget {
           SignupWeb.id: (context) => SignupWeb(),
           BluetoothPage.id: (context) => BluetoothPage(),
           EditProfilePage.id: (context) => EditProfilePage(),
-          InvoiceConfirmation.id: (context) => InvoiceConfirmation(),
+          TeamControllerPage.id: (context) => TeamControllerPage(),
+
+          // InvoiceConfirmation.id: (context) => InvoiceConfirmation(),
 
           SuperResponsiveLayout.id: (context) => SuperResponsiveLayout(
               mobileBody: HomePageController(), desktopBody: ControlPageWeb()),

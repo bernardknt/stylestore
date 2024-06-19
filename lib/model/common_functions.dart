@@ -61,7 +61,7 @@ import '../widgets/subscription_ended_widget.dart';
 import '../widgets/success_hi_five.dart';
 import 'beautician_data.dart';
 
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 import 'excel_model.dart';
 
@@ -1092,7 +1092,7 @@ class CommonFunctions {
     return sms;
   }
 
-  Future<void> reduceSmsBalance(double deductionAmount) async {
+  Future<void> reduceSmsBalance(double deductionAmount, context) async {
     print("WE STARTED HERE");
     final prefs = await SharedPreferences.getInstance();
     var docId = prefs.getString(kStoreIdConstant);
@@ -1114,27 +1114,35 @@ class CommonFunctions {
   }
 
   void sendCustomerSms(message, number, context) async {
-    dynamic serverCallableVariable = await callableSmsCustomer.call(<String, dynamic>{
-      "message" : message,
-      "number" : number,
-
-    }).catchError((error){
-    }).whenComplete(() {
-      Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/message.json', "Message Sent");
-      //  Navigator.pop(context);
-      // Navigator.pop(context);
-      Navigator.pushNamed(context, SuccessPageHiFive.id);
-    });
-  }
-
-  CollectionReference messagesCollection = FirebaseFirestore.instance.collection('sms');
-  Future<void> uploadMessageToServer (context, String phoneNumber, bool isBulk, List numbers, double cost )async {
     showDialog(context: context, builder:
         ( context) {
       return const Center(child: CircularProgressIndicator(
         color: kAppPinkColor,
       ));
     });
+    dynamic serverCallableVariable = await callableSmsCustomer.call(<String, dynamic>{
+      "message" : message,
+      "number" : number,
+
+    }).catchError((error){
+    }).whenComplete(() {
+      CommonFunctions().showSuccessNotification(
+          "Message Succefully Sent", context);
+      CommonFunctions().uploadMessageToServer(
+          context, number, false, [number], 40.0);
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+
+      // Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/message.json', "Message Sent");
+      // Navigator.pushNamed(context, SuccessPageHiFive.id);
+
+    });
+  }
+
+  CollectionReference messagesCollection = FirebaseFirestore.instance.collection('sms');
+  Future<void> uploadMessageToServer (context, String phoneNumber, bool isBulk, List numbers, double cost )async {
+
 
     final prefs =  await SharedPreferences.getInstance();
     var providerData = Provider.of<StyleProvider>(context, listen: false);
@@ -1156,10 +1164,9 @@ class CommonFunctions {
       'delivery': false
 
     }).then((value) {
-      print("WOOOOOOOWWEEE THIS RUN");
-      reduceSmsBalance(cost);
-      Navigator.pop(context);
-      Navigator.pop(context);
+
+      reduceSmsBalance(cost, context);
+
       // Navigator.pushNamed(context, SuccessPageHiFive.id);
 
     } ).catchError((error) {
@@ -1629,7 +1636,7 @@ class CommonFunctions {
       try {
         await FirebaseFirestore.instance
             .collection('stores')
-            .doc(stock.transactionId)
+            .doc(stock.id)
             .get()
             .then((documentSnapshot) {
           var quantity = documentSnapshot.data()!['quantity'];
@@ -1639,7 +1646,7 @@ class CommonFunctions {
           var result = 'R$updateStock?$now';
 
           // Add the result to an array in the same document.
-          FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
+          FirebaseFirestore.instance.collection('stores').doc(stock.id)
               .update({
             'quantity': FieldValue.increment(stock.restock),
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -1727,7 +1734,7 @@ class CommonFunctions {
     });
   }
 
-  Future<void> uploadUpdatedStockItems(selectedStocks, context, basketToPost, docId) async {
+  Future<void> uploadUpdatedStockItems(selectedStocks, context, basketToPost, currency,docId) async {
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return const Center(child: CircularProgressIndicator(
@@ -1741,7 +1748,7 @@ class CommonFunctions {
           var result = 'U${stock.restock}?$now';
 
           // Add the result to an array in the same document.
-          await FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
+          await FirebaseFirestore.instance.collection('stores').doc(stock.id)
               .update({
             'quantity': stock.restock,
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -1762,7 +1769,8 @@ class CommonFunctions {
         'requestBy': prefs.getString(kLoginPersonName)!,
         'storeId':  prefs.getString(kStoreIdConstant)!,
         'name':  prefs.getString(kBusinessNameConstant)!,
-        'activity': "Updated"
+        'activity': "Updated",
+        'currency': currency
 
       });
     }
@@ -1772,7 +1780,7 @@ class CommonFunctions {
     Navigator.pop(context);
   }
 
-  Future<void> uploadReducedStockItems(selectedStocks, context, basketToPost, docId) async {
+  Future<void> uploadReducedStockItems(selectedStocks, context, basketToPost, docId, currency) async {
     final prefs = await SharedPreferences.getInstance();
     var now = DateTime.now().toIso8601String();
     showDialog(context: context, builder: ( context) {return Center(
@@ -1797,7 +1805,7 @@ class CommonFunctions {
       try {
         await FirebaseFirestore.instance
             .collection('stores')
-            .doc(stock.transactionId)
+            .doc(stock.id)
             .get()
             .then((documentSnapshot) {
           // Get the quantity from the document.
@@ -1808,7 +1816,7 @@ class CommonFunctions {
           var result = 'S$updateStock?$now';
 
           // Add the result to an array in the same document.
-          FirebaseFirestore.instance.collection('stores').doc(stock.transactionId)
+          FirebaseFirestore.instance.collection('stores').doc(stock.id)
               .update({
             'quantity': FieldValue.increment(-stock.restock),
             'stockTaking': FieldValue.arrayUnion([result]),
@@ -1830,7 +1838,8 @@ class CommonFunctions {
         'requestBy': prefs.getString(kLoginPersonName)!,
         'storeId': prefs.getString(kStoreIdConstant)!,
         'name': prefs.getString(kBusinessNameConstant)!,
-        'activity': "Sold"
+        'currency': currency,
+        'activity': "Sold",
       });
     }
     ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('${selectedStocks.length} Items stock was Updated')));
@@ -2270,21 +2279,21 @@ Map<String, dynamic> convertPermissionsStringToJson(String permission){
     // Create a blob from the bytes and create a download link
     //
     // PLEASE RE PUT THIS CODE WHEN DEALING WITH WEB
-    final blob = html.Blob([excelData]);
-    final blobUrl = html.Url.createObjectUrlFromBlob(blob);
-
-    // Create a link element and trigger the download
-    final anchor = html.AnchorElement(href: blobUrl)
-      ..target = 'download'
-      ..download = 'bulk_upload_data.xlsx';
-
-    // Trigger the click event to start the download
-    html.document.body?.append(anchor);
-    anchor.click();
-
-    // Clean up the temporary link
-    html.Url.revokeObjectUrl(blobUrl);
-    anchor.remove();
+    // final blob = html.Blob([excelData]);
+    // final blobUrl = html.Url.createObjectUrlFromBlob(blob);
+    //
+    // // Create a link element and trigger the download
+    // final anchor = html.AnchorElement(href: blobUrl)
+    //   ..target = 'download'
+    //   ..download = 'bulk_upload_data.xlsx';
+    //
+    // // Trigger the click event to start the download
+    // html.document.body?.append(anchor);
+    // anchor.click();
+    //
+    // // Clean up the temporary link
+    // html.Url.revokeObjectUrl(blobUrl);
+    // anchor.remove();
   }
   Future<void> uploadExcelDataToFirebase(List<ExcelDataRow> dataList, context) async {
 

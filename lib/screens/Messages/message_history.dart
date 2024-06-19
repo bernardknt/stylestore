@@ -100,6 +100,9 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
 
   return country!="Uganda"?Scaffold(
     backgroundColor: kBlack,
+    appBar: AppBar(
+      title: Text("Send Text Messages",style: kNormalTextStyle,),
+    ),
 
     body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -111,8 +114,8 @@ class _MessageHistoryPageState extends State<MessageHistoryPage> {
     backgroundColor: kBlack,
       appBar: AppBar(
         automaticallyImplyLeading: widget.showBackButton,
-        actions: [
-          GestureDetector(
+         actions: [
+           permissionsMap['tasks']!= true?SizedBox():GestureDetector(
             onTap: (){
               showModalBottomSheet(
                   isScrollControlled: true,

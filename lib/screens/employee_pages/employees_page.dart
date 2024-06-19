@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/user_constants.dart';
+import 'package:stylestore/controllers/team_controller_page.dart';
 import 'package:stylestore/screens/employee_pages/edit_employee_profile_page.dart';
 import 'package:stylestore/utilities/constants/word_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -504,7 +505,7 @@ class _EmployeesPageState extends State<EmployeesPage> {
                                         Provider.of<BeauticianData>(context, listen: false).setEmployeeDetails(filteredEmployees[index].fullNames, filteredEmployees[index].phone, filteredEmployees[index].position,CommonFunctions().convertJsonString( filteredEmployees[index].permissions),
                                             filteredEmployees[index].code, filteredEmployees[index].documentId);
                                                 Provider.of<BeauticianData>(context, listen: false).setEmployeeProfile(filteredEmployees[index]);
-                                                Navigator.pushNamed(context, EditProfilePage.id);
+                                                Navigator.pushNamed(context, TeamControllerPage.id);
                                           }
                                       ),
                                       // buildButton(context, 'Change ${filteredEmployees[index].fullNames} Permissions', Icons.edit,

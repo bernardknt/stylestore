@@ -65,7 +65,8 @@ class _StorePageWebState extends State<StorePageWeb> {
       filteredStock = newStock
           .where((stock) =>
       stock.name.toLowerCase().contains(query.toLowerCase()) ||
-          stock.description.toLowerCase().contains(query.toLowerCase())
+          stock.description.toLowerCase().contains(query.toLowerCase())||
+          stock.barcode.toLowerCase().contains(query.toLowerCase())
       )
           .toList();
     });
@@ -260,159 +261,155 @@ class _StorePageWebState extends State<StorePageWeb> {
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child:
-                      Stack(
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child:
-                                TextField(
-                                  controller: searchController,
-                                  decoration: const InputDecoration(
-                                    prefixIcon: Icon(Icons.search),
-                                    hintText: 'By Product Name / Id',
-                                    hintFadeDuration: Duration(milliseconds: 100),
-                                  ),
-                                  onChanged: filterStock,
-                                ),
+                          Expanded(
+                            child:
+                            TextField(
+                              controller: searchController,
+                              decoration: const InputDecoration(
+                                prefixIcon: Icon(Icons.search),
+                                hintText: 'By Product Name / Id',
+                                hintFadeDuration: Duration(milliseconds: 100),
                               ),
-                              permissionsMap['takeStock'] == false ? Container():
-                              Row(
+                              onChanged: filterStock,
+                            ),
+                          ),
+                          permissionsMap['takeStock'] == false ? Container():
+                          Row(
 
-                                children: [
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final prefs = await SharedPreferences.getInstance();
-                                      Provider.of<BeauticianData>(context, listen: false)
-                                          .setStoreId(prefs.getString(kStoreIdConstant));
+                            children: [
+                              GestureDetector(
+                                onTap: () async {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  Provider.of<BeauticianData>(context, listen: false)
+                                      .setStoreId(prefs.getString(kStoreIdConstant));
+                                  Provider.of<StyleProvider>(context, listen: false).clearSelectedStockList();
 
-                                      // Navigator.pushNamed(context, ReStockPage.id);
-                                      showDialog(context: context,
-                                          // barrierLabel: 'Appointment',
-                                          builder: (context) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Material(
-                                                color: Colors.transparent,
-                                                child: Column(
+                                  // Navigator.pushNamed(context, ReStockPage.id);
+                                  showDialog(context: context,
+                                      // barrierLabel: 'Appointment',
+                                      builder: (context) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Center(child: Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
-                                                    Center(child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
+
+                                                    Column(
                                                       children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.pop(context);
 
-                                                        Column(
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.pop(context);
-
-                                                                Navigator.pushNamed(
-                                                                    context, UpdateStockPage.id);
-                                                              },
-                                                              child: CircleAvatar(
-                                                                  radius: 30,
-                                                                  backgroundColor: kCustomColor
-                                                                      .withOpacity(1),
-                                                                  child: const Icon(
-                                                                    Iconsax.box, color: kBlack,
-                                                                    size: 20,)),
-                                                            ),
-                                                            Text("Update / Check\nStock",
-                                                              textAlign: TextAlign.center,
-                                                              style: kNormalTextStyle.copyWith(
-                                                                  color: kPureWhiteColor,
-                                                                  fontSize: 12),)
-                                                          ],
+                                                            Navigator.pushNamed(
+                                                                context, UpdateStockPage.id);
+                                                          },
+                                                          child: CircleAvatar(
+                                                              radius: 30,
+                                                              backgroundColor: kCustomColor
+                                                                  .withOpacity(1),
+                                                              child: const Icon(
+                                                                Iconsax.box, color: kBlack,
+                                                                size: 20,)),
                                                         ),
-                                                        kMediumWidthSpacing,
-                                                        kMediumWidthSpacing,
-                                                        kMediumWidthSpacing,
-                                                        Column(
-                                                          children: [
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.pop(context);
-                                                                Navigator.pushNamed(
-                                                                    context, ReStockPage.id);
-                                                              },
-                                                              child: CircleAvatar(
-                                                                  backgroundColor: kCustomColorPink
-                                                                      .withOpacity(1),
-
-                                                                  radius: 30,
-                                                                  child: const Icon(Iconsax.tag,
-                                                                    color: kPureWhiteColor,
-                                                                    size: 20,)),
-                                                            ),
-                                                            Text("Restock / Purchase\nItems",
-                                                              textAlign: TextAlign.center,
-                                                              style: kNormalTextStyle.copyWith(
-                                                                  color: kPureWhiteColor,
-                                                                  fontSize: 12),)
-                                                          ],
-                                                        ),
-
+                                                        Text("Update / Check\nStock",
+                                                          textAlign: TextAlign.center,
+                                                          style: kNormalTextStyle.copyWith(
+                                                              color: kPureWhiteColor,
+                                                              fontSize: 12),)
                                                       ],
-                                                    )),
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    kLargeHeightSpacing,
-                                                    Text("Cancel",
-                                                      style: kNormalTextStyle.copyWith(
-                                                          color: kPureWhiteColor),)
+                                                    ),
+                                                    kMediumWidthSpacing,
+                                                    kMediumWidthSpacing,
+                                                    kMediumWidthSpacing,
+                                                    Column(
+                                                      children: [
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Navigator.pop(context);
+                                                            Navigator.pushNamed(
+                                                                context, ReStockPage.id);
+                                                          },
+                                                          child: CircleAvatar(
+                                                              backgroundColor: kCustomColorPink
+                                                                  .withOpacity(1),
+
+                                                              radius: 30,
+                                                              child: const Icon(Iconsax.tag,
+                                                                color: kPureWhiteColor,
+                                                                size: 20,)),
+                                                        ),
+                                                        Text("Restock / Purchase\nItems",
+                                                          textAlign: TextAlign.center,
+                                                          style: kNormalTextStyle.copyWith(
+                                                              color: kPureWhiteColor,
+                                                              fontSize: 12),)
+                                                      ],
+                                                    ),
+
                                                   ],
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                      );
-                                    },
+                                                )),
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                kLargeHeightSpacing,
+                                                Text("Cancel",
+                                                  style: kNormalTextStyle.copyWith(
+                                                      color: kPureWhiteColor),)
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                  );
+                                },
 
-                                    child: Container(
-                                      height: 45,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        color: kBlack,
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,  // Start of the gradient
-                                          end: Alignment.bottomRight, // End of the gradient
-                                          colors: [kAppPinkColor, kBlueDarkColor],
-                                        ),),
-                                      child: Center(child: Text("Take Stock",
-                                        style: kNormalTextStyle.copyWith(
-                                            color: kPureWhiteColor),)),
-                                      // color: kAirPink,
-                                    ),
-                                  ),
-                                  kMediumWidthSpacing,
-                                  GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(context, StockHistoryPage.id);
-
-
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
-                                          Text("History", style: kNormalTextStyle.copyWith(
-                                              fontSize: 12,
-                                              color: kBlack,
-                                              fontWeight: FontWeight.bold),)
-                                        ],
-                                      )),
-
-                                ],
+                                child: Container(
+                                  height: 45,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    color: kBlack,
+                                    borderRadius: BorderRadius.circular(10),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,  // Start of the gradient
+                                      end: Alignment.bottomRight, // End of the gradient
+                                      colors: [kAppPinkColor, kBlueDarkColor],
+                                    ),),
+                                  child: Center(child: Text("Take Stock",
+                                    style: kNormalTextStyle.copyWith(
+                                        color: kPureWhiteColor),)),
+                                  // color: kAirPink,
+                                ),
                               ),
+                              kMediumWidthSpacing,
+                              GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, StockHistoryPage.id);
+
+
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(Iconsax.receipt, color: kAppPinkColor, size: 25,),
+                                      Text("History", style: kNormalTextStyle.copyWith(
+                                          fontSize: 12,
+                                          color: kBlack,
+                                          fontWeight: FontWeight.bold),)
+                                    ],
+                                  )),
 
                             ],
                           ),
@@ -491,8 +488,14 @@ class _StorePageWebState extends State<StorePageWeb> {
                                                     ],
                                                   ),
                                                   kSmallHeightSpacing,
-                                                  Text(filteredStock[index].description,
-                                                      style: kNormalTextStyleSmallGrey),
+                                                  Row(
+                                                    children: [
+                                                      Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),
+                                                      kSmallWidthSpacing,
+                                                      Text(filteredStock[index].barcode,
+                                                          style: kNormalTextStyleSmallGrey),
+                                                    ],
+                                                  ),
                                                   kSmallHeightSpacing,
                                                   filteredStock[index].tracking == true
                                                       ? filteredStock[index].quantity >= 5

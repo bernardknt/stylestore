@@ -66,8 +66,8 @@ class _POSState extends State<POS> {
   // List<AllStockData> filteredStock = [];
   List<AllStockData> newStock = [];
   var currency = "";
-
-  List<Stock> selectedStocks = [];
+  //
+  // List<Stock> selectedStocks = [];
   Map<String, dynamic> permissionsMap = {};
   Map<String, dynamic> videoMap = {};
 
@@ -92,6 +92,7 @@ class _POSState extends State<POS> {
 
   bool isScanning = false;
   Future<void> startBarcodeScan() async {
+    var selectedStocksOriginal  = Provider.of<StyleProvider>(context, listen: false);
     isScanning = true;
     while (isScanning) {
       isScanning = false;
@@ -103,84 +104,21 @@ class _POSState extends State<POS> {
       );
 
       if (barcodeScanRes != '-1') {
-          isScanning = false;
-         // var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
-          try {
-            var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
-            if (barcodeItem != null)
-            {
-              if(barcodeItem.tracking == true){
-                print(barcodeItem.quantity);
-                if (1<=barcodeItem.quantity){
-                  Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
-                      name: barcodeItem.name, quantity: 1.0,
-                      amount: barcodeItem.amount / 1.0,
-                      details: barcodeItem.description,
-                      tracking: barcodeItem.tracking));
-                  selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
-                  CommonFunctions().playBeepSound();
-                  showDialog(context: context, builder: ( context) {return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [CircularProgressIndicator(color: kAppPinkColor,),
-                          kSmallHeightSpacing,
-                          DefaultTextStyle(
-                            style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-                            child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
-                          )
-                          // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
-                        ],));});
-                  await Future.delayed(const Duration(seconds: 1));
-                  Navigator.pop(context);
-                  startBarcodeScan();
-
-                }
-                else {
-
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CupertinoAlertDialog(
-                          title: const Text('OUT OF STOCK'),
-                          content: Text(
-                            "The quantity available for ${barcodeItem.name} is ${barcodeItem.quantity}! You have tried to sell 1 unit!",
-                            style: kNormalTextStyle.copyWith(color: kBlack),
-                          ),
-                          actions: [
-                            CupertinoDialogAction(
-                                isDestructiveAction: true,
-                                onPressed: () {
-                                  // _btnController.reset();
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancel')),
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () async {
-                                  final prefs =
-                                  await SharedPreferences.getInstance();
-                                  Provider.of<BeauticianData>(context,
-                                      listen: false)
-                                      .setStoreId(
-                                      prefs.getString(kStoreIdConstant));
-
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.pushNamed(context, UpdateStockPage.id);
-                                },
-                                child: const Text('Update Stock')),
-                          ],
-                        );
-                      });
-                }
-              }
-              else {
+        isScanning = false;
+        // var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+        try {
+          var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+          if (barcodeItem != null)
+          {
+            if(barcodeItem.tracking == true){
+              print(barcodeItem.quantity);
+              if (1<=barcodeItem.quantity){
                 Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
                     name: barcodeItem.name, quantity: 1.0,
                     amount: barcodeItem.amount / 1.0,
                     details: barcodeItem.description,
                     tracking: barcodeItem.tracking));
-                selectedStocks.add(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+                selectedStocksOriginal.addToOriginalSelectedStock(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
                 CommonFunctions().playBeepSound();
                 showDialog(context: context, builder: ( context) {return Center(
                     child: Column(
@@ -196,60 +134,123 @@ class _POSState extends State<POS> {
                 await Future.delayed(const Duration(seconds: 1));
                 Navigator.pop(context);
                 startBarcodeScan();
+
               }
+              else {
 
-              print("${barcodeItem.name} ${barcodeItem.tracking} Item Exists");
-            } else{
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CupertinoAlertDialog(
+                        title: const Text('OUT OF STOCK'),
+                        content: Text(
+                          "The quantity available for ${barcodeItem.name} is ${barcodeItem.quantity}! You have tried to sell 1 unit!",
+                          style: kNormalTextStyle.copyWith(color: kBlack),
+                        ),
+                        actions: [
+                          CupertinoDialogAction(
+                              isDestructiveAction: true,
+                              onPressed: () {
+                                // _btnController.reset();
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cancel')),
+                          CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () async {
+                                final prefs =
+                                await SharedPreferences.getInstance();
+                                Provider.of<BeauticianData>(context,
+                                    listen: false)
+                                    .setStoreId(
+                                    prefs.getString(kStoreIdConstant));
 
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pushNamed(context, UpdateStockPage.id);
+                              },
+                              child: const Text('Update Stock')),
+                        ],
+                      );
+                    });
+              }
             }
-            // Use barcodeItem here
-          } on StateError catch (e) {
-            // Handle the case where no element is found (e.g., show a message)
-            print("Item does not Exist");
-            isScanning = false;
-            ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Item is not in your Inventory')));
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: Text("ITEM BARCODE NOT FOUND?"),
-                  content: Text("This could mean either the item is not in the inventory or is not set 'For Sale'\nWould you like to add this item to the inventory?"),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: const Text(
-                        "Cancel", style: TextStyle(color: kRedColor),),
-                      onPressed: () {
-                        Navigator.of(context).pop();// Close the dialog
+            else {
+              Provider.of<StyleProvider>(context, listen: false).addToServiceBasket(BasketItem(
+                  name: barcodeItem.name, quantity: 1.0,
+                  amount: barcodeItem.amount / 1.0,
+                  details: barcodeItem.description,
+                  tracking: barcodeItem.tracking));
+              selectedStocksOriginal.addToOriginalSelectedStock(Stock(name: barcodeItem.name, id: barcodeItem.documentId, restock: 1, price: barcodeItem.amount / 1.0));
+              CommonFunctions().playBeepSound();
+              showDialog(context: context, builder: ( context) {return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [CircularProgressIndicator(color: kAppPinkColor,),
+                      kSmallHeightSpacing,
+                      DefaultTextStyle(
+                        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                        child: Text("${barcodeItem.name} Added", textAlign: TextAlign.center,),
+                      )
+                      // Text("Loading Contacts", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)
+                    ],));});
+              await Future.delayed(const Duration(seconds: 1));
+              Navigator.pop(context);
+              startBarcodeScan();
+            }
 
-                      },
-                    ),
-                    CupertinoDialogAction(
-                      child: const Text("Add to Inventory"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return Scaffold(
-                                  appBar: AppBar(
-                                    elevation: 0,
-                                    backgroundColor: kPureWhiteColor,
-                                    automaticallyImplyLeading: false,
-                                  ),
-                                  body: StorePageMobile());
-                            });
+            print("${barcodeItem.name} ${barcodeItem.tracking} Item Exists");
+          } else{
 
-
-
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
           }
+          // Use barcodeItem here
+        } on StateError catch (e) {
+          // Handle the case where no element is found (e.g., show a message)
+          print("Item does not Exist");
+          isScanning = false;
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Item is not in your Inventory')));
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: Text("ITEM BARCODE NOT FOUND?"),
+                content: Text("This could mean either the item is not in the inventory or is not set 'For Sale'\nWould you like to add this item to the inventory?"),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text(
+                      "Cancel", style: TextStyle(color: kRedColor),),
+                    onPressed: () {
+                      Navigator.of(context).pop();// Close the dialog
+
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("Add to Inventory"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                                appBar: AppBar(
+                                  elevation: 0,
+                                  backgroundColor: kPureWhiteColor,
+                                  automaticallyImplyLeading: false,
+                                ),
+                                body: StorePageMobile());
+                          });
+
+
+
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
 
       }
       else{
@@ -291,6 +292,7 @@ class _POSState extends State<POS> {
   Widget build(BuildContext context) {
     var styleDataListen = Provider.of<StyleProvider>(context);
     var styleData = Provider.of<StyleProvider>(context, listen: false);
+    var selectedStocksOriginal  = Provider.of<StyleProvider>(context, listen: false);
     return Scaffold(
 
       backgroundColor: kBackgroundGreyColor,
@@ -331,60 +333,22 @@ class _POSState extends State<POS> {
             )
           ],
         ),
-        // title:
-        // permissionsMap['sales'] == false
-        //     ? Container()
-        //     :
-        // GestureDetector(
-        //   onTap: () async {
-        //     final prefs = await SharedPreferences.getInstance();
-        //
-        //     Provider.of<BeauticianData>(context, listen: false)
-        //         .setStoreId(prefs.getString(kStoreIdConstant));
-        //     Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
-        //
-        //     showModalBottomSheet(
-        //         isScrollControlled: true,
-        //         context: context,
-        //         builder: (context) {
-        //           return Scaffold(
-        //               appBar: AppBar(
-        //                 elevation: 0,
-        //                 backgroundColor: kPureWhiteColor,
-        //                 automaticallyImplyLeading: false,
-        //               ),
-        //               body: CustomerSearchPage());
-        //         });
-        //   },
-        //   child: Container(
-        //       padding: EdgeInsets.all(10),
-        //       decoration: BoxDecoration(
-        //         borderRadius: BorderRadius.all(
-        //           Radius.circular(5),
-        //         ),
-        //         color: kAppPinkColor,
-        //       ),
-        //       child: Text(
-        //         '+ Add Customer',
-        //         style: kNormalTextStyle.copyWith(
-        //             color: kPureWhiteColor, fontSize: 13),
-        //       )),
-        // ),
+
         centerTitle: true,
         actions: [
           if (!kIsWeb)
             Padding(
-              padding: const EdgeInsets.only(right: 30.0, top: 10),
-              child: GestureDetector(
-                  onTap: ()async{
-                    if(await CommonFunctions().subscriptionActive() == false ){
+                padding: const EdgeInsets.only(right: 30.0, top: 10),
+                child: GestureDetector(
+                    onTap: ()async{
+                      if(await CommonFunctions().subscriptionActive() == false ){
 
-                      CommonFunctions().buildSubscriptionPaymentModal(context);
-                    }else {
-                      startBarcodeScan();
-                    }
-                  },
-                  child: const ScannerWidget(backgroundColor: kGreenThemeColor,))
+                        CommonFunctions().buildSubscriptionPaymentModal(context);
+                      }else {
+                        startBarcodeScan();
+                      }
+                    },
+                    child: const ScannerWidget(backgroundColor: kGreenThemeColor,))
             )
         ],
       ),
@@ -411,20 +375,20 @@ class _POSState extends State<POS> {
                 .customerName ==
                 "") {
               Provider.of<StyleProvider>(context, listen: false)
-                  .setSelectedStockItems(selectedStocks);
+                  .setSelectedStockItems(selectedStocksOriginal.originalSelectedStock);
               CommonFunctions().AlertPopUpCustomers(context,
                   imagePath: 'images/leave.json',
                   title: 'No Customer Added',
                   text: 'Add a Customer',
                   cancelButtonText: "Continue",
-                  selectedStocks: selectedStocks,
+                  selectedStocks: selectedStocksOriginal.originalSelectedStock,
                   currency: currency
               );
             } else {
               Provider.of<StyleProvider>(context, listen: false)
                   .clearSelectedStockItems();
               Provider.of<StyleProvider>(context, listen: false)
-                  .setSelectedStockItems(selectedStocks);
+                  .setSelectedStockItems(selectedStocksOriginal.originalSelectedStock);
               showModalBottomSheet(
                   context: context,
                   builder: (context) {
@@ -433,14 +397,14 @@ class _POSState extends State<POS> {
             }
           }
         }, icon: CircleAvatar(
-            radius: 12,
-            child: Text(
-              "${Provider.of<StyleProvider>(context).basketItems.length}",
-              style: kNormalTextStyle.copyWith(color: kBlack),
-            )), label: Text(
-          'Total: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context).totalPrice)}',
-          style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
-        ),
+          radius: 12,
+          child: Text(
+            "${Provider.of<StyleProvider>(context).basketItems.length}",
+            style: kNormalTextStyle.copyWith(color: kBlack),
+          )), label: Text(
+        'Total: ${CommonFunctions().formatter.format(Provider.of<StyleProvider>(context).totalPrice)}',
+        style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+      ),
       ),
       floatingActionButtonLocation:
       FloatingActionButtonLocation.miniCenterFloat,
@@ -459,59 +423,59 @@ class _POSState extends State<POS> {
             child: Center(
               child: Padding(
                 padding:EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                child: 
+                child:
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [permissionsMap['sales'] == false
                       ? Container()
                       : GestureDetector(
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
+                    onTap: () async {
+                      final prefs = await SharedPreferences.getInstance();
 
-                        Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
-                        Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
+                      Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
+                      Provider.of<StyleProvider>(context, listen: false).setStoreCurrency(currency);
 
-                        showModalBottomSheet(
-                            isScrollControlled: true,
-                            context: context,
-                            builder: (context) {
-                              return Scaffold(
-                                  appBar: AppBar(
-                                    elevation: 0,
-                                    backgroundColor: kPureWhiteColor,
-                                    automaticallyImplyLeading: false,
-                                  ),
-                                  body:
-                                  CustomerSearchPage());
-                            });
-                      },
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
+                      showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return Scaffold(
+                                appBar: AppBar(
+                                  elevation: 0,
+                                  backgroundColor: kPureWhiteColor,
+                                  automaticallyImplyLeading: false,
+                                ),
+                                body:
+                                CustomerSearchPage());
+                          });
+                    },
+                    child: Container(
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: kBackgroundGreyColor
-                        ),
-                        child: Provider.of<StyleProvider>(context).customerName == ""
+                      ),
+                      child: Provider.of<StyleProvider>(context).customerName == ""
                           ? Center(
-                            child: Text(
-                                                  'No Customer Selected',textAlign: TextAlign.center,
-                                                  style: kNormalTextStyle.copyWith(
+                        child: Text(
+                          'No Customer Selected',textAlign: TextAlign.center,
+                          style: kNormalTextStyle.copyWith(
                               color: kBlack, fontSize: 12),
-                                                ),
-                          )
+                        ),
+                      )
                           : Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(3.0),
-                              child: Text(
-                                                    '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',textAlign: TextAlign.center,
-                                                    style: kNormalTextStyle.copyWith(
+                        child: Padding(
+                          padding: const EdgeInsets.all(3.0),
+                          child: Text(
+                            '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',textAlign: TextAlign.center,
+                            style: kNormalTextStyle.copyWith(
                                 color: kBlack, fontSize: 12),
-                                                  ),
-                            ),
                           ),
                         ),
+                      ),
                     ),
+                  ),
 
                     kMediumWidthSpacing,
                     kMediumWidthSpacing,
@@ -524,7 +488,7 @@ class _POSState extends State<POS> {
                             return buildItemRow(context, styleDataListen.basketItems[index],currency, kBlack,index);},),
                       ),
                     )
-                    
+
                   ],
                 ),
 
@@ -595,7 +559,7 @@ class _POSState extends State<POS> {
                           builder: (context) {
                             return Scaffold(
                                 appBar: AppBar(automaticallyImplyLeading:
-                                  false, backgroundColor: kBlack,
+                                false, backgroundColor: kBlack,
                                 ),
                                 body: ProductUpload());
                           });
@@ -705,7 +669,7 @@ class _POSState extends State<POS> {
                                                       amount: amount,
                                                       details: description,
                                                       tracking: styleData.filteredStock[index].tracking));
-                                                  selectedStocks.add(Stock(
+                                                  selectedStocksOriginal.addToOriginalSelectedStock(Stock(
                                                       name: styleData.filteredStock[index].name,
                                                       id: styleData.filteredStock[index].documentId,
                                                       restock: quantity,

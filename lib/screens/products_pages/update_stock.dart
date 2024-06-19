@@ -29,9 +29,10 @@ class UpdateStockPage extends StatefulWidget {
 class _UpdateStockPageState extends State<UpdateStockPage> {
   late Stream<QuerySnapshot> _customerStream;
   TextEditingController searchController = TextEditingController();
-  List<Map<String, dynamic>> _searchResults = [];
+
   var basketToPost = [];
   String updateOrderNumber = "";
+  String currency = "";
   var nameList = [];
   var itemIdList = [];
   var descriptionList = [];
@@ -75,6 +76,7 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
             // Navigator.pop(context);
           }
         }on StateError catch (e)
+
         {
           // Handle the case where no element is found (e.g., show a message)
           print("Item does not Exist");
@@ -136,44 +138,10 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       }
     }
   }
-  // Future<void> _startBarcodeScan() async {
-  //   isScanning = true;
-  //   while(isScanning) {
-  //     isScanning = false;
-  //
-  //     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-  //       "#FF0000", // Custom red color for the scanner
-  //       "Cancel", // Button text for cancelling the scan
-  //       true, // Show flash icon
-  //       ScanMode.BARCODE, // Specify the scan mode (BARCODE, QR)
-  //     );
-  //     print("Here is barcodeRes: $barcodeScanRes");
-  //     if (barcodeScanRes != '-1') {
-  //       print("We reached this point");
-  //
-  //       int index = barcodeList.indexOf(barcodeScanRes);
-  //       print("The int value is : $index");
-  //
-  //       if (index != -1) {
-  //         CommonFunctions().playBeepSound();
-  //         isScanning = false;
-  //
-  //         quantityControllers[index]?.text = '0';
-  //         // Add the selected stock to the list.
-  //         selectedStocks.add(Stock(name: nameList[index], id: itemIdList[index], restock: 0, description: descriptionList[index]));
-  //
-  //         showPriceAndQuantityDialogForBarScanner(nameList[index], itemIdList[index], descriptionList[index] );
-  //       } else {
-  //         isScanning = false;
-  //         ScaffoldMessenger.of(context).showSnackBar( SnackBar(content: Text('Item is not in your Inventory')));
-  //
-  //       }
-  //     }
-  //   }
-  // }
   void defaultInitialization()async{
     final prefs = await SharedPreferences.getInstance();
     var storeId = prefs.getString(kStoreIdConstant);
+    currency = prefs.getString(kCurrency)??"";
     updateOrderNumber = "UP_${CommonFunctions().generateUniqueID(prefs.getString(kBusinessNameConstant)!)}";
     newStock = await CommonFunctions().retrieveStockTrackedData(context);
 
@@ -428,7 +396,7 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       }
       );
     }
-    CommonFunctions().uploadUpdatedStockItems(selectedStocks, context, basketToPost,updateOrderNumber );
+    CommonFunctions().uploadUpdatedStockItems(selectedStocks, context, basketToPost,currency, updateOrderNumber );
 
   }
 
@@ -510,9 +478,11 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
       body:
       SafeArea(
         child:
+
         Center(
           child: Container(
-            width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+           // width: MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8,
+            width: kIsWeb? MediaQuery.of(context).size.width > 600 ? 400 : MediaQuery.of(context).size.width * 0.8:double.maxFinite,
 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -1,4 +1,5 @@
 
+import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -32,20 +33,58 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
   int _currentIndex = 0;
   double buttonHeight = 40.0;
   int amount = 0;
-  final tabs = [
-    // SuperResponsiveLayout(mobileBody: HomePageController(), desktopBody: ControlPageWeb(),),
-    HomePage(),
-    StorePageMobile(),
-   TakeStockWidget(mainPage: true,)
-    // AnalysisPage()
-  ];
+  Map permissionsMap = {};
+  List tabs = [];
+  List<BottomNavigationBarItem> navigationItems =  [];
 
 
   var storeName = "";
 
   void defaultInitialization()async {
     final prefs = await SharedPreferences.getInstance();
+    permissionsMap = await CommonFunctions().convertPermissionsJson();
     storeName = CommonFunctions().getFirstWord(prefs.getString(kBusinessNameConstant)??"");
+    if (permissionsMap['takeStock']==true){
+      tabs = [
+        HomePage(),
+        StorePageMobile(),
+        TakeStockWidget(mainPage: true,)
+        // AnalysisPage()
+      ];
+      navigationItems =  [
+        BottomNavigationBarItem(
+            icon: Icon(kIconHome),label: cHome,
+            backgroundColor: Colors.green),
+
+        BottomNavigationBarItem(
+            icon: Icon(kIconStore),label:'$storeName $cStore',
+
+            backgroundColor: Colors.black),
+        BottomNavigationBarItem(
+            icon: Icon(kIconStock),label:'Take Stock',
+
+            backgroundColor: Colors.black),
+      ];
+    } else {
+      tabs = [
+        HomePage(),
+        StorePageMobile(),
+
+        // AnalysisPage()
+      ];
+      navigationItems =  [
+        BottomNavigationBarItem(
+            icon: Icon(kIconHome),label: cHome,
+            backgroundColor: Colors.green),
+
+        BottomNavigationBarItem(
+            icon: Icon(kIconStore),label:'$storeName $cStore',
+
+            backgroundColor: Colors.black),
+
+      ];
+    }
+
     setState(() {
     });
   }
@@ -71,24 +110,9 @@ class _ControlPageMobileState extends State<ControlPageMobile> {
         backgroundColor: Colors.white,
         selectedItemColor: kAppPinkColor,
         iconSize: 18,
-        items:
+        items: navigationItems
         // Item 1
-        [
-          BottomNavigationBarItem(
-              icon: Icon(kIconHome),label: cHome,
-              backgroundColor: Colors.green),
-
-          BottomNavigationBarItem(
-              icon: Icon(kIconStore),label:'$storeName $cStore',
-
-              backgroundColor: Colors.black),
-          BottomNavigationBarItem(
-              icon: Icon(kIconStock),label:'Take Stock',
-
-              backgroundColor: Colors.black),
-
-
-        ],
+       ,
         onTap: (index){
           setState(() {
             _currentIndex = index;

@@ -54,7 +54,20 @@ class _HomePageWebState extends State<HomePageWeb> {
 
   DateTimeRange? selectedDateRange;
 
+  Future<void> updateCurrencies() async {
+    final purchasesRef = FirebaseFirestore.instance.collection('purchases');
+    final snapshot = await purchasesRef.get();
 
+    final batch = FirebaseFirestore.instance.batch();
+
+    for (final doc in snapshot.docs) {
+      if (!doc.data().containsKey('currency')) {
+        batch.update(doc.reference, {'currency': 'UGX'});
+      }
+    }
+
+    await batch.commit();
+  }
 
   void defaultInitialization() async {
     permissionsMap = await CommonFunctions().convertPermissionsJson();
@@ -85,10 +98,6 @@ class _HomePageWebState extends State<HomePageWeb> {
     CommonFunctions().checkPeriodAndSignOut(context, lastSignInTime);
 
 
-
-
-
-
     setState(() {
       businessName = newName;
       image = newImage;
@@ -98,6 +107,7 @@ class _HomePageWebState extends State<HomePageWeb> {
 
     });
   }
+
 
   Future<void> addIgnoreFieldToDocuments(String collectionPath) async {
     final collection = FirebaseFirestore.instance.collection(collectionPath);
@@ -162,6 +172,7 @@ class _HomePageWebState extends State<HomePageWeb> {
               top: 20,
               child: FloatingActionButton(
                 onPressed: (){
+                  updateCurrencies();
                   // Navigator.pushNamed(context, '/payment/FE20240611-58');
                   Provider.of<StyleProvider>(context, listen: false).removeNotificationIcon();
                   showDialog(context: context, builder: (BuildContext context){

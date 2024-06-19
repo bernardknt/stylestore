@@ -249,7 +249,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
         ),
         automaticallyImplyLeading:  MediaQuery.of(context).size.width > 600 ? false: true,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: permissionsMap['suppliers']!= true?SizedBox():FloatingActionButton(
         // When the user hovers over the button, show a tooltip with this text 'Edit Users Profile'
         tooltip: "Add new Supplier",
         backgroundColor: kAppPinkColor,
@@ -259,7 +259,7 @@ class _SuppliersPageState extends State<SuppliersPage> {
           Navigator.pushNamed(context, SupplierForm.id);
         },
       ),
-      body:  permissionsMap['employees'] == false ? LockedWidget(page: "Team",):Column(
+      body:  permissionsMap['suppliers'] == false ? LockedWidget(page: "Suppliers",):Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),

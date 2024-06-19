@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:stylestore/controllers/task_controller.dart';
+import 'package:stylestore/model/printing/test_print1.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/analytics/analysis_page.dart';
 import 'package:stylestore/screens/customer_pages/customers_page.dart';
@@ -302,6 +303,9 @@ class _HomePageState extends State<HomePage> {
           GestureDetector(
                 onTap: (){
                   CommonFunctions().showChecklistToBeDoneDialog(context);
+                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>PrintReceiptPage()));
+                  //
+
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 6.0, top: 7),

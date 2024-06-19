@@ -392,8 +392,14 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                   ],
                                                 ),
                                                 kSmallHeightSpacing,
-                                                Text(filteredStock[index].barcode,
-                                                    style: kNormalTextStyleSmallGrey),
+                                                Row(
+                                                  children: [
+                                                    Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),
+                                                    kSmallWidthSpacing,
+                                                    Text(filteredStock[index].barcode,
+                                                        style: kNormalTextStyleSmallGrey),
+                                                  ],
+                                                ),
                                                 kSmallHeightSpacing,
                                                 filteredStock[index].tracking == true
                                                     ? filteredStock[index].quantity >=

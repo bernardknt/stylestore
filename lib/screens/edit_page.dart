@@ -51,6 +51,7 @@ class _EditShopPageState extends State<EditShopPage> {
   var beauticianImages = [];
   var doesMobile = [];
   var phoneNumber = '';
+  bool invoicePay = false;
   var businessName = '';
   var businessLocation = '';
 
@@ -62,8 +63,10 @@ class _EditShopPageState extends State<EditShopPage> {
   DateTime closing = DateTime.now();
 
   var onlineSwitchValue = true;
+  var invoiceSwitchValue = false;
   var mobileSwitchValue = true;
   var activeStatus = 'Open';
+  var activeSwitchStatus = 'Open';
   var userName = '';
   Map<String, dynamic> permissionsMap = {};
 
@@ -74,9 +77,17 @@ class _EditShopPageState extends State<EditShopPage> {
     storeId = prefs.getString(kStoreIdConstant) ?? 'Hi';
     trueImage = prefs.getString(kImageConstant)!;
     userName = prefs.getString(kLoginPersonName)!;
+    invoicePay = prefs.getBool(kInvoicePay)?? false;
+
     onlineSwitchValue = Provider.of<StyleProvider>(context, listen: false).isActive;
+    invoiceSwitchValue = invoicePay;
 
     // onlineSwitchValue = Provider.of<StyleProvider>(context, listen: false).does;
+    if(invoiceSwitchValue == false){
+      activeSwitchStatus = 'Cant Pay with invoice';
+    }else {
+      activeSwitchStatus = 'Can Pay with invoice';
+    }
 
     setState((){
       if(onlineSwitchValue == false){
@@ -418,6 +429,12 @@ class _EditShopPageState extends State<EditShopPage> {
                       subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: buildSwitch(),
                     ),
+                    ListTile(
+                      leading: kIconClockOpen,
+                      title: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(),),
+                      subtitle: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                      trailing: buildInvoicePaySwitch(),
+                    ),
 
                     // ListTile(
                     //   leading: kIconBlackout,
@@ -522,6 +539,45 @@ class _EditShopPageState extends State<EditShopPage> {
   });
   }
 
+  Widget buildInvoicePaySwitch() => Switch.adaptive(
+      activeColor: kGreenThemeColor,
+      inactiveThumbColor: kAppPinkColor,
+
+      //inactiveTrackColor: kAirPink,
+
+      value: invoiceSwitchValue,
+      onChanged: (value){
+        if (value == false){
+          activeSwitchStatus = 'Pay with Invoice';
+          setState(()async{
+            final prefs = await SharedPreferences.getInstance();
+            invoiceSwitchValue = value;
+            //CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
+            //Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(Colors.red, 'Closed');
+           //prefs.setString(kLiveString, 'Open');
+            // location = Provider.of<StyleProvider>(context, listen: false).beauticianLocation;
+            // Provider.of<StyleProvider>(context, listen: false).setLocationOfAppointment(location, value);
+            // print(value);
+          });
+        }else {
+          activeSwitchStatus = 'No invoice Pay';
+          setState(()async{
+            final prefs = await SharedPreferences.getInstance();
+
+            // onlineSwitchValue = value;
+            // CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
+            // Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(kGreenThemeColor, 'Open');
+            // prefs.setString(kLiveString, 'Open');
+            // // location = Provider.of<StyleProvider>(context, listen: false).beauticianLocation;
+            // // Provider.of<StyleProvider>(context, listen: false).setLocationOfAppointment(location, value);
+            // print(value);
+          });
+
+        }
+      }
+
+
+  );
   Widget buildSwitch() => Switch.adaptive(
       activeColor: kGreenThemeColor,
       inactiveThumbColor: kAppPinkColor,

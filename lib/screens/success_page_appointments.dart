@@ -6,6 +6,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +14,9 @@ import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/Utilities/constants/font_constants.dart';
 import 'package:stylestore/controllers/home_page_controllers/home_controller_mobile.dart';
 import 'package:stylestore/controllers/responsive/responsive_page.dart';
+import 'package:stylestore/model/beautician_data.dart';
 import 'package:stylestore/model/common_functions.dart';
+import 'package:stylestore/model/printing/test_print1.dart';
 import 'package:stylestore/model/styleapp_data.dart';
 import 'package:stylestore/screens/tasks_pages/add_tasks.dart';
 import 'package:stylestore/screens/tasks_pages/tasks_widget.dart';
@@ -127,13 +130,16 @@ class _SuccessPageState extends State<SuccessPage> {
             'product' : selectedStocks[i].name,
             'description':selectedStocks[i].description,
             'quantity': selectedStocks[i].restock,
-            'totalPrice':selectedStocks[i].price
+            'totalPrice':selectedStocks[i].price,
+            'quality':"Ok",
+            'unit':selectedStocks[i].unit
+
           }
           );
         }
 
 
-        CommonFunctions().uploadReducedStockItems(selectedStocks, context, itemsWhoStockChanged, prefs.getString(kOrderId));
+        CommonFunctions().uploadReducedStockItems(selectedStocks, context, itemsWhoStockChanged, prefs.getString(kOrderId), prefs.getString(kCurrency));
       } else {
 
       }
@@ -200,8 +206,93 @@ class _SuccessPageState extends State<SuccessPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    GestureDetector(
+                      onTap: (){
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return Scaffold(
+                                  appBar: AppBar(
+                                    automaticallyImplyLeading: false,
+                                    backgroundColor: kPureWhiteColor,
+                                    elevation: 0,
+                                  ),
+                                  body: PrintReceiptPage(basketItems: Provider.of<StyleProvider>(context, listen: false).basketItems, storeName: Provider.of<StyleProvider>(context, listen: false).beauticianName, currency: Provider.of<StyleProvider>(context, listen: false).storeCurrency,));
+                            });
+                      },
+                      child: CircleAvatar(
+                          backgroundColor:
+                          kGreenThemeColor.withOpacity(
+                              1),
+                          radius:
+                          30,
+                          child:
+                          const Icon(
+                            Iconsax.printer,
+                            color:
+                            kPureWhiteColor,
+                            size:
+                            30,
+                          )),
+                    ),
+                    kMediumWidthSpacing,
+                    kMediumWidthSpacing,
+
+                    Provider.of<StyleProvider>(context, listen: false).customerNumber ==""? SizedBox():GestureDetector(
+                      onTap: ()async{
+                        final prefs = await SharedPreferences.getInstance();
+                        var countryCode = prefs.getString(kCountryCode)?? "+256";
+                        var providerData = Provider.of<StyleProvider>(context, listen: false);
+                        Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
+                        //
+                        // Navigator.pushNamed(context, SuperResponsiveLayout.id);
+                        showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return Scaffold(
+                                  appBar: AppBar(
+                                    automaticallyImplyLeading: false,
+                                    backgroundColor: kPureWhiteColor,
+                                    elevation: 0,
+                                  ),
+                                  body: MessagesPage());
+                            });
+
+                      },
+                      child: CircleAvatar(
+                          backgroundColor:
+                          kBlack.withOpacity(
+                              1),
+                          radius:
+                          30,
+                          child:
+                          const Icon(
+                            Iconsax.message,
+                            color:
+                            kPureWhiteColor,
+                            size:
+                            30,
+                          )),
+                    ),
+                  ],
+                ),
+                kLargeHeightSpacing,
+                kLargeHeightSpacing,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     ElevatedButton(
-                      style:ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor)),
+                      style:ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kAppPinkColor),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+
+
+                      ),
 
                         onPressed:(){
                         // Navigator.pop(context);
@@ -212,7 +303,13 @@ class _SuccessPageState extends State<SuccessPage> {
                     kSmallWidthSpacing,
                     kSmallWidthSpacing,
                     ElevatedButton(
-                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBlueDarkColor)),
+                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(kBlueDarkColor,),
+                          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
                         onPressed:() async {
                           final prefs = await SharedPreferences.getInstance();
                           var countryCode = prefs.getString(kCountryCode)?? "+256";
@@ -248,30 +345,30 @@ class _SuccessPageState extends State<SuccessPage> {
                   ],
                 ),
                 kLargeHeightSpacing,
-                Provider.of<StyleProvider>(context, listen: false).customerNumber !=""?
-                ElevatedButton(
-                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBeigeThemeColor)),
-                    onPressed:() async {
-                      final prefs = await SharedPreferences.getInstance();
-                      var countryCode = prefs.getString(kCountryCode)?? "+256";
-                      var providerData = Provider.of<StyleProvider>(context, listen: false);
-                      Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
-                      //
-                      // Navigator.pushNamed(context, SuperResponsiveLayout.id);
-                       showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return Scaffold(
-                                appBar: AppBar(
-                                  automaticallyImplyLeading: false,
-                                  backgroundColor: kPureWhiteColor,
-                                  elevation: 0,
-                                ),
-                                body: MessagesPage());
-                          });
-                    }, child: Text('Send Customer Message', style: kNormalTextStyle.copyWith(color: kBlack),)
-                ): SizedBox(),
+                // Provider.of<StyleProvider>(context, listen: false).customerNumber !=""?
+                // ElevatedButton(
+                //     style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(kBeigeThemeColor)),
+                //     onPressed:() async {
+                //       final prefs = await SharedPreferences.getInstance();
+                //       var countryCode = prefs.getString(kCountryCode)?? "+256";
+                //       var providerData = Provider.of<StyleProvider>(context, listen: false);
+                //       Provider.of<StyleProvider>(context, listen: false).setInvoicedValues(totalPrice, providerData.paidPrice, providerData.customerName, providerData.invoiceTransactionId, CommonFunctions().smsJustPaid(providerData.beauticianName, providerData.beauticianPhoneNumber, providerData.customerName, countryCode), providerData.customerNumber, DateTime.now(), providerData.invoicedTotalPrice - providerData.invoicedPaidPrice, "");
+                //       //
+                //       // Navigator.pushNamed(context, SuperResponsiveLayout.id);
+                //        showModalBottomSheet(
+                //           context: context,
+                //           isScrollControlled: true,
+                //           builder: (context) {
+                //             return Scaffold(
+                //                 appBar: AppBar(
+                //                   automaticallyImplyLeading: false,
+                //                   backgroundColor: kPureWhiteColor,
+                //                   elevation: 0,
+                //                 ),
+                //                 body: MessagesPage());
+                //           });
+                //     }, child: Text('Send Customer Message', style: kNormalTextStyle.copyWith(color: kBlack),)
+                // ): SizedBox(),
 
               ],
             ),

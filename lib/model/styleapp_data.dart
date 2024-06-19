@@ -31,6 +31,7 @@ class StyleProvider extends ChangeNotifier{
   List<String> supplierDisplayNames = ["Nice"];
   List<String> supplierIds = ["default"];
   List<String> supplierRealNames = ["Supplier"];
+  List<Stock> originalSelectedStock = [];
 
 
   List<AllStockData> filteredStock = [];
@@ -198,6 +199,11 @@ class StyleProvider extends ChangeNotifier{
   Map<String, dynamic> videoMap = {};
 
 
+  addToOriginalSelectedStock(Stock value){
+    originalSelectedStock.add(value);
+    notifyListeners();
+  }
+
   setDisplayReceiptButton(bool state){
     displayInvoiceReceiptButton = state;
     print("Display Button");
@@ -271,9 +277,17 @@ class StyleProvider extends ChangeNotifier{
     selectedUnit = unit;
     notifyListeners();
   }
-  void updateBasketItemQuantity(int index, double newQuantity) {
+  void updateBasketItemQuantity(int index, double newQuantity, bool tracked) {
     if (index >= 0 && index < basketItems.length) {
-      basketItems[index].quantity = newQuantity;
+      if(tracked == true){
+        basketItems[index].quantity = newQuantity;
+        originalSelectedStock[index].setRestock(newQuantity);
+
+      }else {
+        basketItems[index].quantity = newQuantity;
+
+      }
+
       totalPrice = 0;
       notifyListeners();
       recalculateTotalPrice(basketItems);// Notify listeners when quantity is updated
@@ -557,18 +571,18 @@ class StyleProvider extends ChangeNotifier{
   void addSelectedStockItems( Stock item){
     selectedStockItems.add(item);
     notifyListeners();
-    print(selectedStockItems);
+
   }
 
   void setSelectedStockItems( List<Stock> items){
     selectedStockItems.addAll(items);
     notifyListeners();
-    print("THIS IS AT OPENING THE SUMMARY: ${selectedStockItems}");
+
   }
   void clearSelectedStockItems(){
     selectedStockItems.clear();
     notifyListeners();
-    print("THIS IS AT OPENING THE SUMMARY: ${selectedStockItems}");
+
   }
 
   void setSyncedCustomers( gotContacts){

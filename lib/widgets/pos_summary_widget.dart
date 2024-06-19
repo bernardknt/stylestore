@@ -1,10 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Utilities/constants/color_constants.dart';
 import '../Utilities/constants/font_constants.dart';
+import '../Utilities/constants/user_constants.dart';
+import '../model/beautician_data.dart';
 import '../model/common_functions.dart';
 import '../model/styleapp_data.dart';
+import '../screens/products_pages/update_stock.dart';
 import '../utilities/basket_items.dart';
 
 Widget buildItemRow(context, BasketItem item, currency,fontColor, index) {
@@ -35,8 +40,50 @@ Widget buildItemRow(context, BasketItem item, currency,fontColor, index) {
             ),
             onChanged: (value) {
               item.quantity = double.tryParse(value) ?? 0;
-              Provider.of<StyleProvider>(context, listen: false).updateBasketItemQuantity( index, double.tryParse(value) ?? 0); // Call updateQuantity function
+              double trueValue = double.tryParse(value) ?? 0;
+              if (item.tracking == false ){
+                Provider.of<StyleProvider>(context, listen: false).updateBasketItemQuantity( index, double.tryParse(value) ?? 0, item.tracking); // Call updateQuantity function
 
+
+              } else {
+                if(trueValue >  item.quantity){
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CupertinoAlertDialog(
+                          title: const Text('Quantity Too High'),
+                          content: Text(
+                            "The quantity available for ${item.name} is ${item.quantity}!",
+                            style: kNormalTextStyle.copyWith(color: kBlack),
+                          ),
+                          actions: [
+                            CupertinoDialogAction(
+                                isDestructiveAction: true,
+                                onPressed: () {
+                                  // _btnController.reset();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel')),
+                            CupertinoDialogAction(
+                                isDefaultAction: true,
+                                onPressed: () async {
+                                  final prefs = await SharedPreferences.getInstance();
+                                  Provider.of<BeauticianData>(context, listen: false).setStoreId(prefs.getString(kStoreIdConstant));
+
+
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, UpdateStockPage.id);
+                                },
+                                child: const Text('Update Stock')),
+                          ],
+                        );
+                      });
+                } else {
+                  Provider.of<StyleProvider>(context, listen: false).updateBasketItemQuantity( index, double.tryParse(value) ?? 0, item.tracking); // Call updateQuantity function
+
+                }
+
+              }
 
 
             },

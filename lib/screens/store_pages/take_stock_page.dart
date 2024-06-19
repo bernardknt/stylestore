@@ -19,6 +19,8 @@ class TakeStockWidget extends StatelessWidget {
     super.key,  this.mainPage = false,
   });
 
+
+
   @override
   Widget build(BuildContext context) {
     if (mainPage == true){
@@ -67,6 +69,7 @@ class TakeStockWidget extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () async{
+                        Provider.of<StyleProvider>(context, listen: false).clearSelectedStockList();
                         final prefs = await SharedPreferences.getInstance();
                         String storeId = prefs.getString(kStoreIdConstant)??"";
                         Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);
@@ -101,6 +104,7 @@ class TakeStockWidget extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () async{
+                        Provider.of<StyleProvider>(context, listen: false).clearSelectedStockList();
                         final prefs = await SharedPreferences.getInstance();
                         String storeId = prefs.getString(kStoreIdConstant)??"";
                         Provider.of<BeauticianData>(context, listen: false).setStoreId(storeId);

@@ -8,7 +8,7 @@ import 'purchase.dart';
 import 'purchase_customer.dart';
 import 'purchase_supplier.dart';
 import 'purchase_utils.dart';
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 class PdfPurchasePdfHelper {
 
@@ -55,20 +55,20 @@ class PdfPurchasePdfHelper {
     final pdfData = await pdf.save();
 
     // Create a Blob for download
-    final blob = html.Blob([pdfData], 'application/pdf');
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement()
-      ..href = url
-      ..style.display = 'none'
-      ..download = pdfFileName;
-    html.document.body!.children.add(anchor);
-
-    // Trigger download
-    anchor.click();
-
-    // Cleanup
-    html.document.body!.children.remove(anchor);
-    html.Url.revokeObjectUrl(url);
+    // final blob = html.Blob([pdfData], 'application/pdf');
+    // final url = html.Url.createObjectUrlFromBlob(blob);
+    // final anchor = html.AnchorElement()
+    //   ..href = url
+    //   ..style.display = 'none'
+    //   ..download = pdfFileName;
+    // html.document.body!.children.add(anchor);
+    //
+    // // Trigger download
+    // anchor.click();
+    //
+    // // Cleanup
+    // html.document.body!.children.remove(anchor);
+    // html.Url.revokeObjectUrl(url);
   }
 
 

@@ -139,10 +139,10 @@ class _SplashPageState extends State<SplashPage> {
           ),
         ),
         child: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.center, children: [
             // Image.asset('images/logo_white2.png',),
             Text(
-              'Automate and Grow Yours Business',
+              'Automate and Grow Yours Business', textAlign: TextAlign.center,
               style: kHeadingTextStyleWhite.copyWith(color: kPureWhiteColor),
             )
           ]),

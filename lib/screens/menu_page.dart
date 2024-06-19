@@ -114,6 +114,7 @@ class _MenuPageState extends State<MenuPage> {
               // Spacer(),
               Text(
                 "$userName", style: kHeading2TextStyleBold.copyWith(fontSize: 14,color: kPureWhiteColor),),
+              kLargeHeightSpacing,
 
               Row(
                 children: [

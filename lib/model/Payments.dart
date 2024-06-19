@@ -6,6 +6,9 @@ class Payments {
   final double paidAmount;
   final double totalFee;
   final String storeName;
+  final String storePhone;
+  final String storeLocation;
+  final String clientLocation;
   final String client;
   final String clientPhone;
   final String currency;
@@ -16,7 +19,7 @@ class Payments {
   Payments({required this.id,
     // required this.amountToPay,
     required this.items, required this.storeName,required this.paidAmount,  required this.totalFee, required this.client, required this.currency,
-    required this.clientPhone, required this.history, required this.storeId});
+    required this.clientPhone, required this.history, required this.storeId, required this.storePhone, required this.storeLocation,required this.clientLocation,});
 
   factory Payments.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data() as Map<String, dynamic>;
@@ -32,7 +35,10 @@ class Payments {
       storeName: data['beauticianName'],
       totalFee: data['totalFee'],
       storeId: data['beautician_id'],
+      storePhone: data['beauticianNumber'],
       paidAmount: data['paidAmount'],
+      storeLocation: data['location'],
+      clientLocation: data['clientLocation'],
     );
   }
 }

@@ -408,10 +408,12 @@ class _MessagesPageState extends State<MessagesPage> {
                                                   child: const Text('Cancel')),
                                               CupertinoDialogAction(isDefaultAction: true,
                                                   onPressed: (){
-                                                    // _btnController.reset();
+                                                    // // _btnController.reset();
+                                                    // Navigator.pop(context);
+                                                    // Navigator.pop(context);
                                                     Provider.of<BeauticianData>(context, listen: false).setLottieImage( 'images/sending.json', "Message Sent");
                                                     CommonFunctions().sendCustomerSms(beauticianDataListen.textMessage, phoneNumber, context);
-                                                    CommonFunctions().uploadMessageToServer(context, phoneNumber, false, [phoneNumber], 40.0);
+
                                                   },
                                                   child: const Text('Send')),
 

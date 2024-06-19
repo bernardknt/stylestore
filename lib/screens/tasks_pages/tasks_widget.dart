@@ -17,6 +17,7 @@ import 'package:stylestore/utilities/constants/color_constants.dart';
 import 'package:stylestore/widgets/dividing_line_widget.dart';
 import '../../Utilities/constants/font_constants.dart';
 import '../../model/styleapp_data.dart';
+import '../../widgets/locked_widget.dart';
 
 class TasksWidget extends StatefulWidget {
   const TasksWidget({Key? key}) : super(key: key);
@@ -60,6 +61,7 @@ class _TasksWidgetState extends State<TasksWidget> {
   var totalBill = [];
   var newOrderNumber = 0;
   late bool isCheckedIn;
+  Map permissionsMap = {};
 
   String businessName = 'Business';
   String userName = "";
@@ -84,9 +86,11 @@ class _TasksWidgetState extends State<TasksWidget> {
 
   void defaultInitialization() async {
     final prefs = await SharedPreferences.getInstance();
+    permissionsMap = await CommonFunctions().convertPermissionsJson();
     storeId = prefs.getString(kStoreIdConstant) ?? "";
     userName = prefs.getString(kLoginPersonName) ?? "";
     employeeId = prefs.getString(kEmployeeId) ?? "";
+
     setState(() {});
   }
 
@@ -102,7 +106,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     var styleDataDisplay =  Provider.of<StyleProvider>(context);
     return Scaffold(
       backgroundColor: styleDataDisplay.kdsMode == false ?kPureWhiteColor: kBlack,
-      floatingActionButton: Padding(
+      floatingActionButton: permissionsMap['tasks']!= true?SizedBox():Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child:  Provider.of<StyleProvider>(context).kdsMode == true?Container(): FloatingActionButton.extended(
           splashColor: kCustomColor,
@@ -263,7 +267,9 @@ class _TasksWidgetState extends State<TasksWidget> {
                   }
                 }
                 // return Text('Let us understand this ${deliveryTime[3]} ', style: TextStyle(color: Colors.white, fontSize: 25),);
-                return idList.isEmpty
+                return
+                permissionsMap['tasks']!= true?LockedWidget(page: "Tasks"):
+                  idList.isEmpty
                     ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

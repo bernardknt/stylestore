@@ -197,6 +197,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -285,28 +286,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               kIsWeb? Image.network(image!.path, height: 180,):Image.file(image!, height: 180,)
                           ),
                           kLargeHeightSpacing,
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: SizedBox(
-                                  width: 100,
-                                  child: TextButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: CommonFunctions().convertToMaterialStateProperty(kBlack)
-                                  )
-                                  ,onPressed: (){
 
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=> EmployeePermissionsPage()));
-
-                                  }, child: Text("Edit Permissions", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
-                                ),
-                              ),
-                              Expanded(
-                                  flex: 4,
-                                  child: Container())
-                            ],
-                          ),
                           kSmallHeightSpacing,
                           TextForm(  label: 'Full Names', controller: fullNameController,),
                           Text("Birthday", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
