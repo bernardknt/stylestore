@@ -63,8 +63,7 @@ class _POSState extends State<POS> {
   var quantity = 1.0;
   var isStoreEmpty = false;
   List<Product> products = [];
-  // List<AllStockData> filteredStock = [];
-  List<AllStockData> newStock = [];
+
   var currency = "";
   //
   // List<Stock> selectedStocks = [];
@@ -81,7 +80,7 @@ class _POSState extends State<POS> {
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
     currency = prefs.getString(kCurrency)??"USD";
     isStoreEmpty = Provider.of<StyleProvider>(context, listen: false).isStoreEmpty;
-    newStock = await CommonFunctions().retrieveSalableStockData(context);
+    await CommonFunctions().retrieveSalableStockData(context);
 
 
     setState(() {});
@@ -93,6 +92,7 @@ class _POSState extends State<POS> {
   bool isScanning = false;
   Future<void> startBarcodeScan() async {
     var selectedStocksOriginal  = Provider.of<StyleProvider>(context, listen: false);
+    var styleData  = Provider.of<StyleProvider>(context, listen: false);
     isScanning = true;
     while (isScanning) {
       isScanning = false;
@@ -105,9 +105,8 @@ class _POSState extends State<POS> {
 
       if (barcodeScanRes != '-1') {
         isScanning = false;
-        // var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
-        try {
-          var barcodeItem = newStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
+         try {
+          var barcodeItem = styleData.filteredStock.firstWhere((item) => item.getByBarcode(barcodeScanRes) != null);
           if (barcodeItem != null)
           {
             if(barcodeItem.tracking == true){
@@ -771,6 +770,14 @@ class _POSState extends State<POS> {
                                           TextOverflow.clip,
                                           style:
                                           kHeadingTextStyle,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),
+                                            kSmallWidthSpacing,
+                                            Text(styleData.filteredStock[index].barcode,
+                                                style: kNormalTextStyleSmallGrey),
+                                          ],
                                         ),
                                         styleData.filteredStock[index].tracking == false
                                             ? Container() :

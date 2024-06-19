@@ -517,6 +517,7 @@ class _UpdateStockPageState extends State<UpdateStockPage> {
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.search, color: kPureWhiteColor,),
                           hintText: 'By Product Name / Id',
+                          hintStyle: kNormalTextStyle,
                           hintFadeDuration: Duration(milliseconds: 100),
                         ),
                         style: kNormalTextStyle.copyWith(color: kPureWhiteColor),

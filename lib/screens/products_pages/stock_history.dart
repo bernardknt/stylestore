@@ -228,7 +228,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                                     style: kNormalTextStyle.copyWith(fontSize: 12),
                                                   ),
                                                   Text(
-                                                    '${DateFormat('d/MMM hh:mm a').format(filteredDateList[index])}',
+                                                    '${DateFormat('d/MMM kk:mm a').format(filteredDateList[index])}',
                                                     style: kNormalTextStyle.copyWith(fontSize: 11),
                                                   ),
                                                 ],
@@ -320,8 +320,9 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
       }
     }
   }
-
   void _showDetailsModal(BuildContext context, String activity, List items, String adder, DateTime date, String currency) {
+    double totalCost = items.fold(0, (sum, item) => sum + item['totalPrice']);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -331,7 +332,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
             children: [
               Text(
                 'Products $activity',
-                style: kNormalTextStyle.copyWith(color: kBlack,fontWeight: FontWeight.bold, fontSize: 18),
+                style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold, fontSize: 18),
               ),
               kSmallHeightSpacing,
               Text(
@@ -359,7 +360,6 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                     ),
                   ),
                 ),
-
                 kLargeHeightSpacing,
                 ...items.asMap().entries.map((entry) {
                   int index = entry.key + 1;
@@ -381,6 +381,18 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                     ],
                   );
                 }).toList(),
+
+                if (activity != 'Updated')
+                  Column(
+                    children: [
+                      Divider(color: kBlack),
+                      Text(
+                        'Total Cost: $currency ${CommonFunctions().formatter.format(totalCost)}',
+                        style: kNormalTextStyle.copyWith(color: kBlack, fontWeight: FontWeight.bold),
+                      ),
+                      Divider(color: kBlack),
+                    ],
+                  ),
               ],
             ),
           ),
@@ -388,4 +400,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
       },
     );
   }
+
+
+
 }

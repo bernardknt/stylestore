@@ -36,28 +36,45 @@ class _PurchaseGraphWidgetState extends State<PurchaseGraphWidget> {
     super.initState();
     _fetchPurchases();
   }
-
   void _fetchPurchases() async {
-    // Get purchases for the current month
     final prefs = await SharedPreferences.getInstance();
-    String storeId = prefs.getString(kStoreIdConstant)??"";
+    String storeId = prefs.getString(kStoreIdConstant) ?? "";
 
     final purchasesQuery = FirebaseFirestore.instance
-        .collection('purchases').where('storeId', isEqualTo: storeId)
+        .collection('purchases')
+        .where('storeId', isEqualTo: storeId)
         .where('date', isGreaterThanOrEqualTo: widget.startDate)
         .where('date', isLessThanOrEqualTo: widget.endDate);
-
-    // .where('date', isGreaterThanOrEqualTo: DateTime(DateTime.now().year, DateTime.now().month, 1));
 
     purchasesQuery.snapshots().listen((snapshot) {
       setState(() {
         _purchases = snapshot.docs.map((doc) => Purchase.fromSnapshot(doc)).toList();
         _isLoading = false;
         Provider.of<StyleProvider>(context, listen: false).setPurchasesJSON(_createReportJson());
-
       });
     });
   }
+  // void _fetchPurchases() async {
+  //   // Get purchases for the current month
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String storeId = prefs.getString(kStoreIdConstant)??"";
+  //
+  //   final purchasesQuery = FirebaseFirestore.instance
+  //       .collection('purchases').where('storeId', isEqualTo: storeId)
+  //       .where('date', isGreaterThanOrEqualTo: widget.startDate)
+  //       .where('date', isLessThanOrEqualTo: widget.endDate);
+  //
+  //   // .where('date', isGreaterThanOrEqualTo: DateTime(DateTime.now().year, DateTime.now().month, 1));
+  //
+  //   purchasesQuery.snapshots().listen((snapshot) {
+  //     setState(() {
+  //       _purchases = snapshot.docs.map((doc) => Purchase.fromSnapshot(doc)).toList();
+  //       _isLoading = false;
+  //       Provider.of<StyleProvider>(context, listen: false).setPurchasesJSON(_createReportJson());
+  //
+  //     });
+  //   });
+  // }
 
   // 1. Highest Expense Day Value
   double getHighestExpenseValue() {

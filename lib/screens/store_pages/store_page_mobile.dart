@@ -42,9 +42,6 @@ class _StorePageMobileState extends State<StorePageMobile> {
   Map<String, dynamic> permissionsMap = {};
   Map<String, dynamic> videoMap = {};
   TextEditingController searchController = TextEditingController();
-  List<AllStockData> filteredStock = [];
-  List<AllStockData> newStock = [];
-  List<AllStockData> totalStock = [];
   String currency = "";
   String storeName = "";
 
@@ -54,70 +51,16 @@ class _StorePageMobileState extends State<StorePageMobile> {
     storeName = CommonFunctions().getFirstWord(prefs.getString(kBusinessNameConstant)??"");
     permissionsMap = await CommonFunctions().convertPermissionsJson();
     videoMap = await CommonFunctions().convertWalkthroughVideoJson();
-    newStock = await CommonFunctions().retrieveSuppliesData(context);
-    totalStock.addAll(newStock);
-    filteredStock.addAll(newStock);
+
+    await CommonFunctions().retrieveStockData(context);
+
     currency = prefs.getString(kCurrency)??"USD";
-    // currency = Provider.of<StyleProvider>(context, listen: false).storeCurrency;
-    setState(() {
+      setState(() {
 
     });
   }
 
 
-  void filterStockByLowStock() {
-    setState(() {
-      filteredStock = newStock
-          .where((element) => element.quantity < 5 && element.tracking)
-          .toList();
-    });
-  }
-  void filterStockByForSale() {
-    setState(() {
-      filteredStock = newStock
-          .where((element) => element.saleable)
-          .toList();
-    });
-  }
-
-  void filterStockByNotForSale() {
-    setState(() {
-      filteredStock = newStock
-          .where((element) => !element.saleable)
-          .toList();
-    });
-  }
-  void filterStockByWellStocked() {
-    setState(() {
-      filteredStock = newStock
-          .where((element) => element.quantity > 5 && element.tracking)
-          .toList();
-    });
-  }
-
-  void filterStockByTracking() {
-    setState(() {
-      filteredStock = newStock
-          .where((element) => element.tracking)
-          .toList();
-    });
-  }
-
-  void filterAllStock() {
-    setState(() {
-      filteredStock = newStock.toList();
-    });
-  }
-  void filterStock(String query) {
-    setState(() {
-      filteredStock = newStock
-          .where((stock) =>
-      stock.name.toLowerCase().contains(query.toLowerCase()) ||
-          stock.description.toLowerCase().contains(query.toLowerCase())
-          )
-          .toList();
-    });
-  }
   @override
   void initState() {
     // TODO: implement initState
@@ -128,6 +71,8 @@ class _StorePageMobileState extends State<StorePageMobile> {
 
   @override
   Widget build(BuildContext context) {
+    var styleData = Provider.of<StyleProvider>(context, listen: false);
+    var styleDataListen = Provider.of<StyleProvider>(context, listen:true);
 
     var kitchenDataSet = Provider.of<BeauticianData>(context, listen: false);
     return Scaffold(
@@ -265,22 +210,22 @@ class _StorePageMobileState extends State<StorePageMobile> {
 
                         children: [
                           kLargeHeightSpacing,
-                          buildInfoCard(title: "Total Items", value: "${totalStock.length}", cardColor: kBlueThemeColor, cardIcon: Iconsax.box, fontSize: 12,
-                              tapped: (){filterAllStock();}),
+                          buildInfoCard(title: "Total Items", value: "${styleData.totalStock.length}", cardColor: kBlueThemeColor, cardIcon: Iconsax.box, fontSize: 12,
+                              tapped: (){styleData.filterAllStock();}),
                           kSmallWidthSpacing,
-                          buildInfoCard(title: "Tracked Items", value: "${totalStock.where((element) => element.tracking).length}", cardColor: kYellowThemeColor, cardIcon: Iconsax.watch, fontSize: 12,
-                              tapped: (){filterStockByTracking();}),
-                          buildInfoCard(title: "Low Stock ", value:"${totalStock.where((element) => element.quantity < 5 && element.tracking).length}", cardColor: kRedColor,  cardIcon: Icons.battery_2_bar_outlined, fontSize: 14,
-                              tapped: (){filterStockByLowStock();}),
+                          buildInfoCard(title: "Tracked Items", value: "${styleData.totalStock.where((element) => element.tracking).length}", cardColor: kYellowThemeColor, cardIcon: Iconsax.watch, fontSize: 12,
+                              tapped: (){styleData.filterStockByTracking();}),
+                          buildInfoCard(title: "Low Stock ", value:"${styleData.totalStock.where((element) => element.quantity < 5 && element.tracking).length}", cardColor: kRedColor,  cardIcon: Icons.battery_2_bar_outlined, fontSize: 14,
+                              tapped: (){styleData.filterStockByLowStock();}),
                           kSmallWidthSpacing,
-                          buildInfoCard(title: "Well Stocked  ", value:"${totalStock.where((element) => element.quantity > 5 && element.tracking).length}", cardColor: kGreenThemeColor,
-                              cardIcon: Icons.battery_charging_full, fontSize: 14,  tapped: (){filterStockByWellStocked();}),
-                          buildInfoCard(title: "   For Sale  ", value:"${totalStock.where((element) => element.saleable).length}", cardColor: kAppPinkColor,  cardIcon: Icons.point_of_sale_rounded, fontSize: 12,
-                              tapped: (){filterStockByForSale();}
+                          buildInfoCard(title: "Well Stocked  ", value:"${styleData.totalStock.where((element) => element.quantity > 5 && element.tracking).length}", cardColor: kGreenThemeColor,
+                              cardIcon: Icons.battery_charging_full, fontSize: 14,  tapped: (){styleData.filterStockByWellStocked();}),
+                          buildInfoCard(title: "   For Sale  ", value:"${styleData.totalStock.where((element) => element.saleable).length}", cardColor: kAppPinkColor,  cardIcon: Icons.point_of_sale_rounded, fontSize: 12,
+                              tapped: (){styleData.filterStockByForSale();}
                           ),
                           kSmallWidthSpacing,
-                          buildInfoCard(title: "  Not for Sale  ", value:"${totalStock.where((element) => !element.saleable).length}", cardColor: kBlack, cardIcon: Iconsax.box, fontSize: 12,
-                              tapped: (){filterStockByNotForSale();}
+                          buildInfoCard(title: "  Not for Sale  ", value:"${styleData.totalStock.where((element) => !element.saleable).length}", cardColor: kBlack, cardIcon: Iconsax.box, fontSize: 12,
+                              tapped: (){styleData.filterStockByNotForSale();}
                           ),
 
                         ],
@@ -304,7 +249,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                 hintText: 'By Product Name / Id',
                                 hintFadeDuration: Duration(milliseconds: 100),
                               ),
-                              onChanged: filterStock,
+                              onChanged: styleData.filterStockQuery,
                             ),
                           ),
 
@@ -321,24 +266,24 @@ class _StorePageMobileState extends State<StorePageMobile> {
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(
 
-                        itemCount: filteredStock.length,
+                        itemCount: styleDataListen.filteredStock.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
 
                               kitchenDataSet.changeItemDetails(
-                                filteredStock[index].name,
-                                filteredStock[index].quantity.toDouble(),
-                                filteredStock[index].description,
-                                filteredStock[index].minimum.toDouble(),
-                                filteredStock[index].documentId,
-                                filteredStock[index].amount.toDouble(),
-                                filteredStock[index].image,
-                                filteredStock[index].tracking,
-                                filteredStock[index].saleable,
-                                filteredStock[index].barcode,
-                                filteredStock[index].unit,
-                                filteredStock[index].ignore
+                                  styleData.filteredStock[index].name,
+                                  styleData.filteredStock[index].quantity.toDouble(),
+                                  styleData.filteredStock[index].description,
+                                  styleData.filteredStock[index].minimum.toDouble(),
+                                  styleData.filteredStock[index].documentId,
+                                  styleData.filteredStock[index].amount.toDouble(),
+                                  styleData.filteredStock[index].image,
+                                  styleData.filteredStock[index].tracking,
+                                  styleData.filteredStock[index].saleable,
+                                  styleData.filteredStock[index].barcode,
+                                  styleData.filteredStock[index].unit,
+                                  styleData.filteredStock[index].ignore
 
 
 
@@ -368,7 +313,7 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                       .spaceBetween,
 
                                                   children: [
-                                                    Text(filteredStock[index].name,
+                                                    Text(styleData.filteredStock[index].name,
                                                       overflow: TextOverflow
                                                           .ellipsis,
                                                       style: kHeadingTextStyle,),
@@ -376,14 +321,14 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                       children: [
                                                         Text(
                                                           '${formatter.format(
-                                                              filteredStock[index].amount)} $currency',
+                                                              styleData.filteredStock[index].amount)} $currency',
                                                           style: kNormalTextStyle
                                                               .copyWith(
                                                             fontWeight: FontWeight.bold,
                                                               color: kBlack,
                                                               fontSize: 14),),
                                                         kLargeHeightSpacing,
-                                                        filteredStock[index].ignore == true? Icon(CupertinoIcons.bell_slash, color: kRedColor,size: 15,):SizedBox(),
+                                                        styleData.filteredStock[index].ignore == true? Icon(CupertinoIcons.bell_slash, color: kRedColor,size: 15,):SizedBox(),
 
 
                                                       ],
@@ -396,28 +341,28 @@ class _StorePageMobileState extends State<StorePageMobile> {
                                                   children: [
                                                     Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),
                                                     kSmallWidthSpacing,
-                                                    Text(filteredStock[index].barcode,
+                                                    Text(styleData.filteredStock[index].barcode,
                                                         style: kNormalTextStyleSmallGrey),
                                                   ],
                                                 ),
                                                 kSmallHeightSpacing,
-                                                filteredStock[index].tracking == true
-                                                    ? filteredStock[index].quantity >=
+                                                styleData.filteredStock[index].tracking == true
+                                                    ? styleData.filteredStock[index].quantity >=
                                                     5
                                                     ? Text(
-                                                    "Qty: ${filteredStock[index].quantity
-                                                        .toString()} ${filteredStock[index].unit}",
+                                                    "Qty: ${styleData.filteredStock[index].quantity
+                                                        .toString()} ${styleData.filteredStock[index].unit}",
                                                     style: kNormalTextStyleSmallGrey
                                                         .copyWith(
                                                         color: kGreenThemeColor))
                                                     : Text(
-                                                    "Qty: ${filteredStock[index].quantity
-                                                        .toString()} ${filteredStock[index].unit}",
+                                                    "Qty: ${styleData.filteredStock[index].quantity
+                                                        .toString()} ${styleData.filteredStock[index].unit}",
                                                     style: kNormalTextStyleSmallGrey
                                                         .copyWith(
                                                         color: Colors.red))
                                                     : Container(),
-                                                filteredStock[index].saleable == false
+                                                styleData.filteredStock[index].saleable == false
                                                     ? Text("Not for sale",
                                                     style: kNormalTextStyleSmallGrey
                                                         .copyWith(

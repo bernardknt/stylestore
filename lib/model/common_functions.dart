@@ -150,6 +150,7 @@ class CommonFunctions {
       final stockDataList = snapshot.docs
           .map((doc) => AllStockData.fromFirestore(doc))
           .toList();
+      Provider.of<StyleProvider>(context, listen: false).setFilteredStock(stockDataList);
 
       return stockDataList;
     } catch (error) {
@@ -196,6 +197,26 @@ class CommonFunctions {
     }
   }
 
+  Future<List<AllStockData>> retrieveAllStockData(context) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stores')
+          .where('storeId', isEqualTo: Provider.of<StyleProvider>(context, listen: false).beauticianId)
+          .where('active', isEqualTo: true)
+          .where('saleable', isEqualTo: true)
+          .orderBy('name', descending: false)
+          .get();
+
+      final stockDataList = snapshot.docs
+          .map((doc) => AllStockData.fromFirestore(doc))
+          .toList();
+      Provider.of<StyleProvider>(context, listen: false).setFilteredStock(stockDataList);
+      return stockDataList;
+    } catch (error) {
+      print('Error retrieving stock data: $error');
+      return []; // Return an empty list if an error occurs
+    }
+  }
 
 
 

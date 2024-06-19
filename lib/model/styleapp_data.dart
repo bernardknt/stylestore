@@ -36,6 +36,7 @@ class StyleProvider extends ChangeNotifier{
 
   List<AllStockData> filteredStock = [];
   List<AllStockData> filteredStockDisplayed = [];
+  List<AllStockData> totalStock = [];
 
   String userName = '';
   String orderId = '';
@@ -229,6 +230,7 @@ class StyleProvider extends ChangeNotifier{
   void setFilteredStock (List<AllStockData>data){
     filteredStock = data;
    filteredStockDisplayed = data;
+    totalStock = data;
     notifyListeners();
   }
 
@@ -239,15 +241,57 @@ class StyleProvider extends ChangeNotifier{
   }
 
   void filterStockQuery(String query) {
-
    filteredStock = filteredStockDisplayed
           .where((stock) =>
       stock.name.toLowerCase().contains(query.toLowerCase()) ||
-          stock.description.toLowerCase().contains(query.toLowerCase())
+          stock.description.toLowerCase().contains(query.toLowerCase())||
+          stock.barcode.toLowerCase().contains(query.toLowerCase()
+          )
       ).toList();
    notifyListeners();
+  }
+  void filterStockByLowStock() {
 
-    // });
+      filteredStock = filteredStockDisplayed
+          .where((element) => element.quantity < 5 && element.tracking)
+          .toList();
+      notifyListeners();
+  }
+  void filterStockByForSale() {
+
+      filteredStock = filteredStockDisplayed
+          .where((element) => element.saleable)
+          .toList();
+      notifyListeners();
+  }
+
+  void filterStockByNotForSale() {
+
+      filteredStock = filteredStockDisplayed
+          .where((element) => !element.saleable)
+          .toList();
+      notifyListeners();
+  }
+  void filterStockByWellStocked() {
+
+      filteredStock = filteredStockDisplayed
+          .where((element) => element.quantity > 5 && element.tracking)
+          .toList();
+      notifyListeners();
+  }
+
+  void filterStockByTracking() {
+
+      filteredStock = filteredStockDisplayed
+          .where((element) => element.tracking)
+          .toList();
+      notifyListeners();
+  }
+
+  void filterAllStock() {
+
+      filteredStock = filteredStockDisplayed.toList();
+      notifyListeners();
   }
 
   void setSupplierDetails (List<String> ids, List<String> realNames, List<String> displayNames){

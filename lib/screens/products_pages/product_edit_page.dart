@@ -63,6 +63,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
       'stockTaking': [],
       'ignore': ignore
 
+    }).whenComplete((){
+      CommonFunctions().retrieveAllStockData(context);
     })
         .then((value) => print("Message Sent"))
         .catchError((error) => print("Failed to Update Event: $error"));

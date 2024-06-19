@@ -335,18 +335,7 @@ class _PosWebState extends State<PosWeb> {
               )
           ],
         ),
-        // actions: [
-        //   if (kIsWeb)
-        //     Padding(
-        //       padding: const EdgeInsets.only(right: 30.0, top: 10),
-        //       child: GestureDetector(
-        //           onTap: () {
-        //             startBarcodeScan();
-        //           },
-        //           child: ScannerWidget()
-        //       ),
-        //     )
-        // ],
+
       ),
 
       body: permissionsMap['sales'] == false
@@ -635,6 +624,14 @@ class _PosWebState extends State<PosWeb> {
                                                 style:
                                                 kHeadingTextStyle,
                                               ),
+                                              Row(
+                                                children: [
+                                                  Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),
+                                                  kSmallWidthSpacing,
+                                                  Text(styleData.filteredStock[index].barcode,
+                                                      style: kNormalTextStyleSmallGrey),
+                                                ],
+                                              ),
                                               styleData.filteredStock[index].tracking == false
                                                   ? Container() :
                                               // If the minimum quantity at index is greater or equal to the current quantity
@@ -740,30 +737,7 @@ class _PosWebState extends State<PosWeb> {
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: Provider.of<StyleProvider>(context)
-                    //       .customerName ==
-                    //       ""
-                    //       ? Container(
-                    //       padding: EdgeInsets.all(10),
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.all(
-                    //           Radius.circular(5),
-                    //         ),
-                    //         color: kAppPinkColor,
-                    //       ),
-                    //       child: Text(
-                    //         '+ Add Customer',
-                    //         style: kNormalTextStyle.copyWith(
-                    //             color: kPureWhiteColor,
-                    //             fontSize: 13),
-                    //       ))
-                    //       : Text(
-                    //     '${Provider.of<StyleProvider>(context).customerName} (${Provider.of<StyleProvider>(context).customerNumber})',
-                    //     style: kNormalTextStyle.copyWith(color: kBlack, fontSize: 12, fontWeight: FontWeight.w600),
-                    //   ),
-                    // ),
+
                   ),
                   )
                 ],
