@@ -163,9 +163,6 @@ class _LoginPageState extends State<LoginPage> {
                                 );
 
                                  },
-                            // onTap: (){
-                            //   Navigator.pushNamed(context, EmployeeSignIn.id);
-                            // },
                             child:
                             Container(
                               width: double.infinity,

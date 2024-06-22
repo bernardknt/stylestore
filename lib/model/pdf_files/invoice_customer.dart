@@ -22,13 +22,15 @@ class InvoiceTemplate {
   final String salutation;
   final String totalStatement;
   final String currency;
+  final bool invoicePay;
 
 
   const InvoiceTemplate({
     required this.type,
     required this.salutation,
     required this.totalStatement,
-    required this.currency
+    required this.currency,
+    this.invoicePay = false
 
   });
 }

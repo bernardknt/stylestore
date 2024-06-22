@@ -430,6 +430,8 @@ class _StorePageWebState extends State<StorePageWeb> {
 
                                                     ],
                                                   ),
+                                                  Text(styleData.filteredStock[index].description,
+                                                      style: kNormalTextStyleSmallGrey.copyWith(fontSize: 12, fontWeight: FontWeight.w500)),
                                                   kSmallHeightSpacing,
                                                   Row(
                                                     children: [

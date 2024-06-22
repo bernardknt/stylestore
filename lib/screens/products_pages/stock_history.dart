@@ -180,7 +180,8 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                 ),
                               ),
                               Expanded(
-                                child: GestureDetector(
+                                child:
+                                GestureDetector(
                                   onTap: () {
                                     _showDetailsModal(
                                       context,
@@ -192,7 +193,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                     );
                                   },
                                   child: Card(
-                                    margin: const EdgeInsets.fromLTRB(0, 8.0, 25.0, 8.0),
+                                    margin: const EdgeInsets.fromLTRB(25.0, 8.0, 25.0, 8.0),
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     shadowColor: kAppPinkColor,
                                     elevation: 0.0,
@@ -218,7 +219,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                                   Container(
                                                     width: 200,
                                                     child: Text(
-                                                      "${listOProducts[index].join(", ")}",
+                                                      "${filteredListOProducts[index].join(", ")}",
                                                       overflow: TextOverflow.fade,
                                                       style: TextStyle(fontFamily: 'Montserrat-Medium', fontSize: 14.0),
                                                     ),
@@ -228,7 +229,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
                                                     style: kNormalTextStyle.copyWith(fontSize: 12),
                                                   ),
                                                   Text(
-                                                    '${DateFormat('d/MMM kk:mm a').format(filteredDateList[index])}',
+                                                    '${DateFormat('d/MMM hh:mm a').format(filteredDateList[index])}',
                                                     style: kNormalTextStyle.copyWith(fontSize: 11),
                                                   ),
                                                 ],
@@ -291,6 +292,7 @@ class _StockHistoryPageState extends State<StockHistoryPage> {
 
     _filterActivityList();
   }
+
 
   void _filterActivityList() {
     if (selectedActivity == 'All') {

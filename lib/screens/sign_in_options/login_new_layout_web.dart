@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/Utilities/constants/color_constants.dart';
 import 'package:stylestore/model/common_functions.dart';
 import 'package:stylestore/screens/sign_in_options/delete_account.dart';
-import 'package:stylestore/screens/sign_in_options/signup_page.dart';
+
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_mobile.dart';
 import 'package:stylestore/screens/sign_in_options/signup_pages/signup_web.dart';
 import '../../Utilities/constants/font_constants.dart';
@@ -100,8 +100,10 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                         ),
                         Text("Start Here",
                             style: kNormalTextStyle.copyWith(fontSize: 15)),
+                        kLargeHeightSpacing,
+                        kLargeHeightSpacing,
                         GestureDetector(
-                          onTap: () {
+                          onTap: (){
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -111,38 +113,66 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                 ),
                               ),
                             );
+
                           },
-                          child: Container(
+                          child:
+                          Container(
                             width: double.infinity,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: kPureWhiteColor,
+                              color: kAppPinkColor,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: kPureWhiteColor,
                                 width: 1,
                               ),
                             ),
-                            child: Center(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-              
-              
-                                    Text(
-                                      "Create a New Business Account",
-                                      style:
-                                      kNormalTextStyle.copyWith(color:  Colors.blue, fontWeight: FontWeight.w900),
-                                    ),
-                                    Image.asset("images/takeflight.png",),
-                                  ],
-                                )),
+                            child: Center(child: Text("Create Business Account", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
                           ),
                         ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => SuperResponsiveLayout(
+                        //           mobileBody: SignupMobile(),
+                        //           desktopBody: SignupWeb(),
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        //   child: Container(
+                        //     width: double.infinity,
+                        //     height: 40,
+                        //     decoration: BoxDecoration(
+                        //       color: kPureWhiteColor,
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       border: Border.all(
+                        //         color: kPureWhiteColor,
+                        //         width: 1,
+                        //       ),
+                        //     ),
+                        //     child: Center(
+                        //         child: Row(
+                        //           crossAxisAlignment: CrossAxisAlignment.center,
+                        //           mainAxisAlignment: MainAxisAlignment.center,
+                        //           children: [
+                        //
+                        //
+                        //             Text(
+                        //               "Create a New Business Account",
+                        //               style:
+                        //               kNormalTextStyle.copyWith(color:  Colors.blue, fontWeight: FontWeight.w900),
+                        //             ),
+                        //             Image.asset("images/takeflight.png",),
+                        //           ],
+                        //         )),
+                        //   ),
+                        // ),
                         kLargeHeightSpacing,
                         SizedBox(
-                          height: 350,
+                          height: 250,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,273 +183,275 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                               Text("Or",
                                   style: kNormalTextStyle.copyWith(fontSize: 15)),
                               kLargeHeightSpacing,
-                              ownerLogin == true
-                                  ? Container()
-                                  : GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    ownerLogin = true;
-                                  });
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: kAppPinkColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: kPureWhiteColor,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Center(
-                                      child: Text(
-                                        "Login as Business Owner",
-                                        style: kNormalTextStyle.copyWith(
-                                            color: kPureWhiteColor),
-                                      )),
-                                ),
-                              ),
-                              kSmallHeightSpacing,
-                              ownerLogin == false
-                                  ? Container()
-                                  : Column(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(10),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          const BoxShadow(
-                                            color: kBlueDarkColorOld,
-                                            blurRadius: 3,
-                                            offset: Offset(0, 2),
-                                          )
-                                        ]),
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                              border: Border(
-                                                  bottom: BorderSide(
-                                                      color:
-                                                      kBlueDarkColorOld))),
-                                          child: TextField(
-                                            onChanged: (value) {
-                                              email = value;
-                                            },
-                                            decoration: InputDecoration(
-                                                border: InputBorder.none,
-                                                hintText: 'Email Address',
-                                                hintStyle: TextStyle(
-                                                    color: Colors.grey)),
-                                          ),
-                                        ),
-                                        // SizedBox(height: 10),
-                                        Container(
-                                          padding: EdgeInsets.all(10),
-                                          child: TextField(
-                                            obscureText: true,
-                                            onChanged: (value) {
-                                              password = value;
-                                            },
-                                            decoration: InputDecoration(
-                                              border: InputBorder.none,
-                                              hintText: 'Password',
-                                              hintStyle: TextStyle(
-                                                  color: Colors.grey),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  TextButton(
-                                      onPressed: () {
-                                        if (email != '') {
-                                          auth.sendPasswordResetEmail(
-                                              email: email);
-                                          showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text(
-                                                      'Reset Email Sent'),
-                                                  content: Text(
-                                                      'Check email $email for the reset link'),
-                                                  actions: [
-                                                    CupertinoDialogAction(
-                                                        isDestructiveAction:
-                                                        true,
-                                                        onPressed: () {
-                                                          _btnController
-                                                              .reset();
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child:
-                                                        Text('Cancel'))
-                                                  ],
-                                                );
-                                              });
-                                        } else {
-                                          showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text('Type Email'),
-                                                  content: Text(
-                                                      'Please type your email Address and Click on the forgot password!'),
-                                                  actions: [
-                                                    CupertinoDialogAction(
-                                                        isDestructiveAction:
-                                                        true,
-                                                        onPressed: () {
-                                                          //_btnController.reset();
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child:
-                                                        Text('Cancel'))
-                                                  ],
-                                                );
-                                              });
-                                        }
-                                      },
-                                      child: Text('Forgot Password')),
-                                  RoundedLoadingButton(
-                                    color: kAppPinkColor,
-                                    child: Text('Login',
-                                        style:
-                                        TextStyle(color: Colors.white)),
-                                    controller: _btnController,
-                                    onPressed: () async {
-                                      try {
-                                        await auth
-                                            .signInWithEmailAndPassword(
-                                            email: email,
-                                            password: password);
-                                        final users =
-                                        await FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(auth.currentUser!.uid)
-                                            .get();
-                                        if (users['subscribed'] == false) {
-                                          print("WE ENTERED HERE");
 
-                                          final store =
-                                          await FirebaseFirestore
-                                              .instance
-                                              .collection('medics')
-                                              .doc(
-                                              auth.currentUser!.uid)
-                                              .get();
-                                          print("WE NEED THIS");
-                                          final prefs =
-                                          await SharedPreferences
-                                              .getInstance();
-                                          print('${store['open']}');
-                                          prefs.setString(
-                                              kBusinessNameConstant,
-                                              store['name']);
-                                          prefs.setString(kLocationConstant,
-                                              store['location']);
-                                          prefs.setString(kImageConstant,
-                                              store['image']);
-                                          prefs.setString(kStoreIdConstant,
-                                              store['id']);
-                                          prefs.setInt(kStoreOpeningTime,
-                                              store['open']);
-                                          prefs.setInt(kStoreClosingTime,
-                                              store['close']);
-                                          prefs.setString(kLoginPersonName,
-                                              users['lastName']);
-                                          prefs.setString(kPermissions,
-                                              store['permissions']);
-                                          prefs.setBool(kDoesMobileConstant,
-                                              store['doesMobile']);
-                                          prefs.setBool(kIsOwner, true);
-                                          prefs.setString(
-                                              kEmployeeId, users.id);
-                                          //prefs.setStringList(kStoreIdConstant, store['blackout']);
-
-                                          prefs.setString(
-                                              kPhoneNumberConstant,
-                                              users['phoneNumber']);
-                                          prefs.setBool(
-                                              kIsLoggedInConstant, true);
-                                          // subscribeToTopic();
-                                          CommonFunctions().deliveryStream(context);
-
-                                          Navigator.pushNamed(context,
-                                              SuperResponsiveLayout.id);
-                                        } else {
-                                          showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  title: Text(
-                                                      'This account is not Registered for Beautician'),
-                                                  content: Text(
-                                                      'The credentials you have entered are incorrect'),
-                                                  actions: [
-                                                    CupertinoDialogAction(
-                                                        isDestructiveAction:
-                                                        true,
-                                                        onPressed: () {
-                                                          _btnController
-                                                              .reset();
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child:
-                                                        Text('Cancel'))
-                                                  ],
-                                                );
-                                              });
-                                        }
-
-                                        //showSpinner = false;
-                                      } catch (e) {
-                                        _btnController.error();
-                                        showDialog(
-                                            context: context,
-                                            builder:
-                                                (BuildContext context) {
-                                              return CupertinoAlertDialog(
-                                                title: Text(
-                                                    'Oops Login Failed'),
-                                                content: Text("$e"),
-                                                actions: [
-                                                  CupertinoDialogAction(
-                                                      isDestructiveAction:
-                                                      true,
-                                                      onPressed: () {
-                                                        _btnController
-                                                            .reset();
-                                                        Navigator.pop(
-                                                            context);
-                                                      },
-                                                      child: Text('Cancel'))
-                                                ],
-                                              );
-                                            });
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
+                              // ownerLogin == true
+                              //     ? Container()
+                              //     : GestureDetector(
+                              //   onTap: () {
+                              //     setState(() {
+                              //       ownerLogin = true;
+                              //     });
+                              //   },
+                              //   child: Container(
+                              //     width: double.infinity,
+                              //     height: 40,
+                              //     decoration: BoxDecoration(
+                              //       color: kAppPinkColor,
+                              //       borderRadius: BorderRadius.circular(10),
+                              //       border: Border.all(
+                              //         color: kPureWhiteColor,
+                              //         width: 1,
+                              //       ),
+                              //     ),
+                              //     child: Center(
+                              //         child: Text(
+                              //           "Login as Business Owner",
+                              //           style: kNormalTextStyle.copyWith(
+                              //               color: kPureWhiteColor),
+                              //         )),
+                              //   ),
+                              // ),
+                              // kSmallHeightSpacing,
+                              // ownerLogin == false
+                              //     ? Container()
+                              //     : Column(
+                              //   children: [
+                              //     Container(
+                              //       decoration: BoxDecoration(
+                              //           borderRadius:
+                              //           BorderRadius.circular(10),
+                              //           color: Colors.white,
+                              //           boxShadow: [
+                              //             const BoxShadow(
+                              //               color: kBlueDarkColorOld,
+                              //               blurRadius: 3,
+                              //               offset: Offset(0, 2),
+                              //             )
+                              //           ]),
+                              //       child: Column(
+                              //         children: [
+                              //           Container(
+                              //             padding: EdgeInsets.all(10),
+                              //             decoration: BoxDecoration(
+                              //                 border: Border(
+                              //                     bottom: BorderSide(
+                              //                         color:
+                              //                         kBlueDarkColorOld))),
+                              //             child: TextField(
+                              //               onChanged: (value) {
+                              //                 email = value;
+                              //               },
+                              //               decoration: InputDecoration(
+                              //                   border: InputBorder.none,
+                              //                   hintText: 'Email Address',
+                              //                   hintStyle: TextStyle(
+                              //                       color: Colors.grey)),
+                              //             ),
+                              //           ),
+                              //           // SizedBox(height: 10),
+                              //           Container(
+                              //             padding: EdgeInsets.all(10),
+                              //             child: TextField(
+                              //               obscureText: true,
+                              //               onChanged: (value) {
+                              //                 password = value;
+                              //               },
+                              //               decoration: InputDecoration(
+                              //                 border: InputBorder.none,
+                              //                 hintText: 'Password',
+                              //                 hintStyle: TextStyle(
+                              //                     color: Colors.grey),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //     TextButton(
+                              //         onPressed: () {
+                              //           if (email != '') {
+                              //             auth.sendPasswordResetEmail(
+                              //                 email: email);
+                              //             showDialog(
+                              //                 context: context,
+                              //                 builder:
+                              //                     (BuildContext context) {
+                              //                   return CupertinoAlertDialog(
+                              //                     title: Text(
+                              //                         'Reset Email Sent'),
+                              //                     content: Text(
+                              //                         'Check email $email for the reset link'),
+                              //                     actions: [
+                              //                       CupertinoDialogAction(
+                              //                           isDestructiveAction:
+                              //                           true,
+                              //                           onPressed: () {
+                              //                             _btnController
+                              //                                 .reset();
+                              //                             Navigator.pop(
+                              //                                 context);
+                              //                           },
+                              //                           child:
+                              //                           Text('Cancel'))
+                              //                     ],
+                              //                   );
+                              //                 });
+                              //           } else {
+                              //             showDialog(
+                              //                 context: context,
+                              //                 builder:
+                              //                     (BuildContext context) {
+                              //                   return CupertinoAlertDialog(
+                              //                     title: Text('Type Email'),
+                              //                     content: Text(
+                              //                         'Please type your email Address and Click on the forgot password!'),
+                              //                     actions: [
+                              //                       CupertinoDialogAction(
+                              //                           isDestructiveAction:
+                              //                           true,
+                              //                           onPressed: () {
+                              //                             //_btnController.reset();
+                              //                             Navigator.pop(
+                              //                                 context);
+                              //                           },
+                              //                           child:
+                              //                           Text('Cancel'))
+                              //                     ],
+                              //                   );
+                              //                 });
+                              //           }
+                              //         },
+                              //         child: Text('Forgot Password')),
+                              //     RoundedLoadingButton(
+                              //       color: kAppPinkColor,
+                              //       child: Text('Login',
+                              //           style:
+                              //           TextStyle(color: Colors.white)),
+                              //       controller: _btnController,
+                              //       onPressed: () async {
+                              //         try {
+                              //           await auth
+                              //               .signInWithEmailAndPassword(
+                              //               email: email,
+                              //               password: password);
+                              //           final users =
+                              //           await FirebaseFirestore.instance
+                              //               .collection('users')
+                              //               .doc(auth.currentUser!.uid)
+                              //               .get();
+                              //           if (users['subscribed'] == false) {
+                              //             print("WE ENTERED HERE");
+                              //
+                              //             final store =
+                              //             await FirebaseFirestore
+                              //                 .instance
+                              //                 .collection('medics')
+                              //                 .doc(
+                              //                 auth.currentUser!.uid)
+                              //                 .get();
+                              //             print("WE NEED THIS");
+                              //             final prefs =
+                              //             await SharedPreferences
+                              //                 .getInstance();
+                              //             print('${store['open']}');
+                              //             prefs.setString(
+                              //                 kBusinessNameConstant,
+                              //                 store['name']);
+                              //             prefs.setString(kLocationConstant,
+                              //                 store['location']);
+                              //             prefs.setString(kImageConstant,
+                              //                 store['image']);
+                              //             prefs.setString(kStoreIdConstant,
+                              //                 store['id']);
+                              //             prefs.setInt(kStoreOpeningTime,
+                              //                 store['open']);
+                              //             prefs.setInt(kStoreClosingTime,
+                              //                 store['close']);
+                              //             prefs.setString(kLoginPersonName,
+                              //                 users['lastName']);
+                              //             prefs.setString(kPermissions,
+                              //                 store['permissions']);
+                              //             prefs.setBool(kDoesMobileConstant,
+                              //                 store['doesMobile']);
+                              //             prefs.setBool(kIsOwner, true);
+                              //             prefs.setString(
+                              //                 kEmployeeId, users.id);
+                              //             //prefs.setStringList(kStoreIdConstant, store['blackout']);
+                              //
+                              //             prefs.setString(
+                              //                 kPhoneNumberConstant,
+                              //                 users['phoneNumber']);
+                              //             prefs.setBool(
+                              //                 kIsLoggedInConstant, true);
+                              //             // subscribeToTopic();
+                              //             CommonFunctions().deliveryStream(context);
+                              //
+                              //             Navigator.pushNamed(context,
+                              //                 SuperResponsiveLayout.id);
+                              //           } else {
+                              //             showDialog(
+                              //                 context: context,
+                              //                 builder:
+                              //                     (BuildContext context) {
+                              //                   return CupertinoAlertDialog(
+                              //                     title: Text(
+                              //                         'This account is not Registered for Beautician'),
+                              //                     content: Text(
+                              //                         'The credentials you have entered are incorrect'),
+                              //                     actions: [
+                              //                       CupertinoDialogAction(
+                              //                           isDestructiveAction:
+                              //                           true,
+                              //                           onPressed: () {
+                              //                             _btnController
+                              //                                 .reset();
+                              //                             Navigator.pop(
+                              //                                 context);
+                              //                           },
+                              //                           child:
+                              //                           Text('Cancel'))
+                              //                     ],
+                              //                   );
+                              //                 });
+                              //           }
+                              //
+                              //           //showSpinner = false;
+                              //         } catch (e) {
+                              //           _btnController.error();
+                              //           showDialog(
+                              //               context: context,
+                              //               builder:
+                              //                   (BuildContext context) {
+                              //                 return CupertinoAlertDialog(
+                              //                   title: Text(
+                              //                       'Oops Login Failed'),
+                              //                   content: Text("$e"),
+                              //                   actions: [
+                              //                     CupertinoDialogAction(
+                              //                         isDestructiveAction:
+                              //                         true,
+                              //                         onPressed: () {
+                              //                           _btnController
+                              //                               .reset();
+                              //                           Navigator.pop(
+                              //                               context);
+                              //                         },
+                              //                         child: Text('Cancel'))
+                              //                   ],
+                              //                 );
+                              //               });
+                              //         }
+                              //       },
+                              //     ),
+                              //   ],
+                              // ),
                               kLargeHeightSpacing,
                               GestureDetector(
-                                onTap: () {
+                                onTap: (){
                                   Navigator.pushNamed(context, EmployeeSignIn.id);
                                 },
-                                child: Container(
+                                child:
+                                Container(
                                   width: double.infinity,
                                   height: 40,
                                   decoration: BoxDecoration(
@@ -430,12 +462,7 @@ class _LoginPageNewWebState extends State<LoginPageNewWeb> {
                                       width: 1,
                                     ),
                                   ),
-                                  child: Center(
-                                      child: Text(
-                                        "Login as Staff Member",
-                                        style: kNormalTextStyle.copyWith(
-                                            color: kPureWhiteColor),
-                                      )),
+                                  child: Center(child: Text("Log into Work", style: kNormalTextStyle.copyWith(color: kPureWhiteColor),)),
                                 ),
                               ),
                               kLargeHeightSpacing,

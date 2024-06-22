@@ -1,4 +1,5 @@
 
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,13 +31,13 @@ class _SignupMobileState extends State<SignupMobile> {
   String? selectedDepartment;
   String selectedNationality = "Ugandan";
   final _auth = FirebaseAuth.instance;
-
   Map<String, String> optionsToUpload = {};
   String errorMessage = 'Error Signing Up';
   double errorMessageOpacity = 0.0;
   String countryCode = ' ';
   String country = ' ';
   double opacityOfTextFields = 1.0;
+  String initialCountryCode = '+256';
   final RoundedLoadingButtonController _btnController =
   RoundedLoadingButtonController();
   bool showSpinner = false;
@@ -55,6 +56,7 @@ class _SignupMobileState extends State<SignupMobile> {
   void defaultsInitiation() async {
     final prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool(kIsLoggedInConstant) ?? false;
+    initialCountryCode = prefs.getString(kCountryCode)??"+1";
     setState(() {
       userLoggedIn = isLoggedIn;
       if (userLoggedIn == true) {
@@ -95,8 +97,6 @@ class _SignupMobileState extends State<SignupMobile> {
               Center(
                 child: SingleChildScrollView(
                   child: Stack(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
                         height: 500,
@@ -133,6 +133,94 @@ class _SignupMobileState extends State<SignupMobile> {
 
                                   TextForm(label: 'Email',controller: emailController, labelColor: kPureWhiteColor,),
                                   TextForm(label: 'Password',controller: passwordController, password: true,labelColor: kPureWhiteColor,),
+                                  Row(
+                                    children: [
+                                      Text("Phone Number",
+                                          style: kNormalTextStyle.copyWith(
+                                              color: kPureWhiteColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14
+                                          )),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 0, right: 0, top: 10, bottom: 8),
+                                    child: Container(
+                                      height: 53,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(width: 1, color: kPureWhiteColor),
+                                          borderRadius: BorderRadius.circular(10)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          CountryCodePicker(
+                                            textStyle: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+
+                                            onInit: (value) {
+                                              countryCode = value!.dialCode!;
+                                              country = value.name!;
+                                            },
+                                            onChanged: (value) {
+                                              countryCode = value.dialCode!;
+                                              country = value.name!;
+                                            },
+                                            // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                                            initialSelection: initialCountryCode,
+                                            favorite: const ['+254', '+255', "US"],
+                                            // optional. Shows only country name and flag
+                                            showCountryOnly: false,
+                                            // optional. Shows only country name and flag when popup is closed.
+                                            showOnlyCountryWhenClosed: false,
+                                            // optional. aligns the flag and the Text left
+                                            alignLeft: false,
+                                          ),
+                                          Text(
+                                            "|",
+                                            style:
+                                            TextStyle(fontSize: 25, color: kAppPinkColor),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                              child: TextFormField(
+                                                style: kNormalTextStyle.copyWith(color: kPureWhiteColor),
+                                                validator: (value) {
+                                                  List letters = List<String>.generate(
+                                                      value!.length, (index) => value[index]);
+                                                  print(letters);
+
+                                                  if (value != null && value.length > 10) {
+                                                    return 'Number is too long';
+                                                  } else if (value == "") {
+                                                    return 'Enter phone number';
+                                                  } else if (letters[0] == '0') {
+                                                    return 'Number cannot start with a 0';
+                                                  } else if (value != null && value.length < 9) {
+                                                    return 'Number short';
+                                                  } else {
+                                                    return null;
+                                                  }
+                                                },
+                                                onChanged: (value) {
+                                                  phoneNumber = countryCode + value;
+                                                },
+                                                keyboardType: TextInputType.phone,
+                                                decoration: InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: "77000000",
+                                                    hintStyle: kNormalTextStyle.copyWith(
+                                                        color: Colors.grey[500])),
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  kLargeHeightSpacing,
 
 
 
@@ -140,7 +228,7 @@ class _SignupMobileState extends State<SignupMobile> {
 
                                     onPressed: ()async {
 
-                                      if (emailController.text =="" || passwordController.text == "") {
+                                      if (emailController.text =="" || passwordController.text == ""|| phoneNumber == "") {
                                         CommonFunctions().alertDialogueError(context);
 
                                       } else
@@ -155,6 +243,7 @@ class _SignupMobileState extends State<SignupMobile> {
                                             // prefs.setString(kLoginPersonName, businessNameController.text );
                                             prefs.setString(kStoreIdConstant, newUser.user!.uid);
                                             prefs.setBool(kOnboarding, false );
+                                            prefs.setString(kEmployeePhoneNumber, phoneNumber);
                                             // prefs.setString(kCountryCode, countryCode);
                                             // prefs.setString(kCurrency, CommonFunctions().getCurrencyCode(countryCode, context));
                                             prefs.setString(kEmailConstant, email);
@@ -222,176 +311,10 @@ class _SignupMobileState extends State<SignupMobile> {
                   ),
                 ),
               ),
-
-
             ],
           ),
         ),
       )
-      // Container(
-      //   color: kPureWhiteColor,
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.start,
-      //     crossAxisAlignment: CrossAxisAlignment.center,
-      //     children: [
-      //
-      //       Center(
-      //         child: Padding(
-      //           padding: const EdgeInsets.all(16.0),
-      //           child: SingleChildScrollView(
-      //             child: Center(
-      //               child: Container(
-      //                 // color: kAppPinkColor.withOpacity(0.1),
-      //                 width: 650,
-      //                 child: Padding(
-      //                   padding: const EdgeInsets.all(20.0),
-      //                   child: Column(
-      //                     crossAxisAlignment: CrossAxisAlignment.center,
-      //                     children: [
-      //                       // Departments dropdown
-      //                       Text(
-      //                         "CREATE YOUR ACCOUNT",
-      //                         style: kNormalTextStyle.copyWith(
-      //                             color: kAppPinkColor,
-      //                             fontSize: 15,
-      //                             fontWeight: FontWeight.bold),
-      //                       ),
-      //                       kLargeHeightSpacing,
-      //                       TextForm(label:'Business Name', controller:fullNameController),
-      //                       // TextForm(label:'What you deal in',controller: serviceSuppliedController),
-      //
-      //                       kLargeHeightSpacing,
-      //                       Row(
-      //                         children: [
-      //                           Text("Phone Number",
-      //                               style: kNormalTextStyle.copyWith(
-      //                                   color: kBlack,
-      //                                   fontWeight: FontWeight.bold,
-      //                                   fontSize: 14
-      //                               )),
-      //                         ],
-      //                       ),
-      //
-      //                       // Phone number goes here
-      //                       Padding(
-      //                         padding: const EdgeInsets.only(
-      //                             left: 0, right: 0, top: 10, bottom: 8),
-      //                         child: Container(
-      //                           height: 53,
-      //                           decoration: BoxDecoration(
-      //                               border: Border.all(width: 1, color: kBlack),
-      //                               borderRadius: BorderRadius.circular(10)),
-      //                           child: Row(
-      //                             mainAxisAlignment: MainAxisAlignment.center,
-      //                             children: [
-      //                               const SizedBox(
-      //                                 width: 10,
-      //                               ),
-      //                               CountryCodePicker(
-      //                                 textStyle: kNormalTextStyle,
-      //
-      //                                 onInit: (value) {
-      //                                   countryCode = value!.dialCode!;
-      //                                 },
-      //                                 onChanged: (value) {
-      //                                   countryCode = value.dialCode!;
-      //                                 },
-      //                                 // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-      //                                 initialSelection: 'UG',
-      //                                 favorite: const ['+254', '+255', "US"],
-      //                                 // optional. Shows only country name and flag
-      //                                 showCountryOnly: false,
-      //                                 // optional. Shows only country name and flag when popup is closed.
-      //                                 showOnlyCountryWhenClosed: false,
-      //                                 // optional. aligns the flag and the Text left
-      //                                 alignLeft: false,
-      //                               ),
-      //                               Text(
-      //                                 "|",
-      //                                 style:
-      //                                 TextStyle(fontSize: 25, color: kAppPinkColor),
-      //                               ),
-      //                               SizedBox(
-      //                                 width: 10,
-      //                               ),
-      //                               Expanded(
-      //                                   child: TextFormField(
-      //                                     style: kNormalTextStyle.copyWith(color: kBlack),
-      //                                     validator: (value) {
-      //                                       List letters = List<String>.generate(
-      //                                           value!.length, (index) => value[index]);
-      //                                       print(letters);
-      //
-      //                                       if (value != null && value.length > 10) {
-      //                                         return 'Number is too long';
-      //                                       } else if (value == "") {
-      //                                         return 'Enter phone number';
-      //                                       } else if (letters[0] == '0') {
-      //                                         return 'Number cannot start with a 0';
-      //                                       } else if (value != null && value.length < 9) {
-      //                                         return 'Number short';
-      //                                       } else {
-      //                                         return null;
-      //                                       }
-      //                                     },
-      //                                     onChanged: (value) {
-      //                                       phoneNumber = countryCode + value;
-      //                                     },
-      //                                     keyboardType: TextInputType.phone,
-      //                                     decoration: InputDecoration(
-      //                                         border: InputBorder.none,
-      //                                         hintText: "77000000",
-      //                                         hintStyle: kNormalTextStyle.copyWith(
-      //                                             color: Colors.grey[500])),
-      //                                   ))
-      //                             ],
-      //                           ),
-      //                         ),
-      //                       ),
-      //                       // TextForm('Other Names', otherNamesController),
-      //                       // TextForm(label:'Physical Address', controller:addressController),
-      //                       TextForm(label: 'Email',controller: emailController),
-      //                       TextForm(label: 'Password',controller: emailController),
-      //
-      //
-      //
-      //                       ElevatedButton(
-      //
-      //                         onPressed: () {
-      //                           // Add your form submission logic here
-      //                           if (fullNameController.text == "" ) {
-      //                             CommonFunctions().alertDialogueError(context);
-      //
-      //                           } else
-      //                           {
-      //                             // addNewSupplier();
-      //                             Navigator.pop(context);
-      //                           }
-      //                         },
-      //                         child: Padding(
-      //                           padding: const EdgeInsets.all(15.0),
-      //                           child: Text('Create Account',
-      //                               style: kNormalTextStyle.copyWith(
-      //                                   color: kPureWhiteColor,
-      //                                   fontWeight: FontWeight.bold)),
-      //                         ),
-      //                         style: ElevatedButton.styleFrom(
-      //                           backgroundColor: kAppPinkColor,
-      //                         ),
-      //                       ),
-      //                     ],
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //
-      //
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

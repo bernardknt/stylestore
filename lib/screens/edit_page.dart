@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -84,16 +85,16 @@ class _EditShopPageState extends State<EditShopPage> {
 
     // onlineSwitchValue = Provider.of<StyleProvider>(context, listen: false).does;
     if(invoiceSwitchValue == false){
-      activeSwitchStatus = 'Cant Pay with invoice';
+      activeSwitchStatus = 'Invoice Pay';
     }else {
-      activeSwitchStatus = 'Can Pay with invoice';
+      activeSwitchStatus = 'Invoice Pay';
     }
 
     setState((){
       if(onlineSwitchValue == false){
-        activeStatus = 'Business Closed';
+        activeStatus = 'InvoicePay OFF';
       }else {
-        activeStatus = 'Business Open';
+        activeStatus = 'InvoicePay ON';
       }
     });
   }
@@ -112,12 +113,7 @@ class _EditShopPageState extends State<EditShopPage> {
 
   Widget build(BuildContext context) {
 
-    var styleData = Provider.of<StyleProvider>(context, listen: false);
     var styleDataDisplay = Provider.of<StyleProvider>(context);
-
-
-
-
     return Scaffold(
       backgroundColor: kBackgroundGreyColor,
       appBar: AppBar(
@@ -172,134 +168,29 @@ class _EditShopPageState extends State<EditShopPage> {
 
                             ]),
                           ),
-                          //Text(styleData.beauticianName, style: kHeadingTextStyleGold,))
-
                       )
                     ]
                       ),
-
-
-
-                    // ),
-                    // kLargeHeightSpacing,
-                    //
-                    // ListTile(
-                    //   leading: Icon(LineIcons.walking),
-                    //   title: Text("Mobile Services", style: kNormalTextStyle.copyWith(),),
-                    //   subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
-                    //   trailing: buildSwitch(),
-                    // ),
-                    // kLargeHeightSpacing,
-
-
                     ListTile(
                       leading: kIconClockOpen,
                       title: Text(styleDataDisplay.beauticianName, style: kNormalTextStyle.copyWith(fontSize: 15),),
                       trailing: GestureDetector(
                           onTap: (){
-                            // buildShowDialog(context);
-                            showDialog(context: context, builder: (BuildContext context){
-                              return
-                                Material(
-                                  color:Colors.transparent,
-                                  child: CupertinoAlertDialog(
-                                    title: Text('Edit Business Name'),
-                                    content: TextForm(label:'Business Name', controller:TextEditingController()..text = styleDataDisplay.beauticianName),
-                                    actions: [
-                                      CupertinoDialogAction(isDestructiveAction: true,
-                                          onPressed: (){
-                                        Navigator.pop(context);
-                                          },
-                                          child: const Text('Cancel')),
-                                      CupertinoDialogAction(isDefaultAction: true,
-                                          onPressed: ()async{
-
-                                          },
-                                          child: const Text('Update Name')),
-                                    ],
-                                  ),
-                                );
-                            });
+                            buildShowEditDialog(context, styleDataDisplay.beauticianName, "Business Name", "business");
                           },
                           child: Icon(LineIcons.pen, color: kAppPinkColor,)),
                     ),
 
                     DividingLine(),
-                    ListTile(
-                      leading: kIconCustomer,
-                      title: Text(userName, style: kNormalTextStyle.copyWith(),),
-                      trailing: GestureDetector(
-                          onTap: (){
-                            // buildShowDialog(context);
-                            showDialog(context: context, builder: (BuildContext context){
-                              return
-                                Material(
-                                  color:Colors.transparent,
-                                  child: CupertinoAlertDialog(
-                                    title: Text('Edit Your Name'),
-                                    content: TextForm(label:'Your Names', controller: TextEditingController()..text = userName),
-                                    actions: [
-                                      CupertinoDialogAction(isDestructiveAction: true,
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Cancel')),
-                                      CupertinoDialogAction(isDefaultAction: true,
-                                          onPressed: ()async{
-                                            final prefs = await SharedPreferences.getInstance();
-                                            prefs.setString(kLoginPersonName, userName);
-                                            print("Value set to businessName");
-                                            CommonFunctions().updateOnlineStoreInfo(storeId, "ownerName", userName);
-                                            Navigator.pop(context);
-                                            setState(() {
 
-                                            });
-                                          },
-                                          child: const Text('Update Name')),
-                                    ],
-                                  ),
-                                );
-                            });
-                          },
-                          child: Icon(LineIcons.pen, color: kAppPinkColor,)),
-
-                    ),
 
                     ListTile(
                       leading: kIconLocation,
                       title: Text(styleDataDisplay.beauticianLocation, style: kNormalTextStyle.copyWith(),),
                       trailing: GestureDetector(
                           onTap: (){
+                            buildShowEditDialog(context, styleDataDisplay.beauticianLocation, "Location", "location");
 
-                            showDialog(context: context, builder: (BuildContext context){
-                              return
-                                Material(
-                                  color:Colors.transparent,
-                                  child: CupertinoAlertDialog(
-                                    title: Text('Edit Location'),
-                                    content: TextForm(label:'Location', controller: TextEditingController()..text = styleDataDisplay.beauticianLocation),
-                                    actions: [
-                                      CupertinoDialogAction(isDestructiveAction: true,
-                                          onPressed: (){
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Cancel')),
-                                      CupertinoDialogAction(isDefaultAction: true,
-                                          onPressed: ()async{
-                                            final prefs = await SharedPreferences.getInstance();
-                                            prefs.setString(kLocationConstant, businessLocation);
-                                            CommonFunctions().updateOnlineStoreInfo(storeId, "location", businessLocation);
-
-                                            Navigator.pop(context);
-                                            setState(() {
-
-                                            });
-                                          },
-                                          child: const Text('Update Name')),
-                                    ],
-                                  ),
-                                );
-                            });
                           },
                           child: Icon(LineIcons.pen, color: kAppPinkColor,)),
                     ),
@@ -309,26 +200,6 @@ class _EditShopPageState extends State<EditShopPage> {
                       subtitle: Text('Opening Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: GestureDetector(
                           onTap: (){
-                            buildShowDialog(context);
-                            // DatePicker.showTimePicker(context,
-                            //     currentTime: DateTime(2022,12,9,10,00),
-                            //     showSecondsColumn: false,
-                            //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
-                            //
-                            //     //showTitleActions: t,
-                            //
-                            //     onConfirm: (time){
-                            //
-                            //
-                            //       CommonFunctions().updateOnlineStoreInfo(storeId, "open", time.hour);
-                            //
-                            //
-                            //       // deliveryTime = date;
-                            //
-                            //
-                            //
-                            //
-                            //     });
 
                           },
                           child: kIconPen),
@@ -339,28 +210,6 @@ class _EditShopPageState extends State<EditShopPage> {
                       subtitle: Text('Closing Time', style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: GestureDetector(
                           onTap: (){
-                            // DatePicker.showTimePicker(context,
-                            //     currentTime: DateTime(2022,12,9,10,00),
-                            //     showSecondsColumn: false,
-                            //     // theme: const DatePickerTheme(itemHeight: 50, itemStyle: kHeadingTextStyle),
-                            //
-                            //     //showTitleActions: t,
-                            //
-                            //     onConfirm: (time){
-                            //       // DateTime opening = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).openingTime,0);
-                            //       // DateTime closing = DateTime(2022,1,1,Provider.of<StyleProvider>(context, listen: false).closingTime,0);
-                            //       // DateTime selectedDateTime = DateTime(value.date!.year,value.date!.month,value.date!.day,time.hour, time.minute);
-                            //       // var referenceTime = DateTime(2022,1,1,0,0);
-                            //
-                            //       CommonFunctions().updateOnlineStoreInfo(storeId, "close", time.hour);
-                            //
-                            //
-                            //       // deliveryTime = date;
-                            //
-                            //
-                            //
-                            //
-                            //     });
                           },
                           child: kIconPen),
                     ),ListTile(
@@ -368,57 +217,7 @@ class _EditShopPageState extends State<EditShopPage> {
                       title: Text(styleDataDisplay.beauticianPhoneNumber, style: kNormalTextStyle.copyWith(),),
                       trailing: GestureDetector(
                           onTap: (){
-                            CoolAlert.show(
-
-                                lottieAsset: 'images/details.json',
-                                context: context,
-                                type: CoolAlertType.success,
-                                widget: SingleChildScrollView(
-
-                                    child:
-                                    Container(
-                                      child: Column(
-                                        children: [
-
-                                          TextField(
-                                            // controller: TextEditingController!..text = "",
-                                            keyboardType: TextInputType.number,
-
-                                            onChanged: (customerNumber){
-                                              phoneNumber = customerNumber;
-
-                                            },
-                                            decoration: InputDecoration(
-
-                                              // border: InputBorder.none,
-                                                labelText: 'Phone Number',
-                                                labelStyle: kNormalTextStyleExtraSmall,
-
-                                                hintText:  '0771231233',
-                                                hintStyle: kNormalTextStyle
-                                            ) ,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                ),
-                                // text: 'Enter customers details',
-                                title: 'Business Phone Number',
-                                confirmBtnText: 'Ok',
-                                showCancelBtn: true,
-                                confirmBtnColor: Colors.green,
-                                backgroundColor: kBlueDarkColor,
-                                onConfirmBtnTap: (){
-
-
-                                  CommonFunctions().updateOnlineStoreInfo(storeId, "phone", phoneNumber);
-
-                                  Navigator.pop(context);
-                                  setState(() {
-
-                                  });
-                                }
-                            );
+                           buildShowEditDialog(context, styleDataDisplay.beauticianPhoneNumber, "Number", "number");
 
                           },
                           child: kIconPen),
@@ -429,81 +228,12 @@ class _EditShopPageState extends State<EditShopPage> {
                       subtitle: Text(activeStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
                       trailing: buildSwitch(),
                     ),
-                    ListTile(
-                      leading: kIconClockOpen,
-                      title: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(),),
-                      subtitle: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
-                      trailing: buildInvoicePaySwitch(),
-                    ),
-
                     // ListTile(
-                    //   leading: kIconBlackout,
-                    //   title: Text("Blackout Dates", style: kNormalTextStyle.copyWith(),),
-                    //   subtitle: Text('${styleDataDisplay.calendarBlackouts.length}', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                    //   trailing: GestureDetector(
-                    //       onTap: (){
-                    //         buildShowDialog(context);
-                    //       },
-                    //       child: kIconPen),
+                    //   leading: kIconClockOpen,
+                    //   title: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(),),
+                    //   subtitle: Text(activeSwitchStatus, style: kNormalTextStyle.copyWith(fontSize: 12),),
+                    //   trailing: buildInvoicePaySwitch(),
                     // ),
-                    //
-                    // ListTile(
-                    //   leading: Icon(LineIcons.car, color: kAppPinkColor,),
-                    //   title: Text("Mobile Services Fee", style: kNormalTextStyle.copyWith(),),
-                    //   subtitle: Text('${CommonFunctions().formatter.format(styleDataDisplay.beauticianTransport)} Ugx', style: kNormalTextStyle.copyWith(fontSize: 12),),
-                    //   trailing: GestureDetector(
-                    //       onTap: (){
-                    //         CoolAlert.show(
-                    //
-                    //             lottieAsset: 'images/details.json',
-                    //             context: context,
-                    //             type: CoolAlertType.success,
-                    //             widget: SingleChildScrollView(
-                    //
-                    //                 child:
-                    //                 Container(
-                    //                   child: Column(
-                    //                     children: [
-                    //
-                    //                       TextField(
-                    //                         keyboardType: TextInputType.number,
-                    //
-                    //                         onChanged: (mobileServices){
-                    //                           deliveryFee = mobileServices;
-                    //
-                    //                         },
-                    //                         decoration: InputDecoration(
-                    //
-                    //                           // border: InputBorder.none,
-                    //                             labelText: 'Amount',
-                    //                             labelStyle: kNormalTextStyleExtraSmall,
-                    //
-                    //                             hintText:  '10000',
-                    //                             hintStyle: kNormalTextStyle
-                    //                         ) ,
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 )
-                    //             ),
-                    //             // text: 'Enter customers details',
-                    //             title: 'Amount to Provide Mobile Services',
-                    //             confirmBtnText: 'Ok',
-                    //             confirmBtnColor: Colors.green,
-                    //             backgroundColor: kBlueDarkColor,
-                    //             onConfirmBtnTap: (){
-                    //
-                    //
-                    //               CommonFunctions().updateOnlineStoreInfo(storeId, "transport", int.parse(deliveryFee));
-                    //
-                    //               Navigator.pop(context);
-                    //             }
-                    //         );
-                    //       },
-                    //       child: kIconPen),
-                    // ),
-
-
                     kLargeHeightSpacing,
 
                   ]
@@ -516,6 +246,53 @@ class _EditShopPageState extends State<EditShopPage> {
     );
   }
 
+  Future<dynamic> buildShowEditDialog(BuildContext context, String defaultValue, String reason, String field) {
+    TextEditingController textController = TextEditingController()..text = defaultValue;
+
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: CupertinoAlertDialog(
+            title: Text('Edit $reason'),
+            content: TextFormField(
+              decoration: InputDecoration(labelText: reason),
+              controller: textController,
+            ),
+            actions: [
+              CupertinoDialogAction(
+                isDestructiveAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              ),
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  // Retrieve the value from the text controller
+                  String newValue = textController.text;
+
+
+                  await FirebaseFirestore.instance.collection('medics').doc(prefs.getString(kStoreIdConstant)).update({
+                    field: newValue,
+                  });
+
+                  // Close the dialog
+                  Navigator.pop(context);
+                },
+                child: Text('Update $reason'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
   Future<dynamic> buildShowDialog(BuildContext context) {
     return showDialog(context: context, builder: (BuildContext context){
     return
@@ -523,12 +300,6 @@ class _EditShopPageState extends State<EditShopPage> {
         title: Text('ACTIVATE ACCOUNT', style: kHeading2TextStyleBold.copyWith(color: kAppPinkColor),),
         content: Text('To be able to edit this account must first be activated. Contact us on +256782081219 for more details.', style: kNormalTextStyle.copyWith(color: kBlack),),
         actions: [
-          // CupertinoDialogAction(
-          //     onPressed: (){
-          //
-          //     },
-          //     child: Text('UnSubscribe',
-          //       style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold),)),
           CupertinoDialogAction(isDestructiveAction: true,
               onPressed: (){
                 Navigator.pop(context);
@@ -563,14 +334,6 @@ class _EditShopPageState extends State<EditShopPage> {
           activeSwitchStatus = 'No invoice Pay';
           setState(()async{
             final prefs = await SharedPreferences.getInstance();
-
-            // onlineSwitchValue = value;
-            // CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
-            // Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(kGreenThemeColor, 'Open');
-            // prefs.setString(kLiveString, 'Open');
-            // // location = Provider.of<StyleProvider>(context, listen: false).beauticianLocation;
-            // // Provider.of<StyleProvider>(context, listen: false).setLocationOfAppointment(location, value);
-            // print(value);
           });
 
         }
@@ -582,34 +345,30 @@ class _EditShopPageState extends State<EditShopPage> {
       activeColor: kGreenThemeColor,
       inactiveThumbColor: kAppPinkColor,
 
-      //inactiveTrackColor: kAirPink,
-
       value: onlineSwitchValue,
       onChanged: (value){
           if (value == false){
-            activeStatus = 'Business Closed';
+            activeStatus = 'InvoicePay OFF';
             setState(()async{
               final prefs = await SharedPreferences.getInstance();
               onlineSwitchValue = value;
-              CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
-              Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(Colors.red, 'Closed');
-              prefs.setString(kLiveString, 'Open');
-              // location = Provider.of<StyleProvider>(context, listen: false).beauticianLocation;
-              // Provider.of<StyleProvider>(context, listen: false).setLocationOfAppointment(location, value);
-              // print(value);
+              prefs.setBool(kInvoicePay, false);
+              // CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
+              // Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(Colors.red, 'Closed');
+              // prefs.setString(kLiveString, 'Open');
+
             });
           }else {
-            activeStatus = 'Business Open';
+            activeStatus = 'InvoicePay ON';
             setState(()async{
               final prefs = await SharedPreferences.getInstance();
 
+
               onlineSwitchValue = value;
-              CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
-              Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(kGreenThemeColor, 'Open');
-              prefs.setString(kLiveString, 'Open');
-              // location = Provider.of<StyleProvider>(context, listen: false).beauticianLocation;
-              // Provider.of<StyleProvider>(context, listen: false).setLocationOfAppointment(location, value);
-              // print(value);
+              prefs.setBool(kInvoicePay, true);
+              // CommonFunctions().updateOnlineStoreInfo(storeId, "active", value);
+              // Provider.of<StyleProvider>(context, listen: false).setLiveIndicatorValues(kGreenThemeColor, 'Open');
+              // prefs.setString(kLiveString, 'Open');
             });
 
           }

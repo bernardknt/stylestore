@@ -13,10 +13,12 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stylestore/model/styleapp_data.dart';
+
 import '../../Utilities/constants/color_constants.dart';
 import '../../Utilities/constants/font_constants.dart';
-import '../../Utilities/constants/user_constants.dart';
+
 import '../../model/common_functions.dart';
+import '../../utilities/constants/user_constants.dart';
 import '../../utilities/constants/word_constants.dart';
 import '../../widgets/text_form.dart';
 import '../MobileMoneyPages/mobile_money_page.dart';
@@ -160,6 +162,7 @@ class _OnboardingEmployeeState extends State<OnboardingEmployee> {
     final prefs = await SharedPreferences.getInstance();
     initialCountryCode = prefs.getString(kCountryCode)??"+1";
     storeId = prefs.getString(kStoreIdConstant)??"";
+    phoneController..text = CommonFunctions().processPhoneNumber(prefs.getString(kEmployeePhoneNumber)??"", initialCountryCode);
     print("HERE IS THE STORE ID: $storeId");
     final initials = prefs
         .getString(kBusinessNameConstant)
@@ -321,6 +324,7 @@ class _OnboardingEmployeeState extends State<OnboardingEmployee> {
                       Expanded(
                           child: TextFormField(
                             style: kNormalTextStyle.copyWith(color: kBlack),
+                            controller: phoneController,
                             validator: (value) {
                               List letters = List<String>.generate(
                                   value!.length, (index) => value[index]);

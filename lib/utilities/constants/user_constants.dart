@@ -18,6 +18,7 @@ String kOrderId = 'orderId';
 String kToken = 'token';
 String kIsOwner = 'owner';
 String kEmployeeId = 'employeeId';
+String kEmployeePhoneNumber = 'employeePhone';
 String kIsLoggedInConstant = 'loggedIn';
 String kIsFirstTimeUser = 'firstTimer';
 String kIsCheckedIn = 'checkedIn';

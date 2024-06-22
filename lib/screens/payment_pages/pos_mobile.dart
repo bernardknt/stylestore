@@ -771,6 +771,8 @@ class _POSState extends State<POS> {
                                           style:
                                           kHeadingTextStyle,
                                         ),
+                                        Text(styleData.filteredStock[index].description,
+                                            style: kNormalTextStyleSmallGrey.copyWith(fontSize: 12, fontWeight: FontWeight.w500)),
                                         Row(
                                           children: [
                                             Icon(Iconsax.barcode, size: 15, color: kFontGreyColor,),

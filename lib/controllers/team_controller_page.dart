@@ -36,7 +36,7 @@ class _TeamControllerPageState extends State<TeamControllerPage> {
   Widget build(BuildContext context) {
     return
       DefaultTabController(
-        length: 2,
+        length: 3,
         child:
         Scaffold(
             backgroundColor: kPureWhiteColor,
@@ -65,12 +65,16 @@ class _TeamControllerPageState extends State<TeamControllerPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children:[
 
-                        Text('Employee')]
+                        Text('Profile', style: kNormalTextStyle.copyWith(color: kBlack))]
                   ),),
 
                   Tab(child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Permissions'),
+                    child: Text('Permissions', style: kNormalTextStyle.copyWith(color: kBlack)),
+                  ),),
+                  Tab(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Checklist', style: kNormalTextStyle.copyWith(color: kBlack),),
                   ),),
 
 
@@ -82,6 +86,7 @@ class _TeamControllerPageState extends State<TeamControllerPage> {
               children: [
                 EditProfilePage(),
                 EmployeePermissionsPage(),
+                Container(color: kPlainBackground,child: Center(child: Text("Checklist"),),),
               ],
             )
         ),

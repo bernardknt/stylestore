@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -203,42 +204,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               Text('${Provider.of<BeauticianData>(context, listen: false).employeeInformation!.fullNames}', style: kNormalTextStyle,),
               kMediumWidthSpacing,
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kFontGreyColor,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                child: Text('Delete Profile', style: kNormalTextStyle.copyWith(color: kPureWhiteColor),),
-                onPressed: () {
-                  // show a dialog to confirm deletion
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Delete Profile'),
-                      content: Text('Are you sure you want to delete this profile?\nThis action cannot be undone.'),
-                      actions: [
-                        TextButton(
-                          child: Text('Yes'),
-                          onPressed: () {
-                            Navigator.pop(context); // Close the dialog
-                            _deleteProfile();
-                          },
-                        ),
-                        TextButton(
-                          child: Text('No'),
-                          onPressed: () {
-                            Navigator.pop(context); // Close the dialog
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+
             ],
           ),
+          actions: [
+            IconButton(onPressed: (){
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                title: Text('Delete Profile'),
+                content: Text('Are you sure you want to delete this profile?\nThis action cannot be undone.'),
+                actions: [
+                  TextButton(
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                      _deleteProfile();
+                    },
+                  ),
+                  TextButton(
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.pop(context); // Close the dialog
+                    },
+                  ),
+                ],
+              ));
+
+            }, icon: Icon(Icons.delete_forever, color: kBlack,))
+
+          ],
         ),
         // Set the floating action button that is extended to the bottom right of the screen
         floatingActionButton:

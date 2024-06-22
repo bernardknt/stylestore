@@ -301,7 +301,7 @@ class PdfInvoicePdfHelper {
                 Container(height: 1, color: PdfColors.grey400),
                 SizedBox(height: 2 * PdfPageFormat.mm),
                 SizedBox(height: 2 * PdfPageFormat.mm),
-                invoice.template.type == "INVOICE"&& netTotal != 0.0? pw.Row(
+                invoice.template.type == "INVOICE"&& netTotal != 0.0 && invoice.template.invoicePay? pw.Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children:[pw.Container(
                       decoration: pw.BoxDecoration(

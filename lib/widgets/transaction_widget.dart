@@ -320,6 +320,8 @@ class TransactionWidget extends StatelessWidget {
                                       }),
                                       kSmallHeightSpacing,
                                       buildButton(context, 'Invoice', Iconsax.printer, () async {
+                                        final prefs = await SharedPreferences.getInstance();
+                                        bool invoicePay = prefs.getBool(kInvoicePay)??false;
                                         Navigator.pop(context);
                                         Navigator.pop(context);
 
@@ -342,7 +344,7 @@ class TransactionWidget extends StatelessWidget {
                                               number: '${transIdList[index]}',
                                             ),
                                             items: Provider.of<StyleProvider>(context, listen: false).invoiceItems,
-                                            template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due", currency: currency[index]),
+                                            template: InvoiceTemplate(type: 'INVOICE', salutation: 'BILL TO', totalStatement: "Total Amount Due", currency: currency[index], invoicePay:invoicePay ),
                                             paid: Receipt(amount: paidAmountList[index] / 1.0));
                                         if(kIsWeb){
 
